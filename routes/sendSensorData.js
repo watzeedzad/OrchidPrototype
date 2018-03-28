@@ -26,7 +26,7 @@ var SensorData = new Schema({
 
 var SensorDataModel = mongoose.model(
   "SensorDataModel",
-  SensorDataSchema
+  SensorData
 );
 
 function addSensorData(request, respond) {
@@ -67,9 +67,9 @@ router.post("/", function (request, respond) {
 router.get("/", function (request, respond) {
   SensorDataModel.find(function (err, sensorDataList) {
     if (!err) {
-      res.json(sensorDataList);
+      respond.json(sensorDataList);
     } else {
-      res.json({});
+      respond.json({});
     }
   });
 });
