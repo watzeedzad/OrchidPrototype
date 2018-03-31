@@ -11,7 +11,7 @@
 #include <Statistic.h>
 #include <aREST.h>
 
-#define DHT_PIN D5
+#define DHT_PIN D4
 #define DHT_TYPE DHT22
 #define RE_IN_PIN1 D7
 #define RE_IN_PIN2 D8
@@ -31,6 +31,7 @@ String sensorData;
 int fertility;
 float humidity, temperature;
 
+aREST rest = aREST();
 Statistic fertilityStats;
 Statistic humidityStats;
 Statistic moistureStats;
@@ -40,6 +41,7 @@ DynamicJsonBuffer jsonBuffer;
 DHT dht(DHT_PIN, DHT_TYPE);
 H4 caller;
 ESP8266WiFiMulti WiFiMulti;
+WiFiServer server(LISTEN_PORT);
 
 void setup(void)
 {
@@ -52,10 +54,16 @@ void setup(void)
         pinMode(RE_IN_PIN3, OUTPUT);
         pinMode(RE_IN_PIN4, OUTPUT);
 
-        digitalWrite(RE_IN_PIN1, LOW);
-        digitalWrite(RE_IN_PIN2, LOW);
-        digitalWrite(RE_IN_PIN3, LOW);
-        digitalWrite(RE_IN_PIN4, LOW);
+        digitalWrite(RE_IN_PIN1, HIGH);
+        digitalWrite(RE_IN_PIN2, HIGH);
+        digitalWrite(RE_IN_PIN3, HIGH);
+        digitalWrite(RE_IN_PIN4, HIGH);
+
+        rest.function("waterPump", waterPumpControl);
+        rest.function("fertilityPump", fertilityPumpControl);
+        rest.function("moisturePump", moisturePumpControl);
+        rest.set_id("10000001");
+        rest.set_name("esp8266");
 
         WiFi.mode(WIFI_STA);
         IPAddress ip(192, 168, 1, 12);
@@ -74,32 +82,39 @@ void setup(void)
         Serial.println("WiFi is Connected!");
         Serial.println(WiFi.localIP());
 
-//        WiFiMulti.addAP(SSID, SSID_PASSWORD);
-//
-//        while (WiFiMulti.run() != WL_CONNECTED)
-//        {
-//                delay(100);
-//                if (DEBUG_PRINT)
-//                {
-//                        Serial.print(". ");
-//                }
-//        }
-//        WiFi.config(IPAddress(192, 168, 1, 12), IPAddress(8, 8, 8, 8), IPAddress(192, 168, 1, 2), IPAddress(255, 255, 255, 0));
-//        if (DEBUG_PRINT)
-//        {
-//                Serial.println("\nconnected to network " + String(SSID) + "\n");
-//        }
+        //        WiFiMulti.addAP(SSID, SSID_PASSWORD);
+        //
+        //        while (WiFiMulti.run() != WL_CONNECTED)
+        //        {
+        //                delay(100);
+        //                if (DEBUG_PRINT)
+        //                {
+        //                        Serial.print(". ");
+        //                }
+        //        }
+        //        WiFi.config(IPAddress(192, 168, 1, 12), IPAddress(8, 8, 8, 8), IPAddress(192, 168, 1, 2), IPAddress(255, 255, 255, 0));
+        //        if (DEBUG_PRINT)
+        //        {
+        //                Serial.println("\nconnected to network " + String(SSID) + "\n");
+        //        }
 
-        caller.every(30000,sendData);
+        caller.every(30000, sendData);
+        server.begin();
 
         delay(100);
 }
 
 void loop(void)
 {
-        delay(2000);
+        WiFiClient client = server.available();
+        if (client && client.available()){
+                rest.handle(client);
+        }
+
+        delay(1000);
 
         moisture = analogRead(MOISTURE_PIN);
+        Serial.println(moisture);
         String temp = chat.readString();
 
         if (isnan(dht.readTemperature()) || isnan(dht.readTemperature()))
@@ -126,7 +141,15 @@ void loop(void)
 int convertToPercent(int value)
 {
         int percentValue = 0;
-        percentValue = map(value, 1023, 480, 0, 100);
+        percentValue = map(value, 110, 750, 0, 100);
+        if (percentValue == -1)
+        {
+                percentValue = 0;
+        }
+        if (percentValue >= 100)
+        {       
+                percentValue = 100;
+        }
         return percentValue;
 }
 
@@ -168,10 +191,23 @@ void sendData()
         JSONencoder.prettyPrintTo(JSONmessageBuffer, sizeof(JSONmessageBuffer));
         Serial.println(JSONmessageBuffer);
 
+        // HTTPClient http;
+        // http.setTimeout(20000);
+        // http.begin("https://hello.careerity.me/sendSensorData", "10:A6:36:B5:24:5E:72:8A:4E:D8:CC:33:E9:65:89:2A:39:BA:79:8B");
+        // http.addHeader("Content-Type", "application/json");
+        // int httpCode = http.POST(JSONmessageBuffer);
+        // String payload = http.getString();
+        // Serial.print("http result: ");
+        // Serial.println(httpCode);
+        // Serial.println(String(http.errorToString(httpCode)));
+        // Serial.print("Payload: ");
+        // Serial.println(payload);
+        // http.end();
+
         HTTPClient http;
-        http.setTimeout(20000);
-        http.begin("https://hello.careerity.me/sendSensorData", "10:A6:36:B5:24:5E:72:8A:4E:D8:CC:33:E9:65:89:2A:39:BA:79:8B");
-        http.addHeader("Content-Type","application/json");
+        http.setTimeout(1000);
+        http.begin("http://192.168.1.151/sendSensorData");
+        http.addHeader("Content-Type", "application/json");
         int httpCode = http.POST(JSONmessageBuffer);
         String payload = http.getString();
         Serial.print("http result: ");
@@ -181,21 +217,29 @@ void sendData()
         Serial.println(payload);
         http.end();
 
-//        HTTPClient http;
-//        http.setTimeout(1000);
-//        http.begin("http://192.168.1.151/sendSensorData");
-//        http.addHeader("Content-Type","application/json");
-//        int httpCode = http.POST(JSONmessageBuffer);
-//        String payload = http.getString();
-//        Serial.print("http result: ");
-//        Serial.println(httpCode);
-//        Serial.println(String(http.errorToString(httpCode)));
-//        Serial.print("Payload: ");
-//        Serial.println(payload);
-//        http.end();
-
         temperatureStats.clear();
         humidityStats.clear();
         fertilityStats.clear();
         moistureStats.clear();
+}
+
+int waterPumpControl(String command)
+{
+        int state = command.toInt();
+        digitalWrite(RE_IN_PIN4, state);
+        return 1;
+}
+
+int fertilityPumpControl(String command)
+{
+        int state = command.toInt();
+        digitalWrite(RE_IN_PIN2, state);
+        return 1;
+}
+
+int moisturePumpControl(String command)
+{
+        int state = command.toInt();
+        digitalWrite(RE_IN_PIN1, state);
+        return 1;
 }

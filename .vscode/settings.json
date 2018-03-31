@@ -1,0 +1,5 @@
+{
+    "sketch": "smart-farm-rev1.ino",
+    "port": "COM6",
+    "output": "../build"
+}

@@ -16,20 +16,26 @@ db.on("error", console.error.bind(console, "MongoDB connection error:"));
 
 var Schema = mongoose.Schema;
 
-var SensorData = new Schema({
-  id: Number,
+var greenhouse_sensor_schema = new Schema({
+  greenhouseSensorId: Number,
   temperature: Number,
   humidity: Number,
-  fertility: Number,
-  moisture: Number
+  soilmoisture: Number,
+  ambientLight: Number,
+  timeStamp: Date,
+  greenhouseId: Number
 });
 
-var SensorDataModel = mongoose.model(
-  "SensorDataModel",
-  SensorData
+var project_sensor_schema = new Schema({
+  
+});
+
+var greenhouse_sensor = mongoose.model(
+  "greenhouse_sensor",
+  greenhouse_sensor_schema
 );
 
-function addSensorData(request, respond) {
+function addSenhjksorData(request, respond) {
   var test;
 
   test = new SensorDataModel({
