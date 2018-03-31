@@ -26,36 +26,8 @@ var greenhouse_sensor_schema = new Schema({
   greenhouseId: Number
 });
 
-var project_sensor_schema = new Schema({
-  
-});
 
-var greenhouse_sensor = mongoose.model(
-  "greenhouse_sensor",
-  greenhouse_sensor_schema
-);
 
-function addSensorData(request, respond) {
-  var test;
-
-  test = new SensorDataModel({
-    id: 10000001,
-    temperature: request.body.temperature,
-    humidity: request.body.humidity,
-    fertility: request.body.fertility,
-    moisture: request.body.moisture
-  });
-
-  test.save(function (err) {
-    if (!err) {
-      console.log("created");
-      respond.sendStatus(200);
-    } else {
-      //TODO: return page with errors
-      return console.log(err);
-    }
-  });
-}
 
 router.post("/", function (request, respond) {
   console.log(request.body);

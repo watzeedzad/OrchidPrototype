@@ -12,4 +12,4 @@ const greenHouse_SensorSchema = new Schema({
     greenHouseId : number
 });
 
-mongoose.model('greenHouse_Sensor',)
+mongoose.model('greenHouse_Sensor',greenHouse_SensorSchema);

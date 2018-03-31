@@ -1,8 +1,3 @@
-
-if(process.env.NODE_ENV === 'production'){
-
-    module.exports = require('./prod');
-}else{
-
-    module.exports = require('./dev');
-}
+module.exports = {
+    mongoURI:"mongodb://HelloUser:123456@13.229.224.156:27017/OrchidPrototype"
+};
