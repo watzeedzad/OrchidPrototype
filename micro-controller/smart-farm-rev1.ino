@@ -107,7 +107,8 @@ void setup(void)
 void loop(void)
 {
         WiFiClient client = server.available();
-        if (client && client.available()){
+        if (client && client.available())
+        {
                 rest.handle(client);
         }
 
@@ -147,7 +148,7 @@ int convertToPercent(int value)
                 percentValue = 0;
         }
         if (percentValue >= 100)
-        {       
+        {
                 percentValue = 100;
         }
         return percentValue;

@@ -1,12 +1,12 @@
-const mongoose = require('mongoose');
+const mongoose = require("mongoose");
 
-const{Schema} = mongoose;
+const { Schema } = mongoose;
 
 const project_SensorSchema = new Schema({
-    projectSensorId : number,
-    soilFertilizer : number,
-    timeStamp : Date,
-    projectId : number
+  projectSensorId: Number,
+  soilFertilizer: Number,
+  timeStamp: Date,
+  projectId: Number
 });
 
-mongoose.model('project_Sensor',project_SensorSchema);
+mongoose.model("project_Sensor", project_SensorSchema);
