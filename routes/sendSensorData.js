@@ -35,7 +35,7 @@ var greenhouse_sensor = mongoose.model(
   greenhouse_sensor_schema
 );
 
-function addSenhjksorData(request, respond) {
+function addSensorData(request, respond) {
   var test;
 
   test = new SensorDataModel({
