@@ -25,6 +25,7 @@ router.post("/greenHouseSensor", (req, res) => {
       return console.log(err);
     }
   });
+  res.redirect("../sendorRoutes/temperatureControl");
 });
 
 //Show greenHouseSensorData
