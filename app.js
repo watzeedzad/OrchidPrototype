@@ -9,11 +9,13 @@ const mongoose = require("mongoose");
 //load model
 require("./models/GreenHouse_Sensor");
 require("./models/Project_Sensor");
+require("./models/GreenHouse");
 
 //load routes
 const sensorRoutes = require("./routes/sensorRoutes");
 const index = require("./routes/index");
 const users = require("./routes/users");
+const greenHouseRoutes = require("./routes/greenHouseRoutes");
 
 //load keys
 const keys = require("./config/keys");
@@ -50,6 +52,7 @@ app.use(express.static(path.join(__dirname, "public")));
 app.use("/", index);
 app.use("/users", users);
 app.use("/sensorRoutes", sensorRoutes);
+app.use("/greenHouse",greenHouseRoutes);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
