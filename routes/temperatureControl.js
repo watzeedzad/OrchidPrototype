@@ -6,8 +6,8 @@ const farm = mongoose.model("farm");
 var filePathJson;
 var filePath;
 
-async function getFarmData(farmIdIn) {
-    await farm.find({
+/*async function getFarmData(farmIdIn) {
+   let farmData =   await farm.find({
         farmId: farmIdIn
     }, function (err, farm) {
         if (!err) {
@@ -17,6 +17,17 @@ async function getFarmData(farmIdIn) {
             console.log("fail");
         }
     });
+}
+*/
+
+async function getFarmData(farmIdIn){
+    let farmData = await farm.findOne({farmId: farmIdIn});
+    
+    if(farmData){
+        return done(null,farmData)
+    }else{
+        console.log('fail');
+    }
 }
 
 router.post("/", (req, res) => {
