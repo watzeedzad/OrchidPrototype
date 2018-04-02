@@ -19,13 +19,13 @@ router.post("/greenHouseSensor", (req, res) => {
   new greenHouseSensor(newGreenHouseData).save(function(err) {
     if (!err) {
       console.log("created");
-      res.sendStatus(200);
+      // res.sendStatus(200);
     } else {
       //TODO: return page with errors
       return console.log(err);
     }
   });
-  res.redirect("../sendorRoutes/temperatureControl");
+  res.redirect(307, "../temperatureControl");
 });
 
 //Show greenHouseSensorData
