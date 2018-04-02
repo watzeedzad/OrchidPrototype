@@ -6,33 +6,11 @@ const farm = mongoose.model("farm");
 var filePathJson;
 var filePath;
 
-// function getFarmData(farmIdIn) {
-//     var tempData;
-//     var farmData = farm.find({
-//         farmId: farmIdIn
-//     }, (err, farmData) => {
-//         if (!err) {
-//             tempData = JSON.stringify(farmData);
-//             console.log("tempData: " + tempData);
-//             return tempData;
-//             callback();
-//         } else {
-//             console.log("ERROR");
-//         }
-//     }).exec();
-//     return tempData;
-// }
-
-async function getFarmData(farmIdIn) {
-    var farmData = await farm.find({
-        farmId: farmIdIn
-    });
-
-    if (farmData) {
-       let tempData = JSON.stringify(farmData);
-        console.log(tempData);
-        return tempData.JSON;
-    } else {
+async function getFarmData(farmIdIn){
+    var farmData = await farm.find({farmId: farmIdIn});
+    if(farmData){
+        filePathJson =  JSON.stringify(farmData);
+    }else{
         console.log('fail');
     }
 }
@@ -60,15 +38,14 @@ router.post("/", (req, res) => {
 });
 
 router.get("/", (req, res) => {
-    var temp =  getFarmData(123456789) ;
-        console.log("temp: " + temp);
-        filePath = temp.configFilePath;
-        console.log("filePathJson: " + filePathJson)
-        console.log("filePath: " + filePath);
-        res.json(temp);
-
-    // filePathJson = getFarmData(125468958);
-    // var temp = getFarmData(123456789);
+    async function getPathData(){
+        await getFarmData(123456789);
+        const temp = JSON.parse(filePathJson);
+        filePath = temp[0].configFilePath;
+        console.log("filePath: " + filePath)
+        res.sendStatus(200);
+    }
+    getPathData();
 });
 
 module.exports = router;
