@@ -3,12 +3,12 @@ const mongoose = require("mongoose");
 const { Schema } = mongoose;
 
 const farmSchema = new Schema({
-  famrId: Number,
+  farmId: Number,
   farmName: String,
   ownerName: String,
   ownerSurname: String,
   ownerTel: String,
-  owneraddress: String,
+  ownerAddress: String,
   configFilePath: String
 });
 
