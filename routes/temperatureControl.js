@@ -11,6 +11,8 @@ let filePath;
 let configFile;
 let minTemperature;
 let maxTemperature;
+let minHumidity;
+let maxHumidity;
 let controllerData;
 
 async function getFarmData(farmIdIn) {
@@ -40,21 +42,46 @@ function compareTemperature(filePath, currentTemp) {
   minTemperature = configFile.minTemperature;
   maxTemperature = configFile.maxTemperature;
   if (maxTemperature < currentTemp) {
-    unirest.get("http://" + String(controllerData[0].ip) + "/waterPump?params=0").end(function(res) {
-      if (res.error) {
-        console.log("GET error", res.error);
-      } else {
-        console.log("GET response", res.body);
-      }
-    });
+    return false;
+  }
+  if (minHumidity > currentTemp) {
+    return true;
+  }
+}
+
+function compareHumidity(filePath, currentHumid) {
+  configFile = JSON.parse(require("fs").readFileSync(String(filePath), "utf8"));
+  minHumidity = configFile.minHumidity;
+  maxHumidity = configFile.maxHumidity;
+  if (minHumidity < currentHumid) {
+    return true;
+  }
+  if (minHumidity > currentHumid) {
+    return false;
+  }
+}
+
+function onOffWaterPump(ip, state) {
+  if (state) {
+    unirest
+      .get("http://" + String(ip) + "/waterPump?params=0")
+      .end(function(res) {
+        if (res.error) {
+          console.log("GET error", res.error);
+        } else {
+          console.log("GET response", res.body);
+        }
+      });
   } else {
-    unirest.get("http://" + String(controllerData[0].ip) + "/waterPump?params=1").end(function(res) {
-      if (res.error) {
-        console.log("GET error", res.error);
-      } else {
-        console.log("GET response", res.body);
-      }
-    });
+    unirest
+      .get("http://" + String(ip) + "/waterPump?params=1")
+      .end(function(res) {
+        if (res.error) {
+          console.log("GET error", res.error);
+        } else {
+          console.log("GET response", res.body);
+        }
+      });
   }
 }
 
@@ -66,8 +93,21 @@ router.post("/", (req, res) => {
     const temp = JSON.parse(filePathJson);
     filePath = temp[0].configFilePath;
     console.log("filePath: " + filePath);
-    console.log("temp: " + req.body.temperature)
-    await compareTemperature(filePath, req.body.temperature);
+    console.log("temp: " + req.body.temperature);
+    let resultCompareTemp = await compareTemperature(
+      filePath,
+      req.body.temperature
+    );
+    let resultCompareHumid = await compareHumidity(filePath, req.body.humidity);
+    if (!resultCompareTemp) {
+      onOffWaterPump(controllerData[0].ip, true);
+    }
+    if (!resultCompareHumid) {
+      onOffWaterPump(controllerData[0].ip, true);
+    }
+    if (resultCompareTemp && resultCompareHumid) {
+      onOffWaterPump(controllerData[0].ip, false);
+    }
     res.sendStatus(200);
   }
   getPathData();
