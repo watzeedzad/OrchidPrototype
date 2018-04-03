@@ -4,12 +4,14 @@ const mongoose = require("mongoose");
 const fs = require("fs");
 const unirest = require("unirest");
 const farm = mongoose.model("farm");
+const know_controller = mongoose.model("know_controller");
 
 let filePathJson;
 let filePath;
 let configFile;
 let minTemperature;
 let maxTemperature;
+let controllerData;
 
 async function getFarmData(farmIdIn) {
   var farmData = await farm.find({
@@ -22,12 +24,23 @@ async function getFarmData(farmIdIn) {
   }
 }
 
+async function getControllerData(ip) {
+  let controllerResult = await know_controller.find({
+    ip: ip
+  });
+  if (controllerResult) {
+    controllerData = controllerResult;
+  } else {
+    console.log("Query fail!");
+  }
+}
+
 function compareTemperature(filePath, currentTemp) {
   configFile = JSON.parse(require("fs").readFileSync(String(filePath), "utf8"));
   minTemperature = configFile.minTemperature;
   maxTemperature = configFile.maxTemperature;
   if (maxTemperature < currentTemp) {
-    unirest.get("http://192.168.1.12/waterPump?params=0").end(function(res) {
+    unirest.get("http://" + String(controllerData[0].ip) + "/waterPump?params=0").end(function(res) {
       if (res.error) {
         console.log("GET error", res.error);
       } else {
@@ -35,7 +48,7 @@ function compareTemperature(filePath, currentTemp) {
       }
     });
   } else {
-    unirest.get("http://192.168.1.12/waterPump?params=1").end(function(res) {
+    unirest.get("http://" + String(controllerData[0].ip) + "/waterPump?params=1").end(function(res) {
       if (res.error) {
         console.log("GET error", res.error);
       } else {
@@ -47,7 +60,9 @@ function compareTemperature(filePath, currentTemp) {
 
 router.post("/", (req, res) => {
   async function getPathData() {
-    await getFarmData(123456789);
+    await getControllerData(req.body.ip);
+    let farmId = controllerData[0].farmId;
+    await getFarmData(farmId);
     const temp = JSON.parse(filePathJson);
     filePath = temp[0].configFilePath;
     console.log("filePath: " + filePath);

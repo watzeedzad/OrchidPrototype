@@ -11,6 +11,7 @@ require("./models/GreenHouse_Sensor");
 require("./models/Project_Sensor");
 require("./models/GreenHouse");
 require("./models/farm");
+require("./models/know_controller");
 
 //load routes
 const sensorRoutes = require("./routes/sensorRoutes");
