@@ -26,13 +26,16 @@ async function getFarmData(farmIdIn) {
   }
 }
 
-async function getControllerData(ip) {
+async function getControllerData(greenHouseId) {
   let controllerResult = await know_controller.find({
-    ip: ip
+    isHavePump: true,
+    pumpType: "moisture",
+    greenHouseId: greenHouseId
   });
   if (controllerResult) {
     controllerData = controllerResult;
   } else {
+    controllerData = null;
     console.log("Query fail!");
   }
 }
@@ -65,7 +68,7 @@ function onOffWaterPump(ip, state) {
   if (state) {
     unirest
       .get("http://" + String(ip) + "/waterPump?params=0")
-      .end(function(res) {
+      .end(function (res) {
         if (res.error) {
           console.log("GET error", res.error);
         } else {
@@ -75,7 +78,7 @@ function onOffWaterPump(ip, state) {
   } else {
     unirest
       .get("http://" + String(ip) + "/waterPump?params=1")
-      .end(function(res) {
+      .end(function (res) {
         if (res.error) {
           console.log("GET error", res.error);
         } else {
@@ -87,7 +90,10 @@ function onOffWaterPump(ip, state) {
 
 router.post("/", (req, res) => {
   async function getPathData() {
-    await getControllerData(req.body.ip);
+    await getControllerData(req.body.greenHouseId);
+    if (controllerData == null) {
+      res.sendStatus(200);
+    }
     let farmId = controllerData[0].farmId;
     await getFarmData(farmId);
     const temp = JSON.parse(filePathJson);
