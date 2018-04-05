@@ -88,9 +88,25 @@ function onOffWaterPump(ip, state) {
   }
 }
 
+router.use("/", (req, res, next) => {
+  async function getData(ip) {
+    let controllerResult = await know_controller.find({
+      ip: ip
+    });
+    if (controllerResult) {
+      res.controllerDataRes = controllerResult;
+    } else {
+      console.log("Query fail!");
+    }
+    next();
+  }
+  getData(req.body.ip);
+})
+
 router.post("/", (req, res) => {
   async function getPathData() {
-    await getControllerData(req.body.greenHouseId);
+    let greenHouseId = res.controllerDataRes[0].greenHouseId;
+    await getControllerData(greenHouseId);
     if (controllerData == null) {
       res.sendStatus(200);
     }

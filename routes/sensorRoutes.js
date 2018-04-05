@@ -3,6 +3,20 @@ const router = express.Router();
 const mongoose = require("mongoose");
 const greenHouseSensor = mongoose.model("greenHouse_Sensor");
 const projectSensor = mongoose.model("project_Sensor");
+const know_controller = mongoose.model("know_controller");
+
+let controllerData;
+
+async function getControllerData(ip) {
+  let controllerResult = await know_controller.find({
+    ip: ip
+  });
+  if (controllerResult) {
+    controllerData = controllerResult;
+  } else {
+    console.log("Query fail!");
+  }
+}
 
 async function saveSensorData(greenHouseId, temp, humid, soilMoisture, ambientLight) {
   const newGreenHouseData = {
@@ -15,7 +29,7 @@ async function saveSensorData(greenHouseId, temp, humid, soilMoisture, ambientLi
     greenHouseId: greenHouseId
   };
 
-  new greenHouseSensor(newGreenHouseData).save(function(err) {
+  new greenHouseSensor(newGreenHouseData).save(function (err) {
     if (!err) {
       console.log("created green house!");
     } else {
@@ -25,9 +39,18 @@ async function saveSensorData(greenHouseId, temp, humid, soilMoisture, ambientLi
   });
 }
 
+router.use("/greenHouseSensor", (req, res, next) => {
+  async function getData() {
+    let ip = req.body.ip
+    await getControllerData(ip);
+    next()
+  }
+  getData();
+})
+
 //Add greenHouseSensor
 router.post("/greenHouseSensor", (req, res) => {
-  let greenHouseId = req.body.greenHouseId;
+  let greenHouseId = controllerData[0].greenHouseId;
   let temp = req.body.temperature;
   let humid = req.body.humidity;
   let soilMoisture = req.body.soilMoisture;
@@ -56,7 +79,7 @@ router.post("/projectSensor", (req, res) => {
     projectId: req.body.projectId
   };
 
-  new projectSensor(newProjectSensorData).save(function(err) {
+  new projectSensor(newProjectSensorData).save(function (err) {
     if (!err) {
       console.log("created");
       res.sendStatus(200);
