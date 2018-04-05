@@ -2,7 +2,7 @@ const express = require("express");
 const router = express.Router();
 const mongoose = require("mongoose");
 const fs = require("fs");
-const unirest = require("unirest");
+const request = require("request");
 const farm = mongoose.model("farm");
 const know_controller = mongoose.model("know_controller");
 
@@ -66,24 +66,22 @@ function compareHumidity(filePath, currentHumid) {
 
 function onOffWaterPump(ip, state) {
   if (state) {
-    unirest
-      .get("http://" + String(ip) + "/waterPump?params=0")
-      .end(function (res) {
-        if (res.error) {
-          console.log("GET error", res.error);
-        } else {
-          console.log("GET response", res.body);
-        }
+    console.log("Send: /waterPump?params=0 (on)");
+    request
+      .get("http://" + String(ip) + "/waterPump?params=0", { timeout: 5000 })
+      .on("error", function(err) {
+        console.log(err.code === "ETIMEDOUT");
+        console.log(err.connect === true);
+        console.log(err);
       });
   } else {
-    unirest
-      .get("http://" + String(ip) + "/waterPump?params=1")
-      .end(function (res) {
-        if (res.error) {
-          console.log("GET error", res.error);
-        } else {
-          console.log("GET response", res.body);
-        }
+    console.log("Send: /waterPump?params=1 (off)");
+    request
+      .get("http://" + String(ip) + "/waterPump?params=0", { timeout: 5000 })
+      .on("error", function(err) {
+        console.log(err.code === "ETIMEDOUT");
+        console.log(err.connect === true);
+        console.log(err);
       });
   }
 }
@@ -101,21 +99,19 @@ router.use("/", (req, res, next) => {
     next();
   }
   getData(req.body.ip);
-})
+});
 
 router.post("/", (req, res) => {
   async function getPathData() {
     let greenHouseId = res.controllerDataRes[0].greenHouseId;
     await getControllerData(greenHouseId);
-    if (controllerData == null) {
+    if (typeof controllerData === "undefined") {
       res.sendStatus(200);
     }
     let farmId = controllerData[0].farmId;
     await getFarmData(farmId);
     const temp = JSON.parse(filePathJson);
     filePath = temp[0].configFilePath;
-    console.log("filePath: " + filePath);
-    console.log("temp: " + req.body.temperature);
     let resultCompareTemp = await compareTemperature(
       filePath,
       req.body.temperature
