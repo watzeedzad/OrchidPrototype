@@ -1,6 +1,12 @@
 {
-    "minTemperature": 25,
-    "maxTemperature": 30,
-    "minHumidity": 60,
-    "maxHumidity": 80
+    "minTemperature": null,
+    "maxTemperature": null,
+    "minHumidity": null,
+    "maxHumidity": null,
+    "minFertility": null,
+    "maxFertility": null,
+    "minAmbientLight": null,
+    "maxAmbientLight": null,
+    "minMoisture": null,
+    "maxMoisture": null
 }

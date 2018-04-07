@@ -25,8 +25,11 @@ async function getConfigFile(farmIdIn) {
   }
   let temp = JSON.parse(farmData);
   let configFilePath = temp[0].configFilePath;
-  let config = JSON.parse(require("fs").readFileSync(String(configFilePath), "utf8"));
+  let config = JSON.parse(
+    require("fs").readFileSync(String(configFilePath), "utf8")
+  );
   configFile = config;
+  console.log(configFile);
 }
 
 async function getControllerData(greenHouseId) {
@@ -46,6 +49,10 @@ async function getControllerData(greenHouseId) {
 function compareTemperature(configFile, currentTemp) {
   minTemperature = configFile.minTemperature;
   maxTemperature = configFile.maxTemperature;
+  if (minTemperature == null || maxTemperature == null) {
+    console.log(minTemperature);
+    return undefined;
+  }
   if (maxTemperature < currentTemp) {
     return false;
   }
@@ -57,6 +64,9 @@ function compareTemperature(configFile, currentTemp) {
 function compareHumidity(configFile, currentHumid) {
   minHumidity = configFile.minHumidity;
   maxHumidity = configFile.maxHumidity;
+  if (minHumidity == null || maxHumidity == null) {
+    return undefined;
+  }
   if (minHumidity < currentHumid) {
     return true;
   }
@@ -115,7 +125,18 @@ router.post("/", (req, res) => {
       configFile,
       req.body.temperature
     );
-    let resultCompareHumid = await compareHumidity(configFile, req.body.humidity);
+    let resultCompareHumid = await compareHumidity(
+      configFile,
+      req.body.humidity
+    );
+    console.log(resultCompareHumid);
+    console.log(resultCompareTemp);
+    if (
+      typeof resultCompareTemp === "undefined" ||
+      typeof resultCompareHumid === "undefined"
+    ) {
+      res.sendStatus(301);
+    } else {
     if (!resultCompareTemp) {
       onOffWaterPump(controllerData[0].ip, true);
     }
@@ -126,6 +147,7 @@ router.post("/", (req, res) => {
       onOffWaterPump(controllerData[0].ip, false);
     }
     res.sendStatus(200);
+  }
   }
   getPathData();
 });
