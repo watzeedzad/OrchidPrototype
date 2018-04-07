@@ -6,8 +6,7 @@ const request = require("request");
 const farm = mongoose.model("farm");
 const know_controller = mongoose.model("know_controller");
 
-let filePathJson;
-let filePath;
+let farmData;
 let configFile;
 let minTemperature;
 let maxTemperature;
@@ -15,15 +14,19 @@ let minHumidity;
 let maxHumidity;
 let controllerData;
 
-async function getFarmData(farmIdIn) {
+async function getConfigFile(farmIdIn) {
   var farmData = await farm.find({
     farmId: farmIdIn
   });
   if (farmData) {
-    filePathJson = JSON.stringify(farmData);
+    farmData = JSON.stringify(farmData);
   } else {
     console.log("fail");
   }
+  let temp = JSON.parse(farmData);
+  let configFilePath = temp[0].configFilePath;
+  let config = JSON.parse(require("fs").readFileSync(String(configFilePath), "utf8"));
+  configFile = config;
 }
 
 async function getControllerData(greenHouseId) {
@@ -40,8 +43,7 @@ async function getControllerData(greenHouseId) {
   }
 }
 
-function compareTemperature(filePath, currentTemp) {
-  configFile = JSON.parse(require("fs").readFileSync(String(filePath), "utf8"));
+function compareTemperature(configFile, currentTemp) {
   minTemperature = configFile.minTemperature;
   maxTemperature = configFile.maxTemperature;
   if (maxTemperature < currentTemp) {
@@ -52,8 +54,7 @@ function compareTemperature(filePath, currentTemp) {
   }
 }
 
-function compareHumidity(filePath, currentHumid) {
-  configFile = JSON.parse(require("fs").readFileSync(String(filePath), "utf8"));
+function compareHumidity(configFile, currentHumid) {
   minHumidity = configFile.minHumidity;
   maxHumidity = configFile.maxHumidity;
   if (minHumidity < currentHumid) {
@@ -109,14 +110,12 @@ router.post("/", (req, res) => {
       res.sendStatus(200);
     }
     let farmId = controllerData[0].farmId;
-    await getFarmData(farmId);
-    const temp = JSON.parse(filePathJson);
-    filePath = temp[0].configFilePath;
+    await getConfigFile(farmId);
     let resultCompareTemp = await compareTemperature(
-      filePath,
+      configFile,
       req.body.temperature
     );
-    let resultCompareHumid = await compareHumidity(filePath, req.body.humidity);
+    let resultCompareHumid = await compareHumidity(configFile, req.body.humidity);
     if (!resultCompareTemp) {
       onOffWaterPump(controllerData[0].ip, true);
     }
@@ -129,6 +128,12 @@ router.post("/", (req, res) => {
     res.sendStatus(200);
   }
   getPathData();
+});
+
+router.post("/configTemperature", (req, res) => {
+  let minConfigTemp = req.body.minTemperature;
+  let maxCOnfigTemp = req.body.maxTemperature;
+  let farmId = req.body.farmId;
 });
 
 module.exports = router;
