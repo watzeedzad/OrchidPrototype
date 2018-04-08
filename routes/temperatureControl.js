@@ -29,7 +29,6 @@ async function getConfigFile(farmIdIn) {
     require("fs").readFileSync(String(configFilePath), "utf8")
   );
   configFile = config;
-  console.log(configFile);
 }
 
 async function getControllerData(greenHouseId) {
@@ -137,25 +136,100 @@ router.post("/", (req, res) => {
     ) {
       res.sendStatus(301);
     } else {
-    if (!resultCompareTemp) {
-      onOffWaterPump(controllerData[0].ip, true);
+      if (!resultCompareTemp) {
+        onOffWaterPump(controllerData[0].ip, true);
+      }
+      if (!resultCompareHumid) {
+        onOffWaterPump(controllerData[0].ip, true);
+      }
+      if (resultCompareTemp && resultCompareHumid) {
+        onOffWaterPump(controllerData[0].ip, false);
+      }
+      res.sendStatus(200);
     }
-    if (!resultCompareHumid) {
-      onOffWaterPump(controllerData[0].ip, true);
-    }
-    if (resultCompareTemp && resultCompareHumid) {
-      onOffWaterPump(controllerData[0].ip, false);
-    }
-    res.sendStatus(200);
-  }
   }
   getPathData();
 });
 
+async function writeConfigFile(farmId, configFile) {
+  var farmData = await farm.find({
+    farmId: farmId
+  });
+  if (farmData) {
+    farmData = JSON.stringify(farmData);
+  } else {
+    console.log("fail");
+  }
+  let temp = JSON.parse(farmData);
+  let configFilePath = temp[0].configFilePath;
+  let content = JSON.stringify(configFile);
+  fs.writeFileSync(String(configFilePath), content, "utf8", function(err) {
+    if (err) {
+      console.log(err);
+    } else {
+      console.log("write with no error");
+    }
+  });
+}
+
+router.use("/configTemperature", (req, res, next) => {
+  async function preTasks() {
+    let farmId = req.body.farmId;
+    await getConfigFile(farmId);
+    next();
+  }
+  preTasks();
+});
+
 router.post("/configTemperature", (req, res) => {
   let minConfigTemp = req.body.minTemperature;
-  let maxCOnfigTemp = req.body.maxTemperature;
-  let farmId = req.body.farmId;
+  let maxConfigTemp = req.body.maxTemperature;
+  configFile.minTemperature = minConfigTemp;
+  configFile.maxTemperature = maxConfigTemp;
+  async function writeFile() {
+    await writeConfigFile(req.body.farmId, configFile);
+    res.sendStatus(200);
+  }
+  if (
+    typeof minConfigTemp === "undefined" ||
+    typeof maxConfigTemp === "undefined"
+  ) {
+    res.sendStatus(500);
+  } else if (minConfigTemp > maxConfigTemp) {
+    res.sendStatus(500);
+  } else {
+    writeFile();
+  }
+});
+
+router.use("/configHumidity", (req, res, next) => {
+  async function preTasks() {
+    let farmId = req.body.farmId;
+    await getConfigFile(farmId);
+    next();
+  }
+  preTasks();
+});
+
+router.post("/configHumidity", (req, res) => {
+  let minConfigHumid = req.body.minHumidity;
+  let maxConfigHumid = req.body.maxHumidity;
+  configFile.minHumidity = minConfigHumid;
+  configFile.maxHumidity = maxConfigHumid;
+  async function writeFile() {
+    await writeConfigFile(req.body.farmId, configFile);
+    res.sendStatus(200);
+  }
+  if (
+    typeof minConfigHumid === "undefined" ||
+    typeof maxConfigHumid === "undefined"
+  ) {
+    res.sendStatus(500);
+  } else if (minConfigHumid > maxConfigHumid) {
+    res.sendStatus(500);
+  } else {
+    writeFile();
+  }
 });
 
 module.exports = router;
