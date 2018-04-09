@@ -5,6 +5,7 @@ const fs = require("fs");
 const request = require("request");
 const farm = mongoose.model("farm");
 const know_controller = mongoose.model("know_controller");
+const greenHouseSensor = mongoose.model("greenHouse_Sensor");
 
 let farmData;
 let configFile;
@@ -13,18 +14,18 @@ let maxTemperature;
 let minHumidity;
 let maxHumidity;
 let controllerData;
+let greenHouseSensorData;
 
 async function getConfigFile(farmIdIn) {
-  var farmData = await farm.find({
+  var farmResult = await farm.find({
     farmId: farmIdIn
   });
-  if (farmData) {
-    farmData = JSON.stringify(farmData);
+  if (farmResult) {
+    farmData = farmResult;
   } else {
     console.log("fail");
   }
-  let temp = JSON.parse(farmData);
-  let configFilePath = temp[0].configFilePath;
+  let configFilePath = farmData[0].configFilePath;
   let config = JSON.parse(
     require("fs").readFileSync(String(configFilePath), "utf8")
   );
@@ -40,7 +41,7 @@ async function getControllerData(greenHouseId) {
   if (controllerResult) {
     controllerData = controllerResult;
   } else {
-    controllerData = null;
+    controllerData = undefined;
     console.log("Query fail!");
   }
 }
@@ -48,14 +49,14 @@ async function getControllerData(greenHouseId) {
 function compareTemperature(configFile, currentTemp) {
   minTemperature = configFile.minTemperature;
   maxTemperature = configFile.maxTemperature;
+  console.log("MIN-T: " + minTemperature);
+  console.log("MAX-T: " + maxTemperature);
+  console.log("CURRENT-T: " + currentTemp);
   if (minTemperature == null || maxTemperature == null) {
-    console.log(minTemperature);
     return undefined;
-  }
-  if (maxTemperature < currentTemp) {
+  } else if (maxTemperature < currentTemp) {
     return false;
-  }
-  if (minHumidity > currentTemp) {
+  } else if (minHumidity > currentTemp) {
     return true;
   }
 }
@@ -63,13 +64,14 @@ function compareTemperature(configFile, currentTemp) {
 function compareHumidity(configFile, currentHumid) {
   minHumidity = configFile.minHumidity;
   maxHumidity = configFile.maxHumidity;
+  console.log("MIN-H: " + minHumidity);
+  console.log("MAX-H: " + maxHumidity);
+  console.log("CURRENT-H: " + currentHumid);
   if (minHumidity == null || maxHumidity == null) {
     return undefined;
-  }
-  if (minHumidity < currentHumid) {
+  } else if (minHumidity < currentHumid) {
     return true;
-  }
-  if (minHumidity > currentHumid) {
+  } else if (minHumidity > currentHumid) {
     return false;
   }
 }
@@ -120,21 +122,21 @@ router.post("/", (req, res) => {
     }
     let farmId = controllerData[0].farmId;
     await getConfigFile(farmId);
-    let resultCompareTemp = await compareTemperature(
-      configFile,
-      req.body.temperature
-    );
     let resultCompareHumid = await compareHumidity(
       configFile,
       req.body.humidity
     );
-    console.log(resultCompareHumid);
-    console.log(resultCompareTemp);
+    let resultCompareTemp = await compareTemperature(
+      configFile,
+      req.body.temperature
+    );
+    console.log("compareTemp: " + resultCompareTemp);
+    console.log("compareHumid: " + resultCompareHumid);
     if (
       typeof resultCompareTemp === "undefined" ||
       typeof resultCompareHumid === "undefined"
     ) {
-      res.sendStatus(301);
+      res.sendStatus(500);
     } else {
       if (!resultCompareTemp) {
         onOffWaterPump(controllerData[0].ip, true);
@@ -229,6 +231,91 @@ router.post("/configHumidity", (req, res) => {
     res.sendStatus(500);
   } else {
     writeFile();
+  }
+});
+
+async function getGreenhouseSensor(greenHouseId) {
+  let result = await greenHouseSensor.findOne(
+    {
+      greenHouseId: greenHouseId
+    },
+    {},
+    { sort: { _id: -1 } }
+  );
+  if (result) {
+    greenHouseSensorData = result;
+  } else {
+    greenHouseSensorData = undefined;
+    console.log("Query fail!");
+  }
+  console.log(greenHouseSensorData);
+}
+
+router.use("/showTemperature", (req, res, next) => {
+  async function getData() {
+    let greenHouseId = req.body.greenHouseId;
+    let farmId = req.body.farmId;
+    console.log(greenHouseId);
+    console.log(farmId);
+    await getGreenhouseSensor(greenHouseId);
+    await getConfigFile(farmId);
+    next();
+  }
+  getData();
+});
+
+router.post("/showTemperature", (req, res) => {
+  if (typeof greenHouseSensorData === "undefined") {
+    res.sendStatus(500);
+  } else if (
+    configFile.minTemperature == null ||
+    configFile.maxTemperature == null
+  ) {
+    res.sendStatus(500);
+  } else {
+    let minConfigTemp = configFile.minTemperature;
+    let maxConfigTemp = configFile.maxTemperature;
+    let currentTemp = greenHouseSensorData.temperature;
+    var showTemp = {
+      minConfigTemperature: minConfigTemp,
+      maxConfigTemperature: maxConfigTemp,
+      currentTemperature: currentTemp
+    };
+    res.json(showTemp);
+  }
+});
+
+router.use("/showHumidity", (req, res, next) => {
+  async function getData() {
+    let greenHouseId = req.body.greenHouseId;
+    let farmId = req.body.farmId;
+    console.log(greenHouseId);
+    console.log(farmId);
+    await getGreenhouseSensor(greenHouseId);
+    await getConfigFile(farmId);
+    next();
+  }
+  getData();
+});
+
+router.post("/showHumidity", (req, res) => {
+  if (typeof greenHouseSensorData === "undefined") {
+    res.sendStatus(500);
+  } else if (
+    configFile.minTemperature == null ||
+    configFile.maxTemperature == null
+  ) {
+    res.sendStatus(500);
+  } else {
+    let minConfigHumid = configFile.minHumidity;
+    let maxConfigHumid = configFile.maxHumidity;
+    let currentHumid = greenHouseSensorData.humidity;
+    var showTemp = {
+      minConfigHumidity: minConfigHumid,
+      maxConfigHumidity: maxConfigHumid,
+      currentHumidity: currentHumid
+    };
+    res.json(showTemp);
   }
 });
 
