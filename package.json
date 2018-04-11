@@ -3,10 +3,9 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
-    "start": "node ./bin/www",
+    "client": "cd client && yarn start",
     "server": "nodemon app.js",
-    "client": "npm start --prefix client",
-    "dev": "concurrently \"npm run server\"\"npm run client\""
+    "dev": "concurrently --kill-others-on-fail \"yarn server\" \"yarn client\""
   },
   "dependencies": {
     "body-parser": "~1.18.2",
