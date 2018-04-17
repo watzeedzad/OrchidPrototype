@@ -8,6 +8,7 @@ const greenHouseSensor = mongoose.model("greenHouse_Sensor");
 let farmData;
 let configFile;
 let controllerData;
+let controllerDataRes;
 let minTemperature;
 let maxTemperature;
 let minHumidity;
@@ -20,25 +21,25 @@ export default class TemperatureCheck {
 
     async check(req, res) {
         console.log("enter 1");
-        console.log("ip: " + req.body.ip);
         let ipIn = req.body.ip;
-        let controllerResult = await know_controller.find({
+        let controllerResult = await know_controller.findOne({
             ip: ipIn
         }, function (err, result) {
             if (err) {
                 console.log("Query fail!, know_controller");
             } else {
-                res.controllerDataRes = result;
-                console.log(result);
+                controllerDataRes = result;
             }
         });
-        let greenHouseId = res.controllerDataRes[0].greenHouseId;
+        console.log("result of controllerDataRes: " + controllerDataRes);
+        let greenHouseId = controllerDataRes.greenHouseId;
+        console.log("greenHouseId_Class: " + greenHouseId);
         await getControllerData(greenHouseId);
         if (typeof controllerData === "undefined") {
             res.sendStatus(200);
         }
-        console.log(controllerData)
-        let farmId = controllerData.farmId;
+        let farmId = controllerDataRes.farmId;
+        console.log("farmId_Class: " + farmId);
         await getConfigFile(farmId);
         let resultCompareHumid = await compareHumidity(
             configFile,
@@ -119,7 +120,7 @@ function onOffWaterPump(ip, state) {
     } else {
         console.log("Send: /waterPump?params=1 (off)");
         request
-            .get("http://" + String(ip) + "/waterPump?params=0", {
+            .get("http://" + String(ip) + "/waterPump?params=1", {
                 timeout: 5000
             })
             .on("error", function (err) {
