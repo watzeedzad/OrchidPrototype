@@ -12,6 +12,8 @@ require("./models/Project_Sensor");
 require("./models/GreenHouse");
 require("./models/farm");
 require("./models/know_controller");
+require("babel-core/register");
+require("babel-polyfill");
 
 //load routes
 const sensorRoutes = require("./routes/sensorRoutes");
