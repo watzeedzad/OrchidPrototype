@@ -115,7 +115,6 @@ void loop(void)
         delay(1000);
 
         moisture = analogRead(MOISTURE_PIN);
-        Serial.println(moisture);
         String temp = chat.readString();
 
         if (isnan(dht.readTemperature()) || isnan(dht.readTemperature()))
@@ -186,8 +185,10 @@ void sendData()
         JsonObject &JSONencoder = JSONbuffer.createObject();
         JSONencoder["temperature"] = temperatureStats.average();
         JSONencoder["humidity"] = humidityStats.average();
-        JSONencoder["fertility"] = fertilityStats.average();
-        JSONencoder["moisture"] = moistureStats.average();
+        // JSONencoder["fertility"] = fertilityStats.average();
+        JSONencoder["soilMoisture"] = moistureStats.average();
+        JSONencoder["ip"] = WiFi.localIP().toString();
+        JSONencoder["ambientLight"] = 2564;
         char JSONmessageBuffer[150];
         JSONencoder.prettyPrintTo(JSONmessageBuffer, sizeof(JSONmessageBuffer));
         Serial.println(JSONmessageBuffer);
@@ -207,7 +208,7 @@ void sendData()
 
         HTTPClient http;
         http.setTimeout(1000);
-        http.begin("http://192.168.1.151/sendSensorData");
+        http.begin("http://192.168.1.151:3000/sensorRoutes/greenHouseSensor");
         http.addHeader("Content-Type", "application/json");
         int httpCode = http.POST(JSONmessageBuffer);
         String payload = http.getString();
