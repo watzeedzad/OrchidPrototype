@@ -8,7 +8,6 @@ const greenHouseSensor = mongoose.model("greenHouse_Sensor");
 let farmData;
 let configFile;
 let controllerData;
-let controllerDataRes;
 let minTemperature;
 let maxTemperature;
 let minHumidity;
@@ -28,17 +27,17 @@ export default class TemperatureCheck {
             if (err) {
                 console.log("Query fail!, know_controller");
             } else {
-                controllerDataRes = result;
+                console.log("Query success, know_controller")
             }
         });
-        console.log("result of controllerDataRes: " + controllerDataRes);
-        let greenHouseId = controllerDataRes.greenHouseId;
+        console.log("controllerResult: " + controllerResult)
+        let greenHouseId = controllerResult.greenHouseId;
         console.log("greenHouseId_Class: " + greenHouseId);
         await getControllerData(greenHouseId);
         if (typeof controllerData === "undefined") {
             res.sendStatus(200);
         }
-        let farmId = controllerDataRes.farmId;
+        let farmId = controllerResult.farmId;
         console.log("farmId_Class: " + farmId);
         await getConfigFile(farmId);
         let resultCompareHumid = await compareHumidity(
@@ -88,17 +87,17 @@ async function getControllerData(greenHouseId) {
 }
 
 async function getConfigFile(farmIdIn) {
-    var farmResult = await farm.findOne({
+    let farmResult = await farm.findOne({
         farmId: farmIdIn
     }, function (err, result) {
         if (err) {
             console.log("fail");
         } else {
-            farmData = result;
+            console.log("pass");
         }
     });
-    console.log("getConfigFile: " + farmData);
-    let configFilePath = farmData.configFilePath;
+    console.log("getConfigFile: " + farmResult);
+    let configFilePath = farmResult.configFilePath;
     let config = JSON.parse(
         require("fs").readFileSync(String(configFilePath), "utf8")
     );
