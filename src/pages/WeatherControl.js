@@ -1,9 +1,12 @@
-import React, {Component} from 'react'
+import React, { Component } from 'react'
+import GaugeSeries from "../Utils/GaugeSeries";
 
-class WeatherControl extends Component{
-    render() {
-        return(
-            <h1>Weather Control Page</h1>
+class WeatherControl extends Component {
+    render() {       
+        return (
+            <div>
+                <GaugeSeries/>
+            </div>
         )
     }
 }
