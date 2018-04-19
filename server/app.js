@@ -4,6 +4,9 @@ const logger = require("morgan");
 const cookieParser = require("cookie-parser");
 const bodyParser = require("body-parser");
 const mongoose = require("mongoose");
+const ipfilter = require("express-ipfilter").IpFilter;
+
+var ips = ["127.0.0.1"];
 
 //load model
 require("./models/GreenHouse_Sensor");
@@ -52,6 +55,7 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, "public")));
+app.use(ipfilter(ips, {mode: "allow"}));
 
 //use Routes
 app.use("/", index);
