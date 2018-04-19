@@ -22,11 +22,7 @@ function SettingTemperature(props){
         <Grid container>
          <Grid item xs={12} sm={12} md={12} ld={12} xl={12}>
             <Paper className={classes.root} styles={styles}>
-                <Dropdown /> 
                 <Dropdown />
-                <Button vataint ="raised">
-                    Send value
-                </Button>
             </Paper>
             </Grid>
 

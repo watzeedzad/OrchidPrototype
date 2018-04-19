@@ -1,98 +1,94 @@
-import React ,{Component} from 'react';
+import React,{Component} from 'react';
 import PropTypes from 'prop-types';
 import { withStyles } from 'material-ui/styles';
-import TextField from 'material-ui/TextField';
-import MenuItem from "material-ui/Menu/MenuItem";
-import classNames from 'classnames';
+import Input,{InputLabel} from 'material-ui/Input';
+import {FormControl, FormHelperText } from 'material-ui/Form';
+import Select from 'material-ui/Select';
+import MenuItem from 'material-ui/Menu/MenuItem';
+import RaisedButton from './RaisedButton';
 
 
-const styles = theme => ({
-    root: {
-      display: 'flex',
-      flexWrap: 'wrap',
+const styles = theme =>({
+    root:{
+        display:'flex',
+        flexWrap:'wrap'
     },
-    margin: {
-      margin: theme.spacing.unit,
+    formControl:{
+        margin: theme.spacing.unit,
+        minWidth:120,
     },
-    withoutLabel: {
-      marginTop: theme.spacing.unit * 3,
+    selectEmpty:{
+        marginTop: theme.spacing.unit * 2
     },
-    textField: {
-      flexBasis: 200,
-    },
-  });
-  
-
-const number =[
-    {   
-        label: '5',
-        value:5
-    },
-    {
-        label: '10',
-        value:10
-    },
-    {
-        label: '15',
-        value:15
-    },
-    {
-        label: '20',
-        value:20
-    },
-    {
-        label: '25',
-        value:25
-    },
-    {
-        label: '30',
-        value:30
-    },
-    {
-        label: '35',
-        value:35
-    },
-    {
-        label: '40',
-        value:40
-    },
-    {
-        label: '45',
-        value:45
-    },
-    {
-        label: '50',
-        value:50
-    }
-];
+});
 
 class Dropdown extends Component{
-    state = {
-        number : 5
-    };
 
-    handleChange = prop => event=>{
-        this.setState({[prop] : event.target.value});
+    state  = {
+        temperatureMin:'',
+        temperatureMax:''
+    };
+     
+    handleChange = prop => event =>{
+        this.setState({[prop]: event.target.value});
     }
 
     render(){
-        const {classes} = this.props ;
+        const{classes} = this.props;
 
-    return(
-        <TextField
-            select
-            className={classNames(classes.margin,classes.TextField)}
-            value = {this.state.number}
-            onChange={this.handleChange('number')}
-            >
-                {number.map(option => (
-                    <MenuItem key={option.value} value={option.value}>
-                        {option.label}
-                    </MenuItem>
-                ))}
-            </TextField>         
-        ) 
+
+        return(
+            <div className={classes.root}>
+                <FormControl className={classes.formControl}>
+                    <InputLabel>อุณภูมิตํ่าสุด</InputLabel>
+                    <Select
+                        native
+                        value={this.state.temperatureMin}
+                        onChange={this.handleChange('temperatureMin')}
+                    >
+                        <option value=""/>
+                        <option value={5}>5</option>
+                        <option value={10}>10</option>
+                        <option value={15}>15</option>
+                        <option value={20}>20</option>
+                        <option value={25}>25</option>
+                        <option value={30}>30</option>
+                        <option value={35}>35</option>
+                        <option value={40}>40</option>
+                        <option value={45}>45</option>
+                        <option value={50}>50</option>
+                    </Select>
+                </FormControl>
+
+                 <FormControl className={classes.formControl}>
+                    <InputLabel>อุณภูมิสูงสุด</InputLabel>
+                    <Select
+                        native
+                        value={this.state.temperatureMax}
+                        onChange={this.handleChange('temperatureMax')}
+                    >
+                        <option value=""/>
+                        <option value={5}>5</option>
+                        <option value={10}>10</option>
+                        <option value={15}>15</option>
+                        <option value={20}>20</option>
+                        <option value={25}>25</option>
+                        <option value={30}>30</option>
+                        <option value={35}>35</option>
+                        <option value={40}>40</option>
+                        <option value={45}>45</option>
+                        <option value={50}>50</option>
+                    </Select>
+                    <FormHelperText>อุณภูมิสูงสุดต้องมากกว่าอุณภูมิตํ่าสุด</FormHelperText>
+                </FormControl>
+               <RaisedButton/>
+            </div>
+        )
     }
 }
+
+Dropdown.propTypes={
+    classes:PropTypes.object.isRequired,
+};
 
 export default withStyles(styles) (Dropdown);
