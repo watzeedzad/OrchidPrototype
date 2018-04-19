@@ -20,6 +20,7 @@ const index = require("./routes/index");
 const users = require("./routes/users");
 const greenHouseRoutes = require("./routes/greenHouseRoutes");
 const temperatureControl = require("./routes/temperatureControl");
+const planterAnalyze = require("./routes/planterAnalyze");
 
 //load keys
 const keys = require("./config/keys");
@@ -58,6 +59,7 @@ app.use("/users", users);
 app.use("/sensorRoutes", sensorRoutes);
 app.use("/greenHouse", greenHouseRoutes);
 app.use("/temperatureControl", temperatureControl);
+app.use("/planterAnalyze", planterAnalyze);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

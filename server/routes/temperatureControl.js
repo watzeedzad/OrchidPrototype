@@ -9,10 +9,6 @@ const greenHouseSensor = mongoose.model("greenHouse_Sensor");
 
 let farmData;
 let configFile;
-let minTemperature;
-let maxTemperature;
-let minHumidity;
-let maxHumidity;
 let controllerData;
 let greenHouseSensorData;
 
