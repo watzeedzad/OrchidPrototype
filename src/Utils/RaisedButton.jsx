@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { withStyles } from 'material-ui/styles';
 import Button from 'material-ui/Button';
@@ -12,15 +12,22 @@ const styles = theme => ({
   },
 });
 
-function RaisedButtons(props) {
-  const { classes } = props;
-  return (
-    <div>
-      <Button variant="raised"  className={classes.button}>
-        บันทึก
+class RaisedButtons extends Component {
+  state = {
+    onClick: this.props.onClick,
+  }
+  render() {
+    const { classes } = this.props;
+
+    return (
+      <div>
+        <Button variant="raised" className={classes.button}>
+          บันทึก
       </Button>
-    </div>
-  );
+      </div>
+    )
+
+  }
 }
 
 RaisedButtons.propTypes = {

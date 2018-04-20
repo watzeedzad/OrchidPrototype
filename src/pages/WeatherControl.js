@@ -6,7 +6,7 @@ class WeatherControl extends Component {
     render() {       
         return (
             <div>
-                <Speedometer/>
+                <Speedometer />
                 <SettingTemperature />
             </div>
         )

@@ -25,10 +25,14 @@ const styles = theme =>({
 class Dropdown extends Component{
 
     state  = {
-        temperatureMin:'',
-        temperatureMax:''
-    };
-     
+        temperature:'',
+        inputlabel:''
+    }
+    
+    componentDidMount() {
+        this.setState({inputlabel:this.props.inputlabel});
+    }
+
     handleChange = prop => event =>{
         this.setState({[prop]: event.target.value});
     }
@@ -40,11 +44,11 @@ class Dropdown extends Component{
         return(
             <div className={classes.root}>
                 <FormControl className={classes.formControl}>
-                    <InputLabel>อุณภูมิตํ่าสุด</InputLabel>
+                    <InputLabel>{this.state.inputlabel}</InputLabel>
                     <Select
                         native
                         value={this.state.temperatureMin}
-                        onChange={this.handleChange('temperatureMin')}
+                        onChange={this.handleChange('temperature')}
                     >
                         <option value=""/>
                         <option value={5}>5</option>
@@ -58,30 +62,7 @@ class Dropdown extends Component{
                         <option value={45}>45</option>
                         <option value={50}>50</option>
                     </Select>
-                </FormControl>
-
-                 <FormControl className={classes.formControl}>
-                    <InputLabel>อุณภูมิสูงสุด</InputLabel>
-                    <Select
-                        native
-                        value={this.state.temperatureMax}
-                        onChange={this.handleChange('temperatureMax')}
-                    >
-                        <option value=""/>
-                        <option value={5}>5</option>
-                        <option value={10}>10</option>
-                        <option value={15}>15</option>
-                        <option value={20}>20</option>
-                        <option value={25}>25</option>
-                        <option value={30}>30</option>
-                        <option value={35}>35</option>
-                        <option value={40}>40</option>
-                        <option value={45}>45</option>
-                        <option value={50}>50</option>
-                    </Select>
-                    <FormHelperText>อุณภูมิสูงสุดต้องมากกว่าอุณภูมิตํ่าสุด</FormHelperText>
-                </FormControl>
-               <RaisedButton/>
+                </FormControl>              
             </div>
         )
     }
