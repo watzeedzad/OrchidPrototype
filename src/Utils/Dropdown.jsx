@@ -72,4 +72,4 @@ Dropdown.propTypes={
     classes:PropTypes.object.isRequired,
 };
 
-export default withStyles(styles) (Dropdown);
+export default withStyles(styles)(Dropdown);

@@ -1,15 +1,16 @@
+import { createStore, applyMiddleware } from 'redux';
+import { Provider } from 'react-redux';
+import { Router, browserHistory } from 'react-router'
 import React from 'react';
 import ReactDOM from 'react-dom';
+import thunk from 'redux-thunk';
+
+import reducers from './redux/reducers';
 import registerServiceWorker from './registerServiceWorker';
 import routes from './routes'
-import { Router, browserHistory } from 'react-router'
-import { createStore, applyMiddleware } from 'redux';
-import thunk from 'redux-thunk';
-//import reducers from './redux/reducers';
-import { Provider } from 'react-redux';
 
 const store = createStore(
-    //reducers,
+    reducers,
     applyMiddleware(thunk)
 )
 
@@ -20,6 +21,7 @@ ReactDOM.render(
         routes={routes}
     />
     </Provider>
-, document.getElementById('root')
+    ,document.getElementById('root')
 );
+
 registerServiceWorker();

@@ -5,6 +5,9 @@ import PropTypes from 'prop-types';
 import Button from 'material-ui/Button';
 import RaisedButton from '../../Utils/RaisedButton';
 import { Field, reduxForm } from 'redux-form';
+import { browserHistory } from 'react-router'
+import { saveConfig } from '../../redux/actions/weatherActions'
+import { connect } from 'react-redux'
 
 
 const styles = theme => ({
@@ -16,45 +19,49 @@ const styles = theme => ({
     }),
 })
 
-function SettingTemperature(props) {
+class SettingTemperature extends Component {
+    render() {
+        const { classes,configSave } = this.props
+        return (
+            <Grid container>
+                <Grid item xs="5">
+                    <Paper className={classes.root} styles={styles}>
+                        <table>
+                            <tr>
 
-    const { classes } = props
-    return (
-        <Grid container>
-            <Grid item xs="5">
-                <Paper className={classes.root} styles={styles}>
-                    <table>
-                        <tr>
-
-                            <form>
-                                <td><Field name="tempMin" component={Dropdown} inputlabel="อุณหภูมิต่ำสุด" textarea /></td>
-                                <td><Field name="tempMax" component={Dropdown} inputlabel="อุณหภูมิสูงสุด" textarea /></td>
-                                <td><Button component={RaisedButton} ></Button></td>                               
-                            </form>
-                        </tr>
-                    </table>
-                </Paper>
+                                <form>
+                                    <Field name="farmId" values={123456789} />>
+                                    <td><Field name="minTemperature" component={Dropdown} inputlabel="อุณหภูมิต่ำสุด" textarea /></td>
+                                    <td><Field name="maxTemperature" component={Dropdown} inputlabel="อุณหภูมิสูงสุด" textarea /></td>
+                                    <td><Button color="primary" onClick={this.onSubmit}>บันทึก</Button></td>
+                                    {/* <td><Button component={RaisedButton} ></Button></td>                                */}
+                                </form>
+                            </tr>
+                        </table>
+                    </Paper>
+                </Grid>
             </Grid>
-        </Grid>
-    )
+        )
+    }
 
-    
+    onSubmit = (values) =>{
+        //เมื่อบันทึกข้อมูลเสร็จสังให้ไปยัง route /work
+        this.props.dispatch(saveConfig(values)).then(() => {
+            browserHistory.push('/WeatherControl')
+        })
+    }
 }
 
-function onSubmit(values) {
-    //เมื่อบันทึกข้อมูลเสร็จสังให้ไปยัง route /work
-    // this.props.dispatch(saveWork(values)).then(() => {
-    //     browserHistory.push('/WeatherControl')
-    // })
-}
+
+
 
 function validate(values) {
     const errors = {};
-    if (values.tempMin === "") {
-        errors.location_id = 'ต้องเลือกอุณหภูมิต่ำสุด';
+    if (values.minTemperature === "") {
+        errors.minTemperature = 'ต้องเลือกอุณหภูมิต่ำสุด';
     }
-    if (values.tempMin === "") {
-        errors.detail = 'ต้องเลือกอุณหภูมิสูงสุด';
+    if (values.maxTemperature === "") {
+        errors.maxTemperature = 'ต้องเลือกอุณหภูมิสูงสุด';
     }
     return errors;
 }
@@ -68,5 +75,10 @@ SettingTemperature.propTypes = {
     classes: PropTypes.object.isRequired,
 };
 
+function mapStateToProps(state) {
+    return {
+        configSave: state.weatherReducers.configSave
+    }
+}
 
-export default withStyles(styles)(form(SettingTemperature));
+export default connect(mapStateToProps)(withStyles(styles)(form(SettingTemperature)));
