@@ -22,32 +22,40 @@ const styles = theme => ({
 class SettingTemperature extends Component {
     render() {
         const { classes,configSave } = this.props
+        const { data } = configSave
+        if (configSave.isRejected) {
+            return <div className="alert alert-danger">Error: {data}</div>
+        }
+        // if (configSave.isLoading) {
+        //     return <div>Loading...</div>
+        // }
         return (
-            <Grid container>
-                <Grid item xs="5">
+            <div>
+             <Grid container>
+                 <Grid item xs="5">
                     <Paper className={classes.root} styles={styles}>
-                        <table>
+                         <table>
                             <tr>
-
                                 <form>
-                                    <Field name="farmId" values={123456789} />>
+                                    <input name="farmId" type="hidden" value={123456789} />
                                     <td><Field name="minTemperature" component={Dropdown} inputlabel="อุณหภูมิต่ำสุด" textarea /></td>
                                     <td><Field name="maxTemperature" component={Dropdown} inputlabel="อุณหภูมิสูงสุด" textarea /></td>
                                     <td><Button color="primary" onClick={this.onSubmit}>บันทึก</Button></td>
-                                    {/* <td><Button component={RaisedButton} ></Button></td>                                */}
+                                    {/* <td><Button component={RaisedButton} ></Button></td> */}
                                 </form>
                             </tr>
                         </table>
                     </Paper>
-                </Grid>
-            </Grid>
+                 </Grid>
+             </Grid>
+            </div>
         )
     }
 
     onSubmit = (values) =>{
         //เมื่อบันทึกข้อมูลเสร็จสังให้ไปยัง route /work
         this.props.dispatch(saveConfig(values)).then(() => {
-            browserHistory.push('/WeatherControl')
+            browserHistory.push('/')
         })
     }
 }
@@ -67,7 +75,7 @@ function validate(values) {
 }
 
 const form = reduxForm({
-    form: 'workUser',
+    form: 'weatherControl',
     validate
 })
 

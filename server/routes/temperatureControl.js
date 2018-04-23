@@ -21,6 +21,7 @@ async function getConfigFile(farmIdIn) {
   } else {
     console.log("fail");
   }
+  console.log("getConfigFile: " + farmData);
   let configFilePath = farmData[0].configFilePath;
   let config = JSON.parse(
     require("fs").readFileSync(String(configFilePath), "utf8")
@@ -60,7 +61,9 @@ router.use("/configTemperature", (req, res, next) => {
 
 router.post("/configTemperature", (req, res) => {
   let minConfigTemp = req.body.minTemperature;
+  console.log("minConfigTemp: " + minConfigTemp);
   let maxConfigTemp = req.body.maxTemperature;
+  console.log("maxConfigTemp: " + maxConfigTemp);
   configFile.minTemperature = minConfigTemp;
   configFile.maxTemperature = maxConfigTemp;
   async function writeFile() {

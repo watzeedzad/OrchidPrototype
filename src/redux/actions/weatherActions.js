@@ -8,7 +8,7 @@ export const saveConfig = (values) => {
         //ต้องส่ง heder ชื่อ authorization โดยส่ง token เขาไปด้วยครับ
         return axios({
             method: _method,
-            url: `http://localhost:3000/configTemperature}`,
+            url: `http://127.0.0.1:3001/temperatureControl/configTemperature`,
             data: values,
             headers: { authorization: localStorage.getItem('token') }
         }).then(results => {
