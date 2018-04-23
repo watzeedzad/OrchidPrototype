@@ -1,12 +1,10 @@
 import React,{Component} from 'react';
 import PropTypes from 'prop-types';
 import { withStyles } from 'material-ui/styles';
-import Input,{InputLabel} from 'material-ui/Input';
-import {FormControl, FormHelperText } from 'material-ui/Form';
+import {InputLabel} from 'material-ui/Input';
+import {FormControl } from 'material-ui/Form';
 import Select from 'material-ui/Select';
 import MenuItem from 'material-ui/Menu/MenuItem';
-import RaisedButton from './RaisedButton';
-
 
 const styles = theme =>({
     root:{
@@ -26,11 +24,8 @@ class Dropdown extends Component{
 
     state  = {
         temperature:'',
+        name:'',
         inputlabel:''
-    }
-    
-    componentDidMount() {
-        this.setState({inputlabel:this.props.inputlabel});
     }
 
     handleChange = prop => event =>{
@@ -44,11 +39,11 @@ class Dropdown extends Component{
         return(
             <div className={classes.root}>
                 <FormControl className={classes.formControl}>
-                    <InputLabel>{this.state.inputlabel}</InputLabel>
+                    <InputLabel>{this.props.inputlabel}</InputLabel>
                     <Select
                         native
-                        value={this.state.temperatureMin}
                         onChange={this.handleChange('temperature')}
+                        name={this.props.fieldName}
                     >
                         <option value=""/>
                         <option value={5}>5</option>

@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { withStyles, Grid, Paper, Typography } from 'material-ui';
+import { withStyles, Grid, Paper } from 'material-ui';
 import Dropdown from '../../Utils/Dropdown';
 import PropTypes from 'prop-types';
 import Button from 'material-ui/Button';
@@ -21,16 +21,16 @@ const styles = theme => ({
 
 class SettingTemperature extends Component {
     render() {
-        const { classes,configSave } = this.props
+        const { handleSubmit,classes,configSave } = this.props
         const { data } = configSave
+        
         if (configSave.isRejected) {
             return <div className="alert alert-danger">Error: {data}</div>
         }
         // if (configSave.isLoading) {
         //     return <div>Loading...</div>
         // }
-        return (
-            <div>
+        return (            
              <Grid container>
                  <Grid item xs="5">
                     <Paper className={classes.root} styles={styles}>
@@ -38,9 +38,9 @@ class SettingTemperature extends Component {
                             <tr>
                                 <form>
                                     <input name="farmId" type="hidden" value={123456789} />
-                                    <td><Field name="minTemperature" component={Dropdown} inputlabel="อุณหภูมิต่ำสุด" textarea /></td>
-                                    <td><Field name="maxTemperature" component={Dropdown} inputlabel="อุณหภูมิสูงสุด" textarea /></td>
-                                    <td><Button color="primary" onClick={this.onSubmit}>บันทึก</Button></td>
+                                    <td><Field fieldName="minTemperature" component={Dropdown} inputlabel="อุณหภูมิต่ำสุด" textarea /></td>
+                                    <td><Field fieldName="maxTemperature" component={Dropdown} inputlabel="อุณหภูมิสูงสุด" textarea /></td>
+                                    <td><Button color="primary" onClick={handleSubmit(this.onSubmit)}>บันทึก</Button></td>
                                     {/* <td><Button component={RaisedButton} ></Button></td> */}
                                 </form>
                             </tr>
@@ -48,7 +48,6 @@ class SettingTemperature extends Component {
                     </Paper>
                  </Grid>
              </Grid>
-            </div>
         )
     }
 

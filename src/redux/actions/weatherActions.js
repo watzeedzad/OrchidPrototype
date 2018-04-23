@@ -2,6 +2,10 @@ import axios from 'axios'
 
 export const saveConfig = (values) => {
     let _method = 'post'
+    
+    if(!values.farmId){
+        return (dispatch) => dispatch({ type: 'SAVE_WEATHERCONFIG_REJECTED' , payload: 'eiei'})
+    }
 
     return (dispatch) => {
         //รูปแบบการใช้ axios อีกรูปแบบในการจะบุ method ที่ต้องการ
@@ -14,7 +18,7 @@ export const saveConfig = (values) => {
         }).then(results => {
             //เมื่อข้อมูลส่งกลับมาต้องเช็คสถานะก่อนว่า code ซ�้ำหรือไม่
             //โดยserver จะส่ง object ที่ชื่อว่า status และ message กลับมา
-            dispatch({ type: 'SAVE_WEATHERCONFIG__SUCCESS' })           
+            dispatch({ type: 'SAVE_WEATHERCONFIG_SUCCESS' })           
         }).catch(err => {
             //กรณี error
             dispatch({ type: 'SAVE_WEATHERCONFIG_REJECTED', payload: err.message })

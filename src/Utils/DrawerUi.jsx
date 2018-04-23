@@ -74,7 +74,7 @@ class DrawerUi extends Component{
                         <Toolbar>
                             <IconButton
                                 color="inherit"
-                                aria-lebel="open drawer"
+                                aria-label="open drawer"
                                 onClick={this.handleDrawerToggle}
                                 className={classes.navIconHide}
                             >
@@ -86,7 +86,7 @@ class DrawerUi extends Component{
                         </Toolbar>
                     </AppBar>
                     <Hidden mdUp>
-                        <Drawer
+                        <Drawer>
                             variant="temporary"
                             anchor={theme.direction === 'rtl' ? 'right' : 'left'}
                             open={this.state.mobileOpen}
@@ -96,10 +96,8 @@ class DrawerUi extends Component{
                             }}
                             ModalProps={{
                                 keepMouted : true
-                            }}
-                            >
+                            }}                         
 
-                            //ใส่Component อะไรก็ได้
                         </Drawer>            
                     </Hidden>
                 </div>
