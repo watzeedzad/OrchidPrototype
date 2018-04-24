@@ -197,4 +197,29 @@ router.post("/showHumidity", (req, res) => {
   }
 });
 
+router.use("/getConfigTemperature", (req, res, next) => {
+  res.setHeader('Access-Control-Allow-Origin', 'http://localhost:3000');
+  res.setHeader('Access-Control-Allow-Headers', 'X-Requested-With,content-type');
+  res.set("Content-Type", "application/json");
+  next();
+});
+
+router.post("/getConfigTemperature", (req, res) => {
+  async function process() {
+    let farmId = req.body.farmId;
+    if (typeof farmId === "undefined") {
+      res.sendStatus(500);
+    }
+    await getConfigFile(farmId);
+    let minConfigTemp = configFile.minTemperature;
+    let maxConfigTemp = configFile.maxTemperature;
+    var showConfigTemp = {
+      minConfigTemperature: minConfigTemp,
+      maxConfigTemperature: maxConfigTemp
+    }
+    res.json(showConfigTemp);
+  }
+  process();
+})
+
 module.exports = router;

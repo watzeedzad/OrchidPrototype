@@ -6,7 +6,7 @@ import Button from 'material-ui/Button';
 import RaisedButton from '../../Utils/RaisedButton';
 import { Field, reduxForm } from 'redux-form';
 import { browserHistory } from 'react-router'
-import { saveConfig } from '../../redux/actions/weatherActions'
+import { saveTempConfig, getTempConfig } from '../../redux/actions/weatherActions'
 import { connect } from 'react-redux'
 
 
@@ -20,40 +20,48 @@ const styles = theme => ({
 })
 
 class SettingTemperature extends Component {
+
+    componentDidMount() {
+        this.props.dispatch(getTempConfig({farmId: 123456789}))
+    }
+
     render() {
-        const { handleSubmit,classes,configSave } = this.props
-        const { data } = configSave
-        
-        if (configSave.isRejected) {
-            return <div className="alert alert-danger">Error: {data}</div>
+        const { handleSubmit, classes, tempConfigSave, tempConfig } = this.props
+        const { data } = tempConfig
+
+        if (tempConfigSave.isRejected) {
+            return <div className="alert alert-danger">Error: {tempConfigSave.data}</div>
         }
-        // if (configSave.isLoading) {
-        //     return <div>Loading...</div>
-        // }
-        return (            
-             <Grid container>
-                 <Grid item xs="5">
+        if (tempConfig.isRejected) {
+            return <div className="alert alert-danger">Error: {tempConfig.data}</div>
+        }
+        if (tempConfig.isLoading) {
+            return <div>Loading...</div>
+        }
+        return (
+            <Grid container>
+                <Grid item xs="5">
                     <Paper className={classes.root} styles={styles}>
-                         <table>
+                        <table>
                             <tr>
                                 <form>
                                     <input name="farmId" type="hidden" value={123456789} />
-                                    <td><Field fieldName="minTemperature" component={Dropdown} inputlabel="อุณหภูมิต่ำสุด" textarea /></td>
-                                    <td><Field fieldName="maxTemperature" component={Dropdown} inputlabel="อุณหภูมิสูงสุด" textarea /></td>
+                                    <td><Field fieldName="minTemperature" component={Dropdown} inputlabel="อุณหภูมิต่ำสุด" select={data.minConfigTemperature} textarea /></td>
+                                    <td><Field fieldName="maxTemperature" component={Dropdown} inputlabel="อุณหภูมิสูงสุด" select={data.maxConfigTemperature} textarea /></td>
                                     <td><Button color="primary" onClick={handleSubmit(this.onSubmit)}>บันทึก</Button></td>
                                     {/* <td><Button component={RaisedButton} ></Button></td> */}
                                 </form>
                             </tr>
                         </table>
                     </Paper>
-                 </Grid>
-             </Grid>
+                </Grid>
+            </Grid>
         )
     }
 
-    onSubmit = (values) =>{
-        //เมื่อบันทึกข้อมูลเสร็จสังให้ไปยัง route /work
-        this.props.dispatch(saveConfig(values)).then(() => {
+    onSubmit = (values) => {
+        //เมื่อบันทึกข้อมูลเสร็จสังให้ไปยัง route /
+        this.props.dispatch(saveTempConfig({values})).then(() => {
             browserHistory.push('/')
         })
     }
@@ -84,7 +92,8 @@ SettingTemperature.propTypes = {
 
 function mapStateToProps(state) {
     return {
-        configSave: state.weatherReducers.configSave
+        tempConfigSave: state.weatherReducers.tempConfigSave,
+        tempConfig: state.weatherReducers.tempConfig
     }
 }
 
