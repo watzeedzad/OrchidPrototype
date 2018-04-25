@@ -29,6 +29,7 @@ class Temperature extends Component {
                 currentValue={data.currentTemperature}
             />
             <SettingTemperature 
+                farmId={123456789}
                 minConfig={data.minConfigTemperature}
                 maxConfig={data.maxConfigTemperature}
             />

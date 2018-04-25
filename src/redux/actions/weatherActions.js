@@ -3,9 +3,7 @@ import axios from 'axios'
 export const saveTempConfig = (values) => {
     let _method = 'post'
     
-    if(!values.farmId){
-        console.log("eiei")
-    }
+    console.log(values)
 
     return (dispatch) => {
         //รูปแบบการใช้ axios อีกรูปแบบในการจะบุ method ที่ต้องการ

@@ -1,53 +1,49 @@
 import React, { Component } from 'react';
-import { withStyles, Grid, Paper } from 'material-ui';
-import Dropdown from '../../Utils/Dropdown';
 import PropTypes from 'prop-types';
-import Button from 'material-ui/Button';
-import RaisedButton from '../../Utils/RaisedButton';
 import { Field, reduxForm } from 'redux-form';
 import { browserHistory } from 'react-router'
 import { saveTempConfig, getTempConfig } from '../../redux/actions/weatherActions'
 import { connect } from 'react-redux'
+import renderField from '../../Utils/renderField'
+import { Button } from 'reactstrap';
 
-
-const styles = theme => ({
-
-    root: theme.mixins.gutters({
-        paddingTop: 16,
-        paddingBottom: 16,
-        marginTop: theme.spacing.unit * 5,
-    }),
-})
 
 class SettingTemperature extends Component {
+    componentDidMount() {
+        //เรียกใช้ฟังก์ชันในการก�ำหนด value ให้กับ textbox และ control ต่างๆ
+        this.handleInitialize()
+    }
+
+    handleInitialize() {
+        let initData = {
+            "farmId": this.props.farmId,
+            "minTemperature": this.props.minConfig,
+            "maxTemperature": this.props.maxConfig,
+        };
+        this.props.initialize(initData);
+    }
 
     render() {
-        const { handleSubmit, classes, tempConfigSave } = this.props
+        const { handleSubmit, tempConfigSave } = this.props
 
         return (
-            <Grid container>
-                <Grid item xs="5">
-                    <Paper className={classes.root} styles={styles}>
                         <table>
                             <tr>
                                 <form>
-                                    <input name="farmId" type="hidden" value={123456789} />
-                                    <td><Field fieldName="minTemperature" component={Dropdown} inputlabel="อุณหภูมิต่ำสุด" select={this.props.minConfig} textarea /></td>
-                                    <td><Field fieldName="maxTemperature" component={Dropdown} inputlabel="อุณหภูมิสูงสุด" select={this.props.maxConfig} textarea /></td>
+                                    <Field name="farmId" component={renderField} type="hidden" />
+                                    <td><Field name="minTemperature" component={renderField} type="number" label="อุณหภูมิต่ำสุด" /></td>
+                                    <td><Field name="maxTemperature" component={renderField} type="number" label="อุณหภูมิสููงสุด" /></td>
                                     <td><Button color="primary" onClick={handleSubmit(this.onSubmit)}>บันทึก</Button></td>
-                                    {/* <td><Button component={RaisedButton} ></Button></td> */}
                                 </form>
                             </tr>
                         </table>
-                    </Paper>
-                </Grid>
-            </Grid>
         )
     }
-
+    
     onSubmit = (values) => {
         //เมื่อบันทึกข้อมูลเสร็จสังให้ไปยัง route /
-        this.props.dispatch(saveTempConfig({values})).then(() => {
+        console.log(values);
+        this.props.dispatch(saveTempConfig(values)).then(() => {
             browserHistory.push('/')
         })
     }
@@ -72,14 +68,10 @@ const form = reduxForm({
     validate
 })
 
-SettingTemperature.propTypes = {
-    classes: PropTypes.object.isRequired,
-};
-
 function mapStateToProps(state) {
     return {
         tempConfigSave: state.weatherReducers.tempConfigSave,
     }
 }
 
-export default connect(mapStateToProps)(withStyles(styles)(form(SettingTemperature)));
+export default connect(mapStateToProps)(form(SettingTemperature));
