@@ -100,8 +100,6 @@ router.post("/configFertility", (req, res) => {
     await getConfigFile(farmId);
     let minConfigFertility = req.body.minFertility;
     let maxConfigFertility = req.body.maxFertility;
-    configFile.minFertility = minConfigFertility;
-    configFile.maxFertility = maxConfigFertility;
     async function writeFile() {
       await writeConfigFile(req.body.farmId, configFile);
       res.sendStatus(200);
@@ -114,6 +112,8 @@ router.post("/configFertility", (req, res) => {
     } else if (minConfigFertility > maxConfigFertility) {
       res.sendStatus(500);
     } else {
+      configFile.minFertility = minConfigFertility;
+      configFile.maxFertility = maxConfigFertility;
       writeFile();
     }
   }
@@ -135,8 +135,6 @@ router.post("/configSoilMoisture", (req, res) => {
     await getConfigFile(farmId);
     let minConfigSoilMois = req.body.minSoilMoisture;
     let maxConfigSoilMois = req.body.maxSoilMoisture;
-    configFile.minSoilMoisture = minConfigSoilMois;
-    configFile.maxSoilMoisture = maxConfigSoilMois;
     async function writeFile() {
       await writeConfigFile(req.body.farmId, configFile);
       res.sendStatus(200);
@@ -149,6 +147,8 @@ router.post("/configSoilMoisture", (req, res) => {
     } else if (minConfigSoilMois > maxConfigSoilMois) {
       res.sendStatus(500);
     } else {
+      configFile.minSoilMoisture = minConfigSoilMois;
+      configFile.maxSoilMoisture = maxConfigSoilMois;
       writeFile();
     }
   }

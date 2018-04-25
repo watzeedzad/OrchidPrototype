@@ -85,8 +85,6 @@ router.post("/configTemperature", (req, res) => {
     console.log("minConfigTemp: " + minConfigTemp);
     let maxConfigTemp = req.body.maxTemperature;
     console.log("maxConfigTemp: " + maxConfigTemp);
-    configFile.minTemperature = minConfigTemp;
-    configFile.maxTemperature = maxConfigTemp;
     async function writeFile() {
       await writeConfigFile(req.body.farmId, configFile);
       res.sendStatus(200);
@@ -99,6 +97,8 @@ router.post("/configTemperature", (req, res) => {
     } else if (minConfigTemp > maxConfigTemp) {
       res.sendStatus(500);
     } else {
+      configFile.minTemperature = minConfigTemp;
+      configFile.maxTemperature = maxConfigTemp;
       writeFile();
     }
   }
@@ -121,8 +121,6 @@ router.post("/configHumidity", (req, res) => {
     await getConfigFile(farmId);
     let minConfigHumid = req.body.minHumidity;
     let maxConfigHumid = req.body.maxHumidity;
-    configFile.minHumidity = minConfigHumid;
-    configFile.maxHumidity = maxConfigHumid;
     async function writeFile() {
       await writeConfigFile(req.body.farmId, configFile);
       res.sendStatus(200);
@@ -135,6 +133,8 @@ router.post("/configHumidity", (req, res) => {
     } else if (minConfigHumid > maxConfigHumid) {
       res.sendStatus(500);
     } else {
+      configFile.minHumidity = minConfigHumid;
+      configFile.maxHumidity = maxConfigHumid;
       writeFile();
     }
   }
