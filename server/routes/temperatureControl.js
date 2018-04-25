@@ -159,7 +159,6 @@ router.post("/showTemperature", (req, res) => {
     console.log("showTemp: " + farmId);
     await getGreenhouseSensor(greenHouseId);
     await getConfigFile(farmId);
-
     if (typeof greenHouseSensorData === "undefined") {
       res.sendStatus(500);
     } else if (
