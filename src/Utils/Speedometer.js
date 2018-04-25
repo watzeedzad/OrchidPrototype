@@ -37,57 +37,57 @@ const paneOptions = {
 };
 
 class Speedometer extends Component {
-    render(){
-    return (
-        <div className="gauge-empty">
-            <HighchartsChart
-                chart={{ type: "gauge" }}
-                plotOptions={plotOptions}
-                pane={paneOptions}
-            >
-                <XAxis />
-
-                <YAxis
-                    id="myAxis"
-                    min={0}
-                    max={100}
-                    lineWidth={0}
-                    minorTickInterval={null}
-                    tickAmount={2}
-                    title={{
-                        y: -70
-                    }}
-                    labels={{ distance: 25 }}
-                    tickPosition='outside'
-                    tickPositions={[0, this.props.minConfig,this.props.maxConfig, 100]}
-                    minorTickLength={0}
-                    plotBands={[{
-                        from: 0,
-                        to: this.props.minConfig,
-                        color: this.props.minColor,
-                        thickness: '50%',
-                    }, {
-                        from: this.props.minConfig,
-                        to: this.props.maxConfig,
-                        color: this.props.midColor,
-                        thickness: '50%'
-                    }, {
-                        from: this.props.maxConfig,
-                        to: 100,
-                        color: this.props.maxColor,
-                        thickness: '50%'
-                    }]}
+    render() {
+        return (
+            <div className="gauge-empty">
+                <HighchartsChart
+                    chart={{ type: "gauge" }}
+                    plotOptions={plotOptions}
+                    pane={paneOptions}
                 >
-                    <Series
-                        name="speed"
-                        data={[this.props.currentValue]}
-                        type="gauge"
-                    />
-                </YAxis>
-            </HighchartsChart>
-        </div>
-    )
-}
+                    <XAxis />
+
+                    <YAxis
+                        id="myAxis"
+                        min={0}
+                        max={100}
+                        lineWidth={0}
+                        minorTickInterval={null}
+                        tickAmount={2}
+                        title={{
+                            y: -70
+                        }}
+                        labels={{ distance: 25 }}
+                        tickPosition='outside'
+                        tickPositions={[0, this.props.minConfig, this.props.maxConfig, 100]}
+                        minorTickLength={0}
+                        plotBands={[{
+                            from: 0,
+                            to: this.props.minConfig,
+                            color: this.props.minColor,
+                            thickness: '50%',
+                        }, {
+                            from: this.props.minConfig,
+                            to: this.props.maxConfig,
+                            color: this.props.midColor,
+                            thickness: '50%'
+                        }, {
+                            from: this.props.maxConfig,
+                            to: 100,
+                            color: this.props.maxColor,
+                            thickness: '50%'
+                        }]}
+                    >
+                        <Series
+                            name="speed"
+                            data={[this.props.currentValue]}
+                            type="gauge"
+                        />
+                    </YAxis>
+                </HighchartsChart>
+            </div>
+        )
+    }
 }
 
 //const Gauge = ({ data }) => <GraphRender data={data} />;

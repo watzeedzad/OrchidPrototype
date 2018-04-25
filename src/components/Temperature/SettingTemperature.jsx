@@ -5,10 +5,11 @@ import { browserHistory } from 'react-router'
 import { saveTempConfig, getTempConfig } from '../../redux/actions/weatherActions'
 import { connect } from 'react-redux'
 import renderField from '../../Utils/renderField'
-import { Button } from 'reactstrap';
+import { Button, Modal, ModalHeader } from 'reactstrap';
 
 
 class SettingTemperature extends Component {
+
     componentDidMount() {
         //เรียกใช้ฟังก์ชันในการก�ำหนด value ให้กับ textbox และ control ต่างๆ
         this.handleInitialize()
@@ -27,24 +28,26 @@ class SettingTemperature extends Component {
         const { handleSubmit, tempConfigSave } = this.props
 
         return (
-                        <table>
-                            <tr>
-                                <form>
-                                    <Field name="farmId" component={renderField} type="hidden" />
-                                    <td><Field name="minTemperature" component={renderField} type="number" label="อุณหภูมิต่ำสุด" /></td>
-                                    <td><Field name="maxTemperature" component={renderField} type="number" label="อุณหภูมิสููงสุด" /></td>
-                                    <td><Button color="primary" onClick={handleSubmit(this.onSubmit)}>บันทึก</Button></td>
-                                </form>
-                            </tr>
-                        </table>
+            <div>
+                <table>
+                    <tr>
+                        <form>
+                            <Field name="farmId" component={renderField} type="hidden" />
+                            <td><Field name="minTemperature" component={renderField} type="number" label="อุณหภูมิต่ำสุด" /></td>
+                            <td><Field name="maxTemperature" component={renderField} type="number" label="อุณหภูมิสููงสุด" /></td>
+                            <td><Button color="primary" onClick={handleSubmit(this.onSubmit)}>บันทึก</Button></td>
+                        </form>
+                    </tr>
+                </table>               
+            </div>
         )
     }
-    
+
+
     onSubmit = (values) => {
         //เมื่อบันทึกข้อมูลเสร็จสังให้ไปยัง route /
-        console.log(values);
         this.props.dispatch(saveTempConfig(values)).then(() => {
-            browserHistory.push('/')
+            this.props.onToggle()
         })
     }
 }

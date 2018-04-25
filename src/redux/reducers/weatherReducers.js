@@ -7,15 +7,7 @@ const initialState = {
 }
 export default (state = initialState, action) => {
     switch (action.type) {
-        // //เก็บ state การดึงข้อมูล temperature config
-        // case 'LOAD_TEMPCONFIG_PENDING':
-        //     return { ...state, tempConfig: { data: null, isLoading: true, isRejected: false } }
-        // case 'LOAD_TEMPCONFIG_SUCCESS':
-        //     return { ...state, tempConfig: { data: action.payload, isLoading: false, isRejected: false } }
-        // case 'LOAD_TEMPCONFIG_REJECTED':
-        //     return { ...state, tempConfig: { data: action.payload, isLoading: false, isRejected: true } }
-
-        //เก็บ state การดึงข้อมูล temperature
+        
         case 'LOAD_TEMP_PENDING':
             return { ...state, temp: { data: null, isLoading: true, isRejected: false } }
         case 'LOAD_TEMP_SUCCESS':

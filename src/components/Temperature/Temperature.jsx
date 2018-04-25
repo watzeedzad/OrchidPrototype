@@ -4,11 +4,12 @@ import { getTemp } from '../../redux/actions/weatherActions'
 import { connect } from 'react-redux'
 import TemperatureGauge from '../Temperature/TemperatureGauge'
 import SettingTemperature from '../Temperature/SettingTemperature'
+import { Button } from 'reactstrap';
 
 class Temperature extends Component {
 
     componentDidMount() {
-        this.props.dispatch(getTemp({farmId: 123456789,greenHouseId: 25197568}))
+        this.props.dispatch(getTemp({ farmId: 123456789, greenHouseId: 25197568 }))
     }
 
     render() {
@@ -23,18 +24,23 @@ class Temperature extends Component {
         }
         return (
             <div>
-            <TemperatureGauge 
-                minConfig={data.minConfigTemperature}
-                maxConfig={data.maxConfigTemperature}
-                currentValue={data.currentTemperature}
-            />
-            <SettingTemperature 
-                farmId={123456789}
-                minConfig={data.minConfigTemperature}
-                maxConfig={data.maxConfigTemperature}
-            />
+                <TemperatureGauge
+                    minConfig={data.minConfigTemperature}
+                    maxConfig={data.maxConfigTemperature}
+                    currentValue={data.currentTemperature}
+                />
+                <SettingTemperature
+                    farmId={123456789}
+                    minConfig={data.minConfigTemperature}
+                    maxConfig={data.maxConfigTemperature}
+                    onToggle={this.toggle}
+                />
             </div>
         )
+    }
+
+    toggle = () => {
+        this.props.dispatch(getTemp({ farmId: 123456789, greenHouseId: 25197568 }))
     }
 }
 

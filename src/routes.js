@@ -1,4 +1,5 @@
 import App from './pages/App'
+import Home from './pages/Home'
 import WeatherControl from './pages/WeatherControl'
 
 const routes = [{
@@ -6,7 +7,7 @@ const routes = [{
     component: App,
     indexRoute: { component: WeatherControl },
     childRoutes: [
-        //{ path: 'signin', component: Signin },
+        { path: 'weatherControl', component: WeatherControl },
     ]
 }]
 
