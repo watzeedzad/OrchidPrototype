@@ -21,23 +21,9 @@ const styles = theme => ({
 
 class SettingTemperature extends Component {
 
-    componentDidMount() {
-        this.props.dispatch(getTempConfig({farmId: 123456789}))
-    }
-
     render() {
-        const { handleSubmit, classes, tempConfigSave, tempConfig } = this.props
-        const { data } = tempConfig
+        const { handleSubmit, classes, tempConfigSave } = this.props
 
-        if (tempConfigSave.isRejected) {
-            return <div className="alert alert-danger">Error: {tempConfigSave.data}</div>
-        }
-        if (tempConfig.isRejected) {
-            return <div className="alert alert-danger">Error: {tempConfig.data}</div>
-        }
-        if (tempConfig.isLoading) {
-            return <div>Loading...</div>
-        }
         return (
             <Grid container>
                 <Grid item xs="5">
@@ -46,8 +32,8 @@ class SettingTemperature extends Component {
                             <tr>
                                 <form>
                                     <input name="farmId" type="hidden" value={123456789} />
-                                    <td><Field fieldName="minTemperature" component={Dropdown} inputlabel="อุณหภูมิต่ำสุด" select={data.minConfigTemperature} textarea /></td>
-                                    <td><Field fieldName="maxTemperature" component={Dropdown} inputlabel="อุณหภูมิสูงสุด" select={data.maxConfigTemperature} textarea /></td>
+                                    <td><Field fieldName="minTemperature" component={Dropdown} inputlabel="อุณหภูมิต่ำสุด" select={this.props.minConfig} textarea /></td>
+                                    <td><Field fieldName="maxTemperature" component={Dropdown} inputlabel="อุณหภูมิสูงสุด" select={this.props.maxConfig} textarea /></td>
                                     <td><Button color="primary" onClick={handleSubmit(this.onSubmit)}>บันทึก</Button></td>
                                     {/* <td><Button component={RaisedButton} ></Button></td> */}
                                 </form>
@@ -82,7 +68,7 @@ function validate(values) {
 }
 
 const form = reduxForm({
-    form: 'weatherControl',
+    form: 'settingTemp',
     validate
 })
 
@@ -93,7 +79,6 @@ SettingTemperature.propTypes = {
 function mapStateToProps(state) {
     return {
         tempConfigSave: state.weatherReducers.tempConfigSave,
-        tempConfig: state.weatherReducers.tempConfig
     }
 }
 

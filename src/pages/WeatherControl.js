@@ -1,13 +1,11 @@
 import React, { Component } from 'react'
-import SettingTemperature from '../components/Temperature/SettingTemperature';
-import TemperatureGauge from '../components/Temperature/TemperatureGauge';
+import Temperature from '../components/Temperature/Temperature';
 
 class WeatherControl extends Component {
     render() {       
         return (
             <div>
-                <TemperatureGauge />
-                <SettingTemperature />
+                <Temperature />
             </div>
         )
     }

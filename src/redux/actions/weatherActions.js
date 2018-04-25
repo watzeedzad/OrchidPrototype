@@ -28,29 +28,29 @@ export const saveTempConfig = (values) => {
     }
 }
 
-export const getTempConfig = (farmId) => {
-    let _method = 'post'
+// export const getTempConfig = (farmId) => {
+//     let _method = 'post'
 
-    return (dispatch) => {
-        //รูปแบบการใช้ axios อีกรูปแบบในการจะบุ method ที่ต้องการ
-        //ต้องส่ง heder ชื่อ authorization โดยส่ง token เขาไปด้วยครับ
-        dispatch({ type: 'LOAD_TEMPCONFIG_PENDING' })
-        return axios({
-            method: _method,
-            url: `http://127.0.0.1:3001/temperatureControl/getConfigTemperature`,
-            data: farmId,
-            headers: { 'Content-Type': 'application/json' }
-            //headers: { authorization: localStorage.getItem('token') }
-        }).then(result => {
-            //เมื่อข้อมูลส่งกลับมาต้องเช็คสถานะก่อนว่า code ซ�้ำหรือไม่
-            //โดยserver จะส่ง object ที่ชื่อว่า status และ message กลับมา
-            dispatch({ type: 'LOAD_TEMPCONFIG_SUCCESS', payload: result.data })           
-        }).catch(err => {
-            //กรณี error         
-            dispatch({ type: 'LOAD_TEMPCONFIG_REJECTED', payload: err.message })
-        })
-    }
-}
+//     return (dispatch) => {
+//         //รูปแบบการใช้ axios อีกรูปแบบในการจะบุ method ที่ต้องการ
+//         //ต้องส่ง heder ชื่อ authorization โดยส่ง token เขาไปด้วยครับ
+//         dispatch({ type: 'LOAD_TEMPCONFIG_PENDING' })
+//         return axios({
+//             method: _method,
+//             url: `http://127.0.0.1:3001/temperatureControl/getConfigTemperature`,
+//             data: farmId,
+//             headers: { 'Content-Type': 'application/json' }
+//             //headers: { authorization: localStorage.getItem('token') }
+//         }).then(result => {
+//             //เมื่อข้อมูลส่งกลับมาต้องเช็คสถานะก่อนว่า code ซ�้ำหรือไม่
+//             //โดยserver จะส่ง object ที่ชื่อว่า status และ message กลับมา
+//             dispatch({ type: 'LOAD_TEMPCONFIG_SUCCESS', payload: result.data })           
+//         }).catch(err => {
+//             //กรณี error         
+//             dispatch({ type: 'LOAD_TEMPCONFIG_REJECTED', payload: err.message })
+//         })
+//     }
+// }
 
 export const getTemp = ({farmId,greenHouseId}) => {
     let _method = 'post'
