@@ -130,37 +130,40 @@ async function getGreenhouseSensor(greenHouseId) {
 }
 
 router.use("/showTemperature", (req, res, next) => {
-  async function getData() {
-    let greenHouseId = req.body.greenHouseId;
-    let farmId = req.body.farmId;
-    console.log(greenHouseId);
-    console.log(farmId);
-    await getGreenhouseSensor(greenHouseId);
-    await getConfigFile(farmId);
+    res.setHeader('Access-Control-Allow-Origin', 'http://localhost:3000');
+    res.setHeader('Access-Control-Allow-Headers', 'X-Requested-With,content-type');
+    res.set("Content-Type", "application/json");
     next();
-  }
-  getData();
 });
 
 router.post("/showTemperature", (req, res) => {
-  if (typeof greenHouseSensorData === "undefined") {
-    res.sendStatus(500);
-  } else if (
-    configFile.minTemperature == null ||
-    configFile.maxTemperature == null
-  ) {
-    res.sendStatus(500);
-  } else {
-    let minConfigTemp = configFile.minTemperature;
-    let maxConfigTemp = configFile.maxTemperature;
-    let currentTemp = greenHouseSensorData.temperature;
-    var showTemp = {
-      minConfigTemperature: minConfigTemp,
-      maxConfigTemperature: maxConfigTemp,
-      currentTemperature: currentTemp
-    };
-    res.json(showTemp);
-  }
+  async function getData() {
+    let greenHouseId = req.body.greenHouseId;
+    let farmId = req.body.farmId;
+    console.log("showTemp: " + greenHouseId);
+    console.log("showTemp: " + farmId);
+    await getGreenhouseSensor(greenHouseId);
+    await getConfigFile(farmId);
+
+    // if (typeof greenHouseSensorData === "undefined") {
+    //   res.sendStatus(500);
+    // } else if (
+    //   configFile.minTemperature == null ||
+    //   configFile.maxTemperature == null
+    // ) {
+    //   res.sendStatus(500);
+    // } else {
+      let minConfigTemp = configFile.minTemperature;
+      let maxConfigTemp = configFile.maxTemperature;
+      let currentTemp = greenHouseSensorData.temperature;
+      var showTemp = {
+        minConfigTemperature: minConfigTemp,
+        maxConfigTemperature: maxConfigTemp,
+        currentTemperature: currentTemp
+        }
+      res.json(showTemp);
+    }
+    getData()
 });
 
 router.use("/showHumidity", (req, res, next) => {

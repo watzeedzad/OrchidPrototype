@@ -50,7 +50,7 @@ const GraphRender = ({ data }) => {
                 <YAxis
                     id="myAxis"
                     min={0}
-                    max={100}
+                    max={50}
                     lineWidth={0}
                     minorTickInterval={null}
                     tickAmount={2}
@@ -59,28 +59,28 @@ const GraphRender = ({ data }) => {
                     }}
                     labels={{ distance: 25 }}
                     tickPosition='outside'
-                    tickPositions={[0, 30, 40, 100]}
+                    tickPositions={[0, this.props.minTempConfig,this.props.maxTempConfig, 50]}
                     minorTickLength={0}
                     plotBands={[{
                         from: 0,
-                        to: 30,
+                        to: this.props.minTempConfig,
                         color: 'rgb(192, 0, 0)',
                         thickness: '50%',
                     }, {
-                        from: 30,
-                        to: 40,
+                        from: this.props.minTempConfig,
+                        to: this.props.maxTempConfig,
                         color: 'rgb(255, 192, 0)',
                         thickness: '50%'
                     }, {
-                        from: 40,
-                        to: 100,
+                        from: this.props.maxTempConfig,
+                        to: 50,
                         color: 'rgb(155, 187, 89)',
                         thickness: '50%'
                     }]}
                 >
                     <Series
                         name="speed"
-                        data={[40]}
+                        data={this.props.currentTemp}
                         type="gauge"
                     />
                 </YAxis>
