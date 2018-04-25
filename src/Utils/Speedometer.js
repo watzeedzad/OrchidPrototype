@@ -1,4 +1,4 @@
-import React from "react";
+import React, { Component } from 'react';
 import Highcharts from "highcharts";
 import {
     HighchartsChart,
@@ -36,10 +36,10 @@ const paneOptions = {
     }
 };
 
-const GraphRender = ({ data }) => {
+class Speedometer extends Component {
+    render(){
     return (
         <div className="gauge-empty">
-            <div className="no-data">Data Unavaialble</div>
             <HighchartsChart
                 chart={{ type: "gauge" }}
                 plotOptions={plotOptions}
@@ -50,7 +50,7 @@ const GraphRender = ({ data }) => {
                 <YAxis
                     id="myAxis"
                     min={0}
-                    max={50}
+                    max={100}
                     lineWidth={0}
                     minorTickInterval={null}
                     tickAmount={2}
@@ -59,36 +59,37 @@ const GraphRender = ({ data }) => {
                     }}
                     labels={{ distance: 25 }}
                     tickPosition='outside'
-                    tickPositions={[0, this.props.minTempConfig,this.props.maxTempConfig, 50]}
+                    tickPositions={[0, this.props.minConfig,this.props.maxConfig, 100]}
                     minorTickLength={0}
                     plotBands={[{
                         from: 0,
-                        to: this.props.minTempConfig,
-                        color: 'rgb(192, 0, 0)',
+                        to: this.props.minConfig,
+                        color: this.props.minColor,
                         thickness: '50%',
                     }, {
-                        from: this.props.minTempConfig,
-                        to: this.props.maxTempConfig,
-                        color: 'rgb(255, 192, 0)',
+                        from: this.props.minConfig,
+                        to: this.props.maxConfig,
+                        color: this.props.midColor,
                         thickness: '50%'
                     }, {
-                        from: this.props.maxTempConfig,
-                        to: 50,
-                        color: 'rgb(155, 187, 89)',
+                        from: this.props.maxConfig,
+                        to: 100,
+                        color: this.props.maxColor,
                         thickness: '50%'
                     }]}
                 >
                     <Series
                         name="speed"
-                        data={this.props.currentTemp}
+                        data={[this.props.currentValue]}
                         type="gauge"
                     />
                 </YAxis>
             </HighchartsChart>
         </div>
-    );
-};
+    )
+}
+}
 
-const Gauge = ({ data }) => <GraphRender data={data} />;
+//const Gauge = ({ data }) => <GraphRender data={data} />;
 
-export default withHighcharts(Gauge, Highcharts);
+export default withHighcharts(Speedometer, Highcharts);

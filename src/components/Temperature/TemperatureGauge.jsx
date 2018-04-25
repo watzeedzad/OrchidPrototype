@@ -22,9 +22,12 @@ class TemperatureGauge extends Component {
         }
         return (
             <Speedometer 
-                minTempConfig={data.minConfigTemperature}
-                maxTempConfig={data.maxConfigTemperature}
-                currentTemp={data.currentTemperature}/>
+                minConfig={data.minConfigTemperature}
+                maxConfig={data.maxConfigTemperature}
+                currentValue={data.currentTemperature}
+                minColor={"#6FCEE6"}
+                midColor={"#8DE239"}
+                maxColor={"#E84848"}/>
         )
     }
 }
