@@ -1,9 +1,10 @@
 import React, { Component } from 'react';
 import { Field, reduxForm } from 'redux-form';
 import { browserHistory } from 'react-router'
-import { login } from '../redux/actions/loginActions'
-import renderField from '../Utils/renderField'
+import { login } from '../redux/actions/loginActions';
+import renderField from '../Utils/renderField';
 import { Button } from 'reactstrap';
+import { connect } from 'react-redux';
 
 
 class Login extends Component {
@@ -16,6 +17,7 @@ class Login extends Component {
                 <table>
                     <tr>
                         <form>
+                            {this.renderAlert()}
                             <td><Field name="username" component={renderField} type="text" label="Username" /></td>
                             <td><Field name="password" component={renderField} type="password" label="Password" /></td>
                             <td><Button color="primary" onClick={handleSubmit(this.onSubmit)}>บันทึก</Button></td>
@@ -29,21 +31,27 @@ class Login extends Component {
 
     onSubmit = (values) => {
         //เมื่อบันทึกข้อมูลเสร็จสังให้ไปยัง route /
-        this.props.dispatch(login(values)).then(() => {
-            browserHistory.push('/weatherControl')
-        })
+        console.log(values)
+        this.props.dispatch(login(values))
+    }
+
+    renderAlert() {
+        if (this.props.errorMessage) {
+            return (
+                <div className="alert alert-danger">
+                    <strong>Warning: </strong>{this.props.errorMessage}
+                </div>
+            )
+        }
     }
 }
 
-
-
-
 function validate(values) {
     const errors = {};
-    if (values.username === "") {
+    if (!values.username) {
         errors.username = 'กรุณากรอก username';
     }
-    if (values.password === "") {
+    if (!values.password) {
         errors.password = 'กรุณากรอก password';
     }
     return errors;
@@ -54,4 +62,10 @@ const form = reduxForm({
     validate
 })
 
-export default form(Login);
+function mapStateToProps(state) {
+    return {
+        // errorMessage: state.loginReducers.error //กรณี Signin ไม่ผ่าน
+    }
+}
+
+export default connect(mapStateToProps)(form(Login));
