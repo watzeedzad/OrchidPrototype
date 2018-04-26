@@ -1,11 +1,11 @@
 import App from './pages/App'
-import Home from './pages/Home'
 import WeatherControl from './pages/WeatherControl'
+import Login from './pages/Login'
 
 const routes = [{
     path: '/',
     component: App,
-    indexRoute: { component: WeatherControl },
+    indexRoute: { component: Login },
     childRoutes: [
         { path: 'weatherControl', component: WeatherControl },
     ]

@@ -8,6 +8,7 @@ import thunk from 'redux-thunk';
 import reducers from './redux/reducers';
 import registerServiceWorker from './registerServiceWorker';
 import routes from './routes'
+import jwtDecode from 'jwt-decode'
 
 const store = createStore(
     reducers,
