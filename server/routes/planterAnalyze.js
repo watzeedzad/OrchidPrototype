@@ -12,9 +12,12 @@ let configFile;
 let projectSensorData;
 let greenHouseSensorData;
 
-async function getConfigFile(farmIdIn) {
+async function getConfigFile() {
+  if (farmIdGlobal == 0) {
+    return;
+  }
   var farmResult = await farm.find({
-    farmId: farmIdIn
+    farmId: farmIdGlobal
   });
   if (farmResult) {
     farmData = farmResult;
@@ -28,9 +31,9 @@ async function getConfigFile(farmIdIn) {
   configFile = config;
 }
 
-async function writeConfigFile(farmId, configFile) {
+async function writeConfigFile(configFile) {
   var farmData = await farm.find({
-    farmId: farmId
+    farmId: farmIdGlobal
   });
   if (farmData) {
     farmData = JSON.stringify(farmData);
@@ -97,12 +100,14 @@ router.use("/configFertility", (req, res, next) => {
 
 router.post("/configFertility", (req, res) => {
   async function setConfig() {
-    let farmId = req.body.farmId;
-    await getConfigFile(farmId);
+    await getConfigFile();
+    if (typeof configFile === "undefined") {
+      res.sendStatus(500);
+    }
     let minConfigFertility = req.body.minFertility;
     let maxConfigFertility = req.body.maxFertility;
     async function writeFile() {
-      await writeConfigFile(req.body.farmId, configFile);
+      await writeConfigFile(configFile);
       res.sendStatus(200);
     }
     if (
@@ -132,12 +137,14 @@ router.use("/configSoilMoisture", (req, res, next) => {
 
 router.post("/configSoilMoisture", (req, res) => {
   async function setConfig() {
-    let farmId = req.body.farmId;
-    await getConfigFile(farmId);
+    await getConfigFile();
+    if (typeof configFile === "undefined") {
+      res.sendStatus(500);
+    }
     let minConfigSoilMois = req.body.minSoilMoisture;
     let maxConfigSoilMois = req.body.maxSoilMoisture;
     async function writeFile() {
-      await writeConfigFile(req.body.farmId, configFile);
+      await writeConfigFile(configFile);
       res.sendStatus(200);
     }
     if (
@@ -167,13 +174,13 @@ router.use("/showFertility", (req, res, next) => {
 
 router.post("/showFertility", (req, res) => {
   async function getData() {
-    let farmId = req.body.farmId;
     let projectId = req.body.projectId;
-    console.log("farmId: " + farmId);
     console.log("projectId: " + projectId);
     await getProjectSensor(projectId);
-    await getConfigFile(farmId);
+    await getConfigFile();
     if (typeof projectSensorData === "undefined") {
+      res.sendStatus(500);
+    } else if (typeof configFile === "undefined") {
       res.sendStatus(500);
     } else if (
       configFile.minFertility == null ||
@@ -207,13 +214,13 @@ router.use("/showSoilMoisture", (req, res, next) => {
 
 router.post("/showSoilMoisture", (req, res, next) => {
   async function setConfig() {
-    let farmId = req.body.farmId;
     let greenHouseId = req.body.greenHouseId;
     console.log("showSoilMoisture: " + greenHouseId);
-    console.log("showSoilMoisture: " + farmId);
     await getGreenhouseSensor(greenHouseId);
-    await getConfigFile(farmId);
+    await getConfigFile();
     if (typeof greenHouseSensorData === "undefined") {
+      res.sendStatus(500);
+    } else if (typeof configFile === "undefined") {
       res.sendStatus(500);
     } else if (
       configFile.minSoilMoisture == null ||
