@@ -7,6 +7,7 @@ const mongoose = require("mongoose");
 const ipfilter = require("express-ipfilter").IpFilter;
 
 var ips = ["127.0.0.1"];
+farmIdGlobal = 0;
 
 //load model
 require("./models/GreenHouse_Sensor");
@@ -14,6 +15,7 @@ require("./models/Project_Sensor");
 require("./models/GreenHouse");
 require("./models/farm");
 require("./models/know_controller");
+require("./models/user")
 require("babel-core/register");
 require("babel-polyfill");
 
@@ -24,6 +26,7 @@ const users = require("./routes/users");
 const greenHouseRoutes = require("./routes/greenHouseRoutes");
 const temperatureControl = require("./routes/temperatureControl");
 const planterAnalyze = require("./routes/planterAnalyze");
+const login = require("./routes/login");
 
 //load keys
 const keys = require("./config/keys");
@@ -64,6 +67,7 @@ app.use("/sensorRoutes", sensorRoutes);
 app.use("/greenHouse", greenHouseRoutes);
 app.use("/temperatureControl", temperatureControl);
 app.use("/planterAnalyze", planterAnalyze);
+app.use("/login", login)
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

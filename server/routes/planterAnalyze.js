@@ -92,6 +92,7 @@ router.use("/configFertility", (req, res, next) => {
     "X-Requested-With,content-type"
   );
   res.set("Content-Type", "application/json");
+  next();
 });
 
 router.post("/configFertility", (req, res) => {

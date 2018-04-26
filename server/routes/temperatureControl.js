@@ -12,9 +12,9 @@ let configFile;
 let controllerData;
 let greenHouseSensorData;
 
-async function getConfigFile(farmIdIn) {
+async function getConfigFile() {
   var farmResult = await farm.find({
-    farmId: farmIdIn
+    farmId: farmIdGlobal
   });
   if (farmResult) {
     farmData = farmResult;
@@ -29,9 +29,9 @@ async function getConfigFile(farmIdIn) {
   configFile = config;
 }
 
-async function writeConfigFile(farmId, configFile) {
+async function writeConfigFile(configFile) {
   var farmData = await farm.find({
-    farmId: farmId
+    farmId: farmIdGlobal
   });
   if (farmData) {
     farmData = JSON.stringify(farmData);
@@ -79,14 +79,13 @@ router.use("/configTemperature", (req, res, next) => {
 
 router.post("/configTemperature", (req, res) => {
   async function setConfig() {
-    let farmId = req.body.farmId;
-    await getConfigFile(farmId);
+    await getConfigFile();
     let minConfigTemp = req.body.minTemperature;
     console.log("minConfigTemp: " + minConfigTemp);
     let maxConfigTemp = req.body.maxTemperature;
     console.log("maxConfigTemp: " + maxConfigTemp);
     async function writeFile() {
-      await writeConfigFile(req.body.farmId, configFile);
+      await writeConfigFile(configFile);
       res.sendStatus(200);
     }
     if (
@@ -97,8 +96,6 @@ router.post("/configTemperature", (req, res) => {
     } else if (minConfigTemp > maxConfigTemp) {
       res.sendStatus(500);
     } else {
-      configFile.minTemperature = minConfigTemp;
-      configFile.maxTemperature = maxConfigTemp;
       writeFile();
     }
   }
@@ -117,12 +114,11 @@ router.use("/configHumidity", (req, res, next) => {
 
 router.post("/configHumidity", (req, res) => {
   async function setConfig() {
-    let farmId = req.body.farmId;
-    await getConfigFile(farmId);
+    await getConfigFile();
     let minConfigHumid = req.body.minHumidity;
     let maxConfigHumid = req.body.maxHumidity;
     async function writeFile() {
-      await writeConfigFile(req.body.farmId, configFile);
+      await writeConfigFile(configFile);
       res.sendStatus(200);
     }
     if (
@@ -133,8 +129,6 @@ router.post("/configHumidity", (req, res) => {
     } else if (minConfigHumid > maxConfigHumid) {
       res.sendStatus(500);
     } else {
-      configFile.minHumidity = minConfigHumid;
-      configFile.maxHumidity = maxConfigHumid;
       writeFile();
     }
   }
@@ -145,7 +139,7 @@ router.use("/showTemperature", (req, res, next) => {
   res.setHeader("Access-Control-Allow-Origin", "http://localhost:3000");
   res.setHeader(
     "Access-Control-Allow-Headers",
-    "X-Requested-With,content-type,application/json"
+    "X-Requested-With,content-type"
   );
   res.set("Content-Type", "application/json");
   next();
@@ -154,11 +148,9 @@ router.use("/showTemperature", (req, res, next) => {
 router.post("/showTemperature", (req, res) => {
   async function getData() {
     let greenHouseId = req.body.greenHouseId;
-    let farmId = req.body.farmId;
     console.log("showTemp: " + greenHouseId);
-    console.log("showTemp: " + farmId);
     await getGreenhouseSensor(greenHouseId);
-    await getConfigFile(farmId);
+    await getConfigFile();
     if (typeof greenHouseSensorData === "undefined") {
       res.sendStatus(500);
     } else if (
@@ -194,11 +186,9 @@ router.use("/showHumidity", (req, res, next) => {
 router.post("/showHumidity", (req, res) => {
   async function getData() {
     let greenHouseId = req.body.greenHouseId;
-    let farmId = req.body.farmId;
     console.log(greenHouseId);
-    console.log(farmId);
     await getGreenhouseSensor(greenHouseId);
-    await getConfigFile(farmId);
+    await getConfigFile();
     if (typeof greenHouseSensorData === "undefined") {
       res.sendStatus(500);
     } else if (
