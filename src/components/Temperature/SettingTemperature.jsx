@@ -1,11 +1,8 @@
 import React, { Component } from 'react';
-import PropTypes from 'prop-types';
 import { Field, reduxForm } from 'redux-form';
-import { browserHistory } from 'react-router'
-import { saveTempConfig, getTempConfig } from '../../redux/actions/weatherActions'
-import { connect } from 'react-redux'
+import { saveTempConfig } from '../../redux/actions/weatherActions'
 import renderField from '../../Utils/renderField'
-import { Button, Modal, ModalHeader } from 'reactstrap';
+import { Button } from 'reactstrap';
 
 
 class SettingTemperature extends Component {
@@ -25,7 +22,7 @@ class SettingTemperature extends Component {
     }
 
     render() {
-        const { handleSubmit, tempConfigSave } = this.props
+        const { handleSubmit } = this.props
 
         return (
             <div>
@@ -53,8 +50,6 @@ class SettingTemperature extends Component {
 }
 
 
-
-
 function validate(values) {
     const errors = {};
     if (values.minTemperature === "") {
@@ -71,10 +66,4 @@ const form = reduxForm({
     validate
 })
 
-function mapStateToProps(state) {
-    return {
-        tempConfigSave: state.weatherReducers.tempConfigSave,
-    }
-}
-
-export default connect(mapStateToProps)(form(SettingTemperature));
+export default form(SettingTemperature);

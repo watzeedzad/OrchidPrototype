@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-import { browserHistory } from 'react-router'
 import Speedometer from '../../Utils/Speedometer'
 
 class TemperatureGauge extends Component {

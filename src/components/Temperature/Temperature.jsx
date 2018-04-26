@@ -1,10 +1,8 @@
 import React, { Component } from 'react';
-import { browserHistory } from 'react-router'
 import { getTemp } from '../../redux/actions/weatherActions'
 import { connect } from 'react-redux'
 import TemperatureGauge from '../Temperature/TemperatureGauge'
 import SettingTemperature from '../Temperature/SettingTemperature'
-import { Button } from 'reactstrap';
 import { Container, Row, Col } from 'reactstrap';
 import 'bootstrap/dist/css/bootstrap.min.css';
 
