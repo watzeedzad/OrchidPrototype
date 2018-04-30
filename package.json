@@ -31,7 +31,9 @@
     "redux-form": "^7.3.0",
     "redux-thunk": "^2.2.0",
     "request": "~2.85.0",
-    "yarn": "^1.6.0"
+    "yarn": "^1.6.0",
+    "jquery": "~3.3.1",
+    "popper.js": "~1.14.3"
   },
   "devDependencies": {
     "concurrently": "^3.5.1",
