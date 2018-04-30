@@ -1,4 +1,6 @@
 import React from 'react';
+import {Label} from 'reactstrap';
+
 //renderField จะรับ props ต่างๆ ของ Field ที่ได้จาก redux-form
 const renderField = ({ input, label ,type, textarea, autoFocus,meta: { touched, error } }) => {
     //ส�ำหรับรูปแบบ Field ที่เป็น TextArea
@@ -12,9 +14,9 @@ const renderField = ({ input, label ,type, textarea, autoFocus,meta: { touched, 
         className="form-control"
         autoFocus={autoFocus} />;
     return (
-        <div className="form-group row">
-            <label className="col-sm-3 col-form-label">{label}</label>
-            <div className="col-sm-9">
+        <div class="form-group">
+            <Label>{label}</Label>
+            <div className="col-sm-6">
                 {/* เลือกว่าจะแสดงแบบ textarea หรือ input ธรรมดา*/}
                 {textarea ? textareaType : inputType}
                 {/* ส่วนนี้จะแสดงข้อความ error ที่ได้จากการ validate */}

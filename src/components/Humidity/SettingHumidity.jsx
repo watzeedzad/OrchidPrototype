@@ -1,11 +1,11 @@
 import React, { Component } from 'react';
 import { Field, reduxForm } from 'redux-form';
-import { saveHumidityConfig } from '../../redux/actions/weatherActions'
+import { saveTempConfig } from '../../redux/actions/weatherActions'
 import renderField from '../../Utils/renderField'
-import { Button } from 'reactstrap';
+import { Button, FormGroup, Form } from 'reactstrap';
 
 
-class SettingHumidity extends Component {
+class SettingTemperature extends Component {
 
     componentDidMount() {
         //เรียกใช้ฟังก์ชันในการก�ำหนด value ให้กับ textbox และ control ต่างๆ
@@ -14,8 +14,8 @@ class SettingHumidity extends Component {
 
     handleInitialize() {
         let initData = {
-            "minHumidity": this.props.minConfig,
-            "maxHumidity": this.props.maxConfig,
+            "minTemperature": this.props.minConfig,
+            "maxTemperature": this.props.maxConfig,
         };
         this.props.initialize(initData);
     }
@@ -25,15 +25,14 @@ class SettingHumidity extends Component {
 
         return (
             <div>
-                <table>
-                    <tr>
-                        <form>
-                            <td><Field name="minHumidity" component={renderField} type="number" label="ความชื้นต่ำสุด" /></td>
-                            <td><Field name="maxHumidity" component={renderField} type="number" label="ความชื้นสููงสุด" /></td>
-                            <td><Button color="primary" onClick={handleSubmit(this.onSubmit)}>บันทึก</Button></td>
-                        </form>
-                    </tr>
-                </table>               
+                <Form inline>
+                    <FormGroup className="mb-2 mr-sm-2 mb-sm-0">
+                        <Field name="farmId" component={renderField} type="hidden" />
+                        <Field name="minTemperature" component={renderField} type="number" label="อุณหภูมิต่ำสุด" />
+                        <Field name="maxTemperature" component={renderField} type="number" label="อุณหภูมิสููงสุด" />
+                        <Button color="primary" onClick={handleSubmit(this.onSubmit)}>บันทึก</Button>
+                    </FormGroup>
+                </Form>
             </div>
         )
     }
@@ -41,7 +40,7 @@ class SettingHumidity extends Component {
 
     onSubmit = (values) => {
         //เมื่อบันทึกข้อมูลเสร็จสังให้ไปยัง route /
-        this.props.dispatch(saveHumidityConfig(values)).then(() => {
+        this.props.dispatch(saveTempConfig(values)).then(() => {
             this.props.onToggle()
         })
     }
@@ -50,28 +49,28 @@ class SettingHumidity extends Component {
 
 function validate(values) {
     const errors = {};
-    let min = parseFloat(values.minHumidity)
-    let max = parseFloat(values.maxHumidity)
+    let min = parseFloat(values.minTemperature)
+    let max = parseFloat(values.maxTemperature)
 
-    if (values.minHumidity === "") {
-        errors.minHumidity = 'ต้องกรอกอุณหภูมิต่ำสุด';
+    if (values.minTemperature === "") {
+        errors.minTemperature = 'ต้องกรอกอุณหภูมิต่ำสุด';
     }else if(min < 0 || min > 60 ){
-        errors.minHumidity = 'อุณหภูมิต้องอยู่ระหว่าง 0 - 60ํ  ํC ';
+        errors.minTemperature = 'อุณหภูมิต้องอยู่ระหว่าง 0 - 60ํ  ํC ';
     }
-    if (values.maxHumidity === "") {
-        errors.maxHumidity = 'ต้องกรอกอุณหภูมิสูงสุด';
+    if (values.maxTemperature === "") {
+        errors.maxTemperature = 'ต้องกรอกอุณหภูมิสูงสุด';
     }else if(max < 0 || max > 60 ){
-        errors.maxHumidity = 'อุณหภูมิต้องอยู่ระหว่าง 0 - 60ํ  ํC ';
+        errors.maxTemperature = 'อุณหภูมิต้องอยู่ระหว่าง 0 - 60ํ  ํC ';
     }
     if(min > max ){
-        errors.minHumidity = 'อุณหภูมิต่ำสุดต้องน้อยกว่าสูงสุด';
+        errors.minTemperature = 'อุณหภูมิต่ำสุดต้องน้อยกว่าสูงสุด';
     }
     return errors;
 }
 
 const form = reduxForm({
-    form: 'settingHumidity',
+    form: 'settingTemp',
     validate
 })
 
-export default form(SettingHumidity);
+export default form(SettingTemperature);

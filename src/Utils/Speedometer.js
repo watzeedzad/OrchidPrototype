@@ -7,6 +7,7 @@ import {
     XAxis,
     YAxis
 } from "react-jsx-highcharts";
+import 'bootstrap/dist/css/bootstrap.min.css';
 
 require("highcharts/highcharts-more")(Highcharts);
 require("highcharts/modules/solid-gauge")(Highcharts);
@@ -16,15 +17,15 @@ const plotOptions = {
     solidgauge: {
         dataLabels: {
             y: 5,
-            borderWidth: 0,
+            borderWidth:0 ,
             useHTML: true
         }
     }
 };
 
 const paneOptions = {
-    center: ["50%", "45%"],
-    size: "80%",
+    center: ["50%", "85%"],
+    size: "100%",
     startAngle: -90,
     endAngle: 90,
     background: {
