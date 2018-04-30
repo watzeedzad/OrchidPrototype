@@ -126,9 +126,9 @@ router.post("/configHumidity", (req, res) => {
     if (typeof configFile === "undefined") {
       res.sendStatus(500);
     }
-    let minConfigHumid = parseInt(req.body.minHumidity);
+    let minConfigHumid = parseFloat(req.body.minHumidity);
     console.log("minConfigJumid: " + minConfigHumid);
-    let maxConfigHumid = parseInt(req.body.maxHumidity);
+    let maxConfigHumid = parseFloat(req.body.maxHumidity);
     console.log("maxConfigHumid: " + maxConfigHumid);
     async function writeFile() {
       await writeConfigFile(configFile);
@@ -163,7 +163,7 @@ router.use("/showTemperature", (req, res, next) => {
 router.post("/showTemperature", (req, res) => {
   async function getData() {
     console.log("Global: " + farmIdGlobal);
-    let greenHouseId = req.body.greenHouseId;
+    let greenHouseId = parseInt(req.body.greenHouseId);
     console.log("showTemp: " + greenHouseId);
     await getGreenhouseSensor(greenHouseId);
     await getConfigFile();
@@ -204,7 +204,7 @@ router.use("/showHumidity", (req, res, next) => {
 router.post("/showHumidity", (req, res) => {
   async function getData() {
     console.log("Global: " + farmIdGlobal);
-    let greenHouseId = req.body.greenHouseId;
+    let greenHouseId = parseInt(req.body.greenHouseId);
     console.log(greenHouseId);
     await getGreenhouseSensor(greenHouseId);
     await getConfigFile();
