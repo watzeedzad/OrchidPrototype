@@ -14,7 +14,6 @@ class SettingTemperature extends Component {
 
     handleInitialize() {
         let initData = {
-            "farmId": this.props.farmId,
             "minTemperature": this.props.minConfig,
             "maxTemperature": this.props.maxConfig,
         };
@@ -29,7 +28,6 @@ class SettingTemperature extends Component {
                 <table>
                     <tr>
                         <form>
-                            <Field name="farmId" component={renderField} type="hidden" />
                             <td><Field name="minTemperature" component={renderField} type="number" label="อุณหภูมิต่ำสุด" /></td>
                             <td><Field name="maxTemperature" component={renderField} type="number" label="อุณหภูมิสููงสุด" /></td>
                             <td><Button color="primary" onClick={handleSubmit(this.onSubmit)}>บันทึก</Button></td>
@@ -52,11 +50,21 @@ class SettingTemperature extends Component {
 
 function validate(values) {
     const errors = {};
+    let min = parseFloat(values.minTemperature)
+    let max = parseFloat(values.maxTemperature)
+
     if (values.minTemperature === "") {
-        errors.minTemperature = 'ต้องเลือกอุณหภูมิต่ำสุด';
+        errors.minTemperature = 'ต้องกรอกอุณหภูมิต่ำสุด';
+    }else if(min < 0 || min > 60 ){
+        errors.minTemperature = 'อุณหภูมิต้องอยู่ระหว่าง 0 - 60ํ  ํC ';
     }
     if (values.maxTemperature === "") {
-        errors.maxTemperature = 'ต้องเลือกอุณหภูมิสูงสุด';
+        errors.maxTemperature = 'ต้องกรอกอุณหภูมิสูงสุด';
+    }else if(max < 0 || max > 60 ){
+        errors.maxTemperature = 'อุณหภูมิต้องอยู่ระหว่าง 0 - 60ํ  ํC ';
+    }
+    if(min > max ){
+        errors.minTemperature = 'อุณหภูมิต่ำสุดต้องน้อยกว่าสูงสุด';
     }
     return errors;
 }

@@ -9,7 +9,7 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 class Temperature extends Component {
 
     componentDidMount() {
-        this.props.dispatch(getTemp({ farmId: 123456789, greenHouseId: 25197568 }))
+        this.props.dispatch(getTemp({ greenHouseId: 25197568 }))
     }
 
     render() {
@@ -22,6 +22,7 @@ class Temperature extends Component {
         if (temp.isLoading) {
             return <div>Loading...</div>
         }
+    
         return (
             <Container>
                 <div>
@@ -48,7 +49,7 @@ class Temperature extends Component {
     }
 
     toggle = () => {
-        this.props.dispatch(getTemp({ farmId: 123456789, greenHouseId: 25197568 }))
+        this.props.dispatch(getTemp({ greenHouseId: 25197568 }))
     }
 }
 

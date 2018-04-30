@@ -9,7 +9,7 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 class Humidity extends Component {
 
     componentDidMount() {
-        this.props.dispatch(getHumidity({ farmId: 123456789, greenHouseId: 25197568 }))
+        this.props.dispatch(getHumidity({ greenHouseId: 25197568 }))
     }
 
     render() {
@@ -48,7 +48,7 @@ class Humidity extends Component {
     }
 
     toggle = () => {
-        this.props.dispatch(getHumidity({ farmId: 123456789, greenHouseId: 25197568 }))
+        this.props.dispatch(getHumidity({ greenHouseId: 25197568 }))
     }
 }
 

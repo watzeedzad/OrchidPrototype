@@ -14,7 +14,6 @@ class SettingHumidity extends Component {
 
     handleInitialize() {
         let initData = {
-            "farmId": this.props.farmId,
             "minHumidity": this.props.minConfig,
             "maxHumidity": this.props.maxConfig,
         };
@@ -29,7 +28,6 @@ class SettingHumidity extends Component {
                 <table>
                     <tr>
                         <form>
-                            <Field name="farmId" component={renderField} type="hidden" />
                             <td><Field name="minHumidity" component={renderField} type="number" label="ความชื้นต่ำสุด" /></td>
                             <td><Field name="maxHumidity" component={renderField} type="number" label="ความชื้นสููงสุด" /></td>
                             <td><Button color="primary" onClick={handleSubmit(this.onSubmit)}>บันทึก</Button></td>
@@ -52,11 +50,21 @@ class SettingHumidity extends Component {
 
 function validate(values) {
     const errors = {};
-    if (values.minTemperature === "") {
-        errors.minTemperature = 'ต้องเลือกความชื้นต่ำสุด';
+    let min = parseFloat(values.minHumidity)
+    let max = parseFloat(values.maxHumidity)
+
+    if (values.minHumidity === "") {
+        errors.minHumidity = 'ต้องกรอกอุณหภูมิต่ำสุด';
+    }else if(min < 0 || min > 60 ){
+        errors.minHumidity = 'อุณหภูมิต้องอยู่ระหว่าง 0 - 60ํ  ํC ';
     }
-    if (values.maxTemperature === "") {
-        errors.maxTemperature = 'ต้องเลือกความชื้นสูงสุด';
+    if (values.maxHumidity === "") {
+        errors.maxHumidity = 'ต้องกรอกอุณหภูมิสูงสุด';
+    }else if(max < 0 || max > 60 ){
+        errors.maxHumidity = 'อุณหภูมิต้องอยู่ระหว่าง 0 - 60ํ  ํC ';
+    }
+    if(min > max ){
+        errors.minHumidity = 'อุณหภูมิต่ำสุดต้องน้อยกว่าสูงสุด';
     }
     return errors;
 }
