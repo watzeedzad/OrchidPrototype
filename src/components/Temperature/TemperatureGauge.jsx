@@ -10,6 +10,8 @@ class TemperatureGauge extends Component {
 
         return (
             <Speedometer
+                min= {0}
+                max= {60}
                 minConfig={this.props.minConfig}
                 maxConfig={this.props.maxConfig}
                 currentValue={this.props.currentValue}

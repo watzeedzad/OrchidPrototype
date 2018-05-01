@@ -16,11 +16,11 @@ const renderField = ({ input, label ,type, textarea, autoFocus,meta: { touched, 
     return (
         <div class="form-group">
             <Label>{label}</Label>
-            <div className="col-sm-6">
+            <div className="col-sm-7">
                 {/* เลือกว่าจะแสดงแบบ textarea หรือ input ธรรมดา*/}
                 {textarea ? textareaType : inputType}
                 {/* ส่วนนี้จะแสดงข้อความ error ที่ได้จากการ validate */}
-                {touched && error && <small className="text-danger">{error}</small>}
+                {touched && error && <small className="text-danger"><br/>{error}</small>}
             </div>
         </div>
     )

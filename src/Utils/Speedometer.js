@@ -50,8 +50,8 @@ class Speedometer extends Component {
 
                     <YAxis
                         id="myAxis"
-                        min={0}
-                        max={100}
+                        min={this.props.min}
+                        max={this.props.max}
                         lineWidth={0}
                         minorTickInterval={null}
                         tickAmount={2}
@@ -60,10 +60,10 @@ class Speedometer extends Component {
                         }}
                         labels={{ distance: 25 }}
                         tickPosition='outside'
-                        tickPositions={[0, this.props.minConfig, this.props.maxConfig, 100]}
+                        tickPositions={[this.props.min, this.props.minConfig, this.props.maxConfig, this.props.max]}
                         minorTickLength={0}
                         plotBands={[{
-                            from: 0,
+                            from: this.props.min,
                             to: this.props.minConfig,
                             color: this.props.minColor,
                             thickness: '50%',
@@ -74,7 +74,7 @@ class Speedometer extends Component {
                             thickness: '50%'
                         }, {
                             from: this.props.maxConfig,
-                            to: 100,
+                            to: this.props.max,
                             color: this.props.maxColor,
                             thickness: '50%'
                         }]}

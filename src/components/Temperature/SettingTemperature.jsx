@@ -28,8 +28,8 @@ class SettingHumidity extends Component {
                 <form className='form-inline'>
                     <FormGroup className='mb-2 mr-sm-2 mb-sm-0'>
                         <Field name="farmId" component={renderField} type="hidden" />
-                        <Field name="minHumidity" component={renderField} type="number" label="ความชื้นต่ำสุด" />
-                        <Field name="maxHumidity" component={renderField} type="number" label="ความชื้นสููงสุด" />
+                        <Field name="minHumidity" component={renderField} type="number" label="อุณหภูมิต่ำสุด" />
+                        <Field name="maxHumidity" component={renderField} type="number" label="อุณหภูมิสูงสุด" />
                         <Button color="primary" onClick={handleSubmit(this.onSubmit)}>บันทึก</Button>
                     </FormGroup>
                 </form>

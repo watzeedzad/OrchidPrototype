@@ -5,13 +5,12 @@ import config from '../../configure'
 const BASE_URL = config.BASE_URL
 
 export const saveTempConfig = (values) => {
-    let _method = 'post'
 
     return (dispatch) => {
         //รูปแบบการใช้ axios อีกรูปแบบในการจะบุ method ที่ต้องการ
         //ต้องส่ง heder ชื่อ authorization โดยส่ง token เขาไปด้วยครับ
         return axios({
-            method: _method,
+            method: 'post',
             url: `${BASE_URL}/temperatureControl/configTemperature`,
             data: values,
             headers: { 'Content-Type': 'application/json' }
@@ -28,7 +27,6 @@ export const saveTempConfig = (values) => {
 }
 
 export const getTemp = ({farmId,greenHouseId}) => {
-    let _method = 'post'
 
     let values = {
         farmId: farmId,
@@ -40,8 +38,8 @@ export const getTemp = ({farmId,greenHouseId}) => {
         //ต้องส่ง heder ชื่อ authorization โดยส่ง token เขาไปด้วยครับ
         dispatch({ type: 'LOAD_TEMP_PENDING' })
         return axios({
-            method: _method,
-            url: `http://127.0.0.1:3001/temperatureControl/showTemperature`,
+            method: 'post',
+            url: `${BASE_URL}/temperatureControl/showTemperature`,
             data: values,
             headers: { 'Content-Type': 'application/json' }
             //headers: { authorization: localStorage.getItem('token') }
@@ -57,13 +55,12 @@ export const getTemp = ({farmId,greenHouseId}) => {
 }
 
 export const saveHumidityConfig = (values) => {
-    let _method = 'post'
 
     return (dispatch) => {
         //รูปแบบการใช้ axios อีกรูปแบบในการจะบุ method ที่ต้องการ
         //ต้องส่ง heder ชื่อ authorization โดยส่ง token เขาไปด้วยครับ
         return axios({
-            method: _method,
+            method: 'post',
             url: `${BASE_URL}/temperatureControl/configHumidity`,
             data: values,
             headers: { 'Content-Type': 'application/json' }
@@ -80,7 +77,6 @@ export const saveHumidityConfig = (values) => {
 }
 
 export const getHumidity = ({farmId,greenHouseId}) => {
-    let _method = 'post'
 
     let values = {
         farmId: farmId,
@@ -92,8 +88,8 @@ export const getHumidity = ({farmId,greenHouseId}) => {
         //ต้องส่ง heder ชื่อ authorization โดยส่ง token เขาไปด้วยครับ
         dispatch({ type: 'LOAD_HUMIDITY_PENDING' })
         return axios({
-            method: _method,
-            url: `http://127.0.0.1:3001/temperatureControl/showHumidity`,
+            method: 'post',
+            url: `${BASE_URL}/temperatureControl/showHumidity`,
             data: values,
             headers: { 'Content-Type': 'application/json' }
             //headers: { authorization: localStorage.getItem('token') }
