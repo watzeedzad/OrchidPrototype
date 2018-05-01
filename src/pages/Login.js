@@ -3,7 +3,7 @@ import { Field, reduxForm } from 'redux-form';
 import { browserHistory } from 'react-router'
 import { login } from '../redux/actions/loginActions';
 import renderField from '../Utils/renderField';
-import { Button } from 'reactstrap';
+import { Button ,FormGroup} from 'reactstrap';
 import { connect } from 'react-redux';
 
 
@@ -16,11 +16,13 @@ class Login extends Component {
             <div>
                 <table>
                     <tr>
-                        <form>
+                        <form className='form-inline'>
+                            <FormGroup className='mb-2 mr-sm-2 mb-sm-0'>
                             {this.renderAlert()}
                             <td><Field name="username" component={renderField} type="text" label="Username" /></td>
                             <td><Field name="password" component={renderField} type="password" label="Password" /></td>
                             <td><Button color="primary" onClick={handleSubmit(this.onSubmit)}>บันทึก</Button></td>
+                            </FormGroup>
                         </form>
                     </tr>
                 </table>               
