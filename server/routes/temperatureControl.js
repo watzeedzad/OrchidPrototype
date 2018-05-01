@@ -59,6 +59,9 @@ router.use("/configTemperature", (req, res, next) => {
 
 router.post("/configTemperature", (req, res) => {
   async function setConfig() {
+    if (pathGlobal == null) {
+      res.sendStatus(500);
+    }
     await getConfigFile();
     if (typeof configFile === "undefined") {
       res.sendStatus(500);
@@ -99,6 +102,9 @@ router.use("/configHumidity", (req, res, next) => {
 
 router.post("/configHumidity", (req, res) => {
   async function setConfig() {
+    if (pathGlobal == null) {
+      res.sendStatus(500);
+    }
     await getConfigFile();
     if (typeof configFile === "undefined") {
       res.sendStatus(500);
@@ -139,6 +145,9 @@ router.use("/showTemperature", (req, res, next) => {
 
 router.post("/showTemperature", (req, res) => {
   async function getData() {
+    if (pathGlobal == null) {
+      res.sendStatus(500);
+    }
     console.log("Global: " + farmIdGlobal);
     let greenHouseId = parseFloat(req.body.greenHouseId);
     console.log("showTemp: " + greenHouseId);
@@ -180,6 +189,9 @@ router.use("/showHumidity", (req, res, next) => {
 
 router.post("/showHumidity", (req, res) => {
   async function getData() {
+    if (pathGlobal == null) {
+      res.sendStatus(500);
+    }
     console.log("Global: " + farmIdGlobal);
     let greenHouseId = parseFloat(req.body.greenHouseId);
     console.log(greenHouseId);

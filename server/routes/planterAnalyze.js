@@ -76,6 +76,9 @@ router.use("/configFertility", (req, res, next) => {
 
 router.post("/configFertility", (req, res) => {
   async function setConfig() {
+    if (pathGlobal == null) {
+      res.sendStatus(500);
+    }
     await getConfigFile();
     if (typeof configFile === "undefined") {
       res.sendStatus(500);
@@ -113,12 +116,15 @@ router.use("/configSoilMoisture", (req, res, next) => {
 
 router.post("/configSoilMoisture", (req, res) => {
   async function setConfig() {
+    if (pathGlobal == null) {
+      res.sendStatus(500);
+    }
     await getConfigFile();
     if (typeof configFile === "undefined") {
       res.sendStatus(500);
     }
-    let minConfigSoilMois = parseInt(req.body.minSoilMoisture);;
-    let maxConfigSoilMois = parseInt(req.body.maxSoilMoisture);;
+    let minConfigSoilMois = parseFloat(req.body.minSoilMoisture);;
+    let maxConfigSoilMois = parseFloat(req.body.maxSoilMoisture);;
     async function writeFile() {
       await writeConfigFile(configFile);
       res.sendStatus(200);
@@ -150,6 +156,9 @@ router.use("/showFertility", (req, res, next) => {
 
 router.post("/showFertility", (req, res) => {
   async function getData() {
+    if (pathGlobal == null) {
+      res.sendStatus(500);
+    }
     let projectId = parseInt(req.body.projectId);
     console.log("projectId: " + projectId);
     await getProjectSensor(projectId);
@@ -190,7 +199,10 @@ router.use("/showSoilMoisture", (req, res, next) => {
 
 router.post("/showSoilMoisture", (req, res, next) => {
   async function setConfig() {
-    let greenHouseId = req.body.greenHouseId;
+    if (pathGlobal == null) {
+      res.sendStatus(500);
+    }
+    let greenHouseId = parseInt(req.body.greenHouseId);
     console.log("showSoilMoisture: " + greenHouseId);
     await getGreenhouseSensor(greenHouseId);
     await getConfigFile();
