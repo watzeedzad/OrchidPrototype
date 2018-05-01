@@ -187,28 +187,15 @@ void sendData()
         JSONencoder["humidity"] = humidityStats.average();
         // JSONencoder["fertility"] = fertilityStats.average();
         JSONencoder["soilMoisture"] = moistureStats.average();
-        JSONencoder["ip"] = WiFi.localIP().toString();
+        JSONencoder["ip"] = "crossbaronx.thddns.net:6064";
         JSONencoder["ambientLight"] = 2564;
         char JSONmessageBuffer[150];
         JSONencoder.prettyPrintTo(JSONmessageBuffer, sizeof(JSONmessageBuffer));
         Serial.println(JSONmessageBuffer);
 
-        // HTTPClient http;
-        // http.setTimeout(20000);
-        // http.begin("https://hello.careerity.me/sendSensorData", "10:A6:36:B5:24:5E:72:8A:4E:D8:CC:33:E9:65:89:2A:39:BA:79:8B");
-        // http.addHeader("Content-Type", "application/json");
-        // int httpCode = http.POST(JSONmessageBuffer);
-        // String payload = http.getString();
-        // Serial.print("http result: ");
-        // Serial.println(httpCode);
-        // Serial.println(String(http.errorToString(httpCode)));
-        // Serial.print("Payload: ");
-        // Serial.println(payload);
-        // http.end();
-
         HTTPClient http;
-        http.setTimeout(1000);
-        http.begin("http://192.168.1.151:3000/sensorRoutes/greenHouseSensor");
+        http.setTimeout(20000);
+        http.begin("https://hello-api.careerity.me/sensorRoutes/greenHouseSensor", "EC:BB:33:AB:B4:F4:5B:A0:76:F3:F1:5B:FE:EC:BD:16:17:5C:22:47");
         http.addHeader("Content-Type", "application/json");
         int httpCode = http.POST(JSONmessageBuffer);
         String payload = http.getString();
@@ -218,6 +205,19 @@ void sendData()
         Serial.print("Payload: ");
         Serial.println(payload);
         http.end();
+
+        // HTTPClient http;
+        // http.setTimeout(1000);
+        // http.begin("http://192.168.1.151:3000/sensorRoutes/greenHouseSensor");
+        // http.addHeader("Content-Type", "application/json");
+        // int httpCode = http.POST(JSONmessageBuffer);
+        // String payload = http.getString();
+        // Serial.print("http result: ");
+        // Serial.println(httpCode);
+        // Serial.println(String(http.errorToString(httpCode)));
+        // Serial.print("Payload: ");
+        // Serial.println(payload);
+        // http.end();
 
         temperatureStats.clear();
         humidityStats.clear();
