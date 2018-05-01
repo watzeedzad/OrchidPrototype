@@ -34,7 +34,9 @@ class Login extends Component {
     onSubmit = (values) => {
         //เมื่อบันทึกข้อมูลเสร็จสังให้ไปยัง route /
         console.log(values)
-        this.props.dispatch(login(values))
+        this.props.dispatch(login(values)).then(() => {
+            browserHistory.push('/weatherControl')
+        })
     }
 
     renderAlert() {
