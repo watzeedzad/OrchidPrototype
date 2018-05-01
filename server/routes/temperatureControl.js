@@ -7,44 +7,21 @@ const farm = mongoose.model("farm");
 const know_controller = mongoose.model("know_controller");
 const greenHouseSensor = mongoose.model("greenHouse_Sensor");
 
-let farmData;
 let configFile;
 let controllerData;
 let greenHouseSensorData;
 
 async function getConfigFile() {
-  if (farmIdGlobal == 0) {
-    return;
-  }
-  var farmResult = await farm.find({
-    farmId: farmIdGlobal
-  });
-  if (farmResult) {
-    farmData = farmResult;
-  } else {
-    console.log("fail");
-  }
-  console.log("getConfigFile: " + farmData);
-  let configFilePath = farmData[0].configFilePath;
+  console.log("getConfigFilePath: " + pathGlobal);
   let config = JSON.parse(
-    require("fs").readFileSync(String(configFilePath), "utf8")
+    require("fs").readFileSync(String(pathGlobal), "utf8")
   );
   configFile = config;
 }
 
 async function writeConfigFile(configFile) {
-  var farmData = await farm.find({
-    farmId: farmIdGlobal
-  });
-  if (farmData) {
-    farmData = JSON.stringify(farmData);
-  } else {
-    console.log("fail");
-  }
-  let temp = JSON.parse(farmData);
-  let configFilePath = temp[0].configFilePath;
   let content = JSON.stringify(configFile);
-  fs.writeFileSync(String(configFilePath), content, "utf8", function (err) {
+  fs.writeFileSync(String(pathGlobal), content, "utf8", function (err) {
     if (err) {
       console.log(err);
     } else {

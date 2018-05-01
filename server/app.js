@@ -8,6 +8,7 @@ const ipfilter = require("express-ipfilter").IpFilter;
 
 var ips = ["127.0.0.1"];
 farmIdGlobal = 0;
+pathGlobal = null;
 
 //load model
 require("./models/GreenHouse_Sensor");
