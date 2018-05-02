@@ -37,7 +37,8 @@ async function getFarmData(farmId) {
 }
 
 router.use("/", (req, res, next) => {
-    res.setHeader("Access-Control-Allow-Origin", "http://localhost:3000");
+    console.log(origin_url);
+    res.setHeader("Access-Control-Allow-Origin", origin_url);
     res.setHeader(
         "Access-Control-Allow-Headers",
         "X-Requested-With,content-type"

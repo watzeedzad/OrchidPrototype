@@ -5,10 +5,15 @@ const cookieParser = require("cookie-parser");
 const bodyParser = require("body-parser");
 const mongoose = require("mongoose");
 const ipfilter = require("express-ipfilter").IpFilter;
+require('dotenv').config();
 
 var ips = ["127.0.0.1","::1"];
 farmIdGlobal = 0;
 pathGlobal = null;
+origin_url = process.env.ORIGIN_URL;
+db_host = process.env.DB_HOST;
+db_user = process.env.DB_USER;
+db_pass = process.env.DB_PASS;
 
 //load model
 require("./models/GreenHouse_Sensor");

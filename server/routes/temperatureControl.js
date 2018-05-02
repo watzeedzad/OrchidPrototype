@@ -48,7 +48,7 @@ async function getGreenhouseSensor(greenHouseId) {
 }
 
 router.use("/configTemperature", (req, res, next) => {
-  res.setHeader("Access-Control-Allow-Origin", "http://localhost:3000");
+  res.setHeader("Access-Control-Allow-Origin", origin_url);
   res.setHeader(
     "Access-Control-Allow-Headers",
     "X-Requested-With,content-type"
@@ -91,7 +91,7 @@ router.post("/configTemperature", (req, res) => {
 });
 
 router.use("/configHumidity", (req, res, next) => {
-  res.setHeader("Access-Control-Allow-Origin", "http://localhost:3000");
+  res.setHeader("Access-Control-Allow-Origin", origin_url);
   res.setHeader(
     "Access-Control-Allow-Headers",
     "X-Requested-With,content-type"
@@ -134,7 +134,7 @@ router.post("/configHumidity", (req, res) => {
 });
 
 router.use("/showTemperature", (req, res, next) => {
-  res.setHeader("Access-Control-Allow-Origin", "http://localhost:3000");
+  res.setHeader("Access-Control-Allow-Origin", origin_url);
   res.setHeader(
     "Access-Control-Allow-Headers",
     "X-Requested-With,content-type"
@@ -178,7 +178,7 @@ router.post("/showTemperature", (req, res) => {
 });
 
 router.use("/showHumidity", (req, res, next) => {
-  res.setHeader("Access-Control-Allow-Origin", "http://localhost:3000");
+  res.setHeader("Access-Control-Allow-Origin", origin_url);
   res.setHeader(
     "Access-Control-Allow-Headers",
     "X-Requested-With,content-type"
