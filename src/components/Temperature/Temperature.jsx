@@ -36,7 +36,6 @@ class Temperature extends Component {
                         </Col>
                         <Col xs='12' sm='12' md='12' lg='12' xl='12'>
                             <SettingTemperature
-                                farmId={123456789}
                                 minConfig={data.minConfigTemperature}
                                 maxConfig={data.maxConfigTemperature}
                                 onToggle={this.toggle}

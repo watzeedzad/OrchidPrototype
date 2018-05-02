@@ -26,13 +26,11 @@ export const saveTempConfig = (values) => {
     }
 }
 
-export const getTemp = ({farmId,greenHouseId}) => {
+export const getTemp = ({greenHouseId}) => {
 
     let values = {
-        farmId: farmId,
         greenHouseId: greenHouseId
     }
-
     return (dispatch) => {
         //รูปแบบการใช้ axios อีกรูปแบบในการจะบุ method ที่ต้องการ
         //ต้องส่ง heder ชื่อ authorization โดยส่ง token เขาไปด้วยครับ
@@ -76,10 +74,9 @@ export const saveHumidityConfig = (values) => {
     }
 }
 
-export const getHumidity = ({farmId,greenHouseId}) => {
+export const getHumidity = ({greenHouseId}) => {
 
     let values = {
-        farmId: farmId,
         greenHouseId: greenHouseId
     }
 

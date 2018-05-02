@@ -35,7 +35,6 @@ class Humidity extends Component {
                         </Col>
                         <Col xs='12' sm='12' md='12' lg='12' xl='12'>
                             <SettingHumidity
-                                farmId={123456789}
                                 minConfig={data.minConfigHumidity}
                                 maxConfig={data.maxConfigHumidity}
                                 onToggle={this.toggle}

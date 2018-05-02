@@ -25,7 +25,7 @@ class SettingTemperature extends Component {
 
         return (
             <div>
-                <Form inline>
+                <Form className='form-inline'>
                     <FormGroup className="mb-2 mr-sm-2 mb-sm-0">
                         <Field name="minTemperature" component={renderField} type="number" label="อุณหภูมิต่ำสุด" />
                         <Field name="maxTemperature" component={renderField} type="number" label="อุณหภูมิสูงสุด" />
