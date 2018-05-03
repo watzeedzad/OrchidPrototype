@@ -193,6 +193,20 @@ router.post("/showFertility", (req, res) => {
   getData();
 });
 
+router.use("/showAllFertility", (req, res, next) => {
+  res.setHeader("Access-Control-Allow-Origin", "http://localhost:3000");
+  res.setHeader(
+    "Access-Control-Allow-Headers",
+    "X-Requested-With,content-type"
+  );
+  res.set("Content-Type", "application/json");
+  next();
+})
+
+router.post("/showAllFertility", (req, res) => {
+  
+})
+
 router.use("/showSoilMoisture", (req, res, next) => {
   res.setHeader("Access-Control-Allow-Origin", "http://localhost:3000");
   res.setHeader(
