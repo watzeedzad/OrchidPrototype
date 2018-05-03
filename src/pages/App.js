@@ -1,11 +1,11 @@
 import React, { Component } from 'react';
-import Header from '../components/Sidebar/Header'
+import Sidebar from '../components/Sidebar/Drawers'
 
 class App extends Component {
     render() {
         return (
             <div>
-            <Header/>
+            <Sidebar/>
                  {this.props.children}
 
             </div>
