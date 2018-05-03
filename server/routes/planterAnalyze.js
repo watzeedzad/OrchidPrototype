@@ -12,6 +12,7 @@ let projectSensorData;
 let greenHouseSensorData;
 
 async function getConfigFile() {
+  console.log("getConfigFilePath: " + pathGlobal);
   let config = JSON.parse(
     require("fs").readFileSync(String(pathGlobal), "utf8")
   );
@@ -19,6 +20,7 @@ async function getConfigFile() {
 }
 
 async function writeConfigFile(configFile) {
+  let content = JSON.stringify(configFile);
   fs.writeFileSync(String(pathGlobal), content, "utf8", function (err) {
     if (err) {
       console.log(err);
@@ -102,6 +104,7 @@ router.post("/configFertility", (req, res) => {
       writeFile();
     }
   }
+  setConfig();
 });
 
 router.use("/configSoilMoisture", (req, res, next) => {
@@ -123,8 +126,10 @@ router.post("/configSoilMoisture", (req, res) => {
     if (typeof configFile === "undefined") {
       res.sendStatus(500);
     }
-    let minConfigSoilMois = parseFloat(req.body.minSoilMoisture);;
-    let maxConfigSoilMois = parseFloat(req.body.maxSoilMoisture);;
+    let maxConfigSoilMois = parseFloat(req.body.maxSoilMoisture);
+    console.log("maxConfigSoilMois: " + maxConfigSoilMois);
+    let minConfigSoilMois = parseFloat(req.body.minSoilMoisture);
+    console.log("minConfigSoilMois: " + minConfigSoilMois);
     async function writeFile() {
       await writeConfigFile(configFile);
       res.sendStatus(200);
@@ -142,6 +147,7 @@ router.post("/configSoilMoisture", (req, res) => {
       writeFile();
     }
   }
+  setConfig();
 });
 
 router.use("/showFertility", (req, res, next) => {
@@ -198,7 +204,7 @@ router.use("/showSoilMoisture", (req, res, next) => {
 });
 
 router.post("/showSoilMoisture", (req, res, next) => {
-  async function setConfig() {
+  async function getData() {
     if (pathGlobal == null) {
       res.sendStatus(500);
     }
@@ -227,7 +233,7 @@ router.post("/showSoilMoisture", (req, res, next) => {
       res.json(showSoilMoisture);
     }
   }
-  setConfig();
+  getData();
 });
 
 module.exports = router;
