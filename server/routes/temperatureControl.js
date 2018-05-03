@@ -1,7 +1,7 @@
-import ConfigTemperature from "../classes/ConfigTemperature";
-import ShowTemprature from "../classes/ShowTemperature";
-import ConfigHumidity from "../classes/ConfigHumidity";
-import ShowHumidity from "../classes/ShowHumidity";
+import ConfigTemperature from "../classes/TemperatureControl/ConfigTemperature";
+import ShowTemprature from "../classes/TemperatureControl/ShowTemperature";
+import ConfigHumidity from "../classes/TemperatureControl/ConfigHumidity";
+import ShowHumidity from "../classes/TemperatureControl/ShowHumidity";
 
 const express = require("express");
 const router = express.Router();

@@ -1,7 +1,8 @@
-import ShowSoilMoisture from "../classes/ShowSoilMoisture";
-import ConfigSoilMoisture from "../classes/ConfigSoilMoisture";
-import ShowFertility from "../classes/ShowFertility";
-import ConfigFertility from "../classes/ConfigFertility";
+import ShowSoilMoisture from "../classes/PlanterAnalyze/ShowSoilMoisture";
+import ConfigSoilMoisture from "../classes/PlanterAnalyze/ConfigSoilMoisture";
+import ShowFertility from "../classes/PlanterAnalyze/ShowFertility";
+import ConfigFertility from "../classes/PlanterAnalyze/ConfigFertility";
+import ShowAllFertility from "../classes/PlanterAnalyze/ShowAllFertility";
 
 const express = require("express");
 const router = express.Router();
@@ -59,7 +60,7 @@ router.use("/showAllFertility", (req, res, next) => {
 })
 
 router.post("/showAllFertility", (req, res) => {
-  
+  new ShowAllFertility(req, res);
 })
 
 router.use("/showSoilMoisture", (req, res, next) => {
