@@ -4,17 +4,22 @@ import { withStyles } from 'material-ui/styles'
 import Drawer from 'material-ui/Drawer';
 import Hidden from 'material-ui/Hidden';
 import AppBar from 'material-ui/AppBar';
+import List from 'material-ui/List';
 import Typography from 'material-ui/Typography';
 import IconButton from 'material-ui/IconButton';
 import Toolbar from 'material-ui/Toolbar';
 import MenuIcon from '@material-ui/icons/Menu';
+import MenuList from "./MenuList";
 
 const drawerWidth = 240;
 
 const styles = theme => ({
    
     appBar: {
-        zIndex: theme.zIndex.drawer + 1,
+        marginLeft: drawerWidth,
+        [theme.breakpoints.up('md')]: {
+          width: `calc(100% - ${drawerWidth}px)`,
+        },
     },
     navIconHide: {
         [theme.breakpoints.up('md')]: {
@@ -52,12 +57,15 @@ class DrawerResponsive extends Component {
 
         const drawer = (
             <div id='listMenuItem'>
-
+                <div className={classes.toobar}/>
+                <List>
+                    <MenuList/>
+                </List>
             </div>
         );
 
         return (
-            <div className={classes.root}>
+            <div id='sideBar'>
                 <AppBar className={classes.appBar} position='absolute' color='secondary' >
                     <Toolbar>
                         <IconButton
@@ -86,6 +94,7 @@ class DrawerResponsive extends Component {
                             keepMounted: true, // Better open performance on mobile.
                         }}
                     >
+                        {drawer}
                     </Drawer>
                 </Hidden>
 
