@@ -12,5 +12,5 @@ const greenHouse_SensorSchema = new Schema({
   greenHouseId: Number
 });
 
-greenHouse_SensorSchema.plugin(autoIncrement, {inc_field: "greenHouseId"});
+greenHouse_SensorSchema.plugin(autoIncrement, {inc_field: "greenHouseSensorId"});
 mongoose.model("greenHouse_Sensor", greenHouse_SensorSchema);

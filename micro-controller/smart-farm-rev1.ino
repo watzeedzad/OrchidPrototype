@@ -22,7 +22,7 @@
 #define LISTEN_PORT 80
 #define DEBUG_PRINT 1
 
-const char *SSID = "ASUS";
+const char *SSID = "aisfibre_2.4G";
 const char *SSID_PASSWORD = "molena01";
 
 int moisture = 0;
@@ -98,7 +98,7 @@ void setup(void)
         //                Serial.println("\nconnected to network " + String(SSID) + "\n");
         //        }
 
-        caller.every(30000, sendData);
+        caller.every(60000, sendData);
         server.begin();
 
         delay(100);
@@ -106,6 +106,7 @@ void setup(void)
 
 void loop(void)
 {
+        Serial.println("enter loop");
         WiFiClient client = server.available();
         if (client && client.available())
         {
@@ -124,6 +125,7 @@ void loop(void)
         fertility = temp.toInt();
         humidity = dht.readHumidity();
         temperature = dht.readTemperature();
+        Serial.println(moisture);
         moisturePercent = convertToPercent(moisture);
         humidityStats.add(humidity);
         temperatureStats.add(temperature);
@@ -141,7 +143,7 @@ void loop(void)
 int convertToPercent(int value)
 {
         int percentValue = 0;
-        percentValue = map(value, 110, 750, 0, 100);
+        percentValue = map(value, 750, 110, 0, 100);
         if (percentValue == -1)
         {
                 percentValue = 0;
@@ -181,24 +183,45 @@ void sendData()
         Serial.print("Avg. of moisture : ");
         Serial.println(moistureStats.average(), 2);
 
-        StaticJsonBuffer<150> JSONbuffer;
-        JsonObject &JSONencoder = JSONbuffer.createObject();
+        StaticJsonBuffer<150> JSONbuffer1;
+        JsonObject &JSONencoder = JSONbuffer1.createObject();
         JSONencoder["temperature"] = temperatureStats.average();
         JSONencoder["humidity"] = humidityStats.average();
-        // JSONencoder["fertility"] = fertilityStats.average();
         JSONencoder["soilMoisture"] = moistureStats.average();
-        JSONencoder["ip"] = "crossbaronx.thddns.net:6064";
         JSONencoder["ambientLight"] = 2564;
-        char JSONmessageBuffer[150];
-        JSONencoder.prettyPrintTo(JSONmessageBuffer, sizeof(JSONmessageBuffer));
-        Serial.println(JSONmessageBuffer);
+        JSONencoder["ip"] = "crossbaronx.thddns.net:6064";
+        char dataSet1[150];
+        JSONencoder.prettyPrintTo(dataSet1, sizeof(dataSet1));
+        Serial.println(dataSet1);
+
+        StaticJsonBuffer<150> JSONbuffer2;
+        JsonObject &JSONencoder2 = JSONbuffer2.createObject();
+        JSONencoder2["soilFertilizer"] = fertilityStats.average();
+        JSONencoder2["ip"] = "crossbaronx.thddns.net:6064";
+        char dataSet2[150];
+        JSONencoder2.prettyPrintTo(dataSet2, sizeof(dataSet2));
+        Serial.println(dataSet2);
 
         HTTPClient http;
         http.setTimeout(20000);
         http.begin("https://hello-api.careerity.me/sensorRoutes/greenHouseSensor", "EC:BB:33:AB:B4:F4:5B:A0:76:F3:F1:5B:FE:EC:BD:16:17:5C:22:47");
         http.addHeader("Content-Type", "application/json");
-        int httpCode = http.POST(JSONmessageBuffer);
+        int httpCode = http.POST(dataSet1);
         String payload = http.getString();
+        Serial.print("http result: ");
+        Serial.println(httpCode);
+        Serial.println(String(http.errorToString(httpCode)));
+        Serial.print("Payload: ");
+        Serial.println(payload);
+        http.end();
+
+        delay(5000);
+
+        http.setTimeout(20000);
+        http.begin("https://hello-api.careerity.me/sensorRoutes/projectSensor", "EC:BB:33:AB:B4:F4:5B:A0:76:F3:F1:5B:FE:EC:BD:16:17:5C:22:47");
+        http.addHeader("Content-Type", "application/json");
+        httpCode = http.POST(dataSet2);
+        payload = http.getString();
         Serial.print("http result: ");
         Serial.println(httpCode);
         Serial.println(String(http.errorToString(httpCode)));
