@@ -98,7 +98,7 @@ void setup(void)
         //                Serial.println("\nconnected to network " + String(SSID) + "\n");
         //        }
 
-        caller.every(60000, sendData);
+        caller.every(300000, sendData);
         server.begin();
 
         delay(100);
@@ -183,24 +183,16 @@ void sendData()
         Serial.print("Avg. of moisture : ");
         Serial.println(moistureStats.average(), 2);
 
-        StaticJsonBuffer<150> JSONbuffer1;
+        StaticJsonBuffer<250> JSONbuffer1;
         JsonObject &JSONencoder = JSONbuffer1.createObject();
         JSONencoder["temperature"] = temperatureStats.average();
         JSONencoder["humidity"] = humidityStats.average();
         JSONencoder["soilMoisture"] = moistureStats.average();
-        JSONencoder["ambientLight"] = 2564;
+        JSONencoder["ambientLight"] = 548.68;
         JSONencoder["ip"] = "crossbaronx.thddns.net:6064";
-        char dataSet1[150];
+        char dataSet1[250];
         JSONencoder.prettyPrintTo(dataSet1, sizeof(dataSet1));
         Serial.println(dataSet1);
-
-        StaticJsonBuffer<150> JSONbuffer2;
-        JsonObject &JSONencoder2 = JSONbuffer2.createObject();
-        JSONencoder2["soilFertilizer"] = fertilityStats.average();
-        JSONencoder2["ip"] = "crossbaronx.thddns.net:6064";
-        char dataSet2[150];
-        JSONencoder2.prettyPrintTo(dataSet2, sizeof(dataSet2));
-        Serial.println(dataSet2);
 
         HTTPClient http;
         http.setTimeout(20000);
@@ -215,7 +207,13 @@ void sendData()
         Serial.println(payload);
         http.end();
 
-        delay(5000);
+        StaticJsonBuffer<250> JSONbuffer2;
+        JsonObject &JSONencoder2 = JSONbuffer2.createObject();
+        JSONencoder2["soilFertilizer"] = fertilityStats.average();
+        JSONencoder2["ip"] = "crossbaronx.thddns.net:6064";
+        char dataSet2[250];
+        JSONencoder2.prettyPrintTo(dataSet2, sizeof(dataSet2));
+        Serial.println(dataSet2);
 
         http.setTimeout(20000);
         http.begin("https://hello-api.careerity.me/sensorRoutes/projectSensor", "EC:BB:33:AB:B4:F4:5B:A0:76:F3:F1:5B:FE:EC:BD:16:17:5C:22:47");
