@@ -9,7 +9,7 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 class Temperature extends Component {
 
     componentDidMount() {
-        this.props.dispatch(getTemp({ greenHouseId: 25197568 }))
+        this.props.dispatch(getTemp({ greenHouseId: 789456123 }))
     }
 
     render() {
