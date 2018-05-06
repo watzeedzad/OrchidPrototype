@@ -9,7 +9,7 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 class Humidity extends Component {
 
     componentDidMount() {
-        this.props.dispatch(getHumidity({ greenHouseId: 25197568 }))
+        this.props.dispatch(getHumidity({ greenHouseId: 789456123 }))
     }
 
     render() {
