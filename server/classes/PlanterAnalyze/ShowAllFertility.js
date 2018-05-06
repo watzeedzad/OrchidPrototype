@@ -34,7 +34,6 @@ export default class ShowAllFertility {
       let countProjectId = [];
       let projectSensorDataSplice = [];
       for (let index = 0; index < projectSensorData.length; index++) {
-        console.log("enter loop: " + index);
         if (!countProjectId.includes(projectSensorData[index].projectId)) {
           projectSensorDataSplice.push(projectSensorData[index]);
           countProjectId.push(projectSensorData[index].projectId);

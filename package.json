@@ -37,7 +37,8 @@
     "redux-form": "^7.3.0",
     "redux-thunk": "^2.2.0",
     "request": "~2.85.0",
-    "yarn": "^1.6.0"
+    "yarn": "^1.6.0",
+    "mongodb": "~3.0.7"
   },
   "devDependencies": {
     "concurrently": "^3.5.1",

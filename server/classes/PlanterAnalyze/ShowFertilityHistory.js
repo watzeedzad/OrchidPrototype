@@ -1,8 +1,8 @@
 const fs = require("fs");
 const mongoose = require("mongoose");
 const project_sensor = mongoose.model("project_Sensor");
+let ObjectId = require("mongodb").ObjectID;
 
-let configFile;
 let projectSensorResult;
 
 export default class ShowFertilityHistory {
@@ -14,74 +14,77 @@ export default class ShowFertilityHistory {
     if (pathGlobal == null) {
       res.sendStatus(500);
     }
-    let projectId = parseInt(req.body.projectId);
+    let projectId = req.body.projectId;
     console.log("projectId-ShowAllFertility: " + projectId);
-    await getConfigFile();
-    await getProjectSensor(projectId, function(error, result) {
-      projectSensorResult = result;
-    });
+    await getProjectSensor(projectId);
     if (typeof projectSensorResult === "undefined") {
       console.log("projectSensorResult undefined");
       res.sendStatus(500);
-    } else if (typeof configFile === "undefined") {
-      console.log("configFile undefined");
-      res.sendStatus(500);
-    } else if (
-      configFile.minFertility == null ||
-      configFile.maxFertility == null
-    ) {
-      console.log("min max undefined");
-      res.sendStatus(500);
     } else {
-      let minConfigFertility = configFile.minFertility;
-      let maxConfigFertility = configFile.maxFertility;
-      var showAllFertility = {
-        minConfigFertility: minConfigFertility,
-        maxConfigFertility: maxConfigFertility,
+      let nowDate = new Date();
+      let projectSensorDataSplice = [];
+      let compareHours = -1;
+      let compareMinutes = -1;
+      for (let index = 0; index < projectSensorResult.length; index++) {
+        let indexDateTime = new Date(projectSensorResult[index].timeStamp);
+        if (
+          indexDateTime.getDate() == nowDate.getDate() &&
+          indexDateTime.getMinutes() < 10
+        ) {
+          if (compareHours == -1 && compareMinutes == -1) {
+            compareHours = indexDateTime.getHours();
+            compareMinutes = indexDateTime.getMinutes();
+          } else if (compareHours < indexDateTime.getHours()) {
+            compareHours = -1;
+            compareMinutes = -1;
+          }
+          if (
+            compareHours == indexDateTime.getHours() &&
+            compareMinutes == indexDateTime.getMinutes()
+          ) {
+            indexDateTime.setHours(indexDateTime.getHours() + 7);
+            projectSensorResult[index].timeStamp = indexDateTime;
+            projectSensorDataSplice.push(projectSensorResult[index]);
+          }
+        }
+      }
+      console.log(projectSensorDataSplice.length);
+      var fertilityHistory = {
         fertilityHistory: [
           {
-            projectId: projectSensorResult[0].projectId,
-            currentFertility: projectSensorResult[0].soilFertilizer
+            currentFertility: projectSensorDataSplice[0].soilFertilizer,
+            timeStamp: projectSensorDataSplice[0].timeStamp
           }
         ]
       };
-      for (let index = 1; index < projectSensorResult.length; index++) {
+      for (let index = 1; index < projectSensorDataSplice.length; index++) {
         var temp = {
-          projectId: projectSensorResult[index].projectId,
-          currentFertility: projectSensorResult[index].soilFertilizer
+          currentFertility: projectSensorDataSplice[index].soilFertilizer,
+          timeStamp: projectSensorDataSplice[index].timeStamp
         };
-        showAllFertility.fertilityHistory.push(temp);
+        fertilityHistory.fertilityHistory.push(temp);
       }
-      res.json(showAllFertility);
+      res.json(fertilityHistory);
     }
   }
 }
 
-async function getConfigFile() {
-  console.log("getConfigFilePath: " + pathGlobal);
-  let config = JSON.parse(
-    require("fs").readFileSync(String(pathGlobal), "utf8")
-  );
-  configFile = config;
-}
-
-async function getProjectSensor(projectId, callback) {
-  let tempDate = await Date.now();
+async function getProjectSensor(projectId) {
   await project_sensor.find(
-    { projectId: projectId },
-    {},
     {
-      createdAt: { $gt: new Date(Date.now() - 12 * 60 * 60 * 1000) }
+      _id: {
+        $gt: ObjectId.createFromTime(Date.now() / 1000 - 26 * 60 * 60)
+      },
+      projectId: projectId
     },
     (err, projectSensorList) => {
       if (err) {
         console.log("Query fail");
         console.log(err);
-        return callback(err);
-      } else if (projectSensorList) {
-        return callback(null, projectSensorList);
       } else {
-        return callback();
+        console.log("Query pass");
+        projectSensorResult = projectSensorList;
+        console.log(projectSensorList);
       }
     }
   );
