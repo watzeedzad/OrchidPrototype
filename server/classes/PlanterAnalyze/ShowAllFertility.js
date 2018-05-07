@@ -73,18 +73,15 @@ async function getConfigFile() {
 }
 
 async function getProjectSensor(greenHouseId) {
-  await project_sensor.find(
+  let result = await project_sensor.find(
     { greenHouseId: greenHouseId },
     {},
-    { sort: { _id: -1 } },
-    (err, projectSensorList) => {
-      if (err) {
-        console.log("Query fail");
-        console.log(err);
-      } else {
-        console.log("Query pass");
-        projectSensorData = projectSensorList;
-      }
-    }
+    { sort: { _id: -1 } }
   );
+  if (result) {
+    projectSensorData = result;
+  } else {
+    projectSensorData = undefined;
+    console.log("Query fail!");
+  }
 }

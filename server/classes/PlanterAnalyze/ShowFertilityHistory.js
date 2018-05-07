@@ -70,22 +70,16 @@ export default class ShowFertilityHistory {
 }
 
 async function getProjectSensor(projectId) {
-  await project_sensor.find(
-    {
-      _id: {
-        $gt: ObjectId.createFromTime(Date.now() / 1000 - 26 * 60 * 60)
-      },
-      projectId: projectId
+  let result = await project_sensor.find({
+    _id: {
+      $gt: ObjectId.createFromTime(Date.now() / 1000 - 48 * 60 * 60)
     },
-    (err, projectSensorList) => {
-      if (err) {
-        console.log("Query fail");
-        console.log(err);
-      } else {
-        console.log("Query pass");
-        projectSensorResult = projectSensorList;
-        console.log(projectSensorList);
-      }
-    }
-  );
+    projectId: projectId
+  });
+  if (result) {
+    projectSensorResult = result;
+  } else {
+    projectSensorResult = undefined;
+    console.log("Query fail!");
+  }
 }
