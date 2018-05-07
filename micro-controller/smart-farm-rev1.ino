@@ -143,7 +143,7 @@ void loop(void)
 int convertToPercent(int value)
 {
         int percentValue = 0;
-        percentValue = map(value, 750, 110, 0, 100);
+        percentValue = map(value, 730, 400, 0, 100);
         if (percentValue == -1)
         {
                 percentValue = 0;
@@ -151,6 +151,10 @@ int convertToPercent(int value)
         if (percentValue >= 100)
         {
                 percentValue = 100;
+        }
+        if (percentValue <= 0)
+        {
+                percentValue = 0;
         }
         return percentValue;
 }
