@@ -8,8 +8,8 @@ const ipfilter = require("express-ipfilter").IpFilter;
 require("dotenv").config();
 
 var ips = ["127.0.0.1", "::1"];
-farmIdGlobal = 0;
-pathGlobal = null;
+farmIdGlobal = 123456789;
+pathGlobal = './conf/farm-1.json';
 origin_url = process.env.ORIGIN_URL;
 db_host = process.env.DB_HOST;
 db_user = process.env.DB_USER;

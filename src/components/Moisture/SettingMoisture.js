@@ -25,8 +25,8 @@ class SettingMoisture extends Component {
 
         return (
             <div>
-                <Form className='form-inline'>
-                    <FormGroup className="mb-2 mr-sm-2 mb-sm-0">
+                <Form >
+                    <FormGroup>
                         <Field name="minSoilMoisture" component={renderField} type="number" label="ความชื้นต่ำสุด" />
                         <Field name="maxSoilMoisture" component={renderField} type="number" label="ความชื้นสูงสุด" />
                         <Button color="primary" onClick={handleSubmit(this.onSubmit)}>บันทึก</Button>

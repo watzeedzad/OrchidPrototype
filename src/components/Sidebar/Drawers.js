@@ -76,7 +76,7 @@ class DrawerResponsive extends Component {
                         >
                             <MenuIcon />
                         </IconButton>
-                        <Typography variant='title' color='white' align='left' noWrap>
+                        <Typography variant='title' colors='white' align='left' noWrap>
                             Orchid care Assistance prototype system
                         </Typography>
                     </Toolbar>

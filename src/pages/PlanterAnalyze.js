@@ -6,7 +6,7 @@ class PlanterAnalyze extends Component {
     render() {       
         return (
             <div>
-                <Moisture/>
+                <Moisture/><br/><hr/>
                 <ShowAllFertility/>
             </div>
         )

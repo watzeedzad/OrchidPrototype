@@ -3,13 +3,14 @@
 const initialState = {
     tempConfig: { data: null, isLoading: true, isRejected: false },
     temp: { data: null, isLoading: true, isRejected: false },
+    tempHistory: { data: null, isLoading: true, isRejected: false },
 
     humidityConfig: { data: null, isLoading: true, isRejected: false },
     humidity: { data: null, isLoading: true, isRejected: false }
 }
 export default (state = initialState, action) => {
     switch (action.type) {
-        
+
         case 'LOAD_TEMP_PENDING':
             return { ...state, temp: { data: null, isLoading: true, isRejected: false } }
         case 'LOAD_TEMP_SUCCESS':
@@ -21,6 +22,13 @@ export default (state = initialState, action) => {
             return { ...state, tempConfig: { data: null, isLoading: false, isRejected: false } }
         case 'SAVE_TEMPCONFIG_REJECTED':
             return { ...state, tempConfig: { data: action.payload, isLoading: false, isRejected: true } }
+
+        case 'LOAD_TEMPHISTORY_PENDING':
+            return { ...state, tempHistory: { data: null, isLoading: true, isRejected: false } }
+        case 'LOAD_TEMPHISTORY_SUCCESS':
+            return { ...state, tempHistory: { data: action.payload, isLoading: false, isRejected: false } }
+        case 'LOAD_TEMPHISTORY_REJECTED':
+            return { ...state, tempHistory: { data: action.payload, isLoading: false, isRejected: true } }
 
         case 'LOAD_HUMIDITY_PENDING':
             return { ...state, humidity: { data: null, isLoading: true, isRejected: false } }

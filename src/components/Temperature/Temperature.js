@@ -3,6 +3,7 @@ import { getTemp } from '../../redux/actions/weatherActions'
 import { connect } from 'react-redux'
 import TemperatureGauge from '../Temperature/TemperatureGauge'
 import SettingTemperature from '../Temperature/SettingTemperature'
+import TemperatureGraph from '../Temperature/TemperatureGraph'
 import { Container, Row, Col } from 'reactstrap';
 import 'bootstrap/dist/css/bootstrap.min.css';
 
@@ -34,12 +35,15 @@ class Temperature extends Component {
                                 currentValue={data.currentTemperature}
                             />
                         </Col>
-                        <Col xs='12' sm='12' md='12' lg='12' xl='12'>
+                        <Col xs='6' sm='6' md='6' lg='6' xl='6'>
                             <SettingTemperature
                                 minConfig={data.minConfigTemperature}
                                 maxConfig={data.maxConfigTemperature}
                                 onToggle={this.toggle}
                             />
+                        </Col>
+                        <Col xs='12' sm='12' md='12' lg='12' xl='12'>
+                            <TemperatureGraph/>
                         </Col>
                     </Row>
                 </div>

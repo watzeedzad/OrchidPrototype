@@ -24,7 +24,7 @@ const plotOptions = {
 };
 
 const paneOptions = {
-    center: ["50%", "85%"],
+    center: ["40%", "75%"],
     size: "100%",
     startAngle: -90,
     endAngle: 90,

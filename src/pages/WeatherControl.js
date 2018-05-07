@@ -6,7 +6,7 @@ class WeatherControl extends Component {
     render() {       
         return (
             <div>
-                <Temperature />
+                <Temperature /><br/><hr/>
                 <Humidity />
             </div>
         )
