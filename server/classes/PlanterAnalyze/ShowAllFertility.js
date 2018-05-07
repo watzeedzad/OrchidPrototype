@@ -58,6 +58,7 @@ export default class ShowAllFertility {
         };
         showAllFertility.allFertility.push(temp);
       }
+      showAllFertility.allFertility.sort();
       res.json(showAllFertility);
     }
   }

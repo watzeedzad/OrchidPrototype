@@ -30,15 +30,16 @@ class ShowAllFertility extends Component {
                         {data.allFertility && data.allFertility.map(e => {
                             return (
                                 <Col xs='6' sm='6' md='6' lg='6' xl='6'>
+                                    โปรเจ็คที่ : {e.projectId}
                                     <Speedometer
                                         min={0}
                                         max={100}
                                         minConfig={data.minConfigFertility}
                                         maxConfig={data.maxConfigFertility}
                                         currentValue={e.currentFertility}
-                                        minColor={"#C7F3FF"}
-                                        midColor={"#51DBFF"}
-                                        maxColor={"#00B9E9"} />
+                                        minColor={"#E8B79E"}
+                                        midColor={"#D98559"}
+                                        maxColor={"#BE5C2A"} />
                                     <Button><a href="">ตั้งค่า</a></Button>
                                 </Col>
                             )
@@ -50,7 +51,7 @@ class ShowAllFertility extends Component {
     }
 
     toggle = () => {
-        this.props.dispatch(getAllFertility({ greenHouseId: 25197568 }))
+        this.props.dispatch(getAllFertility({ greenHouseId: 789456123 }))
     }
 }
 

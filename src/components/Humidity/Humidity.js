@@ -47,7 +47,7 @@ class Humidity extends Component {
     }
 
     toggle = () => {
-        this.props.dispatch(getHumidity({ greenHouseId: 25197568 }))
+        this.props.dispatch(getHumidity({ greenHouseId: 789456123 }))
     }
 }
 

@@ -48,7 +48,7 @@ class Temperature extends Component {
     }
 
     toggle = () => {
-        this.props.dispatch(getTemp({ greenHouseId: 25197568 }))
+        this.props.dispatch(getTemp({ greenHouseId: 789456123 }))
     }
 }
 
