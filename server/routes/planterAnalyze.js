@@ -79,7 +79,7 @@ router.post("/showSoilMoisture", (req, res) => {
   new ShowSoilMoisture(req, res);
 });
 
-router.use("showFertilityHistory", (req, res, next) => {
+router.use("/showFertilityHistory", (req, res, next) => {
   res.setHeader("Access-Control-Allow-Origin", origin_url);
   res.setHeader(
     "Access-Control-Allow-Headers",
