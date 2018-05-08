@@ -54,12 +54,12 @@ function validate(values) {
     if (values.minHumidity === "") {
         errors.minHumidity = 'ต้องกรอกความชื้นต่ำสุด';
     }else if(min < 0 || min > 60 ){
-        errors.minHumidity = 'ความชื้นต้องอยู่ระหว่าง 0 - 60ํ  ํC ';
+        errors.minHumidity = 'ความชื้นต้องอยู่ระหว่าง 0 - 100 ';
     }
     if (values.maxHumidity === "") {
         errors.maxHumidity = 'ต้องกรอกความชื้นสูงสุด';
     }else if(max < 0 || max > 60 ){
-        errors.maxHumidity = 'ความชื้นต้องอยู่ระหว่าง 0 - 60ํ  ํC ';
+        errors.maxHumidity = 'ความชื้นต้องอยู่ระหว่าง 0 - 100 ';
     }
     if(min > max ){
         errors.minHumidity = 'ความชื้นต่ำสุดต้องน้อยกว่าสูงสุด';

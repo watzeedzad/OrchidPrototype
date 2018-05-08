@@ -54,12 +54,12 @@ function validate(values) {
     if (values.minSoilMoisture === "") {
         errors.minSoilMoisture = 'ต้องกรอกความชื้นต่ำสุด';
     }else if(min < 0 || min > 60 ){
-        errors.minSoilMoisture = 'ความชื้นต้องอยู่ระหว่าง 0 - 60ํ  ํC ';
+        errors.minSoilMoisture = 'ความชื้นต้องอยู่ระหว่าง 0 - 100 ';
     }
     if (values.maxSoilMoisture === "") {
         errors.maxSoilMoisture = 'ต้องกรอกความชื้นสูงสุด';
     }else if(max < 0 || max > 60 ){
-        errors.maxSoilMoisture = 'ความชื้นต้องอยู่ระหว่าง 0 - 60ํ  ํC ';
+        errors.maxSoilMoisture = 'ความชื้นต้องอยู่ระหว่าง 0 - 100 ';
     }
     if(min > max ){
         errors.minSoilMoisture = 'ความชื้นต่ำสุดต้องน้อยกว่าสูงสุด';

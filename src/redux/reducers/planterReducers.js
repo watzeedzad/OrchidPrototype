@@ -3,7 +3,11 @@
 const initialState = {
     moistureConfig: { data: null, isLoading: true, isRejected: false },
     moisture: { data: null, isLoading: true, isRejected: false },
+
+    fertilityConfig: { data: null, isLoading: true, isRejected: false },
+    fertility: { data: null, isLoading: true, isRejected: false },
     fertilitys: { data: null, isLoading: true, isRejected: false },
+    fertilityHistory: { data: null, isLoading: true, isRejected: false },
 }
 export default (state = initialState, action) => {
     switch (action.type) {
@@ -20,12 +24,31 @@ export default (state = initialState, action) => {
         case 'SAVE_MOISTURECONFIG_REJECTED':
             return { ...state, moistureConfig: { data: action.payload, isLoading: false, isRejected: true } }
 
+        case 'LOAD_FERTILITY_PENDING':
+            return { ...state, fertility: { data: null, isLoading: true, isRejected: false } }
+        case 'LOAD_FERTILITY_SUCCESS':
+            return { ...state, fertility: { data: action.payload, isLoading: false, isRejected: false } }
+        case 'LOAD_FERTILITY_REJECTED':
+            return { ...state, fertility: { data: action.payload, isLoading: false, isRejected: true } }
+
         case 'LOAD_ALLFERTILITY_PENDING':
             return { ...state, fertilitys: { data: null, isLoading: true, isRejected: false } }
         case 'LOAD_ALLFERTILITY_SUCCESS':
             return { ...state, fertilitys: { data: action.payload, isLoading: false, isRejected: false } }
         case 'LOAD_ALLFERTILITY_REJECTED':
             return { ...state, fertilitys: { data: action.payload, isLoading: false, isRejected: true } }
+
+        case 'LOAD_FERTILITYHISTORY_PENDING':
+            return { ...state, fertilityHistory: { data: null, isLoading: true, isRejected: false } }
+        case 'LOAD_FERTILITYHISTORY_SUCCESS':
+            return { ...state, fertilityHistory: { data: action.payload, isLoading: false, isRejected: false } }
+        case 'LOAD_FERTILITYHISTORY_REJECTED':
+            return { ...state, fertilityHistory: { data: action.payload, isLoading: false, isRejected: true } }
+
+        case 'SAVE_FERTILITYCONFIG_SUCCESS':
+            return { ...state, fertilityConfig: { data: null, isLoading: false, isRejected: false } }
+        case 'SAVE_FERTILITYCONFIG_REJECTED':
+            return { ...state, fertilityConfig: { data: action.payload, isLoading: false, isRejected: true } }
 
         default:
             return state

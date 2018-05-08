@@ -1,6 +1,7 @@
 import App from './pages/App'
 import WeatherControl from './pages/WeatherControl'
 import PlanterAnalyze from './pages/PlanterAnalyze'
+import FertilityControl from './pages/FertilityControl'
 import Login from './pages/Login'
 
 const routes = [{
@@ -9,7 +10,8 @@ const routes = [{
     indexRoute: { component: Login },
     childRoutes: [
         { path: 'weatherControl', component: WeatherControl },
-        { path: 'planterAnalyze', component: PlanterAnalyze }
+        { path: 'planterAnalyze', component: PlanterAnalyze },
+        { path: 'fertilityControl', component: FertilityControl },
     ]
 }]
 

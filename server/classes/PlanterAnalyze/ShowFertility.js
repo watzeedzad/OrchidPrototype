@@ -32,9 +32,10 @@ export default class ShowFertility {
       let maxConfigFertility = configFile.maxFertility;
       let cuurentFertility = projectSensorData.soilFertilizer;
       var showFertility = {
+        projectId: projectId,
         minConfigFertility: minConfigFertility,
         maxConfigFertility: maxConfigFertility,
-        cuurentFertility: cuurentFertility
+        currentFertility: cuurentFertility
       };
       res.json(showFertility);
     }

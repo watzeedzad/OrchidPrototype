@@ -1,9 +1,10 @@
 import React, { Component } from 'react';
-import { getAllFertility } from '../../redux/actions/planterActions'
+import { getAllFertility, getFertility } from '../../redux/actions/planterActions'
 import { connect } from 'react-redux'
 import { Container, Row, Col } from 'reactstrap';
 import Speedometer from '../../Utils/Speedometer'
 import { Button } from 'reactstrap';
+import { browserHistory } from 'react-router'
 import 'bootstrap/dist/css/bootstrap.min.css';
 
 class ShowAllFertility extends Component {
@@ -28,8 +29,9 @@ class ShowAllFertility extends Component {
                 <div>
                     <Row>
                         {data.allFertility && data.allFertility.map(e => {
+                            let projectId = e.projectId
                             return (
-                                <Col xs='6' sm='6' md='6' lg='6' xl='6'>
+                                <Col xs='6' sm='6' md='6' lg='6' xl='6' key={e.projectId}>
                                     โปรเจ็คที่ : {e.projectId}
                                     <Speedometer
                                         min={0}
@@ -40,7 +42,8 @@ class ShowAllFertility extends Component {
                                         minColor={"#E8B79E"}
                                         midColor={"#D98559"}
                                         maxColor={"#BE5C2A"} />
-                                    <Button><a href="">ตั้งค่า</a></Button>
+                                    <Button color="primary" onClick={() => { this.props.dispatch(getFertility({ projectId })) }}>ตั้งค่า</Button>
+                                    <br /><hr />
                                 </Col>
                             )
                         })}
@@ -50,8 +53,9 @@ class ShowAllFertility extends Component {
         )
     }
 
-    toggle = () => {
-        this.props.dispatch(getAllFertility({ greenHouseId: 789456123 }))
+    onSubmit = (values) => {
+        console.log(values)
+        this.props.dispatch(getFertility({ values }))
     }
 }
 
