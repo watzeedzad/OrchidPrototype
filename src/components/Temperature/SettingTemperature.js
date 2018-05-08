@@ -25,13 +25,13 @@ class SettingTemperature extends Component {
 
         return (
             <div>
-                <Form>
+                <form>
                     <FormGroup >
                         <Field name="minTemperature" component={renderField} type="number" label="อุณหภูมิต่ำสุด" />
                         <Field name="maxTemperature" component={renderField} type="number" label="อุณหภูมิสูงสุด" />
                         <Button color="primary" onClick={handleSubmit(this.onSubmit)}>บันทึก</Button>
                     </FormGroup>
-                </Form>
+                </form>
             </div>
         )
     }
