@@ -1,1 +1,1 @@
-{"minTemperature":20,"maxTemperature":35,"minHumidity":33,"maxHumidity":60,"minFertility":25,"maxFertility":60,"minAmbientLight":null,"maxAmbientLight":null,"minSoilMoisture":30,"maxSoilMoisture":55}
+{"minTemperature":20,"maxTemperature":20,"minHumidity":33,"maxHumidity":60,"minFertility":25,"maxFertility":60,"minAmbientLight":null,"maxAmbientLight":null,"minSoilMoisture":30,"maxSoilMoisture":55}
