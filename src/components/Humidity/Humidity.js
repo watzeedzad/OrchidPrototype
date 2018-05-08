@@ -5,6 +5,7 @@ import HumidityGauge from '../Humidity/HumidityGauge'
 import SettingHumidity from '../Humidity/SettingHumidity'
 import { Container, Row, Col } from 'reactstrap';
 import 'bootstrap/dist/css/bootstrap.min.css';
+import HumidityGraph from './HumidityGraph';
 
 class Humidity extends Component {
 
@@ -39,6 +40,9 @@ class Humidity extends Component {
                                 maxConfig={data.maxConfigHumidity}
                                 onToggle={this.toggle}
                             />
+                        </Col>
+                        <Col xs='12' sm='12' md='12' lg='12' xl='12'>
+                            <HumidityGraph/>
                         </Col>
                     </Row>
                 </div>

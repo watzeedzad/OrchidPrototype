@@ -6,7 +6,8 @@ const initialState = {
     tempHistory: { data: null, isLoading: true, isRejected: false },
 
     humidityConfig: { data: null, isLoading: true, isRejected: false },
-    humidity: { data: null, isLoading: true, isRejected: false }
+    humidity: { data: null, isLoading: true, isRejected: false },
+    humidityHistory: { data: null, isLoading: true, isRejected: false }
 }
 export default (state = initialState, action) => {
     switch (action.type) {
@@ -41,6 +42,13 @@ export default (state = initialState, action) => {
             return { ...state, humidityConfig: { data: null, isLoading: false, isRejected: false } }
         case 'SAVE_HUMIDITYCONFIG_REJECTED':
             return { ...state, humidityConfig: { data: action.payload, isLoading: false, isRejected: true } }
+
+        case 'LOAD_HUMIDITYHISTORY_PENDING':
+            return { ...state, humidityHistory: { data: null, isLoading: true, isRejected: false } }
+        case 'LOAD_HUMIDITYHISTORY_SUCCESS':
+            return { ...state, humidityHistory: { data: action.payload, isLoading: false, isRejected: false } }
+        case 'LOAD_HUMIDITYHISTORY_REJECTED':
+            return { ...state, humidityHistory: { data: action.payload, isLoading: false, isRejected: true } }
 
         default:
             return state

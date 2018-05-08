@@ -7,7 +7,7 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 class FertilityGraph extends Component {
 
     componentDidMount() {
-        this.props.dispatch(getFertilityHistory(this.props.projectId))
+        this.props.dispatch(getFertilityHistory({projectId: this.props.projectId}))
     }
 
     render() {

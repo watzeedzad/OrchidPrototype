@@ -53,10 +53,6 @@ class ShowAllFertility extends Component {
         )
     }
 
-    onSubmit = (values) => {
-        console.log(values)
-        this.props.dispatch(getFertility({ values }))
-    }
 }
 
 function mapStateToProps(state) {
