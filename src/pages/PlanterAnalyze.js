@@ -2,17 +2,40 @@ import React, { Component } from 'react'
 import Moisture from '../components/Moisture/Moisture'
 import ShowAllFertility from '../components/Fertility/ShowAllFertility'
 import Sidebar from '../components/Sidebar/Drawers'
+import { withStyles } from 'material-ui/styles';
+import PropTypes from 'prop-types';
 
-class PlanterAnalyze extends Component {
-    render() {       
+const styles = theme => ({
+    root: {
+      flexGrow: 1,
+      zIndex: 1,
+      overflow: 'hidden',
+      position: 'relative',
+      display: 'flex',
+    },
+    content: {
+        flexGrow: 1,
+        backgroundColor: theme.palette.background.default,
+        padding: theme.spacing.unit * 3,
+      },
+      toolbar: theme.mixins.toolbar,
+    });
+function PlanterAnalyze(props){    
+    const { classes } = props;
+
         return (
-            <div>
-                <Sidebar/>
+            <div className={classes.root}>
+                <div>
+                    <Sidebar/>
+                </div>
+                <main className={classes.content}>
+                <div className={classes.toolbar} />
                 <Moisture/><br/><hr/>
                 <ShowAllFertility/>
+                </main>
             </div>
         )
-    }
+    
 }
 
-export default PlanterAnalyze
+export default withStyles(styles, { withTheme: true })(PlanterAnalyze)
