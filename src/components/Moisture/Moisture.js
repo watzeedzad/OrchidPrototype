@@ -4,6 +4,7 @@ import { connect } from 'react-redux'
 import MoistureGauge from '../Moisture/MoistureGauge'
 import SettingMoisture from '../Moisture/SettingMoisture'
 import { Container, Row, Col } from 'reactstrap';
+import MoistureGraph from './MoistureGraph';
 import 'bootstrap/dist/css/bootstrap.min.css';
 
 class Moisture extends Component {
@@ -40,6 +41,9 @@ class Moisture extends Component {
                                 maxConfig={data.maxConfigSoilMoisture}
                                 onToggle={this.toggle}
                             />
+                        </Col>
+                        <Col xs='12' sm='12' md='12' lg='12' xl='12'>
+                            <MoistureGraph/>
                         </Col>
                     </Row>
                 </div>

@@ -28,7 +28,7 @@ class HumidityGraph extends Component {
       
         return (
             <div>
-                <LineGraph history={history} name='ประวัติอุณหภูมิในวันนี้' />
+                <LineGraph history={history} name='ประวัติความชื้นในอากาศของวันนี้' />
             </div>
         )
     }

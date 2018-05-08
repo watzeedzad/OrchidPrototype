@@ -3,6 +3,7 @@
 const initialState = {
     moistureConfig: { data: null, isLoading: true, isRejected: false },
     moisture: { data: null, isLoading: true, isRejected: false },
+    moistureHistory: { data: null, isLoading: true, isRejected: false },
 
     fertilityConfig: { data: null, isLoading: true, isRejected: false },
     fertility: { data: null, isLoading: true, isRejected: false },
@@ -23,6 +24,13 @@ export default (state = initialState, action) => {
             return { ...state, moistureConfig: { data: null, isLoading: false, isRejected: false } }
         case 'SAVE_MOISTURECONFIG_REJECTED':
             return { ...state, moistureConfig: { data: action.payload, isLoading: false, isRejected: true } }
+
+        case 'LOAD_MOISTUREHISTORY_PENDING':
+            return { ...state, moistureHistory: { data: null, isLoading: true, isRejected: false } }
+        case 'LOAD_MOISTUREHISTORY_SUCCESS':
+            return { ...state, moistureHistory: { data: action.payload, isLoading: false, isRejected: false } }
+        case 'LOAD_MOISTUREHISTORY_REJECTED':
+            return { ...state, moistureHistory: { data: action.payload, isLoading: false, isRejected: true } }
 
         case 'LOAD_FERTILITY_PENDING':
             return { ...state, fertility: { data: null, isLoading: true, isRejected: false } }
