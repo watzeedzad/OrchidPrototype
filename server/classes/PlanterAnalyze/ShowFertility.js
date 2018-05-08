@@ -18,18 +18,22 @@ export default class ShowFertility {
     console.log("projectId: " + projectId);
     await getProjectSensor(projectId);
     await getConfigFile();
+    let projectIdIndex = await seekProjectIdIndex(
+      configFile.fertilityConfigs,
+      projectId
+    );
     if (typeof projectSensorData === "undefined") {
       res.sendStatus(500);
     } else if (typeof configFile === "undefined") {
       res.sendStatus(500);
-    } else if (
-      configFile.minFertility == null ||
-      configFile.maxFertility == null
-    ) {
+    } else if (projectIdIndex == -1) {
       res.sendStatus(500);
     } else {
-      let minConfigFertility = configFile.minFertility;
-      let maxConfigFertility = configFile.maxFertility;
+      console.log("enter main body");
+      let minConfigFertility =
+        configFile.fertilityConfigs[projectIdIndex].minFertility;
+      let maxConfigFertility =
+        configFile.fertilityConfigs[projectIdIndex].maxFertility;
       let cuurentFertility = projectSensorData.soilFertilizer;
       var showFertility = {
         projectId: projectId,
@@ -70,4 +74,13 @@ async function getProjectSensor(projectId) {
       }
     }
   );
+}
+
+function seekProjectIdIndex(dataArray, projectId) {
+  console.log(dataArray);
+  let index = dataArray.findIndex(function(item, i) {
+    return item.projectId === projectId;
+  });
+
+  return index;
 }

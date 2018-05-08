@@ -17,20 +17,24 @@ export default class ConfigFertility {
     }
     let minConfigFertility = parseFloat(req.body.minFertility);
     let maxConfigFertility = parseFloat(req.body.maxFertility);
+    let projectId = parseInt(req.body.projectId);
+    let projectConfigIndex = await seekProjectIdIndex(
+      configFile.fertilityConfigs,
+      projectId
+    );
     async function writeFile() {
       await writeConfigFile(configFile);
       res.sendStatus(200);
     }
-    if (
-      typeof minConfigFertility === "undefined" ||
-      typeof maxConfigFertility === "undefined"
-    ) {
-      res.sendStatus(500);
-    } else if (minConfigFertility > maxConfigFertility) {
+    if (minConfigFertility > maxConfigFertility) {
       res.sendStatus(500);
     } else {
-      configFile.minFertility = minConfigFertility;
-      configFile.maxFertility = maxConfigFertility;
+      let updateData = {
+        projectId: projectId,
+        minFertility: minConfigFertility,
+        maxFertility: maxConfigFertility
+      };
+      configFile.fertilityConfigs[projectConfigIndex] = updateData;
       writeFile();
     }
   }
@@ -53,4 +57,16 @@ async function writeConfigFile(configFile) {
       console.log("write with no error");
     }
   });
+}
+
+function seekProjectIdIndex(dataArray, projectId) {
+  console.log(dataArray);
+  let index = dataArray.findIndex(function(item, i) {
+    return item.projectId === projectId;
+  });
+  if (index == -1) {
+    return dataArray.length;
+  } else {
+    return index;
+  }
 }

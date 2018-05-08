@@ -23,12 +23,7 @@ export default class ConfigTemperature {
       await writeConfigFile(configFile);
       res.sendStatus(200);
     }
-    if (
-      typeof minConfigTemp === "undefined" ||
-      typeof maxConfigTemp === "undefined"
-    ) {
-      res.sendStatus(500);
-    } else if (minConfigTemp > maxConfigTemp) {
+    if (minConfigTemp > maxConfigTemp) {
       res.sendStatus(500);
     } else {
       configFile.minTemperature = minConfigTemp;

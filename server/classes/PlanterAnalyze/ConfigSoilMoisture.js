@@ -23,12 +23,7 @@ export default class ConfigSoilMoisture {
       await writeConfigFile(configFile);
       res.sendStatus(200);
     }
-    if (
-      typeof minConfigSoilMois === "undefined" ||
-      typeof maxConfigSoilMois === "undefined"
-    ) {
-      res.sendStatus(500);
-    } else if (minConfigSoilMois > maxConfigSoilMois) {
+    if (minConfigSoilMois > maxConfigSoilMois) {
       res.sendStatus(500);
     } else {
       configFile.minSoilMoisture = minConfigSoilMois;

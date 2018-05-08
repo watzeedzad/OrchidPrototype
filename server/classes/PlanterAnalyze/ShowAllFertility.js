@@ -24,12 +24,6 @@ export default class ShowAllFertility {
     } else if (typeof configFile === "undefined") {
       console.log("configFile undefined");
       res.sendStatus(500);
-    } else if (
-      configFile.minFertility == null ||
-      configFile.maxFertility == null
-    ) {
-      console.log("min max undefined");
-      res.sendStatus(500);
     } else {
       let countProjectId = [];
       let projectSensorDataSplice = [];
@@ -39,21 +33,22 @@ export default class ShowAllFertility {
           countProjectId.push(projectSensorData[index].projectId);
         }
       }
-      let minConfigFertility = configFile.minFertility;
-      let maxConfigFertility = configFile.maxFertility;
       var showAllFertility = {
-        minConfigFertility: minConfigFertility,
-        maxConfigFertility: maxConfigFertility,
-        allFertility: [
-          {
-            projectId: projectSensorDataSplice[0].projectId,
-            currentFertility: projectSensorDataSplice[0].soilFertilizer
-          }
-        ]
+        allFertility: []
       };
-      for (let index = 1; index < projectSensorDataSplice.length; index++) {
+      for (let index = 0; index < projectSensorDataSplice.length; index++) {
+        let projectConfigIndex = seekProjectIdIndex(
+          configFile.fertilityConfigs,
+          projectSensorDataSplice[index].projectId
+        );
+        if (projectConfigIndex == -1) {
+          continue;
+        }
         var temp = {
           projectId: projectSensorDataSplice[index].projectId,
+          minFertility:
+            configFile.fertilityConfigs[projectConfigIndex].minFertility,
+          maxFertility: configFile.fertilityConfigs[projectConfigIndex].maxFertility,
           currentFertility: projectSensorDataSplice[index].soilFertilizer
         };
         showAllFertility.allFertility.push(temp);
@@ -84,4 +79,13 @@ async function getProjectSensor(greenHouseId) {
     projectSensorData = undefined;
     console.log("Query fail!");
   }
+}
+
+function seekProjectIdIndex(dataArray, projectId) {
+  console.log(dataArray);
+  let index = dataArray.findIndex(function(item, i) {
+    return item.projectId === projectId;
+  });
+
+  return index;
 }

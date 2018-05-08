@@ -23,12 +23,7 @@ export default class ConfigHumidity {
       await writeConfigFile(configFile);
       res.sendStatus(200);
     }
-    if (
-      typeof minConfigHumid === "undefined" ||
-      typeof maxConfigHumid === "undefined"
-    ) {
-      res.sendStatus(500);
-    } else if (minConfigHumid > maxConfigHumid) {
+    if (minConfigHumid > maxConfigHumid) {
       res.sendStatus(500);
     } else {
       configFile.minHumidity = minConfigHumid;
