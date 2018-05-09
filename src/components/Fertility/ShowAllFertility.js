@@ -36,8 +36,8 @@ class ShowAllFertility extends Component {
                                     <Speedometer
                                         min={0}
                                         max={100}
-                                        minConfig={data.minConfigFertility}
-                                        maxConfig={data.maxConfigFertility}
+                                        minConfig={e.minFertility}
+                                        maxConfig={e.maxFertility}
                                         currentValue={e.currentFertility}
                                         minColor={"#E8B79E"}
                                         midColor={"#D98559"}

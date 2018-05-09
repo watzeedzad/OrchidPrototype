@@ -1,8 +1,8 @@
 import React, { Component } from 'react';
-import { Field, reduxForm } from 'redux-form';
+import { Field, reduxForm ,Form} from 'redux-form';
 import { saveFertilityConfig } from '../../redux/actions/planterActions'
 import renderField from '../../Utils/renderField'
-import { Button, FormGroup, Form } from 'reactstrap';
+import { Button, FormGroup } from 'reactstrap';
 
 
 class SettingFertility extends Component {
@@ -14,6 +14,7 @@ class SettingFertility extends Component {
 
     handleInitialize() {
         let initData = {
+            "projectId": this.props.projectId,
             "minFertility": this.props.minConfig,
             "maxFertility": this.props.maxConfig,
         };
@@ -27,6 +28,7 @@ class SettingFertility extends Component {
             <div>
                 <Form >
                     <FormGroup>
+                        <Field name="projectId" component={renderField} type="hidden" />
                         <Field name="minFertility" component={renderField} type="number" label="ปริมาณแร่ธาตุต่ำสุด" />
                         <Field name="maxFertility" component={renderField} type="number" label="ปริมาณแร่ธาตุสูงสุด" />
                         <Button color="primary" onClick={handleSubmit(this.onSubmit)}>บันทึก</Button>

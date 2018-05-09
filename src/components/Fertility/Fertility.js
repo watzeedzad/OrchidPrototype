@@ -35,6 +35,7 @@ class Fertility extends Component {
                             <SettingFertility
                                 minConfig={data.minConfigFertility}
                                 maxConfig={data.maxConfigFertility}
+                                projectId={data.projectId}
                                 onToggle={() => {this.props.dispatch(getFertility({ projectId: data.projectId }))}}
                             />
                         </Col>
