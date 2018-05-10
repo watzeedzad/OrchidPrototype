@@ -79,7 +79,7 @@ router.post("/showTemperatureHistory", (req, res) => {
 });
 
 router.use("/showHumidityHistory", (req, res, next) => {
-  res.setHeader("Access-Control-Allow-Origin", "http://localhost:3000");
+  res.setHeader("Access-Control-Allow-Origin", origin_url);
   res.setHeader(
     "Access-Control-Allow-Headers",
     "X-Requested-With,content-type"
