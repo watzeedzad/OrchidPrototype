@@ -1,7 +1,9 @@
 const mongoose = require("mongoose");
 const autoIncrement = require("mongoose-sequence")(mongoose);
 
-const { Schema } = mongoose;
+const {
+  Schema
+} = mongoose;
 
 const greenHouse_SensorSchema = new Schema({
   temperature: Number,
@@ -12,5 +14,7 @@ const greenHouse_SensorSchema = new Schema({
   greenHouseId: Number
 });
 
-greenHouse_SensorSchema.plugin(autoIncrement, {inc_field: "greenHouseSensorId"});
+greenHouse_SensorSchema.plugin(autoIncrement, {
+  inc_field: "greenHouseSensorId"
+});
 mongoose.model("greenHouse_Sensor", greenHouse_SensorSchema);

@@ -43,6 +43,10 @@ require("./models/GreenHouse");
 require("./models/farm");
 require("./models/know_controller");
 require("./models/user");
+require("./models/fertilizer_history");
+require("./models/water_history");
+require("./models/growth_rate");
+require("./models/Project");
 
 //load routes
 const sensorRoutes = require("./routes/sensorRoutes");
