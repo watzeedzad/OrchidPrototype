@@ -61,7 +61,7 @@ class LineGraph extends Component {
             ]}
           />
 
-          <YAxis title={{ text: "อุณหภูมิ" }} id="myAxis">
+          <YAxis title={{ text: this.props.yName }} id="myAxis">
             <Series
               id="series"
               data={this.props.history}

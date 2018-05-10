@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import Moisture from '../components/Moisture/Moisture'
+import MoistureTab from '../components/Moisture/MoistureTab'
 import ShowAllFertility from '../components/Fertility/ShowAllFertility'
 import Sidebar from '../components/Sidebar/Drawers'
 import { withStyles } from 'material-ui/styles';
@@ -30,7 +30,7 @@ function PlanterAnalyze(props){
                 </div>
                 <main className={classes.content}>
                 <div className={classes.toolbar} />
-                <Moisture/><br/><hr/>
+                <MoistureTab/><br/><hr/>
                 <ShowAllFertility/>
                 </main>
             </div>

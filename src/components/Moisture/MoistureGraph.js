@@ -20,7 +20,9 @@ class MoistureGraph extends Component {
         if (moistureHistory.isLoading) {
             return <div>Loading...</div>
         }
-
+        if (data.message){
+            return <div className="alert alert-danger">{data.message}</div>
+        }
         const history = []
         for (let index = 0; index < data.soilMoistureHistory.length; index++) {
             history[index] = data.soilMoistureHistory[index].currentSoilMoisture;
@@ -28,7 +30,7 @@ class MoistureGraph extends Component {
       
         return (
             <div>
-                <LineGraph history={history} name='ประวัติความชื้นในเครื่องปลูกของวันนี้' />
+                <LineGraph history={history} name='ประวัติความชื้นในเครื่องปลูกของวันนี้' yName='ความชื้นในเครื่องปลูก'/>
             </div>
         )
     }

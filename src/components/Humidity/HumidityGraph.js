@@ -20,7 +20,9 @@ class HumidityGraph extends Component {
         if (humidityHistory.isLoading) {
             return <div>Loading...</div>
         }
-
+        if (data.message){
+            return <div className="alert alert-danger">{data.message}</div>
+        }
         const history = []
         for (let index = 0; index < data.humidityHistory.length; index++) {
             history[index] = data.humidityHistory[index].currentHumidity;
@@ -28,7 +30,7 @@ class HumidityGraph extends Component {
       
         return (
             <div>
-                <LineGraph history={history} name='ประวัติความชื้นในอากาศของวันนี้' />
+                <LineGraph history={history} name='ประวัติความชื้นในอากาศของวันนี้' yName='ความชื้นในอากาศ'/>
             </div>
         )
     }

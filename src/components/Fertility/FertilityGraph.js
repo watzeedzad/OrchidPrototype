@@ -20,7 +20,9 @@ class FertilityGraph extends Component {
         if (fertilityHistory.isLoading) {
             return <div>Loading...</div>
         }
-
+        if (data.message){
+            return <div className="alert alert-danger">{data.message}</div>
+        }
         const history = []
         for (let index = 0; index < data.fertilityHistory.length; index++) {
             history[index] = data.fertilityHistory[index].currentFertility;
@@ -28,7 +30,7 @@ class FertilityGraph extends Component {
       
         return (
             <div>
-                <LineGraph history={history} name='ประวัติความอุดมสมบูรณ์ในเครื่องปลูกของวันนี้' />
+                <LineGraph history={history} name='ประวัติความอุดมสมบูรณ์ในเครื่องปลูกของวันนี้' yName='ปริมาณแร่ธาตุ'/>
             </div>
         )
     }

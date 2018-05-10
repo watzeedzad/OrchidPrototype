@@ -49,6 +49,9 @@ export default class ShowFertilityHistory {
         }
       }
       console.log(projectSensorDataSplice.length);
+      if (projectSensorDataSplice.length == 0) {
+        res.json({ status: 500, message: 'ไม่มีประวัติอยู่ในระบบ' })
+      }
       var fertilityHistory = {
         fertilityHistory: [
           {

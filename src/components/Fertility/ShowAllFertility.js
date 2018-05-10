@@ -5,6 +5,7 @@ import { Container, Row, Col } from 'reactstrap';
 import Speedometer from '../../Utils/Speedometer'
 import { Button } from 'reactstrap';
 import { browserHistory } from 'react-router'
+import { debounce } from 'lodash'
 import 'bootstrap/dist/css/bootstrap.min.css';
 
 class ShowAllFertility extends Component {
@@ -42,7 +43,7 @@ class ShowAllFertility extends Component {
                                         minColor={"#E8B79E"}
                                         midColor={"#D98559"}
                                         maxColor={"#BE5C2A"} />
-                                    <Button color="primary" onClick={() => { this.props.dispatch(getFertility({ projectId })) }}>ตั้งค่า</Button>
+                                    <Button color="primary" onClick={debounce(() => { this.props.dispatch(getFertility({ projectId })) },500)}>ตั้งค่า</Button>
                                     <br /><hr />
                                 </Col>
                             )

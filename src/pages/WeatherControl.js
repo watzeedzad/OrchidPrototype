@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
-import Temperature from '../components/Temperature/Temperature';
-import Humidity from '../components/Humidity/Humidity'
+import TemperatureTab from '../components/Temperature/TemperatureTab';
+import HumidityTab from '../components/Humidity/HumidityTab'
 import Sidebar from '../components/Sidebar/Drawers'
 import { withStyles } from 'material-ui/styles';
 import PropTypes from 'prop-types';
@@ -31,8 +31,8 @@ function WeatherControl(props){
                 </div>
                 <main className={classes.content}>
                 <div className={classes.toolbar} />
-                <Temperature /><br/><hr/>
-                <Humidity />
+                <TemperatureTab /><br/><hr/>
+                <HumidityTab />
                 </main>
             </div>
         )

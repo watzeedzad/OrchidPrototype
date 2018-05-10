@@ -48,9 +48,6 @@ class Fertility extends Component {
         )
     }
 
-    // toggle = () => {
-    //     this.props.dispatch(getFertility({ projectId: 2 }))
-    // }
 }
 
 function mapStateToProps(state) {
