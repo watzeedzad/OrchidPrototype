@@ -35,6 +35,7 @@ class ShowAllFertility extends Component {
                                 <Col xs='6' sm='6' md='6' lg='6' xl='6' key={e.projectId}>
                                     โปรเจ็คที่ : {e.projectId}
                                     <Speedometer
+                                        title={"ปริมาณแร่ธาตุ ณ ปัจจุบัน"}
                                         min={0}
                                         max={100}
                                         minConfig={e.minFertility}

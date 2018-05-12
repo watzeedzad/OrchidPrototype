@@ -10,6 +10,7 @@ class MoistureGauge extends Component {
 
         return (
             <Speedometer
+                title={"ความชื้นเครื่องปลูก ณ ปัจจุบัน"}
                 min= {0}
                 max= {100}
                 minConfig={this.props.minConfig}

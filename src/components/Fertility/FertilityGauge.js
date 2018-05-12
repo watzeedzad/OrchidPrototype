@@ -10,6 +10,7 @@ class FertilityGauge extends Component {
 
         return (
             <Speedometer
+                title={"ปริมาณแร่ธาตุ ณ ปัจจุบัน"}
                 min={0}
                 max={100}
                 minConfig={this.props.minConfig}

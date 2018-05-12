@@ -24,7 +24,7 @@ const plotOptions = {
 };
 
 const paneOptions = {
-    center: ["40%", "75%"],
+    center: ["50%", "75%"],
     size: "100%",
     startAngle: -90,
     endAngle: 90,
@@ -41,6 +41,7 @@ class Speedometer extends Component {
     render() {
         return (
             <div className="gauge-empty">
+                <div className="text-center">{this.props.title}</div>
                 <HighchartsChart
                     chart={{ type: "gauge" }}
                     plotOptions={plotOptions}
