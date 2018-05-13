@@ -25,6 +25,7 @@ export default class ShowSoilMoistureHistory {
       let greenHouseSensorDataFlitered = [];
       let compareHours = -1;
       let compareMinutes = -1;
+      let compareSeconds = -1;
       for (let index = 0; index < greenHouseSensorResult.length; index++) {
         let indexDateTime = new Date(greenHouseSensorResult[index].timeStamp);
         if (
@@ -34,13 +35,16 @@ export default class ShowSoilMoistureHistory {
           if (compareHours == -1 && compareMinutes == -1) {
             compareHours = indexDateTime.getHours();
             compareMinutes = indexDateTime.getMinutes();
+            compareSeconds = indexDateTime.getSeconds();
           } else if (compareHours < indexDateTime.getHours()) {
             compareHours = -1;
             compareMinutes = -1;
+            compareSeconds = -1;
           }
           if (
             compareHours == indexDateTime.getHours() &&
-            compareMinutes == indexDateTime.getMinutes()
+            compareMinutes == indexDateTime.getMinutes() &&
+            compareSeconds == indexDateTime.getSeconds()
           ) {
             indexDateTime.setHours(indexDateTime.getHours() + 7);
             greenHouseSensorResult[index].timeStamp = indexDateTime;
@@ -50,17 +54,13 @@ export default class ShowSoilMoistureHistory {
       }
       console.log(greenHouseSensorDataFlitered.length);
       var soilMoistureHistory = {
-        soilMoistureHistory: [
-          {
-            currentSoilMoisture: greenHouseSensorDataFlitered[0].soilMoisture,
-            timeStamp: greenHouseSensorDataFlitered[0].timeStamp
-          }
-        ]
+        soilMoistureHistory: [{
+          currentSoilMoisture: greenHouseSensorDataFlitered[0].soilMoisture,
+          timeStamp: greenHouseSensorDataFlitered[0].timeStamp
+        }]
       };
       for (
-        let index = 1;
-        index < greenHouseSensorDataFlitered.length;
-        index++
+        let index = 1; index < greenHouseSensorDataFlitered.length; index++
       ) {
         var temp = {
           currentSoilMoisture: greenHouseSensorDataFlitered[index].soilMoisture,
@@ -76,7 +76,7 @@ export default class ShowSoilMoistureHistory {
 async function getGreenHouseSensor(greenHouseId) {
   let result = await greenHouseSensor.find({
     _id: {
-      $gt: ObjectId.createFromTime(Date.now() / 1000 - 48 * 60 * 60)
+      $gt: ObjectId.createFromTime(Date.now() / 1000 - 25 * 60 * 60)
     },
     greenHouseId: greenHouseId
   });

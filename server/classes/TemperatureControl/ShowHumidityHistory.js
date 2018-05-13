@@ -25,22 +25,26 @@ export default class ShowHumidityHistory {
       let greenHouseSensorDataFlitered = [];
       let compareHours = -1;
       let compareMinutes = -1;
+      let compareSeconds = -1;
       for (let index = 0; index < greenHouseSensorResult.length; index++) {
         let indexDateTime = new Date(greenHouseSensorResult[index].timeStamp);
         if (
           indexDateTime.getDate() == nowDate.getDate() &&
           indexDateTime.getMinutes() < 10
         ) {
-          if (compareHours == -1 && compareMinutes == -1) {
+          if (compareHours == -1 && compareMinutes == -1 && compareSeconds == -1) {
             compareHours = indexDateTime.getHours();
             compareMinutes = indexDateTime.getMinutes();
+            compareSeconds = indexDateTime.getSeconds();
           } else if (compareHours < indexDateTime.getHours()) {
             compareHours = -1;
             compareMinutes = -1;
+            compareSeconds = -1;
           }
           if (
             compareHours == indexDateTime.getHours() &&
-            compareMinutes == indexDateTime.getMinutes()
+            compareMinutes == indexDateTime.getMinutes() &&
+            compareSeconds == indexDateTime.getSeconds()
           ) {
             indexDateTime.setHours(indexDateTime.getHours() + 7);
             greenHouseSensorResult[index].timeStamp = indexDateTime;
@@ -50,17 +54,13 @@ export default class ShowHumidityHistory {
       }
       console.log(greenHouseSensorDataFlitered.length);
       var humidityHistory = {
-        humidityHistory: [
-          {
-            currentHumidity: greenHouseSensorDataFlitered[0].humidity,
-            timeStamp: greenHouseSensorDataFlitered[0].timeStamp
-          }
-        ]
+        humidityHistory: [{
+          currentHumidity: greenHouseSensorDataFlitered[0].humidity,
+          timeStamp: greenHouseSensorDataFlitered[0].timeStamp
+        }]
       };
       for (
-        let index = 1;
-        index < greenHouseSensorDataFlitered.length;
-        index++
+        let index = 1; index < greenHouseSensorDataFlitered.length; index++
       ) {
         var temp = {
           currentHumidity: greenHouseSensorDataFlitered[index].humidity,
@@ -76,7 +76,7 @@ export default class ShowHumidityHistory {
 async function getGreenHouseSensor(greenHouseId) {
   let result = await greenHouseSensor.find({
     _id: {
-      $gt: ObjectId.createFromTime(Date.now() / 1000 - 48 * 60 * 60)
+      $gt: ObjectId.createFromTime(Date.now() / 1000 - 25 * 60 * 60)
     },
     greenHouseId: greenHouseId
   });
