@@ -98,7 +98,7 @@ void setup(void)
         //                Serial.println("\nconnected to network " + String(SSID) + "\n");
         //        }
 
-        caller.every(300000, sendData);
+        caller.every(15000, sendData);
         server.begin();
 
         delay(100);
@@ -201,6 +201,7 @@ void sendData()
         HTTPClient http;
         http.setTimeout(20000);
         http.begin("https://hello-api.careerity.me/sensorRoutes/greenHouseSensor", "EC:BB:33:AB:B4:F4:5B:A0:76:F3:F1:5B:FE:EC:BD:16:17:5C:22:47");
+        // http.begin("http://192.168.1.151:3001/sensorRoutes/greenHouseSensor");
         http.addHeader("Content-Type", "application/json");
         int httpCode = http.POST(dataSet1);
         String payload = http.getString();
@@ -221,6 +222,7 @@ void sendData()
 
         http.setTimeout(20000);
         http.begin("https://hello-api.careerity.me/sensorRoutes/projectSensor", "EC:BB:33:AB:B4:F4:5B:A0:76:F3:F1:5B:FE:EC:BD:16:17:5C:22:47");
+        // http.begin("http://192.168.1.151/sensorRoutes/projectSensor");
         http.addHeader("Content-Type", "application/json");
         httpCode = http.POST(dataSet2);
         payload = http.getString();
@@ -230,19 +232,6 @@ void sendData()
         Serial.print("Payload: ");
         Serial.println(payload);
         http.end();
-
-        // HTTPClient http;
-        // http.setTimeout(1000);
-        // http.begin("http://192.168.1.151:3000/sensorRoutes/greenHouseSensor");
-        // http.addHeader("Content-Type", "application/json");
-        // int httpCode = http.POST(JSONmessageBuffer);
-        // String payload = http.getString();
-        // Serial.print("http result: ");
-        // Serial.println(httpCode);
-        // Serial.println(String(http.errorToString(httpCode)));
-        // Serial.print("Payload: ");
-        // Serial.println(payload);
-        // http.end();
 
         temperatureStats.clear();
         humidityStats.clear();

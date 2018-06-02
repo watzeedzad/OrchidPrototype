@@ -7,9 +7,11 @@ const mongoose = require("mongoose");
 const ipfilter = require("express-ipfilter").IpFilter;
 require("dotenv").config();
 
-var ips = ["127.0.0.1", "::1"];
+var ips = ["127.0.0.1", "::1", "192.168.1.12"];
 farmIdGlobal = 123456789;
 pathGlobal = './conf/farm-1.json';
+greenHouseSensorRouteStatus = 0;
+projectSensorRouteStatus = 0;
 origin_url = process.env.ORIGIN_URL;
 db_host = process.env.DB_HOST;
 db_user = process.env.DB_USER;

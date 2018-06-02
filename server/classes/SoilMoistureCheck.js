@@ -8,12 +8,10 @@ const greenHouseSensor = mongoose.model("greenHouse_Sensor");
 let farmData;
 let configFile;
 let controllerData;
-let minTemperature;
-let maxTemperature;
-let minHumidity;
-let maxHumidity;
+let minSoilMoisture;
+let maxSoilMoisture;
 
-export default class TemperatureCheck {
+export default class SoilMoistureCheck {
     constructor(req, res) {
         this.check(req, res);
     }
@@ -41,32 +39,20 @@ export default class TemperatureCheck {
         let farmId = controllerResult.farmId;
         console.log("farmId_Class: " + farmId);
         await getConfigFile(farmId);
-        let resultCompareHumid = await compareHumidity(
+        let resultCompareSoilMoisture = await compareSoilMositure(
             configFile,
-            req.body.humidity
+            req.body.soilMoisture
         );
-        let resultCompareTemp = await compareTemperature(
-            configFile,
-            req.body.temperature
-        );
-        console.log("compareTemp: " + resultCompareTemp);
-        console.log("compareHumid: " + resultCompareHumid);
-        if (
-            typeof resultCompareTemp === "undefined" ||
-            typeof resultCompareHumid === "undefined"
-        ) {
+        console.log("compareSoilMoisture: " + resultCompareSoilMoisture);
+        if (typeof resultCompareSoilMoisture === "undefined") {
             greenHouseSensorRouteStatus = 500;
             return;
         } else {
-            console.log("controllerData_Temperature: " + controllerData);
-            if (!resultCompareTemp) {
-                onOffMoisturePump(controllerData.ip, true);
-            }
-            if (!resultCompareHumid) {
-                onOffMoisturePump(controllerData.ip, true);
-            }
-            if (resultCompareTemp && resultCompareHumid) {
-                onOffMoisturePump(controllerData.ip, false);
+            console.log("controllerData_SoilMoisture: " + controllerData);
+            if (resultCompareSoilMoisture) {
+                onOffWaterPump(controllerData.ip, true);
+            } else {
+                onOffWaterPump(controllerData.ip, false);
             }
             greenHouseSensorRouteStatus = 200
             return;
@@ -78,7 +64,7 @@ async function getControllerData(greenHouseId) {
     console.log("enter xx");
     let controllerResult = await know_controller.findOne({
         isHavePump: true,
-        "pumpType.moisture": true,
+        "pumpType.water": true,
         greenHouseId: greenHouseId
     }, function (err, result) {
         if (err) {
@@ -108,11 +94,11 @@ async function getConfigFile(farmIdIn) {
     configFile = config;
 }
 
-function onOffMoisturePump(ip, state) {
+function onOffWaterPump(ip, state) {
     if (state) {
-        console.log("Send: /moisturePump?params=0 (on)");
+        console.log("Send: /waterPump?params=0 (on)");
         request
-            .get("http://" + String(ip) + "/moisturePump?params=0", {
+            .get("http://" + String(ip) + "/waterPump?params=0", {
                 timeout: 5000
             })
             .on("error", function (err) {
@@ -121,9 +107,9 @@ function onOffMoisturePump(ip, state) {
                 console.log(err);
             });
     } else {
-        console.log("Send: /moisturePump?params=1 (off)");
+        console.log("Send: /waterPump?params=1 (off)");
         request
-            .get("http://" + String(ip) + "/moisturePump?params=1", {
+            .get("http://" + String(ip) + "/waterPump?params=1", {
                 timeout: 5000
             })
             .on("error", function (err) {
@@ -134,32 +120,17 @@ function onOffMoisturePump(ip, state) {
     }
 }
 
-function compareTemperature(configFile, currentTemp) {
-    minTemperature = configFile.minTemperature;
-    maxTemperature = configFile.maxTemperature;
-    console.log("MIN-T: " + minTemperature);
-    console.log("MAX-T: " + maxTemperature);
-    console.log("CURRENT-T: " + currentTemp);
-    if (minTemperature == null || maxTemperature == null) {
+function compareSoilMositure(configFile, currentSoilMoisture) {
+    minSoilMoisture = configFile.minSoilMoisture;
+    maxSoilMoisture = configFile.maxSoilMoisture;
+    console.log("MIN-SM: " + maxSoilMoisture);
+    console.log("MAX-SM: " + maxSoilMoisture);
+    console.log("CURRENT-SM: " + currentSoilMoisture);
+    if (maxSoilMoisture == null || maxSoilMoisture == null) {
         return undefined;
-    } else if (maxTemperature < currentTemp) {
+    } else if (maxSoilMoisture < currentSoilMoisture) {
         return false;
-    } else if (minHumidity > currentTemp) {
+    } else if (minSoilMoisture > currentSoilMoisture) {
         return true;
-    }
-}
-
-function compareHumidity(configFile, currentHumid) {
-    minHumidity = configFile.minHumidity;
-    maxHumidity = configFile.maxHumidity;
-    console.log("MIN-H: " + minHumidity);
-    console.log("MAX-H: " + maxHumidity);
-    console.log("CURRENT-H: " + currentHumid);
-    if (minHumidity == null || maxHumidity == null) {
-        return undefined;
-    } else if (minHumidity < currentHumid) {
-        return true;
-    } else if (minHumidity > currentHumid) {
-        return false;
     }
 }
