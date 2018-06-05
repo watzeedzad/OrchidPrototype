@@ -5,7 +5,6 @@ const farm = mongoose.model("farm");
 const know_controller = mongoose.model("know_controller");
 const greenHouseSensor = mongoose.model("greenHouse_Sensor");
 
-let farmData;
 let configFile;
 let controllerData;
 let minTemperature;
@@ -113,7 +112,7 @@ function onOffMoisturePump(ip, state) {
         console.log("Send: /moisturePump?params=0 (on)");
         request
             .get("http://" + String(ip) + "/moisturePump?params=0", {
-                timeout: 5000
+                timeout: 20000
             })
             .on("error", function (err) {
                 console.log(err.code === "ETIMEDOUT");
@@ -124,7 +123,7 @@ function onOffMoisturePump(ip, state) {
         console.log("Send: /moisturePump?params=1 (off)");
         request
             .get("http://" + String(ip) + "/moisturePump?params=1", {
-                timeout: 5000
+                timeout: 20000
             })
             .on("error", function (err) {
                 console.log(err.code === "ETIMEDOUT");

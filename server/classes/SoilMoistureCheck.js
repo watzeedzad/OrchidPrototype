@@ -99,7 +99,7 @@ function onOffWaterPump(ip, state) {
         console.log("Send: /waterPump?params=0 (on)");
         request
             .get("http://" + String(ip) + "/waterPump?params=0", {
-                timeout: 5000
+                timeout: 20000
             })
             .on("error", function (err) {
                 console.log(err.code === "ETIMEDOUT");
@@ -110,7 +110,7 @@ function onOffWaterPump(ip, state) {
         console.log("Send: /waterPump?params=1 (off)");
         request
             .get("http://" + String(ip) + "/waterPump?params=1", {
-                timeout: 5000
+                timeout: 20000
             })
             .on("error", function (err) {
                 console.log(err.code === "ETIMEDOUT");

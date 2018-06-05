@@ -24,6 +24,9 @@
 
 const char *SSID = "aisfibre_2.4G";
 const char *SSID_PASSWORD = "molena01";
+const int waterPump = 1;
+const int fertilizerPump = 2;
+const int moisturePump = 3;
 
 int moisture = 0;
 int moisturePercent = 0;
@@ -60,8 +63,11 @@ void setup(void)
         digitalWrite(RE_IN_PIN4, HIGH);
 
         rest.function("waterPump", waterPumpControl);
-        rest.function("fertilityPump", fertilityPumpControl);
+        rest.function("fertilizerPump", fertilizerPumpControl);
         rest.function("moisturePump", moisturePumpControl);
+        rest.function("manualWater", manualWaterPump);
+        rest.function("manualFertilizer", manualFertilizerPump);
+        rest.function("manualMoisture", manualMoisturePump);
         rest.set_id("10000001");
         rest.set_name("esp8266");
 
@@ -98,7 +104,7 @@ void setup(void)
         //                Serial.println("\nconnected to network " + String(SSID) + "\n");
         //        }
 
-        caller.every(15000, sendData);
+        caller.every(25000, sendData);
         server.begin();
 
         delay(100);
@@ -199,9 +205,9 @@ void sendData()
         Serial.println(dataSet1);
 
         HTTPClient http;
-        http.setTimeout(20000);
-        http.begin("https://hello-api.careerity.me/sensorRoutes/greenHouseSensor", "EC:BB:33:AB:B4:F4:5B:A0:76:F3:F1:5B:FE:EC:BD:16:17:5C:22:47");
-        // http.begin("http://192.168.1.151:3001/sensorRoutes/greenHouseSensor");
+        http.setTimeout(10000);
+        // http.begin("https://hello-api.careerity.me/sensorRoutes/greenHouseSensor", "EC:BB:33:AB:B4:F4:5B:A0:76:F3:F1:5B:FE:EC:BD:16:17:5C:22:47");
+        http.begin("http://192.168.1.151:3001/sensorRoutes/greenHouseSensor");
         http.addHeader("Content-Type", "application/json");
         int httpCode = http.POST(dataSet1);
         String payload = http.getString();
@@ -220,9 +226,9 @@ void sendData()
         JSONencoder2.prettyPrintTo(dataSet2, sizeof(dataSet2));
         Serial.println(dataSet2);
 
-        http.setTimeout(20000);
-        http.begin("https://hello-api.careerity.me/sensorRoutes/projectSensor", "EC:BB:33:AB:B4:F4:5B:A0:76:F3:F1:5B:FE:EC:BD:16:17:5C:22:47");
-        // http.begin("http://192.168.1.151/sensorRoutes/projectSensor");
+        http.setTimeout(10000);
+        // http.begin("https://hello-api.careerity.me/sensorRoutes/projectSensor", "EC:BB:33:AB:B4:F4:5B:A0:76:F3:F1:5B:FE:EC:BD:16:17:5C:22:47");
+        http.begin("http://192.168.1.151:3001/sensorRoutes/projectSensor");
         http.addHeader("Content-Type", "application/json");
         httpCode = http.POST(dataSet2);
         payload = http.getString();
@@ -239,6 +245,10 @@ void sendData()
         moistureStats.clear();
 }
 
+void manualOnPump(int pumpType, int litre)
+{
+}
+
 int waterPumpControl(String command)
 {
         int state = command.toInt();
@@ -246,7 +256,7 @@ int waterPumpControl(String command)
         return 1;
 }
 
-int fertilityPumpControl(String command)
+int fertilizerPumpControl(String command)
 {
         int state = command.toInt();
         digitalWrite(RE_IN_PIN2, state);
@@ -257,5 +267,26 @@ int moisturePumpControl(String command)
 {
         int state = command.toInt();
         digitalWrite(RE_IN_PIN1, state);
+        return 1;
+}
+
+int manualWaterPump(String inputLitre)
+{
+        int litre = inputLitre.toInt();
+        manualOnPump(waterPump, litre);
+        return 1;
+}
+
+int manualFertilizerPump(String inputLitre)
+{
+        int litre = inputLitre.toInt();
+        manualOnPump(fertilizerPump, litre);
+        return 1;
+}
+
+int manualMoisturePump(String inputLitre)
+{
+        int litre = inputLitre.toInt();
+        manualOnPump(moisturePump, litre);
         return 1;
 }

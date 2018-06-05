@@ -58,6 +58,7 @@ const greenHouseRoutes = require("./routes/greenHouseRoutes");
 const temperatureControl = require("./routes/temperatureControl");
 const planterAnalyze = require("./routes/planterAnalyze");
 const login = require("./routes/login");
+const waterControl = require("./routes/waterControl");
 
 const app = express();
 
@@ -82,6 +83,7 @@ app.use("/greenHouse", greenHouseRoutes);
 app.use("/temperatureControl", temperatureControl);
 app.use("/planterAnalyze", planterAnalyze);
 app.use("/login", login);
+app.use("/waterControl", waterControl);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
