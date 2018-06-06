@@ -2,7 +2,7 @@ import React, { Component } from 'react'
 import TemperatureTab from '../components/Temperature/TemperatureTab';
 import HumidityTab from '../components/Humidity/HumidityTab'
 import Sidebar from '../components/Sidebar/Drawers'
-import { withStyles } from 'material-ui/styles';
+import { withStyles } from '@material-ui/core/styles';
 import PropTypes from 'prop-types';
 
 const styles = theme => ({

@@ -1,7 +1,7 @@
 import React from 'react'
 import Fertility from '../components/Fertility/Fertility'
 import Sidebar from '../components/Sidebar/Drawers'
-import { withStyles } from 'material-ui/styles';
+import { withStyles } from '@material-ui/core/styles';
 import PropTypes from 'prop-types'
 
 
