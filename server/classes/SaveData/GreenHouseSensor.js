@@ -11,9 +11,8 @@ export default class GreenHouseSensor {
 
   async process(req, res) {
     let ip = req.body.ip;
-    console.log("ip: " + req.body.ip);
+    console.log("GreenHouseSensor: ip, " + req.body.ip);
     await getControllerData(ip);
-    console.log(controllerData.greenHouseId);
     let greenHouseId = controllerData.greenHouseId;
     let temp = req.body.temperature;
     let humid = req.body.humidity;
@@ -24,17 +23,15 @@ export default class GreenHouseSensor {
 }
 
 async function getControllerData(ip) {
-  console.log("enter 0");
   let controllerResult = await know_controller.findOne(
     {
       ip: ip
     },
     function(err, result) {
       if (err) {
-        console.log("Query fail!");
+        console.log("GreenHouseSensor: getControllerData, Query fail!");
       } else {
         controllerData = result;
-        console.log("Result enter 0: " + controllerData);
       }
     }
   );
@@ -58,7 +55,7 @@ async function saveSensorData(
 
   new greenHouseSensor(newGreenHouseData).save(function(err) {
     if (!err) {
-      console.log("created green house!");
+      console.log("GreenHouseSensor: created green house!");
     } else {
       //TODO: return page with errors
       return console.log(err);

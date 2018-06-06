@@ -17,51 +17,47 @@ export default class SoilMoistureCheck {
     }
 
     async check(req, res) {
-        console.log("enter 1");
         let ipIn = req.body.ip;
         let controllerResult = await know_controller.findOne({
             ip: ipIn
         }, function (err, result) {
             if (err) {
-                console.log("Query fail!, know_controller");
+                console.log("SoilMoistureCheck: Query fail!, know_controller");
             } else {
-                console.log("Query success, know_controller")
+                console.log("SoilMoistureCheck: Query success, know_controller")
             }
         });
-        console.log("controllerResult: " + controllerResult)
         let greenHouseId = controllerResult.greenHouseId;
-        console.log("greenHouseId_Class: " + greenHouseId);
+        console.log("SoilMoistureCheck: greenHouseId_Class, " + greenHouseId);
         await getControllerData(greenHouseId);
         if (typeof controllerData === "undefined") {
-            greenHouseSensorRouteStatus = 200;
+            soilMoistureCheck = 200;
             return;
         }
         let farmId = controllerResult.farmId;
-        console.log("farmId_Class: " + farmId);
+        console.log("SoilMoistureCheck: farmId_Class, " + farmId);
         await getConfigFile(farmId);
         let resultCompareSoilMoisture = await compareSoilMositure(
             configFile,
             req.body.soilMoisture
         );
-        console.log("compareSoilMoisture: " + resultCompareSoilMoisture);
+        console.log("SoilMoistureCheck: compareSoilMoisture, " + resultCompareSoilMoisture);
         if (typeof resultCompareSoilMoisture === "undefined") {
-            greenHouseSensorRouteStatus = 500;
+            soilMoistureCheck = 500;
             return;
         } else {
-            console.log("controllerData_SoilMoisture: " + controllerData);
             if (resultCompareSoilMoisture) {
                 onOffWaterPump(controllerData.ip, true);
             } else {
                 onOffWaterPump(controllerData.ip, false);
             }
-            greenHouseSensorRouteStatus = 200
+            soilMoistureCheck = 200
             return;
         }
     }
 }
 
 async function getControllerData(greenHouseId) {
-    console.log("enter xx");
     let controllerResult = await know_controller.findOne({
         isHavePump: true,
         "pumpType.water": true,
@@ -69,7 +65,7 @@ async function getControllerData(greenHouseId) {
     }, function (err, result) {
         if (err) {
             controllerData = undefined;
-            console.log("Query fail!, know_controller2");
+            console.log("SoilMoistureCheck: Query fail!, know_controller2");
         } else {
             controllerData = result;
         }
@@ -81,12 +77,11 @@ async function getConfigFile(farmIdIn) {
         farmId: farmIdIn
     }, function (err, result) {
         if (err) {
-            console.log("fail");
+            console.log("SoilMoistureCheck: getConfigFile, fail");
         } else {
-            console.log("pass");
+            console.log("SoilMoistureCheck: getConfigFile, pass");
         }
     });
-    console.log("getConfigFile: " + farmResult);
     let configFilePath = farmResult.configFilePath;
     let config = JSON.parse(
         require("fs").readFileSync(String(configFilePath), "utf8")
@@ -123,12 +118,12 @@ function onOffWaterPump(ip, state) {
 function compareSoilMositure(configFile, currentSoilMoisture) {
     minSoilMoisture = configFile.minSoilMoisture;
     maxSoilMoisture = configFile.maxSoilMoisture;
-    console.log("MIN-SM: " + maxSoilMoisture);
+    console.log("MIN-SM: " + minSoilMoisture);
     console.log("MAX-SM: " + maxSoilMoisture);
     console.log("CURRENT-SM: " + currentSoilMoisture);
-    if (maxSoilMoisture == null || maxSoilMoisture == null) {
+    if (minSoilMoisture == null || maxSoilMoisture == null) {
         return undefined;
-    } else if (maxSoilMoisture < currentSoilMoisture) {
+    } else if (minSoilMoisture < currentSoilMoisture) {
         return false;
     } else if (minSoilMoisture > currentSoilMoisture) {
         return true;
