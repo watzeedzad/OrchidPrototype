@@ -34,6 +34,15 @@ String sensorData;
 int fertility;
 float humidity, temperature;
 
+byte sensorInterrupt = 0;
+byte sensorPin = 0;
+float calibrationFactor = 4.5;
+volatile byte pulseCount;
+float flowRate;
+unsigned int flowMilliLitres;
+unsigned long totalMilliLitres;
+unsigned long oldTime;
+
 aREST rest = aREST();
 Statistic fertilityStats;
 Statistic humidityStats;
@@ -57,10 +66,19 @@ void setup(void)
         pinMode(RE_IN_PIN3, OUTPUT);
         pinMode(RE_IN_PIN4, OUTPUT);
 
+        pinMode(sensorPin, INPUT);
+        digitalWrite(sensorPin, HIGH);
+
         digitalWrite(RE_IN_PIN1, HIGH);
         digitalWrite(RE_IN_PIN2, HIGH);
         digitalWrite(RE_IN_PIN3, HIGH);
         digitalWrite(RE_IN_PIN4, HIGH);
+
+        pulseCount = 0;
+        flowRate = 0.0;
+        flowMilliLitres = 0;
+        totalMilliLitres = 0;
+        oldTime = 0;
 
         rest.function("waterPump", waterPumpControl);
         rest.function("fertilizerPump", fertilizerPumpControl);
@@ -106,6 +124,7 @@ void setup(void)
 
         caller.every(25000, sendData);
         server.begin();
+        attachInterrupt(sensorInterrupt, pulseCounter, FALLING);
 
         delay(100);
 }
@@ -128,6 +147,26 @@ void loop(void)
         {
                 return;
         }
+
+        if ((millis() - oldTime) > 1000)
+        {
+                detachInterrupt(sensorInterrupt);
+                flowRate = ((1000.0 / (millis() - oldTime)) * pulseCount) / calibrationFactor;
+                oldTime = millis();
+                flowMilliLitres = (flowRate / 60) * 1000;
+                totalMilliLitres += flowMilliLitres;
+
+                Serial.print("Output Liquid Quantity: ");
+                Serial.print(totalMilliLitres);
+                Serial.println("mL");
+                Serial.print("\t"); // Print tab space
+                Serial.print(totalMilliLitres / 1000);
+                Serial.println("L");
+
+                pulseCount = 0;
+                attachInterrupt(sensorInterrupt, pulseCounter, FALLING);
+        }
+
         fertility = temp.toInt();
         humidity = dht.readHumidity();
         temperature = dht.readTemperature();
@@ -144,6 +183,11 @@ void loop(void)
         Serial.println(sensorData);
 
         caller.loop();
+}
+
+void pulseCounter()
+{
+  pulseCount++;
 }
 
 int convertToPercent(int value)

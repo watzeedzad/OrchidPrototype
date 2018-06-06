@@ -13,7 +13,6 @@ export default class ProjectSensor {
     let ip = req.body.ip;
     console.log("ip: " + req.body.ip);
     await getControllerData(ip);
-    console.log(controllerData.projectId);
     let soilFertilizer = req.body.soilFertilizer;
     let projectId = controllerData.projectId;
     let greenHouseId = controllerData.greenHouseId;
