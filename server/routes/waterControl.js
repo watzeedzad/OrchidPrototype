@@ -3,7 +3,7 @@ import ManualWater from "../classes/WaterControl/ManualWater";
 const express = require("express");
 const router = express.Router();
 
-router.use("/manualWater", (req, res) => {
+router.use("/manualWater", (req, res, next) => {
     res.setHeader("Access-Control-Allow-Origin", origin_url);
     res.setHeader(
         "Access-Control-Allow-Headers",

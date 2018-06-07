@@ -187,7 +187,7 @@ void loop(void)
 
 void pulseCounter()
 {
-  pulseCount++;
+        pulseCount++;
 }
 
 int convertToPercent(int value)
@@ -291,6 +291,16 @@ void sendData()
 
 void manualOnPump(int pumpType, int litre)
 {
+        totalMilliLitres = 0;
+        digitalWrite(RE_IN_PIN4, 0);
+        for(;;)
+        {
+                if ((totalMilliLitres / 1000) > litre)
+                {
+                        digitalWrite(RE_IN_PIN4, 1);
+                        break;
+                }
+        }
 }
 
 int waterPumpControl(String command)
