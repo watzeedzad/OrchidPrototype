@@ -4,7 +4,7 @@ const request = require("request");
 
 let controllerData;
 
-export default class ManualWater {
+export default class ManualWatering {
     constructor(req, res) {
         this.process(req, res);
     }
@@ -14,21 +14,22 @@ export default class ManualWater {
         let inputLitre = req.body.litre;
         if (typeof greenHouseId === "undefined" || typeof inputLitre === "undefined") {
             res.sendStatus(500);
-        }
-        console.log("ManualWater: greenHouseId, " + greenHouseId);
-        console.log("ManualWater: inputLitre, " + inputLitre);
-        await getControllerData(greenHouseId);
-        if (typeof controllerData === "undefined") {
-            res.sendStatus(200);
-        }
-        let status = manualOnWaterPump(controllerData.ip, inputLitre);
-        if (status) {
-            res.sendStatus(200);
         } else {
-            res.json({
-                status: 500,
-                message: 'เกิดข้อผิดพลาดในการสั้งรดนํ้า'
-            })
+            console.log("[ManualWater] greenHouseId, " + greenHouseId);
+            console.log("[ManualWater] inputLitre, " + inputLitre);
+            await getControllerData(greenHouseId);
+            if (typeof controllerData === "undefined") {
+                res.sendStatus(200);
+            }
+            let status = manualOnWaterPump(controllerData.ip, inputLitre);
+            if (status) {
+                res.sendStatus(200);
+            } else {
+                res.json({
+                    status: 500,
+                    message: 'เกิดข้อผิดพลาดในการสั้งรดนํ้า'
+                })
+            }
         }
     }
 }
@@ -41,7 +42,7 @@ async function getControllerData(greenHouseId) {
     }, function (err, result) {
         if (err) {
             controllerData = undefined;
-            console.log("ManualWater: Query fail!, know_controller2");
+            console.log("[ManualWater] Query fail!, know_controller2");
         } else {
             controllerData = result;
         }
