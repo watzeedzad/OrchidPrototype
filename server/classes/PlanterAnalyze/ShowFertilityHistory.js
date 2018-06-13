@@ -15,7 +15,13 @@ export default class ShowFertilityHistory {
       res.sendStatus(500);
     }
     let projectId = req.body.projectId;
-    console.log("projectId-ShowAllFertility: " + projectId);
+    if (typeof projectId === "undefined") {
+      res.json({
+        status: 500,
+        message: "เกิดข้อผิดพลาดในการแสดงค่าประวัติความอุดมสมบูรณ์ในเครื่องปลูก"
+      });
+    }
+    console.log("ShowAllFertility: " + projectId);
     await getProjectSensor(projectId);
     if (typeof projectSensorResult === "undefined") {
       console.log("projectSensorResult undefined");

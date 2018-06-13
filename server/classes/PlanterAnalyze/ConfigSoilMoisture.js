@@ -9,26 +9,30 @@ export default class ConfigSoilMoisture {
 
   async process(req, res) {
     if (pathGlobal == null) {
-      res.sendStatus(500);
-    }
-    await getConfigFile();
-    if (typeof configFile === "undefined") {
-      res.sendStatus(500);
-    }
-    let maxConfigSoilMois = parseFloat(req.body.maxSoilMoisture);
-    console.log("maxConfigSoilMois: " + maxConfigSoilMois);
-    let minConfigSoilMois = parseFloat(req.body.minSoilMoisture);
-    console.log("minConfigSoilMois: " + minConfigSoilMois);
-    async function writeFile() {
-      await writeConfigFile(configFile);
-      res.sendStatus(200);
-    }
-    if (minConfigSoilMois > maxConfigSoilMois) {
-      res.sendStatus(500);
+      res.json({
+        status: 500,
+        message: "เกิดข้อผิดพลาดไม่ได้ login"
+      });
     } else {
-      configFile.minSoilMoisture = minConfigSoilMois;
-      configFile.maxSoilMoisture = maxConfigSoilMois;
-      writeFile();
+      await getConfigFile();
+      if (typeof configFile === "undefined") {
+        res.sendStatus(500);
+      }
+      let maxConfigSoilMois = parseFloat(req.body.maxSoilMoisture);
+      console.log("maxConfigSoilMois: " + maxConfigSoilMois);
+      let minConfigSoilMois = parseFloat(req.body.minSoilMoisture);
+      console.log("minConfigSoilMois: " + minConfigSoilMois);
+      async function writeFile() {
+        await writeConfigFile(configFile);
+        res.sendStatus(200);
+      }
+      if (minConfigSoilMois > maxConfigSoilMois) {
+        res.sendStatus(500);
+      } else {
+        configFile.minSoilMoisture = minConfigSoilMois;
+        configFile.maxSoilMoisture = maxConfigSoilMois;
+        writeFile();
+      }
     }
   }
 }
@@ -43,7 +47,7 @@ async function getConfigFile() {
 
 async function writeConfigFile(configFile) {
   let content = JSON.stringify(configFile);
-  fs.writeFileSync(String(pathGlobal), content, "utf8", function(err) {
+  fs.writeFileSync(String(pathGlobal), content, "utf8", function (err) {
     if (err) {
       console.log(err);
     } else {
