@@ -8,46 +8,84 @@ export default class ConfigTemperature {
   }
 
   async process(req, res) {
-    if (pathGlobal == null) {
-      res.sendStatus(500);
-    }
     await getConfigFile();
     if (typeof configFile === "undefined") {
-      res.sendStatus(500);
+      res.json({
+        status: 500,
+        errorMessage: "เกิดข้อผิดพลาดในการตั้งค่าอุณหภูมิในอากาศ"
+      });
+      return;
+    }
+    if (typeof req.body.minTemperature === "undefined" || typeof req.body.maxTemperature === "undefined" || typeof req.body.greenHouseId === "undefined") {
+      res.json({
+        status: 500,
+        errorMessage: "เกิดข้อผิดพลาดในการตั้งค่าอุณหภูมิในอากาศ"
+      });
+      return;
     }
     let minConfigTemp = parseFloat(req.body.minTemperature);
-    console.log("minConfigTemp: " + minConfigTemp);
+    console.log("[ConfigTemperature] minConfigTemp: " + minConfigTemp);
     let maxConfigTemp = parseFloat(req.body.maxTemperature);
-    console.log("maxConfigTemp: " + maxConfigTemp);
-    async function writeFile() {
-      await writeConfigFile(configFile);
-      res.sendStatus(200);
+    console.log("[ConfigTemperature] maxConfigTemp: " + maxConfigTemp);
+    let greenHouseId = req.body.greenHouseId;
+    console.log("[ConfigTemperature] greenHouseId: " + greenHouseId);
+    let greenHouseIdIndex = seekGreenHouseIdIndex(configFile.temperatureConfigs, greenHouseId);
+    if (greenHouseIdIndex == -1) {
+      res.json({
+        status: 500,
+        errorMessage: "เกิดข้อผิดพลาดในการตั้งค่าอุณหภูมิในอากาศ"
+      });
+      return;
     }
     if (minConfigTemp > maxConfigTemp) {
-      res.sendStatus(500);
-    } else {
-      configFile.minTemperature = minConfigTemp;
-      configFile.maxTemperature = maxConfigTemp;
-      writeFile();
+      res.json({
+        status: 500,
+        errorMessage: "เกิดข้อผิดพลาดในการตั้งค่าอุณหภูมิในอากาศ"
+      });
+      return;
     }
+    let updateData = {
+      greenHouseId: greenHouseId,
+      minTemperature: minConfigTemp,
+      maxTemperature: maxConfigTemp
+    }
+    configFile.temperatureConfigs[greenHouseIdIndex] = updateData;
+    await writeConfigFile(configFile, res);
   }
 }
 
-async function getConfigFile() {
-  console.log("getConfigFilePath: " + pathGlobal);
+function getConfigFile() {
+  console.log("[ConfigTemperature] getConfigFilePath: " + pathGlobal);
   let config = JSON.parse(
     require("fs").readFileSync(String(pathGlobal), "utf8")
   );
   configFile = config;
 }
 
-async function writeConfigFile(configFile) {
+function writeConfigFile(configFile, res) {
+  let writeFileResult;
   let content = JSON.stringify(configFile);
-  fs.writeFileSync(String(pathGlobal), content, "utf8", function(err) {
+  fs.writeFile(String(pathGlobal), content, "utf8", function (err) {
     if (err) {
       console.log(err);
+      writeFileResult = false;
+    }
+    writeFileResult = true;
+    console.log("[ConfigHumidity] write file with no error");
+    if (writeFileResult) {
+      res.sendStatus(200);
     } else {
-      console.log("write with no error");
+      res.json({
+        status: 500,
+        errorMessage: "เกิดข้อผิดพลาดไม่สามารถเขียนไฟล์การตั้งค่าได้"
+      });
     }
   });
+}
+
+function seekGreenHouseIdIndex(dataArray, greenHouseId) {
+  let index = dataArray.findIndex(function (item, i) {
+    return item.greenHouseId === greenHouseId;
+  });
+  return index;
 }

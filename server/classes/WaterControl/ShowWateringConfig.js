@@ -3,8 +3,6 @@ const fs = require("fs");
 let configFile;
 let existGreenHouseIndex;
 
-let newDate = new Date(1970, 0, 1, 10, 11);
-
 export default class ShowWateringConfig {
     constructor(req, res) {
         this.process(req, res);
@@ -15,7 +13,7 @@ export default class ShowWateringConfig {
         if (typeof greenHouseId === "undefined") {
             res.json({
                 status: 500,
-                message: "เกิดข้อผิดพลาดในการแสดงการตั้งค่าการให้น้ำ"
+                errorMessage: "เกิดข้อผิดพลาดในการแสดงการตั้งค่าการให้น้ำ"
             });
         } else {
             getConfigFile();
@@ -23,7 +21,7 @@ export default class ShowWateringConfig {
             if (Object.keys(wateringConfig).length == 0) {
                 res.json({
                     status: 200,
-                    message: "ไม่มีข้อมูลการตั้งค่าการให้น้ำในโรงเรือนใด ๆ",
+                    errorMessage: "ไม่มีข้อมูลการตั้งค่าการให้น้ำในโรงเรือนใด ๆ",
                     result: false
                 });
             } else {
@@ -37,7 +35,7 @@ export default class ShowWateringConfig {
             if (typeof existGreenHouseIndex === "undefined") {
                 res.json({
                     status: 200,
-                    message: "ไม่มีข้อมูลการตั้งค่าการให้น้ำในโรงเรือนที่ระบุ",
+                    errorMessage: "ไม่มีข้อมูลการตั้งค่าการให้น้ำในโรงเรือนที่ระบุ",
                     status: false
                 });
             } else {
@@ -47,7 +45,7 @@ export default class ShowWateringConfig {
     }
 }
 
-async function getConfigFile() {
+function getConfigFile() {
     console.log("[ShowWateringConfig] getConfigFilePath, " + pathGlobal);
     let config = JSON.parse(
         require("fs").readFileSync(String(pathGlobal), "utf8")

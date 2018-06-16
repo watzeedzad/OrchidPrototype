@@ -23,31 +23,39 @@ export default class TemperatureCheck {
             ip: ipIn
         }, function (err, result) {
             if (err) {
-                console.log("TemperatureCheck: Query fail!, know_controller");
+                console.log("[TemperatureCheck] Query fail!, know_controller");
             } else {
-                console.log("TemperatureCheck: Query success, know_controller")
+                console.log("[TemperatureCheck] Query success, know_controller")
             }
         });
         let greenHouseId = controllerResult.greenHouseId;
-        console.log("TemperatureCheck: greenHouseId_Class, " + greenHouseId);
+        console.log("[TemperatureCheck] greenHouseId_Class, " + greenHouseId);
         await getControllerData(greenHouseId);
         if (typeof controllerData === "undefined") {
             temperatureCheckStatus = 200;
             return;
         }
         let farmId = controllerResult.farmId;
-        console.log("TemperatureCheck: farmId_Class, " + farmId);
+        console.log("[TemperatureCheck] farmId_Class, " + farmId);
         await getConfigFile(farmId);
+        let greenHouseIdIndexTemperature = await seekGreenHouseIdIndex(configFile.temperatureConfigs, greenHouseId);
+        let greenHouseIdIndexHumidity = await seekGreenHouseIdIndex(configFile.humidityConfigs, greenHouseId);
+        if (greenHouseIdIndexTemperature == -1 || greenHouseIdIndexHumidity == -1) {
+            temperatureCheckStatus = 500;
+            return;
+        }
         let resultCompareHumid = await compareHumidity(
             configFile,
-            req.body.humidity
+            req.body.humidity,
+            greenHouseIdIndexHumidity
         );
         let resultCompareTemp = await compareTemperature(
             configFile,
-            req.body.temperature
+            req.body.temperature,
+            greenHouseIdIndexTemperature
         );
-        console.log("TemperatureCheck: compareTemp, " + resultCompareTemp);
-        console.log("TemperatureCheck: compareHumid, " + resultCompareHumid);
+        console.log("[TemperatureCheck] compareTemp, " + resultCompareTemp);
+        console.log("[TemperatureCheck] compareHumid, " + resultCompareHumid);
         if (
             typeof resultCompareTemp === "undefined" ||
             typeof resultCompareHumid === "undefined"
@@ -78,7 +86,7 @@ async function getControllerData(greenHouseId) {
     }, function (err, result) {
         if (err) {
             controllerData = undefined;
-            console.log("TemperatureCheck: Query fail!, know_controller2");
+            console.log("[TemperatureCheck] Query fail!, know_controller2");
         } else {
             controllerData = result;
         }
@@ -90,9 +98,9 @@ async function getConfigFile(farmIdIn) {
         farmId: farmIdIn
     }, function (err, result) {
         if (err) {
-            console.log("TemperatureCheck: getConfigFile, fail");
+            console.log("[TemperatureCheck] getConfigFile, fail");
         } else {
-            console.log("SoilMoistureCheck: getConfigFile, pass");
+            console.log("[TemperatureCheck] getConfigFile, pass");
         }
     });
     let configFilePath = farmResult.configFilePath;
@@ -128,12 +136,12 @@ function onOffMoisturePump(ip, state) {
     }
 }
 
-function compareTemperature(configFile, currentTemp) {
-    minTemperature = configFile.minTemperature;
+function compareTemperature(configFile, currentTemp, greenHouseIdIndexTemperature) {
+    minTemperature = configFile.temperatureConfigs[greenHouseIdIndexTemperature].minTemperature;
     maxTemperature = configFile.maxTemperature;
-    console.log("MIN-T: " + minTemperature);
-    console.log("MAX-T: " + maxTemperature);
-    console.log("CURRENT-T: " + currentTemp);
+    console.log("[TemperatureCheck] MIN-T: " + minTemperature);
+    console.log("[TemperatureCheck] MAX-T: " + maxTemperature);
+    console.log("[TemperatureCheck] CURRENT-T: " + currentTemp);
     if (minTemperature == null || maxTemperature == null) {
         return undefined;
     } else if (maxTemperature < currentTemp) {
@@ -143,12 +151,12 @@ function compareTemperature(configFile, currentTemp) {
     }
 }
 
-function compareHumidity(configFile, currentHumid) {
-    minHumidity = configFile.minHumidity;
-    maxHumidity = configFile.maxHumidity;
-    console.log("MIN-H: " + minHumidity);
-    console.log("MAX-H: " + maxHumidity);
-    console.log("CURRENT-H: " + currentHumid);
+function compareHumidity(configFile, currentHumid, greenHouseIdIndexHumidity) {
+    minHumidity = configFile.humidityConfigs[greenHouseIdIndexHumidity].minHumidity;
+    maxHumidity = configFile.humidityConfigs[greenHouseIdIndexHumidity].maxHumidity;
+    console.log("[TemperatureCheck] MIN-H: " + minHumidity);
+    console.log("[TemperatureCheck] MAX-H: " + maxHumidity);
+    console.log("[TemperatureCheck] CURRENT-H: " + currentHumid);
     if (minHumidity == null || maxHumidity == null) {
         return undefined;
     } else if (minHumidity < currentHumid) {
@@ -156,4 +164,12 @@ function compareHumidity(configFile, currentHumid) {
     } else if (minHumidity > currentHumid) {
         return false;
     }
+}
+
+function seekGreenHouseIdIndex(dataArray, greenHouseId) {
+    console.log(dataArray);
+    let index = dataArray.findIndex(function (item, i) {
+        return item.greenHouseId === greenHouseId;
+    });
+    return index;
 }

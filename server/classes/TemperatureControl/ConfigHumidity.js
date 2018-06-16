@@ -8,32 +8,51 @@ export default class ConfigHumidity {
   }
 
   async process(req, res) {
-    if (pathGlobal == null) {
-      res.sendStatus(500);
-    }
     await getConfigFile();
     if (typeof configFile === "undefined") {
-      res.sendStatus(500);
+      res.json({
+        status: 500,
+        errorMessage: "เกิดข้อผิดพลาดไม่สามารถอ่านไฟล์การตั้งค่าได้"
+      });
+    }
+    if (typeof req.body.minHumidity === "undefined" || typeof req.body.maxHumidity === "undefined" || typeof req.body.greenHouseId === "undefined") {
+      res.json({
+        status: 500,
+        errorMessage: "เกิดข้อผิดพลาดในการตั้งค่าความชื้นในอากาศ"
+      });
     }
     let minConfigHumid = parseFloat(req.body.minHumidity);
-    console.log("minConfigJumid: " + minConfigHumid);
+    console.log("[ConfigHumidity] minConfigJumid: " + minConfigHumid);
     let maxConfigHumid = parseFloat(req.body.maxHumidity);
-    console.log("maxConfigHumid: " + maxConfigHumid);
-    async function writeFile() {
-      await writeConfigFile(configFile);
-      res.sendStatus(200);
+    console.log("[ConfigHumidity] maxConfigHumid: " + maxConfigHumid);
+    let greenHouseId = req.body.greenHouseId;
+    console.log("[ConfigHumidity] greenHouseId: " + greenHouseId);
+    let greenHouseIdIndex = await seekGreenHouseIdIndex(configFile.humidityConfigs, greenHouseId);
+    if (greenHouseIdIndex == -1) {
+      res.json({
+        status: 500,
+        errorMessage: "เกิดข้อผิดพลาดในการตั้งค่าความชื้นในอากาศ"
+      });
+      return;
     }
     if (minConfigHumid > maxConfigHumid) {
-      res.sendStatus(500);
-    } else {
-      configFile.minHumidity = minConfigHumid;
-      configFile.maxHumidity = maxConfigHumid;
-      writeFile();
+      res.json({
+        status: 500,
+        errorMessage: "เกิดข้อผิดพลาดในการตั้งค่าความชื้นในอากาศ"
+      });
+      return;
     }
+    let updateData = {
+      greenHouseId: greenHouseId,
+      minHumidity: minConfigHumid,
+      maxHumidity: maxConfigHumid
+    }
+    configFile.humidityConfigs[greenHouseIdIndex] = updateData;
+    await writeConfigFile(configFile, res);
   }
 }
 
-async function getConfigFile() {
+function getConfigFile() {
   console.log("getConfigFilePath: " + pathGlobal);
   let config = JSON.parse(
     require("fs").readFileSync(String(pathGlobal), "utf8")
@@ -41,13 +60,30 @@ async function getConfigFile() {
   configFile = config;
 }
 
-async function writeConfigFile(configFile) {
+function writeConfigFile(configFile, res) {
+  let writeFileResult;
   let content = JSON.stringify(configFile);
-  fs.writeFileSync(String(pathGlobal), content, "utf8", function(err) {
+  fs.writeFile(String(pathGlobal), content, "utf8", function (err) {
     if (err) {
       console.log(err);
+      writeFileResult = false;
+    }
+    writeFileResult = true;
+    console.log("[ConfigHumidity] write file with no error");
+    if (writeFileResult) {
+      res.sendStatus(200);
     } else {
-      console.log("write with no error");
+      res.json({
+        status: 500,
+        errorMessage: "เกิดข้อผิดพลาดไม่สามารถเขียนไฟล์การตั้งค่าได้"
+      });
     }
   });
+}
+
+function seekGreenHouseIdIndex(dataArray, greenHouseId) {
+  let index = dataArray.findIndex(function (item, i) {
+    return item.greenHouseId === greenHouseId;
+  });
+  return index;
 }

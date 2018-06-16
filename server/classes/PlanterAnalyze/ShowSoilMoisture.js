@@ -11,25 +11,38 @@ export default class ShowSoilMoisture {
   }
 
   async process(req, res) {
-    if (pathGlobal == null) {
-      res.sendStatus(500);
+    let greenHouseId = req.body.greenHouseId;
+    if (typeof req.body.greenHouseId === "undefined") {
+      res.json({
+        status: 500,
+        errorMessage: "เกิดข้อผิดพลาดในการแสดงค่าความชื้นในเครื่องปลูก"
+      });
+      return;
     }
-    let greenHouseId = parseInt(req.body.greenHouseId);
-    console.log("showSoilMoisture: " + greenHouseId);
+    console.log("[ShowSoilMoisture] greenHouseId: " + greenHouseId);
     await getGreenhouseSensor(greenHouseId);
     await getConfigFile();
     if (typeof greenHouseSensorData === "undefined") {
-      res.sendStatus(500);
+      res.json({
+        status: 500,
+        errorMessage: "เกิดข้อผิดพลาดไม่มีข้อมูลจากเซนเซอร์ของโรงเรือน"
+      });
     } else if (typeof configFile === "undefined") {
-      res.sendStatus(500);
-    } else if (
-      configFile.minSoilMoisture == null ||
-      configFile.maxSoilMoisture == null
-    ) {
-      res.sendStatus(500);
+      res.json({
+        status: 500,
+        errorMessage: "เกิดข้อผิดพลาดไม่สามารถอ่านไฟล์การตั้งค่าได้"
+      });
     } else {
-      let minConfigSoilMois = configFile.minSoilMoisture;
-      let maxConfigSoilMois = configFile.maxSoilMoisture;
+      let greenHouseIdIndex = await seekGreenHouseIdIndex(config.soilMoistureConfigs, greenHouseId);
+      if (greenHouseIdIndex == -1) {
+        res.json({
+          status: 500,
+          errorMessage: "เกิดข้อผิดพลาดในการแสดงค่าความชื้นในเครื่องปลูก"
+        });
+        return;
+      }
+      let minConfigSoilMois = configFile.soilMoistureConfigs[greenHouseIdIndex].minSoilMoisture;
+      let maxConfigSoilMois = configFile.soilMoistureConfigs[greenHouseIdIndex].maxSoilMoisture;
       let currentSoilMoisture = greenHouseSensorData.soilMoisture;
       var showSoilMoisture = {
         minConfigSoilMoisture: minConfigSoilMois,
@@ -41,8 +54,8 @@ export default class ShowSoilMoisture {
   }
 }
 
-async function getConfigFile() {
-  console.log("getConfigFilePath: " + pathGlobal);
+function getConfigFile() {
+  console.log("[ShowSoilMoisture] getConfigFilePath: " + pathGlobal);
   let config = JSON.parse(
     require("fs").readFileSync(String(pathGlobal), "utf8")
   );
@@ -50,22 +63,25 @@ async function getConfigFile() {
 }
 
 async function getGreenhouseSensor(greenHouseId) {
-  let result = await greenHouseSensor.findOne(
-    {
-      greenHouseId: greenHouseId
-    },
-    {},
-    {
-      sort: {
-        _id: -1
-      }
+  let result = await greenHouseSensor.findOne({
+    greenHouseId: greenHouseId
+  }, {}, {
+    sort: {
+      _id: -1
     }
-  );
+  });
   if (result) {
     greenHouseSensorData = result;
   } else {
     greenHouseSensorData = undefined;
-    console.log("Query fail!");
+    console.log("[ShowSoilMoisture] getGreenhouseSensor: Query fail!");
   }
-  console.log(greenHouseSensorData);
+}
+
+function seekGreenHouseIdIndex(dataArray, greenHouseId) {
+  console.log(dataArray);
+  let index = dataArray.findIndex(function (item, i) {
+    return item.greenHouseId === greenHouseId;
+  });
+  return index;
 }

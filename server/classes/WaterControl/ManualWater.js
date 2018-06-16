@@ -13,7 +13,10 @@ export default class ManualWatering {
         let greenHouseId = req.body.greenHouseId;
         let inputLitre = req.body.litre;
         if (typeof greenHouseId === "undefined" || typeof inputLitre === "undefined") {
-            res.sendStatus(500);
+            res.json({
+                status: 500,
+                errorMessage: "เกิดข้อผิดพลาดในการสั่งรดนํ้าแบบแมนนวล"
+            });
         } else {
             console.log("[ManualWater] greenHouseId, " + greenHouseId);
             console.log("[ManualWater] inputLitre, " + inputLitre);
@@ -27,7 +30,7 @@ export default class ManualWatering {
             } else {
                 res.json({
                     status: 500,
-                    message: 'เกิดข้อผิดพลาดในการสั้งรดนํ้า'
+                    message: "เกิดข้อผิดพลาดในการสั่งรดนํ้าแบบแมนนวล"
                 })
             }
         }
@@ -49,7 +52,7 @@ async function getControllerData(greenHouseId) {
     });
 }
 
-async function manualOnWaterPump(ip, litre) {
+function manualOnWaterPump(ip, litre) {
     console.log("Send: /waterPump?params=" + litre);
     request.get("http://" + String(ip) + "/manualWater?params=" + litre, {
             timeout: 20000

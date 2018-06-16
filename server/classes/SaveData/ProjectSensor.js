@@ -11,7 +11,7 @@ export default class ProjectSensor {
 
   async process(req, res) {
     let ip = req.body.ip;
-    console.log("ProjectSensor: ip, " + req.body.ip);
+    console.log("[ProjectSensor] ip: " + req.body.ip);
     await getControllerData(ip);
     let soilFertilizer = req.body.soilFertilizer;
     let projectId = controllerData.projectId;
@@ -27,7 +27,7 @@ async function getControllerData(ip) {
     },
     function(err, result) {
       if (err) {
-        console.log("ProjectSensor: getControllerData, Query fail!");
+        console.log("[ProjectSensor] getControllerData, Query fail!");
       } else {
         controllerData = result;
       }
@@ -45,7 +45,7 @@ async function saveSensorData(soilFertilizer, projectId, greenHouseId) {
 
   new projectSensor(newProjectData).save(function(err) {
     if (!err) {
-      console.log("ProjectSensor: create new project sensor data!");
+      console.log("[ProjectSensor] create new project sensor data!");
     } else {
       //TODO: return page with errors
       return console.log(err);

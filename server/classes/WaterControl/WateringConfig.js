@@ -17,7 +17,7 @@ export default class WateringConfig {
     ) {
       res.json({
         status: 500,
-        message: "เกิดข้อผิดพลาดในการตั้งค่าการให้น้ำ"
+        errorMessage:"เกิดข้อผิดพลาดในการตั้งค่าการให้น้ำอัตโนมัติ"
       });
     } else {
       getConfigFile();
@@ -40,20 +40,14 @@ export default class WateringConfig {
         let tempTimeMills = tempDate.getTime();
         tempJson.timeRanges.push(tempTimeMills);
       }
-      if (Object.keys(wateringConfig).length == 0) {
-        configFile.watering.push(tempJson);
-        writeConfigFile(configFile);
-        res.sendStatus(200);
-      } else if (typeof existGreenHouseIndex === "undefined") {
+      if (typeof existGreenHouseIndex === "undefined") {
         res.json({
-          status: 200,
-          message: "ไม่สามารถตั้งค่าการให้น้ำของโรงเรือนที่ระบุได้",
-          status: false
+          status: 500,
+          errorMessage:"ไม่สามารถตั้งค่าการให้น้ำของโรงเรือนที่ระบุได้",
         });
       } else {
         configFile.watering[existGreenHouseIndex] = tempJson;
-        writeConfigFile(configFile);
-        res.sendStatus(200);
+        writeConfigFile(configFile, res);
       }
     }
   }
@@ -67,13 +61,23 @@ async function getConfigFile() {
   configFile = config;
 }
 
-async function writeConfigFile(configFile) {
+function writeConfigFile(configFile, res) {
+  let writeFileResult;
   let content = JSON.stringify(configFile);
-  fs.writeFileSync(String(pathGlobal), content, "utf8", function (err) {
+  fs.writeFile(String(pathGlobal), content, "utf8", function (err) {
     if (err) {
       console.log(err);
+      writeFileResult = false;
+    }
+    writeFileResult = true;
+    console.log("[WateringConfig] write file with no error");
+    if (writeFileResult) {
+      res.sendStatus(200);
     } else {
-      console.log("[WateringConfig] writeConfigFile, write with no error");
+      res.json({
+        status: 500,
+        errorMessage: "เกิดข้อผิดพลาดไม่สามารถเขียนไฟล์การตั้งค่าได้"
+      });
     }
   });
 }

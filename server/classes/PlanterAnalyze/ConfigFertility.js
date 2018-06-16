@@ -8,69 +8,86 @@ export default class ConfigFertility {
   }
 
   async process(req, res) {
-    if (pathGlobal == null) {
+    await getConfigFile();
+    if (typeof configFile === "undefined") {
       res.json({
         status: 500,
-        message: "เกิดข้อผิดพลาดไม่ได้ login"
+        errorMessage: "เกิดข้อผิดพลาดไม่สามารถอ่านไฟล์การตั้งค่าได้"
       });
-    } else {
-      await getConfigFile();
-      if (typeof configFile === "undefined") {
-        res.sendStatus(500);
-      }
-      let minConfigFertility = parseFloat(req.body.minFertility);
-      let maxConfigFertility = parseFloat(req.body.maxFertility);
-      let projectId = parseInt(req.body.projectId);
-      let projectConfigIndex = await seekProjectIdIndex(
-        configFile.fertilityConfigs,
-        projectId
-      );
-      async function writeFile() {
-        await writeConfigFile(configFile);
-        res.sendStatus(200);
-      }
-      if (minConfigFertility > maxConfigFertility) {
-        res.sendStatus(500);
-      } else {
-        let updateData = {
-          projectId: projectId,
-          minFertility: minConfigFertility,
-          maxFertility: maxConfigFertility
-        };
-        configFile.fertilityConfigs[projectConfigIndex] = updateData;
-        writeFile();
-      }
+      return;
     }
+    if (typeof req.body.minFertility === "undefined" || typeof req.body.maxFertility == "undefined" || typeof req.body.projectId === "undefined") {
+      res.json({
+        status: 500,
+        errorMessage: "เกิดข้อผิดพลาดในการตั้งค่าความอุดมสมบูรณ์ในเครื่องปลูก"
+      });
+      return;
+    }
+    let minConfigFertility = parseFloat(req.body.minFertility);
+    console.log("[ConfigFertility] minConfigFertility: " + minConfigFertility);
+    let maxConfigFertility = parseFloat(req.body.maxFertility);
+    console.log("[ConfgiFertility] maxConfigFertility: " + maxConfigFertility);
+    let projectId = req.body.projectId;
+    console.log("[ConfigFertility] projectId: " + projectId);
+    let projectConfigIndex = await seekProjectIdIndex(
+      configFile.fertilityConfigs,
+      projectId
+    );
+    if (projectConfigIndex == -1) {
+      res.json({
+        status: 500,
+        errorMessage: "เกิดข้อผิดพลาดในการตั้งค่าความอุดมสมบูรณ์ในเครื่องปลูก"
+      });
+    }
+    if (minConfigFertility > maxConfigFertility) {
+      res.json({
+        status: 500,
+        errorMessage: "เกิดข้อผิดพลาดไม่สามารถเขียนไฟล์การตั้งค่าได้"
+      });
+      return;
+    }
+    let updateData = {
+      projectId: projectId,
+      minFertility: minConfigFertility,
+      maxFertility: maxConfigFertility
+    };
+    configFile.fertilityConfigs[projectConfigIndex] = updateData;
+    await writeConfigFile(configFile, res)
   }
 }
 
-async function getConfigFile() {
-  console.log("getConfigFilePath: " + pathGlobal);
+function getConfigFile() {
+  console.log("[ConfigFertility] getConfigFilePath: " + pathGlobal);
   let config = JSON.parse(
     require("fs").readFileSync(String(pathGlobal), "utf8")
   );
   configFile = config;
 }
 
-async function writeConfigFile(configFile) {
+function writeConfigFile(configFile, res) {
+  let writeFileResult;
   let content = JSON.stringify(configFile);
-  fs.writeFileSync(String(pathGlobal), content, "utf8", function (err) {
+  fs.writeFile(String(pathGlobal), content, "utf8", function (err) {
     if (err) {
       console.log(err);
+      writeFileResult = false;
+    }
+    writeFileResult = true;
+    console.log("[ConfigFertility] write file with no error");
+    if (writeFileResult) {
+      res.sendStatus(200);
     } else {
-      console.log("write with no error");
+      res.json({
+        status: 500,
+        errorMessage: "เกิดข้อผิดพลาดไม่สามารถเขียนไฟล์การตั้งค่าได้"
+      });
     }
   });
 }
 
 function seekProjectIdIndex(dataArray, projectId) {
-  console.log(dataArray);
   let index = dataArray.findIndex(function (item, i) {
     return item.projectId === projectId;
   });
-  if (index == -1) {
-    return dataArray.length;
-  } else {
-    return index;
-  }
+  return index;
 }

@@ -11,26 +11,38 @@ export default class ShowTemprature {
   }
 
   async process(req, res) {
-    if (pathGlobal == null) {
-      res.sendStatus(500);
+    let greenHouseId = req.body.greenHouseId;
+    if (typeof greenHouseId === "undefined") {
+      res.json({
+        status: 500,
+        errorMessage: "เกิดข้อผิดพลาดในการแสดงค่าอุณหภูมิในอากาศ"
+      });
+      return;
     }
-    console.log("Global: " + farmIdGlobal);
-    let greenHouseId = parseFloat(req.body.greenHouseId);
-    console.log("showTemp: " + greenHouseId);
+    console.log("[ShowTemperature] greenHouseId: " + greenHouseId);
     await getGreenhouseSensor(greenHouseId);
     await getConfigFile();
     if (typeof greenHouseSensorData === "undefined") {
-      res.sendStatus(500);
+      res.json({
+        status: 500,
+        errorMessage: "เกิดข้อผิดพลาดไม่มีข้อมูลจากเซนเซอร์ของโรงเรือน"
+      });
     } else if (typeof configFile === "undefined") {
-      res.sendStatus(500);
-    } else if (
-      configFile.minTemperature == null ||
-      configFile.maxTemperature == null
-    ) {
-      res.sendStatus(500);
+      res.json({
+        status: 500,
+        errorMessage: "เกิดข้อผิดพลาดไม่สามารถอ่านไฟล์การตั้งค่าได้"
+      });
     } else {
-      let minConfigTemp = configFile.minTemperature;
-      let maxConfigTemp = configFile.maxTemperature;
+      let greenHouseIdIndex = await seekGreenHouseIdIndex(configFile.temperatureConfigs, greenHouseId);
+      if (greenHouseIdIndex == -1) {
+        res.json({
+          status: 500,
+          errorMessage: "เกิดข้อผิดพลาดในการแสดงค่าอุณหภูมิในอากาศ"
+        });
+        return;
+      }
+      let minConfigTemp = configFile.temperatureConfigs[greenHouseIdIndex].minTemperature;
+      let maxConfigTemp = configFile.temperatureConfigs[greenHouseIdIndex].maxTemperature;
       let currentTemp = greenHouseSensorData.temperature;
       var showTemp = {
         minConfigTemperature: minConfigTemp,
@@ -43,17 +55,13 @@ export default class ShowTemprature {
 }
 
 async function getGreenhouseSensor(greenHouseId) {
-  let result = await greenHouseSensor.findOne(
-    {
-      greenHouseId: greenHouseId
-    },
-    {},
-    {
-      sort: {
-        _id: -1
-      }
+  let result = await greenHouseSensor.findOne({
+    greenHouseId: greenHouseId
+  }, {}, {
+    sort: {
+      _id: -1
     }
-  );
+  });
   if (result) {
     greenHouseSensorData = result;
   } else {
@@ -69,4 +77,12 @@ async function getConfigFile() {
     require("fs").readFileSync(String(pathGlobal), "utf8")
   );
   configFile = config;
+}
+
+function seekGreenHouseIdIndex(dataArray, greenHouseId) {
+  console.log(dataArray);
+  let index = dataArray.findIndex(function (item, i) {
+    return item.greenHouseId === greenHouseId;
+  });
+  return index;
 }

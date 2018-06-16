@@ -11,15 +11,21 @@ export default class ShowSoilMoistureHistory {
   }
 
   async process(req, res) {
-    if (pathGlobal == null) {
-      res.sendStatus(500);
-    }
     let greenHouseId = req.body.greenHouseId;
-    console.log("greenHouseId-ShowAllFertility: " + greenHouseId);
+    if (typeof greenHouseId === "undefined") {
+      res.json({
+        status: 500,
+        errorMessage: "เกิดข้อผิดพลาดในการแสดงค่าประวัติความชื้นในเครื่องปลูก"
+      })
+    }
+    console.log("[ShowSoilMoistureHistory] greenHouseId: " + greenHouseId);
     await getGreenHouseSensor(greenHouseId);
     if (typeof greenHouseSensorResult === "undefined") {
-      console.log("greenHouseSensorResult undefined");
-      res.sendStatus(500);
+      console.log("[ShowSoilMoistureHistory] greenHouseSensorResult undefined");
+      res.json({
+        status: 500,
+        errorMessage: "เกิดข้อผิดพลาดไม่มีข้อมูลประวัติจากเซนเซอร์"
+      });
     } else {
       let nowDate = new Date();
       let greenHouseSensorDataFlitered = [];
@@ -84,6 +90,6 @@ async function getGreenHouseSensor(greenHouseId) {
     greenHouseSensorResult = result;
   } else {
     greenHouseSensorResult = undefined;
-    console.log("Query fail!");
+    console.log("[ShowSoilMoistureHistory] getGreenHouseSensor, Query fail!");
   }
 }

@@ -22,26 +22,32 @@ export default class SoilMoistureCheck {
             ip: ipIn
         }, function (err, result) {
             if (err) {
-                console.log("SoilMoistureCheck: Query fail!, know_controller");
+                console.log("[SoilMoistureCheck] Query fail!, know_controller");
             } else {
-                console.log("SoilMoistureCheck: Query success, know_controller")
+                console.log("[SoilMoistureCheck] Query success, know_controller")
             }
         });
         let greenHouseId = controllerResult.greenHouseId;
-        console.log("SoilMoistureCheck: greenHouseId_Class, " + greenHouseId);
+        console.log("[SoilMoistureCheck] greenHouseId_Class, " + greenHouseId);
         await getControllerData(greenHouseId);
         if (typeof controllerData === "undefined") {
             soilMoistureCheck = 200;
             return;
         }
         let farmId = controllerResult.farmId;
-        console.log("SoilMoistureCheck: farmId_Class, " + farmId);
+        console.log("[SoilMoistureCheck] farmId_Class, " + farmId);
         await getConfigFile(farmId);
+        let greenHouseIdIndex = await seekGreenHouseIdIndex(configFile.soilMoistureConfigs, greenHouseId);
+        if (greenHouseIdIndex == -1) {
+            soilMoistureCheck = 500;
+            return;
+        }
         let resultCompareSoilMoisture = await compareSoilMositure(
             configFile,
-            req.body.soilMoisture
+            req.body.soilMoisture,
+            greenHouseIdIndex
         );
-        console.log("SoilMoistureCheck: compareSoilMoisture, " + resultCompareSoilMoisture);
+        console.log("[SoilMoistureCheck] compareSoilMoisture, " + resultCompareSoilMoisture);
         if (typeof resultCompareSoilMoisture === "undefined") {
             soilMoistureCheck = 500;
             return;
@@ -65,7 +71,7 @@ async function getControllerData(greenHouseId) {
     }, function (err, result) {
         if (err) {
             controllerData = undefined;
-            console.log("SoilMoistureCheck: Query fail!, know_controller2");
+            console.log("[SoilMoistureCheck] Query fail!, know_controller2");
         } else {
             controllerData = result;
         }
@@ -77,9 +83,9 @@ async function getConfigFile(farmIdIn) {
         farmId: farmIdIn
     }, function (err, result) {
         if (err) {
-            console.log("SoilMoistureCheck: getConfigFile, fail");
+            console.log("[SoilMoistureCheck] getConfigFile, fail");
         } else {
-            console.log("SoilMoistureCheck: getConfigFile, pass");
+            console.log("[SoilMoistureCheck] getConfigFile, pass");
         }
     });
     let configFilePath = farmResult.configFilePath;
@@ -115,12 +121,12 @@ function onOffWaterPump(ip, state) {
     }
 }
 
-function compareSoilMositure(configFile, currentSoilMoisture) {
-    minSoilMoisture = configFile.minSoilMoisture;
-    maxSoilMoisture = configFile.maxSoilMoisture;
-    console.log("MIN-SM: " + minSoilMoisture);
-    console.log("MAX-SM: " + maxSoilMoisture);
-    console.log("CURRENT-SM: " + currentSoilMoisture);
+function compareSoilMositure(configFile, currentSoilMoisture, greenHouseIdIndex) {
+    minSoilMoisture = configFile.soilMoistureConfigs[greenHouseIdIndex].minSoilMoisture;
+    maxSoilMoisture = configFile.soilMoistureConfigs[greenHouseIdIndex].maxSoilMoisture;
+    console.log("[SoilMoistureCheck] MIN-SM: " + minSoilMoisture);
+    console.log("[SoilMoistureCheck] MAX-SM: " + maxSoilMoisture);
+    console.log("[SoilMoistureCheck] CURRENT-SM: " + currentSoilMoisture);
     if (minSoilMoisture == null || maxSoilMoisture == null) {
         return undefined;
     } else if (minSoilMoisture < currentSoilMoisture) {
@@ -128,4 +134,12 @@ function compareSoilMositure(configFile, currentSoilMoisture) {
     } else if (minSoilMoisture > currentSoilMoisture) {
         return true;
     }
+}
+
+function seekGreenHouseIdIndex(dataArray, greenHouseId) {
+    console.log(dataArray);
+    let index = dataArray.findIndex(function (item, i) {
+        return item.greenHouseId === greenHouseId;
+    });
+    return index;
 }

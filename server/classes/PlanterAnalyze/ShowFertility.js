@@ -11,47 +11,54 @@ export default class ShowFertility {
   }
 
   async process(req, res) {
-    if (pathGlobal == null) {
-      res.sendStatus(500);
-    }
     let projectId = req.body.projectId;
     if (typeof projectId === "undefined") {
       res.json({
         status: 500,
         message: "เกิดข้อผิดพลาดในการแสดงค่าความอุดมสมบูรณ์ในเครื่องปลูก"
       });
+      return;
+    }
+    console.log("[ShowFertility] projectId: " + projectId);
+    await getProjectSensor(projectId);
+    await getConfigFile();
+    let projectIdIndex = await seekProjectIdIndex(
+      configFile.fertilityConfigs,
+      projectId
+    );
+    if (typeof projectSensorData === "undefined") {
+      res.json({
+        status: 500,
+        message: "เกิดข้อผิดพลาดไม่มีข้อมูลจากเซนเซอร์ของโปรเจค"
+      });
+    } else if (typeof configFile === "undefined") {
+      res.json({
+        status: 500,
+        message: "เกิดข้อผิดพลาดไม่สามารถอ่านไฟล์การตั้งค่าได้"
+      });
+    } else if (projectIdIndex == -1) {
+      res.json({
+        status: 500,
+        message: "เกิดข้อผิดพลาดในการแสดงค่าความอุดมสมบูรณ์ในเครื่องปลูก"
+      });
     } else {
-      console.log("[ShowFertility] projectId: " + projectId);
-      await getProjectSensor(projectId);
-      await getConfigFile();
-      let projectIdIndex = await seekProjectIdIndex(
-        configFile.fertilityConfigs,
-        projectId
-      );
-      if (typeof projectSensorData === "undefined") {
-        res.sendStatus(500);
-      } else if (typeof configFile === "undefined") {
-        res.sendStatus(500);
-      } else if (projectIdIndex == -1) {
-        res.sendStatus(500);
-      } else {
-        let minConfigFertility =
-          configFile.fertilityConfigs[projectIdIndex].minFertility;
-        let maxConfigFertility =
-          configFile.fertilityConfigs[projectIdIndex].maxFertility;
-        let cuurentFertility = projectSensorData.soilFertilizer;
-        var showFertility = {
-          projectId: projectId,
-          minConfigFertility: minConfigFertility,
-          maxConfigFertility: maxConfigFertility,
-          currentFertility: cuurentFertility
-        };
-        res.json(showFertility);
-      }
+      let minConfigFertility =
+        configFile.fertilityConfigs[projectIdIndex].minFertility;
+      let maxConfigFertility =
+        configFile.fertilityConfigs[projectIdIndex].maxFertility;
+      let cuurentFertility = projectSensorData.soilFertilizer;
+      var showFertility = {
+        projectId: projectId,
+        minConfigFertility: minConfigFertility,
+        maxConfigFertility: maxConfigFertility,
+        currentFertility: cuurentFertility
+      };
+      res.json(showFertility);
     }
   }
 }
-async function getConfigFile() {
+
+function getConfigFile() {
   console.log("[ShowFertility] getConfigFilePath: " + pathGlobal);
   let config = JSON.parse(
     require("fs").readFileSync(String(pathGlobal), "utf8")
