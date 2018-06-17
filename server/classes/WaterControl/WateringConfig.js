@@ -17,7 +17,7 @@ export default class WateringConfig {
     ) {
       res.json({
         status: 500,
-        errorMessage:"เกิดข้อผิดพลาดในการตั้งค่าการให้น้ำอัตโนมัติ"
+        errorMessage: "เกิดข้อผิดพลาดในการตั้งค่าการให้น้ำอัตโนมัติ"
       });
     } else {
       getConfigFile();
@@ -43,12 +43,12 @@ export default class WateringConfig {
       if (typeof existGreenHouseIndex === "undefined") {
         res.json({
           status: 500,
-          errorMessage:"ไม่สามารถตั้งค่าการให้น้ำของโรงเรือนที่ระบุได้",
+          errorMessage: "ไม่สามารถตั้งค่าการให้น้ำของโรงเรือนที่ระบุได้",
         });
-      } else {
-        configFile.watering[existGreenHouseIndex] = tempJson;
-        writeConfigFile(configFile, res);
+        return;
       }
+      configFile.watering[existGreenHouseIndex] = tempJson;
+      writeConfigFile(configFile, res);
     }
   }
 }

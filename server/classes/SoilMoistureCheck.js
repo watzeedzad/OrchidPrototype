@@ -31,7 +31,7 @@ export default class SoilMoistureCheck {
         console.log("[SoilMoistureCheck] greenHouseId_Class, " + greenHouseId);
         await getControllerData(greenHouseId);
         if (typeof controllerData === "undefined") {
-            soilMoistureCheck = 200;
+            soilMoistureCheckStatus = 200;
             return;
         }
         let farmId = controllerResult.farmId;
@@ -39,7 +39,7 @@ export default class SoilMoistureCheck {
         await getConfigFile(farmId);
         let greenHouseIdIndex = await seekGreenHouseIdIndex(configFile.soilMoistureConfigs, greenHouseId);
         if (greenHouseIdIndex == -1) {
-            soilMoistureCheck = 500;
+            soilMoistureCheckStatus = 500;
             return;
         }
         let resultCompareSoilMoisture = await compareSoilMositure(
@@ -49,7 +49,7 @@ export default class SoilMoistureCheck {
         );
         console.log("[SoilMoistureCheck] compareSoilMoisture, " + resultCompareSoilMoisture);
         if (typeof resultCompareSoilMoisture === "undefined") {
-            soilMoistureCheck = 500;
+            soilMoistureCheckStatus = 500;
             return;
         } else {
             if (resultCompareSoilMoisture) {
@@ -57,7 +57,7 @@ export default class SoilMoistureCheck {
             } else {
                 onOffWaterPump(controllerData.ip, false);
             }
-            soilMoistureCheck = 200
+            soilMoistureCheckStatus = 200
             return;
         }
     }

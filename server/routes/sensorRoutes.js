@@ -14,7 +14,7 @@ router.post("/greenHouseSensor", (req, res) => {
   new TemperatureCheck(req, res);
   new SoilMoistureCheck(req, res);
   checkStatus(res);
-  if (temperatureCheckStatus == 200 && soilMoistureCheck == 200) {
+  if (temperatureCheckStatus == 200 && soilMoistureCheckStatus == 200) {
     res.sendStatus(200);
   }
 });
@@ -35,11 +35,11 @@ function checkStatus(res) {
     status  = 500;
     messageArray.push('เกิดข้อผิดพลาดในการตรวจสอบความชิ้นในเครื่องปลูก');
   }
-  if (temperatureCheckStatus == 500 || soilMoistureCheck == 500) {
+  if (temperatureCheckStatus == 500 || soilMoistureCheckStatus == 500) {
     status = 500;
     res.json({
       status: 500,
-      message: messageArray
+      errorMessage: messageArray
     })
   }
 }
