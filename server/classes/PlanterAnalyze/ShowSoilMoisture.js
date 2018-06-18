@@ -33,7 +33,7 @@ export default class ShowSoilMoisture {
         errorMessage: "เกิดข้อผิดพลาดไม่สามารถอ่านไฟล์การตั้งค่าได้"
       });
     } else {
-      let greenHouseIdIndex = await seekGreenHouseIdIndex(config.soilMoistureConfigs, greenHouseId);
+      let greenHouseIdIndex = await seekGreenHouseIdIndex(configFile.soilMoistureConfigs, greenHouseId);
       if (greenHouseIdIndex == -1) {
         res.json({
           status: 500,

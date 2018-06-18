@@ -1,15 +1,19 @@
 {
-    "minTemperature": 25,
-    "maxTemperature": 35,
-    "temperatureConfigs": [],
-    "humidityConfigs": [],
+    "temperatureConfigs": [{
+        "greenHouseId": 789456123,
+        "minTemperature": 25,
+    "maxTemperature": 35
+    }],
+    "humidityConfigs": [{
+        "greenHouseId": 789456123,
+        "minHumidity": 50,
+        "maxHumidity": 70
+    }],
     "soilMoistureConfigs": [{
         "greenHouseId": 789456123,
         "minSoilMoisture": 30,
         "maxSoilMoisture": 55
     }],
-    "minHumidity": 50,
-    "maxHumidity": 70,
     "fertilityConfigs": [{
         "projectId": 2,
         "minFertility": 30,
@@ -25,8 +29,6 @@
     }],
     "minAmbientLight": null,
     "maxAmbientLight": null,
-    "minSoilMoisture": 30,
-    "maxSoilMoisture": 40,
     "watering": [{
         "greenHouseId": 789456120,
         "timeRanges": []
