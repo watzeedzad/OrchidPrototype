@@ -9,7 +9,7 @@ import Typography from '@material-ui/core/Typography';
 import IconButton from '@material-ui/core/IconButton';
 import Toolbar from '@material-ui/core/Toolbar';
 import MenuIcon from '@material-ui/icons/Menu';
-import MenuList from "./MenuList";
+import MenuDrawer from "./MenuDrawer";
 
 const drawerWidth = 240;
 
@@ -58,7 +58,7 @@ class DrawerResponsive extends Component {
             <div id='listMenuItem'>
                 <div className={classes.toobar}/>
                 <List>
-                    <MenuList/>
+                    <MenuDrawer/>
                 </List>
             </div>
         );
