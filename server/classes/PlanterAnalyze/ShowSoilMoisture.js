@@ -79,7 +79,6 @@ async function getGreenhouseSensor(greenHouseId) {
 }
 
 function seekGreenHouseIdIndex(dataArray, greenHouseId) {
-  console.log(dataArray);
   let index = dataArray.findIndex(function (item, i) {
     return item.greenHouseId === greenHouseId;
   });

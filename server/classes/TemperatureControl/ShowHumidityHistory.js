@@ -60,7 +60,14 @@ export default class ShowHumidityHistory {
         }
       }
     }
-    console.log(greenHouseSensorDataFlitered.length);
+    console.log("[ShowHumidityHistory] greenHouseSensorDataFlitered.length: " + greenHouseSensorDataFlitered.length);
+    if (greenHouseSensorDataFlitered.length == 0) {
+      res.json({
+        status: 500,
+        message: 'เกิดข้อผิดพลาดไม่มีประวัติอยู่ในระบบ'
+      });
+      return;
+    }
     var humidityHistory = {
       humidityHistory: [{
         currentHumidity: greenHouseSensorDataFlitered[0].humidity,
