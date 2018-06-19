@@ -60,7 +60,7 @@ export default class ShowFertilityHistory {
         }
       }
     }
-    console.log(projectSensorDataSplice.length);
+    console.log("[ShowFertilityHistory] projectSensorDataSplice.length: " + projectSensorDataSplice.length);
     if (projectSensorDataSplice.length == 0) {
       res.json({
         status: 500,

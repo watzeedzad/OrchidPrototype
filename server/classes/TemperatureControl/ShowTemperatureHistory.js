@@ -60,8 +60,14 @@ export default class ShowTemperatureHistory {
         }
       }
     }
-    console.log(greenHouseSensorDataFlitered.length);
-    console.log(greenHouseSensorDataFlitered);
+    console.log("[ShowTemperatureHistory] greenHouseSensorDataFlitered.length: " + greenHouseSensorDataFlitered.length);
+    if (greenHouseSensorDataFlitered.length == 0) {
+      res.json({
+        status: 500,
+        message: 'เกิดข้อผิดพลาดไม่มีประวัติอยู่ในระบบ'
+      });
+      return;
+    }
     var temperatureHistory = {
       temperatureHistory: [{
         currentTemperature: greenHouseSensorDataFlitered[0].temperature,

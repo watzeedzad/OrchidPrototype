@@ -93,7 +93,6 @@ async function getProjectSensor(greenHouseId) {
 }
 
 function seekProjectIdIndex(dataArray, projectId) {
-  console.log(dataArray);
   let index = dataArray.findIndex(function (item, i) {
     return item.projectId === projectId;
   });

@@ -58,7 +58,14 @@ export default class ShowSoilMoistureHistory {
           }
         }
       }
-      console.log(greenHouseSensorDataFlitered.length);
+      console.log("[ShowSoilMoistureHistory] greenHouseSensorDataFlitered.length: " + greenHouseSensorDataFlitered.length);
+      if (greenHouseSensorDataFlitered.length == 0) {
+        res.json({
+          status: 500,
+          message: 'เกิดข้อผิดพลาดไม่มีประวัติอยู่ในระบบ'
+        });
+        return;
+      }
       var soilMoistureHistory = {
         soilMoistureHistory: [{
           currentSoilMoisture: greenHouseSensorDataFlitered[0].soilMoisture,

@@ -2,25 +2,22 @@
 #include <DHT.h>
 #include <DHT_U.h>
 #include <Adafruit_Sensor.h>
-#include <SoftwareSerial.h>
 #include <ArduinoJson.h>
-#include <ESP8266WiFi.h>
-#include <ESP8266WiFiMulti.h>
-#include <ESP8266HTTPClient.h>
-#include <H4.h>
+#include <WiFi.h>
+#include <HTTPClient.h>
+#include <TaskScheduler.h>
 #include <Statistic.h>
 #include <aREST.h>
 
-#define DHT_PIN D4
-#define DHT_TYPE DHT22
-#define RE_IN_PIN1 D7
-#define RE_IN_PIN2 D8
-#define RE_IN_PIN3 D6
-#define RE_IN_PIN4 D5
-#define FERTILITY_PIN 5
-#define MOISTURE_PIN A0
+#define DHT_PIN 26
+#define DHT_TYPE 25
+#define RE_IN_PIN1 17
+#define RE_IN_PIN2 16
+#define RE_IN_PIN3 27
+#define RE_IN_PIN4 14
+#define FERTILITY_PIN 4
+#define MOISTURE_PIN 2
 #define LISTEN_PORT 80
-#define DEBUG_PRINT 1
 
 const char *SSID = "aisfibre_2.4G";
 const char *SSID_PASSWORD = "molena01";
@@ -33,6 +30,7 @@ int moisturePercent = 0;
 String sensorData;
 int fertility;
 float humidity, temperature;
+int inputLitre;
 
 byte sensorInterrupt = 0;
 byte sensorPin = 0;
@@ -48,12 +46,16 @@ Statistic fertilityStats;
 Statistic humidityStats;
 Statistic moistureStats;
 Statistic temperatureStats;
-SoftwareSerial chat(D6, SW_SERIAL_UNUSED_PIN);
 DynamicJsonBuffer jsonBuffer;
 DHT dht(DHT_PIN, DHT_TYPE);
-H4 caller;
-ESP8266WiFiMulti WiFiMulti;
+Scheduler runner;
+
 WiFiServer server(LISTEN_PORT);
+
+void sendData();
+void checkLitre();
+Task sendDataTask(15000, TASK_FOREVER, &sendData);
+Task checkLitreTask(2000, TASK_FOREVER, &checkLitre);
 
 void setup(void)
 {
@@ -106,25 +108,12 @@ void setup(void)
         Serial.println("WiFi is Connected!");
         Serial.println(WiFi.localIP());
 
-        //        WiFiMulti.addAP(SSID, SSID_PASSWORD);
-        //
-        //        while (WiFiMulti.run() != WL_CONNECTED)
-        //        {
-        //                delay(100);
-        //                if (DEBUG_PRINT)
-        //                {
-        //                        Serial.print(". ");
-        //                }
-        //        }
-        //        WiFi.config(IPAddress(192, 168, 1, 12), IPAddress(8, 8, 8, 8), IPAddress(192, 168, 1, 2), IPAddress(255, 255, 255, 0));
-        //        if (DEBUG_PRINT)
-        //        {
-        //                Serial.println("\nconnected to network " + String(SSID) + "\n");
-        //        }
-
-        caller.every(25000, sendData);
         server.begin();
         attachInterrupt(sensorInterrupt, pulseCounter, FALLING);
+
+        runner.init();
+        runner.addTask(sendData);
+        sendDataTask.enable();
 
         delay(100);
 }
@@ -181,8 +170,6 @@ void loop(void)
 
         Serial.println("-----------------JSON-----------------");
         Serial.println(sensorData);
-
-        caller.loop();
 }
 
 void pulseCounter()
@@ -289,24 +276,68 @@ void sendData()
         moistureStats.clear();
 }
 
+int read_fertility()
+{
+        int i, fertility;
+        fertility = 0;
+        for (i = 0; i < 10; i++)
+        {
+                fertility = fertility + analogRead(fertility_pin);
+                delay(1);
+        }
+        fertility = fertility / 10;
+        if (fertility >= 480)
+        {
+                fertility = ((fertility - 480) / 10) + 93;
+        }
+        else if (fertility >= 360)
+        {
+                fertility = ((fertility - 360) / 7.5) + 77;
+        }
+        else if (fertility >= 275)
+        {
+                fertility = ((fertility - 275) / 5) + 59;
+        }
+        else if (fertility >= 200)
+        {
+                fertility = ((fertility - 200) / 6.25) + 47;
+        }
+        else if (fertility >= 125)
+        {
+                fertility = ((fertility - 125) / 5.3) + 31;
+        }
+        else if (fertility >= 65)
+        {
+                fertility = ((fertility - 65) / 4) + 16;
+        }
+        else if (fertility >= 0)
+        {
+                fertility = ((fertility - 0) / 3.75) + 0;
+        }
+        return (fertility);
+}
+
 void manualOnPump(int pumpType, int litre)
 {
         totalMilliLitres = 0;
-        digitalWrite(RE_IN_PIN4, 0);
-        for(;;)
+        digitalWrite(RE_IN_PIN1, 0);
+        checkLitreTask.enable();
+}
+
+void checkLitre()
+{
+        if ((totalMilliLitres / 1000) > litre)
         {
-                if ((totalMilliLitres / 1000) > litre)
-                {
-                        digitalWrite(RE_IN_PIN4, 1);
-                        break;
-                }
+                digitalWrite(RE_IN_PIN4, 1);
+                checkLitreTask.disable();
+                runner.deleteTask(checkLitreTask);
         }
 }
 
 int waterPumpControl(String command)
 {
         int state = command.toInt();
-        digitalWrite(RE_IN_PIN4, state);
+        digitalWrite(RE_IN_PIN1, state);
         return 1;
 }
 
@@ -320,7 +351,7 @@ int fertilizerPumpControl(String command)
 int moisturePumpControl(String command)
 {
         int state = command.toInt();
-        digitalWrite(RE_IN_PIN1, state);
+        digitalWrite(RE_IN_PIN4, state);
         return 1;
 }
 
