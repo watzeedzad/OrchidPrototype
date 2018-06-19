@@ -50,6 +50,12 @@ function MenuDrawer(props) {
                     สภาพเครื่องปลูก
                 </ListItem>
             </Link>
+
+            <Link to="/waterControl">
+                <ListItem button>
+                    ตั้งค่าการให้น้ำ
+                </ListItem>
+            </Link>
         </MenuList>
     )
 }
