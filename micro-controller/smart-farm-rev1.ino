@@ -21,16 +21,30 @@
 
 const char *SSID = "aisfibre_2.4G";
 const char *SSID_PASSWORD = "molena01";
-const int waterPump = 1;
-const int fertilizerPump = 2;
-const int moisturePump = 3;
 
+aREST rest = aREST();
+Statistic fertilityStats;
+Statistic humidityStats;
+Statistic moistureStats;
+Statistic temperatureStats;
+DynamicJsonBuffer jsonBuffer;
+DHT dht(DHT_PIN, DHT_TYPE);
+Scheduler runner;
+WiFiServer server(LISTEN_PORT);
+
+void sendData();
+void checkWaterLitre();
+void checkFertilizerLitre();
+Task sendDataTask(15000, TASK_FOREVER, &sendData);
+Task checkWaterLitreTask(2000, TASK_FOREVER, &checkWaterLitre);
+Task checkFertilizerLitreTask(200, TASK_FOREVER, &checkFertilizerLitre);
+
+int inputLitre;
 int moisture = 0;
 int moisturePercent = 0;
 String sensorData;
 int fertility;
 float humidity, temperature;
-int inputLitre;
 
 byte sensorInterrupt = 0;
 byte sensorPin = 0;
@@ -41,26 +55,9 @@ unsigned int flowMilliLitres;
 unsigned long totalMilliLitres;
 unsigned long oldTime;
 
-aREST rest = aREST();
-Statistic fertilityStats;
-Statistic humidityStats;
-Statistic moistureStats;
-Statistic temperatureStats;
-DynamicJsonBuffer jsonBuffer;
-DHT dht(DHT_PIN, DHT_TYPE);
-Scheduler runner;
-
-WiFiServer server(LISTEN_PORT);
-
-void sendData();
-void checkLitre();
-Task sendDataTask(15000, TASK_FOREVER, &sendData);
-Task checkLitreTask(2000, TASK_FOREVER, &checkLitre);
-
 void setup(void)
 {
         Serial.begin(115200);
-        chat.begin(57600);
 
         pinMode(MOISTURE_PIN, INPUT);
         pinMode(RE_IN_PIN1, OUTPUT);
@@ -112,7 +109,7 @@ void setup(void)
         attachInterrupt(sensorInterrupt, pulseCounter, FALLING);
 
         runner.init();
-        runner.addTask(sendData);
+        runner.addTask(sendDataTask);
         sendDataTask.enable();
 
         delay(100);
@@ -130,7 +127,6 @@ void loop(void)
         delay(1000);
 
         moisture = analogRead(MOISTURE_PIN);
-        String temp = chat.readString();
 
         if (isnan(dht.readTemperature()) || isnan(dht.readTemperature()))
         {
@@ -156,11 +152,13 @@ void loop(void)
                 attachInterrupt(sensorInterrupt, pulseCounter, FALLING);
         }
 
-        fertility = temp.toInt();
+        fertility = read_fertility();
         humidity = dht.readHumidity();
         temperature = dht.readTemperature();
         Serial.println(moisture);
+        Serial.println(fertility);
         moisturePercent = convertToPercent(moisture);
+
         humidityStats.add(humidity);
         temperatureStats.add(temperature);
         moistureStats.add(moisturePercent);
@@ -282,7 +280,7 @@ int read_fertility()
         fertility = 0;
         for (i = 0; i < 10; i++)
         {
-                fertility = fertility + analogRead(fertility_pin);
+                fertility = fertility + analogRead(FERTILITY_PIN);
                 delay(1);
         }
         fertility = fertility / 10;
@@ -317,21 +315,19 @@ int read_fertility()
         return (fertility);
 }
 
-void manualOnPump(int pumpType, int litre)
+void checkWaterLitre()
 {
-        totalMilliLitres = 0;
-        digitalWrite(RE_IN_PIN1, 0);
-        checkLitreTask.enable();
+        if ((totalMilliLitres / 1000) > inputLitre)
+        {
+                digitalWrite(RE_IN_PIN1, 1);
+                checkWaterLitreTask.disable();
+                runner.deleteTask(checkWaterLitreTask);
+        }
 }
 
-void checkLitre()
+void checkFertilizerLitre()
 {
-        if ((totalMilliLitres / 1000) > litre)
-        {
-                digitalWrite(RE_IN_PIN4, 1);
-                checkLitreTask.disable();
-                runner.deleteTask(checkLitreTask);
-        }
+        
 }
 
 int waterPumpControl(String command)
@@ -357,21 +353,22 @@ int moisturePumpControl(String command)
 
 int manualWaterPump(String inputLitre)
 {
-        int litre = inputLitre.toInt();
-        manualOnPump(waterPump, litre);
+        inputLitre = inputLitre.toInt();
+        totalMilliLitres = 0;
+        digitalWrite(RE_IN_PIN1, 0);
+        runner.addTask(checkWaterLitreTask);
+        checkWaterLitreTask.enable();
         return 1;
 }
 
 int manualFertilizerPump(String inputLitre)
 {
         int litre = inputLitre.toInt();
-        manualOnPump(fertilizerPump, litre);
         return 1;
 }
 
 int manualMoisturePump(String inputLitre)
 {
         int litre = inputLitre.toInt();
-        manualOnPump(moisturePump, litre);
         return 1;
 }

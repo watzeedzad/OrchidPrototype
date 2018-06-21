@@ -19,6 +19,10 @@ export default class TemperatureCheck {
 
     async check(req, res) {
         let ipIn = req.body.ip;
+        if (typeof ipIn === "undefined") {
+            temperatureCheckStatus = 500;
+            return;
+        }
         let controllerResult = await know_controller.findOne({
             ip: ipIn
         }, function (err, result) {

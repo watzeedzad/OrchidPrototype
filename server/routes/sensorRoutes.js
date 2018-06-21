@@ -5,6 +5,7 @@ import TemperatureCheck from "../classes/TemperatureCheck";
 import GreenHouseSensor from "../classes/SaveData/GreenHouseSensor";
 import ProjectSensor from "../classes/SaveData/ProjectSensor";
 import SoilMoistureCheck from "../classes/SoilMoistureCheck";
+import FertilityCheck from "../classes/FertilityCheck";
 
 let status = 0;
 
@@ -13,8 +14,9 @@ router.post("/greenHouseSensor", (req, res) => {
   new GreenHouseSensor(req, res);
   new TemperatureCheck(req, res);
   new SoilMoistureCheck(req, res);
+  new FertilityCheck(req, res);
   checkStatus(res);
-  if (temperatureCheckStatus == 200 && soilMoistureCheckStatus == 200) {
+  if (temperatureCheckStatus == 200 && soilMoistureCheckStatus == 200 && fertilityCheckStatus == 200) {
     res.sendStatus(200);
   }
 });
@@ -28,12 +30,13 @@ router.post("/projectSensor", (req, res) => {
 function checkStatus(res) {
   let messageArray = [];
   if (temperatureCheckStatus == 500) {
-    status = 500;
     messageArray.push('เกิดข้อผิดพลาดในการตรวจสอบอุณหภูมิ');
   }
-  if (soilMoistureCheck == 500) {
-    status  = 500;
+  if (soilMoistureCheckStatus == 500) {
     messageArray.push('เกิดข้อผิดพลาดในการตรวจสอบความชิ้นในเครื่องปลูก');
+  }
+  if (fertilityCheckStatus == 500) {
+    messageArray.push('เกิดข้อผิดพลาดในการตรวจสอบความอุดมสมบูรณ์ในเครื่องปลูก');
   }
   if (temperatureCheckStatus == 500 || soilMoistureCheckStatus == 500) {
     status = 500;

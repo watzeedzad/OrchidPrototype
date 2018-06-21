@@ -5,7 +5,6 @@ const farm = mongoose.model("farm");
 const know_controller = mongoose.model("know_controller");
 const greenHouseSensor = mongoose.model("greenHouse_Sensor");
 
-let farmData;
 let configFile;
 let controllerData;
 let minSoilMoisture;
@@ -18,6 +17,10 @@ export default class SoilMoistureCheck {
 
     async check(req, res) {
         let ipIn = req.body.ip;
+        if (typeof ipIn === "undefined") {
+            soilMoistureCheckStatus = 500;
+            return;
+        }
         let controllerResult = await know_controller.findOne({
             ip: ipIn
         }, function (err, result) {
@@ -51,15 +54,14 @@ export default class SoilMoistureCheck {
         if (typeof resultCompareSoilMoisture === "undefined") {
             soilMoistureCheckStatus = 500;
             return;
-        } else {
-            if (resultCompareSoilMoisture) {
-                onOffWaterPump(controllerData.ip, true);
-            } else {
-                onOffWaterPump(controllerData.ip, false);
-            }
-            soilMoistureCheckStatus = 200
-            return;
         }
+        if (resultCompareSoilMoisture) {
+            onOffWaterPump(controllerData.ip, true);
+        } else {
+            onOffWaterPump(controllerData.ip, false);
+        }
+        soilMoistureCheckStatus = 200
+        return;
     }
 }
 
