@@ -2,6 +2,9 @@
 #include <HTTPClient.h>
 #include <TaskScheduler.h>
 #include <Statistic.h>
+#include <DHT.h>
+#include <DHT_U.h>
+#include <Adafruit_Sensor.h>
 #include <aREST.h>
 
 #define LISTEN_PORT 80

@@ -1,7 +1,5 @@
 #include <MoistureSensor.h>
-#include <DHT.h>
-#include <DHT_U.h>
-#include <Adafruit_Sensor.h>
+#include <dht.h>
 #include <ArduinoJson.h>
 #include <WiFi.h>
 #include <HTTPClient.h>
@@ -9,14 +7,13 @@
 #include <Statistic.h>
 #include <aREST.h>
 
-#define DHT_PIN 26
-#define DHT_TYPE 25
+#define DHT22_PIN 26
 #define RE_IN_PIN1 17
 #define RE_IN_PIN2 16
 #define RE_IN_PIN3 27
 #define RE_IN_PIN4 14
-#define FERTILITY_PIN 4
-#define MOISTURE_PIN 2
+#define FERTILITY_PIN 36
+#define MOISTURE_PIN 39
 #define LISTEN_PORT 80
 
 const char *SSID = "aisfibre_2.4G";
@@ -28,26 +25,26 @@ Statistic humidityStats;
 Statistic moistureStats;
 Statistic temperatureStats;
 DynamicJsonBuffer jsonBuffer;
-DHT dht(DHT_PIN, DHT_TYPE);
+dht DHT;
 Scheduler runner;
 WiFiServer server(LISTEN_PORT);
 
 void sendData();
 void checkWaterLitre();
 void checkFertilizerLitre();
-Task sendDataTask(15000, TASK_FOREVER, &sendData);
-Task checkWaterLitreTask(2000, TASK_FOREVER, &checkWaterLitre);
-Task checkFertilizerLitreTask(200, TASK_FOREVER, &checkFertilizerLitre);
+Task sendDataTask(75000, TASK_FOREVER, &sendData);
+Task checkWaterLitreTask(1000, TASK_FOREVER, &checkWaterLitre);
+Task checkFertilizerLitreTask(1000, TASK_FOREVER, &checkFertilizerLitre);
 
 int inputLitre;
 int moisture = 0;
 int moisturePercent = 0;
 String sensorData;
-int fertility;
+int fertility = 0;
 float humidity, temperature;
 
-byte sensorInterrupt = 0;
-byte sensorPin = 0;
+byte sensorInterrupt = 25;
+byte sensorPin = 25;
 float calibrationFactor = 4.5;
 volatile byte pulseCount;
 float flowRate;
@@ -55,11 +52,18 @@ unsigned int flowMilliLitres;
 unsigned long totalMilliLitres;
 unsigned long oldTime;
 
+IPAddress ip(192, 168, 1, 12);
+IPAddress subnet(255, 255, 255, 0);
+IPAddress gateway(192, 168, 1, 2);
+IPAddress primaryDns(8, 8, 8, 8);
+IPAddress secondaryDns(8, 8, 4, 4);
+
 void setup(void)
 {
         Serial.begin(115200);
 
         pinMode(MOISTURE_PIN, INPUT);
+        pinMode(FERTILITY_PIN, INPUT);
         pinMode(RE_IN_PIN1, OUTPUT);
         pinMode(RE_IN_PIN2, OUTPUT);
         pinMode(RE_IN_PIN3, OUTPUT);
@@ -89,12 +93,8 @@ void setup(void)
         rest.set_name("esp8266");
 
         WiFi.mode(WIFI_STA);
-        IPAddress ip(192, 168, 1, 12);
-        IPAddress dns(8, 8, 8, 8);
-        IPAddress gateway(192, 168, 1, 2);
-        IPAddress subset(255, 255, 255, 0);
+        WiFi.config(ip, gateway, subnet, primaryDns, secondaryDns);
         WiFi.begin(SSID, SSID_PASSWORD);
-        WiFi.config(ip, dns, gateway, subset);
 
         while (WiFi.status() != WL_CONNECTED)
         {
@@ -109,8 +109,9 @@ void setup(void)
         attachInterrupt(sensorInterrupt, pulseCounter, FALLING);
 
         runner.init();
-        runner.addTask(sendDataTask);
-        sendDataTask.enable();
+        runner.addTask(checkWaterLitreTask);
+        // runner.addTask(sendDataTask);
+        // sendDataTask.enable();
 
         delay(100);
 }
@@ -127,11 +128,6 @@ void loop(void)
         delay(1000);
 
         moisture = analogRead(MOISTURE_PIN);
-
-        if (isnan(dht.readTemperature()) || isnan(dht.readTemperature()))
-        {
-                return;
-        }
 
         if ((millis() - oldTime) > 1000)
         {
@@ -153,10 +149,11 @@ void loop(void)
         }
 
         fertility = read_fertility();
-        humidity = dht.readHumidity();
-        temperature = dht.readTemperature();
+        DHT.read22(DHT22_PIN);
+        humidity = DHT.humidity, 1;
+        temperature = DHT.temperature, 1;
+        Serial.println(analogRead(FERTILITY_PIN));
         Serial.println(moisture);
-        Serial.println(fertility);
         moisturePercent = convertToPercent(moisture);
 
         humidityStats.add(humidity);
@@ -168,6 +165,8 @@ void loop(void)
 
         Serial.println("-----------------JSON-----------------");
         Serial.println(sensorData);
+
+        runner.execute();
 }
 
 void pulseCounter()
@@ -178,7 +177,7 @@ void pulseCounter()
 int convertToPercent(int value)
 {
         int percentValue = 0;
-        percentValue = map(value, 730, 400, 0, 100);
+        percentValue = map(value, 3000, 1700, 0, 100);
         if (percentValue == -1)
         {
                 percentValue = 0;
@@ -317,17 +316,20 @@ int read_fertility()
 
 void checkWaterLitre()
 {
-        if ((totalMilliLitres / 1000) > inputLitre)
+        if (totalMilliLitres > (inputLitre * 1000))
         {
+                Serial.println("true");
                 digitalWrite(RE_IN_PIN1, 1);
                 checkWaterLitreTask.disable();
-                runner.deleteTask(checkWaterLitreTask);
+        }
+        else
+        {
+                Serial.println("false");
         }
 }
 
 void checkFertilizerLitre()
 {
-        
 }
 
 int waterPumpControl(String command)
@@ -356,7 +358,6 @@ int manualWaterPump(String inputLitre)
         inputLitre = inputLitre.toInt();
         totalMilliLitres = 0;
         digitalWrite(RE_IN_PIN1, 0);
-        runner.addTask(checkWaterLitreTask);
         checkWaterLitreTask.enable();
         return 1;
 }
