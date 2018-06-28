@@ -25,3 +25,31 @@ export const saveWaterConfig = (values) => {
         })
     }
 }
+
+export const getWateringTime = ({greenHouseId}) => {
+
+    let values = {
+        greenHouseId: greenHouseId
+    }
+    
+    return (dispatch) => {
+        //รูปแบบการใช้ axios อีกรูปแบบในการจะบุ method ที่ต้องการ
+        //ต้องส่ง heder ชื่อ authorization โดยส่ง token เขาไปด้วยครับ
+        dispatch({ type: 'LOAD_WATERCONFIG_PENDING' })
+        return axios({
+            method: 'post',
+            url: `${BASE_URL}/waterControl/showWateringConfig`,
+            data: values,
+            headers: { 'Content-Type': 'application/json' }
+            //headers: { authorization: localStorage.getItem('token') }
+        }).then(result => {
+            //เมื่อข้อมูลส่งกลับมาต้องเช็คสถานะก่อนว่า code ซ�้ำหรือไม่
+            //โดยserver จะส่ง object ที่ชื่อว่า status และ message กลับมา
+            //browserHistory.push('/waterControl')
+            dispatch({ type: 'LOAD_WATERCONFIG_SUCCESS', payload: result.data })           
+        }).catch(err => {
+            //กรณี error         
+            dispatch({ type: 'LOAD_WATERCONFIG_REJECTED', payload: err.message })
+        })
+    }
+}

@@ -6,7 +6,7 @@ import ClockPiker from '../../Utils/ClockPicker';
 import { Modal, ModalHeader} from 'reactstrap';
 import { Field, reduxForm ,Form} from 'redux-form';
 import renderField from '../../Utils/renderField'
-import { saveWaterConfig } from '../../redux/actions/waterActions'
+import { saveWaterConfig,getWateringTime } from '../../redux/actions/waterActions'
 import 'bootstrap/dist/css/bootstrap.min.css';
 
 class WateringTimeList extends Component {
@@ -18,10 +18,12 @@ class WateringTimeList extends Component {
 
     componentDidMount() {
         //ดึงข้อมูลเวลาที่ตั้งไว้ทั้งหมดมาลง state
-        // this.props.dispatch(getWateringTime({ greenHouseId: 789456123 }))
-        // this.setState({
-        //     setTimeList: this.props.wateringTimeList.data
-        // })
+        this.props.dispatch(getWateringTime({ greenHouseId: 789456123 }))
+        if(!this.props.wateringTimeList){
+            this.setState({
+                setTimeList: this.props.wateringTimeList.data
+            })
+        }
     }
 
     handleInitialize() {
@@ -33,18 +35,18 @@ class WateringTimeList extends Component {
     }
 
     render() {
-        const { handleSubmit } = this.props
+        const { handleSubmit,wateringTimeList } = this.props
 
-        // if (wateringTimeList.isRejected) {
-        //     return <div className="alert alert-danger">Error: {wateringTimeList.data}</div>
-        // }
-        // if (wateringTimeList.isLoading) {
-        //     return <div>Loading...</div>
-        // }
-        // if (wateringTimeList.errorMessage) {
-        //     return <div className="alert alert-danger">Error: {wateringTimeList.errorMessage}</div>
-        // }
-        
+        if (wateringTimeList.isRejected) {
+            return <div className="alert alert-danger">Error: {wateringTimeList.data}</div>
+        }
+        if (wateringTimeList.isLoading) {
+            return <div>Loading...</div>
+        }
+        if (wateringTimeList.errorMessage) {
+            return <div className="alert alert-danger">Error: {wateringTimeList.errorMessage}</div>
+        }
+
         this.handleInitialize()
 
         return (
@@ -134,7 +136,7 @@ const form = reduxForm({
 
 function mapStateToProps(state) {
     return {
-        //wateringTimeList: state.waterControl.wateringTimeList,
+        wateringTimeList: state.waterReducers.wateringTimeList,
     }
 }
 
