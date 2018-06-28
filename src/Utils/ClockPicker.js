@@ -1,6 +1,5 @@
 import React, { Component } from 'react'
 import TimeKeeper from 'react-timekeeper'
-import { Modal, ModalHeader} from 'reactstrap';
 
 class ClockPiker extends Component {
     constructor(props){
@@ -8,24 +7,26 @@ class ClockPiker extends Component {
         this.state = {
             time: '0:00 am',
             time24: '0.00',
-            modal: false
+            hour24: 0,
+            minute: 0
         }
         this.handleTimeChange = this.handleTimeChange.bind(this)
     }
     handleTimeChange(newTime){
-        this.setState({ time: newTime.formatted}),
-        this.setState({ time24: newTime.formatted24})
+        this.setState({ 
+            time: newTime.formatted ,
+            time24: newTime.formatted24 ,
+            hour24: newTime.hour24 ,
+            minute: newTime.minute
+        })
     }
-    toggleTimekeeper(val){
-        this.setState({modal: val})
+    toggleTimekeeper(){
+        this.props.toggle()
+        this.props.addTime(new Date(1970,0,1,this.state.hour24,this.state.minute))
     }
     render(){
         return (
-            <div align="center">
-                    <Modal isOpen={this.state.modal} toggle={this.toggle} autoFocus={false} size='sm'>
-                        <ModalHeader toggle={this.toggle}>ตั้งเวลารดน้ำ</ModalHeader>
-                        <div align="center">
-                        <br/>
+            <div>
                         <TimeKeeper
                             time={this.state.time}
                             onChange={this.handleTimeChange}
@@ -35,26 +36,15 @@ class ClockPiker extends Component {
                                 DONE_BUTTON_BORDER_COLOR: '#ededed'
                             }}
                             onDoneClick={() => {
-                                this.toggleTimekeeper(false)
+                                this.toggleTimekeeper()
                             }}
                             switchToMinuteOnHourSelect={true}
                         />
-                        </div>
-                        &nbsp;
-                    </Modal>
                 
                 <br/><br/>
-                <span>เวลาที่เลือกคือ {this.state.time} หรือ {this.state.time24} น.</span>
-                <br/><br/>
-                <button onClick={() => this.toggle()}>OPEN</button>
+                <span>เวลาที่เลือกคือ {this.state.time24} น. หรือ {this.state.time} </span>
             </div>
         )
-    }
-
-    toggle = () => {
-        this.setState({
-            modal: !this.state.modal
-        })
     }
 } 
 
