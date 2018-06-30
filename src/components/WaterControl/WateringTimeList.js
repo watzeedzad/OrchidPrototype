@@ -1,26 +1,26 @@
 import React, { Component } from 'react';
+import { Container, Row, Col, Alert  } from 'reactstrap';
 import { connect } from 'react-redux'
-import { Container, Row, Col } from 'reactstrap';
 import { Button } from 'reactstrap';
 import ClockPiker from '../../Utils/ClockPicker';
 import { Modal, ModalHeader} from 'reactstrap';
-import { Field, reduxForm ,Form} from 'redux-form';
-import renderField from '../../Utils/renderField'
-import { saveWaterConfig,getWateringTime } from '../../redux/actions/waterActions'
-import { debounce } from 'lodash'
+import { saveWaterConfig } from '../../redux/actions/waterActions'
 import 'bootstrap/dist/css/bootstrap.min.css';
 
 class WateringTimeList extends Component {
     
     state = {
         setTimeList: [],
-        refresh: true,
-        modal: false
+        modal: false,
+        visible: true,
+        mss: ''
     }
 
-    componentWillReceiveProps() {
+    componentDidMount() {
         const wateringTimeList = this.props.wateringTimeList
-        
+        this.setState({
+            mss:this.props.mss
+        })
         if (wateringTimeList.data!=null){    
             if (wateringTimeList.data.timeRanges.length>0){
                 const newArr = []
@@ -33,35 +33,21 @@ class WateringTimeList extends Component {
             }
         }
     }
-
-    
-
-    handleInitialize() {
-        let initData = {
-            "greenHouseId": 789456123,
-            "timeRanges": this.state.setTimeList
-        };
-        this.props.initialize(initData);
-    }
     
     render() {
-        
-        const { handleSubmit,wateringTimeList} = this.props
+        const { waterConfig} = this.props
 
-        
-        this.handleInitialize()
+        if (waterConfig.isRejected) {
+            return <div className="alert alert-danger">Error: {waterConfig.data}</div>
+        }
 
         return (
             <Container>
                 <div>
                     <Row>
                         <Col xs='12' sm='12' md='12' lg='12' xl='12'>
+                            {this.state.mss}
                             <Button color="primary" onClick={() => this.toggle()}>เพิ่มเวลา</Button>{' '}
-                            <form>
-                                <Field name="greenHouseId" component={renderField} type="hidden" />
-                                <Field name="timeRanges" component={renderField} type="hidden" />
-                                <Button color="primary" onClick={handleSubmit(this.onSubmit)}>บันทึก</Button>
-                            </form>
                             <br/><hr/>
                             <div align="center">
                                 <Modal isOpen={this.state.modal} toggle={this.toggle} autoFocus={false} size='sm'>
@@ -109,11 +95,35 @@ class WateringTimeList extends Component {
         })
     }
 
+    checkDuplicateTime = (val,curTimeList) => {
+        for (let index = 0; index < curTimeList.length; index++) {
+            const time = curTimeList[index];
+            if(time.getTime()==val.getTime()){
+                return false;
+            }
+        }
+        return true;
+    }
+
     addTime = (val) => {
+        if(this.checkDuplicateTime(val,this.state.setTimeList)){
         var newArray = this.state.setTimeList.slice();    
         newArray.push(val);
-        newArray.sort();   
-        this.setState({setTimeList:newArray})
+        newArray.sort();
+        this.onSubmit({greenHouseId:789456123,timeRanges:newArray})
+        }else{
+            this.setState({mss: 
+                <div>
+                    <Alert  color="warning" isOpen={this.state.visible} toggle={this.onDismiss}>
+                        เวลาที่เลือกซ้ำกับที่เคยตั้งไว้
+                    </Alert >
+                </div>
+            })
+        }
+    }
+
+    onDismiss = () => {
+        this.setState({ mss: '' });
     }
 
     tConvert = (time) => {
@@ -135,9 +145,10 @@ class WateringTimeList extends Component {
 
 }
 
-const form = reduxForm({
-    form: 'waterConfig'
-})
+function mapStateToProps(state) {
+    return {
+        waterConfig: state.waterReducers.waterConfig,
+    }
+}
 
-
-export default (form(WateringTimeList))
+export default connect(mapStateToProps)(WateringTimeList)

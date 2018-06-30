@@ -9,6 +9,7 @@ export const saveWaterConfig = (values) => {
     return (dispatch) => {
         //รูปแบบการใช้ axios อีกรูปแบบในการจะบุ method ที่ต้องการ
         //ต้องส่ง heder ชื่อ authorization โดยส่ง token เขาไปด้วยครับ
+        console.log(values)
         return axios({
             method: 'post',
             url: `${BASE_URL}/waterControl/wateringConfig`,

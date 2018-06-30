@@ -1,10 +1,16 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux'
+import { UncontrolledAlert } from 'reactstrap';
 import { Container, Row, Col } from 'reactstrap';
 import WateringTimeList from '../WaterControl/WateringTimeList'
-import { saveWaterConfig,getWateringTime } from '../../redux/actions/waterActions'
+import { getWateringTime } from '../../redux/actions/waterActions'
 
 class AutoWaterControl extends Component {
+    state = {
+        mss: '',
+        visible: true
+    }
+
     componentDidMount() {
         //ดึงข้อมูลเวลาที่ตั้งไว้ทั้งหมดมาลง state
         this.props.dispatch(getWateringTime({ greenHouseId: 789456123 }))
@@ -28,7 +34,7 @@ class AutoWaterControl extends Component {
                 <div>
                     <Row>
                         <Col xs='12' sm='12' md='12' lg='12' xl='12'>
-                            <WateringTimeList wateringTimeList={wateringTimeList} onToggle={this.toggle}/>
+                            <WateringTimeList wateringTimeList={wateringTimeList} onToggle={this.toggle} mss={this.state.mss}/>
                         </Col>
                     </Row>
                 </div>
@@ -37,8 +43,17 @@ class AutoWaterControl extends Component {
     }
 
     toggle = () => {
+        this.setState({
+            mss: 
+                <div>
+                    <UncontrolledAlert  color="success">
+                        บันทึกการตั้งค่าเวลาการให้น้ำสำเร็จ
+                    </UncontrolledAlert >
+                </div>
+        })
         this.props.dispatch(getWateringTime({ greenHouseId: 789456123 }))
     }
+
 }
 
 function mapStateToProps(state) {

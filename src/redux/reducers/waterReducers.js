@@ -15,7 +15,7 @@ export default (state = initialState, action) => {
             return { ...state, wateringTimeList: { data: action.payload, isLoading: false, isRejected: true } }
 
         case 'SAVE_WATERCONFIG_SUCCESS':
-            return { ...state, waterConfig: { data: null, isLoading: false, isRejected: false } }
+            return { ...state, waterConfig: { data: action.payload, isLoading: false, isRejected: false } }
         case 'SAVE_WATERCONFIG_REJECTED':
             return { ...state, waterConfig: { data: action.payload, isLoading: false, isRejected: true } }
 
