@@ -50,6 +50,7 @@ require("./models/fertilizer_history");
 require("./models/water_history");
 require("./models/growth_rate");
 require("./models/Project");
+require("./models/relay_queue");
 
 //load routes
 const sensorRoutes = require("./routes/sensorRoutes");

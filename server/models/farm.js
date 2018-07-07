@@ -11,7 +11,8 @@ const farmSchema = new Schema({
   ownerSurname: String,
   ownerTel: String,
   ownerAddress: String,
-  configFilePath: String
+  configFilePath: String,
+  pimac: String
 });
 
 farmSchema.plugin(autoIncrement, {

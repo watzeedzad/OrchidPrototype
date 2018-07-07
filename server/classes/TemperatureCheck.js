@@ -1,3 +1,5 @@
+import InsertRelayCommand from "./InsertRelayCommand";
+
 const mongoose = require("mongoose");
 const fs = require("fs");
 const request = require("request");
@@ -68,13 +70,16 @@ export default class TemperatureCheck {
             return;
         } else {
             if (!resultCompareTemp) {
-                onOffMoisturePump(controllerData.ip, true);
+                new InsertRelayCommand(controllerData.ip, "water", true, farmData.piMacAddress);
+                // onOffMoisturePump(controllerData.ip, true);
             }
             if (!resultCompareHumid) {
-                onOffMoisturePump(controllerData.ip, true);
+                new InsertRelayCommand(controllerData.ip, "water", true, farmData.piMacAddress);
+                // onOffMoisturePump(controllerData.ip, true);
             }
             if (resultCompareTemp && resultCompareHumid) {
-                onOffMoisturePump(controllerData.ip, false);
+                new InsertRelayCommand(controllerData.ip, "water", false, farmData.piMacAddress);
+                // onOffMoisturePump(controllerData.ip, false);
             }
             temperatureCheckStatus = 200
             return;
@@ -114,31 +119,31 @@ async function getConfigFile(farmIdIn) {
     configFile = config;
 }
 
-function onOffMoisturePump(ip, state) {
-    if (state) {
-        console.log("Send: /moisturePump?params=0 (on)");
-        request
-            .get("http://" + String(ip) + "/moisturePump?params=0", {
-                timeout: 20000
-            })
-            .on("error", function (err) {
-                console.log(err.code === "ETIMEDOUT");
-                console.log(err.connect === true);
-                console.log(err);
-            });
-    } else {
-        console.log("Send: /moisturePump?params=1 (off)");
-        request
-            .get("http://" + String(ip) + "/moisturePump?params=1", {
-                timeout: 20000
-            })
-            .on("error", function (err) {
-                console.log(err.code === "ETIMEDOUT");
-                console.log(err.connect === true);
-                console.log(err);
-            });
-    }
-}
+// function onOffMoisturePump(ip, state) {
+//     if (state) {
+//         console.log("Send: /moisturePump?params=0 (on)");
+//         request
+//             .get("http://" + String(ip) + "/moisturePump?params=0", {
+//                 timeout: 20000
+//             })
+//             .on("error", function (err) {
+//                 console.log(err.code === "ETIMEDOUT");
+//                 console.log(err.connect === true);
+//                 console.log(err);
+//             });
+//     } else {
+//         console.log("Send: /moisturePump?params=1 (off)");
+//         request
+//             .get("http://" + String(ip) + "/moisturePump?params=1", {
+//                 timeout: 20000
+//             })
+//             .on("error", function (err) {
+//                 console.log(err.code === "ETIMEDOUT");
+//                 console.log(err.connect === true);
+//                 console.log(err);
+//             });
+//     }
+// }
 
 function compareTemperature(configFile, currentTemp, greenHouseIdIndexTemperature) {
     minTemperature = configFile.temperatureConfigs[greenHouseIdIndexTemperature].minTemperature;
