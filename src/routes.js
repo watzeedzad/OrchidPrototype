@@ -4,6 +4,7 @@ import PlanterAnalyze from './pages/PlanterAnalyze'
 import FertilityControl from './pages/FertilityControl'
 import Login from './pages/Login'
 import WaterControl from './pages/WaterControl'
+import FertilizerControl from './pages/FertilizerControl';
 
 const routes = [{
     path: '/',
@@ -14,6 +15,7 @@ const routes = [{
         { path: 'planterAnalyze', component: PlanterAnalyze },
         { path: 'fertilityControl', component: FertilityControl },
         { path: 'waterControl', component: WaterControl },
+        { path: 'fertilizerControl', component:FertilizerControl},
     ]
 }]
 

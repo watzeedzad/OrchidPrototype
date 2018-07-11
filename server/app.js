@@ -50,6 +50,8 @@ require("./models/fertilizer_history");
 require("./models/water_history");
 require("./models/growth_rate");
 require("./models/Project");
+require("./models/relay_queue");
+require("./models/relayManualQueue");
 
 //load routes
 const sensorRoutes = require("./routes/sensorRoutes");
@@ -60,6 +62,7 @@ const temperatureControl = require("./routes/temperatureControl");
 const planterAnalyze = require("./routes/planterAnalyze");
 const login = require("./routes/login");
 const waterControl = require("./routes/waterControl");
+const fertilizerControl = require("./routes/fertilizerControl");
 
 const app = express();
 
@@ -85,6 +88,7 @@ app.use("/temperatureControl", temperatureControl);
 app.use("/planterAnalyze", planterAnalyze);
 app.use("/login", login);
 app.use("/waterControl", waterControl);
+app.use("/fertilizerControl", fertilizerControl);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

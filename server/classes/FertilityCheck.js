@@ -1,3 +1,5 @@
+import InsertRelayCommand from "./InsertRelayCommand";
+
 const mongoose = require("mongoose");
 const fs = require("fs");
 const request = require("request");
@@ -5,6 +7,7 @@ const farm = mongoose.model("farm");
 const know_controller = mongoose.model("know_controller");
 const project = mongoose.model("project");
 
+let farmData;
 let configFile;
 let controllerData;
 let minFertility;
@@ -52,9 +55,11 @@ export default class FertilityCheck {
             return;
         }
         if (resultCompareFertility) {
-            onOffFertilizerPump(controllerData.ip, true);
+            new InsertRelayCommand(controllerData.ip, "fertilizer", true, farmData.piMacAddress);
+            // onOffFertilizerPump(controllerData.ip, true);
         } else {
-            onOffFertilizerPump(controllerData.ip, false);
+            new InsertRelayCommand(controllerData.ip, "fertilizer", false, farmData.piMacAddress);
+            // onOffFertilizerPump(controllerData.ip, false);
         }
         fertilityCheckStatus = 200;
         return;
@@ -64,7 +69,7 @@ export default class FertilityCheck {
 async function getControllerData(greenHouseId) {
     let controllerResult = await know_controller.findOne({
         isHavePump: true,
-        "pumpType.fertility": true,
+        "pumpType.fertilizer": true,
         projectId: projectId
     }, function (err, result) {
         if (err) {
@@ -76,31 +81,31 @@ async function getControllerData(greenHouseId) {
     });
 }
 
-function onOffFertilizerPump(ip, state) {
-    if (state) {
-        console.log("Send: /waterFertilizer?params=0 (on)");
-        request
-            .get("http://" + String(ip) + "/waterFertilizer?params=0", {
-                timeout: 20000
-            })
-            .on("error", function (err) {
-                console.log(err.code === "ETIMEDOUT");
-                console.log(err.connect === true);
-                console.log(err);
-            });
-    } else {
-        console.log("Send: /waterFertilizer?params=1 (off)");
-        request
-            .get("http://" + String(ip) + "/waterFertilizer?params=1", {
-                timeout: 20000
-            })
-            .on("error", function (err) {
-                console.log(err.code === "ETIMEDOUT");
-                console.log(err.connect === true);
-                console.log(err);
-            });
-    }
-}
+// function onOffFertilizerPump(ip, state) {
+//     if (state) {
+//         console.log("Send: /fertilizerPump?params=0 (on)");
+//         request
+//             .get("http://" + String(ip) + "/fertilizerPump?params=0", {
+//                 timeout: 20000
+//             })
+//             .on("error", function (err) {
+//                 console.log(err.code === "ETIMEDOUT");
+//                 console.log(err.connect === true);
+//                 console.log(err);
+//             });
+//     } else {
+//         console.log("Send: /fertilizerPump?params=1 (off)");
+//         request
+//             .get("http://" + String(ip) + "/fertilizerPump?params=1", {
+//                 timeout: 20000
+//             })
+//             .on("error", function (err) {
+//                 console.log(err.code === "ETIMEDOUT");
+//                 console.log(err.connect === true);
+//                 console.log(err);
+//             });
+//     }
+// }
 
 async function getConfigFile(farmIdIn) {
     let farmResult = await farm.findOne({
@@ -110,6 +115,7 @@ async function getConfigFile(farmIdIn) {
             console.log("[FertilityCheck] getConfigFile, fail");
         } else {
             console.log("[FertilityCheck] getConfigFile, pass");
+            farmData = result;
         }
     });
     let configFilePath = farmResult.configFilePath;

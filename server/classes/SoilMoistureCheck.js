@@ -1,3 +1,5 @@
+import InsertRelayCommand from "./InsertRelayCommand";
+
 const mongoose = require("mongoose");
 const fs = require("fs");
 const request = require("request");
@@ -56,9 +58,11 @@ export default class SoilMoistureCheck {
             return;
         }
         if (resultCompareSoilMoisture) {
-            onOffWaterPump(controllerData.ip, true);
+            new InsertRelayCommand(controllerData.ip, "moisture", true, farmData.piMacAddress);
+            // onOffWaterPump(controllerData.ip, true);
         } else {
-            onOffWaterPump(controllerData.ip, false);
+            new InsertRelayCommand(controllerData.ip, "moisture", false, farmData.piMacAddress);
+            // onOffWaterPump(controllerData.ip, false);
         }
         soilMoistureCheckStatus = 200
         return;
@@ -97,31 +101,31 @@ async function getConfigFile(farmIdIn) {
     configFile = config;
 }
 
-function onOffWaterPump(ip, state) {
-    if (state) {
-        console.log("Send: /waterPump?params=0 (on)");
-        request
-            .get("http://" + String(ip) + "/waterPump?params=0", {
-                timeout: 20000
-            })
-            .on("error", function (err) {
-                console.log(err.code === "ETIMEDOUT");
-                console.log(err.connect === true);
-                console.log(err);
-            });
-    } else {
-        console.log("Send: /waterPump?params=1 (off)");
-        request
-            .get("http://" + String(ip) + "/waterPump?params=1", {
-                timeout: 20000
-            })
-            .on("error", function (err) {
-                console.log(err.code === "ETIMEDOUT");
-                console.log(err.connect === true);
-                console.log(err);
-            });
-    }
-}
+// function onOffWaterPump(ip, state) {
+//     if (state) {
+//         console.log("Send: /waterPump?params=0 (on)");
+//         request
+//             .get("http://" + String(ip) + "/waterPump?params=0", {
+//                 timeout: 20000
+//             })
+//             .on("error", function (err) {
+//                 console.log(err.code === "ETIMEDOUT");
+//                 console.log(err.connect === true);
+//                 console.log(err);
+//             });
+//     } else {
+//         console.log("Send: /waterPump?params=1 (off)");
+//         request
+//             .get("http://" + String(ip) + "/waterPump?params=1", {
+//                 timeout: 20000
+//             })
+//             .on("error", function (err) {
+//                 console.log(err.code === "ETIMEDOUT");
+//                 console.log(err.connect === true);
+//                 console.log(err);
+//             });
+//     }
+// }
 
 function compareSoilMositure(configFile, currentSoilMoisture, greenHouseIdIndex) {
     minSoilMoisture = configFile.soilMoistureConfigs[greenHouseIdIndex].minSoilMoisture;
