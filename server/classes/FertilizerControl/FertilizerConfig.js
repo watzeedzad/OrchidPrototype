@@ -36,7 +36,7 @@ export default class FertilizerConfig {
                 }
             }
             for (let index = 0; index < configTimeRanges.length; index++) {
-                let tempDate = configTimeRanges[index];
+                let tempDate = new Date(configTimeRanges[index]);
                 let tempTimeMills = tempDate.getTime();
                 tempJson.timeRanges.push(tempTimeMills);
             }

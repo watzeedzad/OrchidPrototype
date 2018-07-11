@@ -34,7 +34,7 @@ export default class ShowFertilizerConfig {
             });
         } else {
             for (let index = 0; index < Object.keys(fertilizerConfig).length; index++) {
-                let temp = wateringConfig[index];
+                let temp = fertilizerConfig[index];
                 if (temp.projectId == projectId) {
                     existProjectIndex = index;
                 }

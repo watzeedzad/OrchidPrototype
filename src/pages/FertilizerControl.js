@@ -2,6 +2,7 @@ import React from 'react'
 import Sidebar from '../components/Sidebar/Drawers'
 import { withStyles } from '@material-ui/core/styles';
 import AutoFertilizerControl from '../components/FertilizerControl/AutoFertilizerControl';
+import ManualFertilizerControl from '../components/FertilizerControl/ManualFertilizerControl'
 
 
 const styles = theme => ({
@@ -29,12 +30,13 @@ function FertilizerControl(props){
             <div id='sidebar'>
                 <Sidebar/>
             </div>
-            <div id='content-fertilizercontrol'>
+            
                 <main className={classes.content}>
                 <div className={classes.toolbar} id='toolbar' />
-                <AutoFertilizerControl/>
+                <AutoFertilizerControl/><br/><hr/>
+                <ManualFertilizerControl/>
                 </main>
-            </div>
+            
         </div>
     )
 }

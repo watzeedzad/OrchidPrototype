@@ -25,13 +25,15 @@ class FertilizerTimeList extends Component{
             mss:this.props.mss
         });
         if(fertilizerTimeList.data!=null){
-            const newArr = [];
-            for(let i = 0 ;i< fertilizerTimeList.data.timeRanges.length;i++){
-                const mills = fertilizerTimeList.data.timeRanges[i];
-                const date = new Date(mills);
-                newArr.push(date);
+            if (fertilizerTimeList.data.timeRanges.length>0){
+                const newArr = [];
+                for(let i = 0 ;i< fertilizerTimeList.data.timeRanges.length;i++){
+                    const mills = fertilizerTimeList.data.timeRanges[i];
+                    const date = new Date(mills);
+                    newArr.push(date);
+                }
+                this.setState({setTimeList:newArr});
             }
-            this.setState({setTimeList:newArr});
         }
     }
 
@@ -45,9 +47,10 @@ class FertilizerTimeList extends Component{
         <Container>
             <div id='time-modal-content'>
              <Row>
-              <Col md='12'>
+              <Col xs='12' sm='12' md='12' lg='12' xl='12'>
                 {this.state.mss}
                 <Button color='primary' onClick={()=> this.toggle()}>เพิ่มเวลา</Button>
+                <br/><hr/>
                 <Modal isOpen={this.state.modal} toggle={this.toggle} autoFocus={false} size='xs'>
                     <ModalHeader toggle={this.toggle}>ตั้งเวลาให้ปุ๋ย</ModalHeader>
                     <div align='center'>
@@ -61,11 +64,11 @@ class FertilizerTimeList extends Component{
             </div>
             <div id='time-list'>
                 <Row>
-                    {this.state.setTimeList > 0 && this.state.setTimeList.map(e=>{
+                    {this.state.setTimeList.length > 0 && this.state.setTimeList.map(e=>{
                         let hour = e.getHours()<10? '0'+e.getHours():e.getHours();
                         let minute = e.getMinutes()<10? '0'+e.getMinutes():e.getMinutes();
                         return(
-                            <Col md='12'>
+                            <Col xs='12' sm='12' md='12' lg='12' xl='12'>
                                 {hour}:{minute} น. หรือ {this.tConvert(hour+":"+minute)}
                             </Col>
                         )
@@ -103,7 +106,7 @@ class FertilizerTimeList extends Component{
             var newArray = this.state.setTimeList.slice();    
             newArray.push(val);
             newArray.sort();
-            this.onSubmit({greenHouseId:789456123,timeRanges:newArray})
+            this.onSubmit({projectId: 1,timeRanges:newArray})
         }else{
              this.setState({mss: 
                 <div id='warning-duplicatetime'>

@@ -5,8 +5,6 @@ const BASE_URL = config.BASE_URL
 
 export const saveFertilizerConfig = (values)=>{
     return (dispatch)=>{
-
-        console.log(values);
         return axios({
             method:'post',
             url:`${BASE_URL}/fertilizerControl/fertilizerConfig`,
@@ -20,10 +18,10 @@ export const saveFertilizerConfig = (values)=>{
     }
 }
 
-export const getFertilizerTime = ({greenHouseId})=>{
+export const getFertilizerTime = ({projectId})=>{
 
     let values ={
-        greenHouseId: greenHouseId
+        projectId: projectId
     }
 
     return (dispatch)=>{
@@ -42,4 +40,25 @@ export const getFertilizerTime = ({greenHouseId})=>{
         })
     }
 
+}
+
+export const manaulFertilizer = (values) => {
+    return (dispatch) => {
+        //รูปแบบการใช้ axios อีกรูปแบบในการจะบุ method ที่ต้องการ
+        //ต้องส่ง heder ชื่อ authorization โดยส่ง token เขาไปด้วยครับ
+        return axios({
+            method: 'post',
+            url: `${BASE_URL}/fertilizerControl/manualFertilizer`,
+            data: values,
+            headers: { 'Content-Type': 'application/json' }
+            //headers: { authorization: localStorage.getItem('token') }
+        }).then(results => {
+            //เมื่อข้อมูลส่งกลับมาต้องเช็คสถานะก่อนว่า code ซ�้ำหรือไม่
+            //โดยserver จะส่ง object ที่ชื่อว่า status และ message กลับมา   
+            dispatch({ type: 'SAVE_MANUALFERTILIZER_SUCCESS' , payload: results.data})
+        }).catch(err => {
+            //กรณี error
+            dispatch({ type: 'SAVE_MANUALFERTILIZER_REJECTED', payload: err.message })
+        })
+    }
 }

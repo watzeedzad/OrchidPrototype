@@ -1,11 +1,11 @@
 import React, { Component } from 'react';
 import { Field, reduxForm } from 'redux-form';
-import { manaulWatering } from '../../redux/actions/waterActions'
+import { manaulFertilizer } from '../../redux/actions/fertilizerActions'
 import renderField from '../../Utils/renderField'
 import { Button, FormGroup, Form } from 'reactstrap';
 
 
-class ManualWaterField extends Component {
+class ManualFertilizerField extends Component {
 
     componentDidMount() {
         //เรียกใช้ฟังก์ชันในการก�ำหนด value ให้กับ textbox และ control ต่างๆ
@@ -14,7 +14,7 @@ class ManualWaterField extends Component {
 
     handleInitialize() {
         let initData = {
-            "greenHouseId": this.props.greenHouseId,
+            "projectId": this.props.projectId,
             "litre": 0,
         };
         this.props.initialize(initData);
@@ -27,9 +27,9 @@ class ManualWaterField extends Component {
             <div>
                 <form>
                     <FormGroup >
-                        <Field name="litre" component={renderField} type="number" label="ปริมาณน้ำที่จะให้" />
-                        <Button color="primary" onClick={handleSubmit(this.onSubmit)}>ให้น้ำทันที</Button>
-                        <Field name="greenHouseId" component={renderField} type="hidden" />
+                        <Field name="litre" component={renderField} type="number" label="ปริมาณปุ๋ยที่จะให้" />
+                        <Button color="primary" onClick={handleSubmit(this.onSubmit)}>ให้ปุ๋ยทันที</Button>
+                        <Field name="projectId" component={renderField} type="hidden" />
                     </FormGroup>
                 </form>
             </div>
@@ -39,7 +39,7 @@ class ManualWaterField extends Component {
 
     onSubmit = (values) => {
         //เมื่อบันทึกข้อมูลเสร็จสังให้ไปยัง route /
-        this.props.dispatch(manaulWatering(values)).then(() => {
+        this.props.dispatch(manaulFertilizer(values)).then(() => {
             this.props.onToggle()
         })
     }
@@ -51,18 +51,18 @@ function validate(values) {
     let litre = parseFloat(values.litre)
 
     if (values.litre === "") {
-        errors.litre = 'กรุณากรอกน้ำที่ต้องการให้';
+        errors.litre = 'กรุณากรอกปุ๋ยที่ต้องการให้';
     }else if(litre < 0){
-        errors.litre = 'ปริมาณน้ำไม่สามารถติดลบได้';
+        errors.litre = 'ปริมาณปุ๋ยไม่สามารถติดลบได้';
     }else if(litre == 0){
-        errors.litre = 'ปริมาณน้ำต้องมากกว่าศูนย์'
+        errors.litre = 'ปริมาณปุ๋ยต้องมากกว่าศูนย์'
     }
     return errors;
 }
 
 const form = reduxForm({
-    form: 'manaulWatering',
+    form: 'manaulFertilizer',
     validate
 })
 
-export default form(ManualWaterField);
+export default form(ManualFertilizerField);

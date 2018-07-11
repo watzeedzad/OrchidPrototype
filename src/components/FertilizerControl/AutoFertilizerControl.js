@@ -16,7 +16,7 @@ class AutoFertilizerControl extends Component{
     }
 
     componentDidMount(){
-        this.props.dispatch(getFertilizerTime({ greenHouseId: 789456123 }))
+        this.props.dispatch(getFertilizerTime({ projectId: 1 }))
     }
 
     render(){
@@ -30,15 +30,15 @@ class AutoFertilizerControl extends Component{
             return <div>Loading...</div>
         }
 
-        if(fertilizerTimeList.errorMessage){
-            return <div className="alert alert-danger">Error: {fertilizerTimeList.errorMessage}</div>
+        if(fertilizerTimeList.data.errorMessage){
+            return <div className="alert alert-danger">Error: {fertilizerTimeList.data.errorMessage}</div>
         }
 
         return(
             <Container>
                 <div id="FertilizerTimeList-content">
                     <Row>
-                        <Col md='12'>
+                        <Col xs='12' sm='12' md='12' lg='12' xl='12'>
                             <FertilizerTimeList fertilizerTimeList={fertilizerTimeList} onToggle={this.toggle} mss={this.state.mss}/>
                         </Col>
                     </Row>
@@ -47,7 +47,7 @@ class AutoFertilizerControl extends Component{
         );
     }
     
-    toggle= ()=>{
+    toggle = ()=>{
         this.setState({
             mss:
                 <div>
@@ -56,14 +56,14 @@ class AutoFertilizerControl extends Component{
                     </UncontrolledAlert>
                 </div>
             });
-            this.props.dispatch(getFertilizerTime({ greenHouseId:789456123}))
+            this.props.dispatch(getFertilizerTime({ projectId: 1}))
         }
     
 }
 
 function mapStateToProps(state) {
     return {
-        FertilizerTimeList: state.fertilizerReducers.fertilizerTimeList
+        fertilizerTimeList: state.fertilizerReducers.fertilizerTimeList
     }
 }
 
