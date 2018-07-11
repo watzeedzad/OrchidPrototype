@@ -56,6 +56,11 @@ function MenuDrawer(props) {
                     ตั้งค่าการให้น้ำ
                 </ListItem>
             </Link>
+            <Link to="/fertilizerControl">
+                <ListItem button>
+                    ตั้งค่าการให้ปุ๋ย
+                </ListItem>
+            </Link>
         </MenuList>
     )
 }
