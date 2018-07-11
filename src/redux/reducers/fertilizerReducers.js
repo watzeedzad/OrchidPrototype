@@ -11,7 +11,7 @@ const initialState = {
     }
 }
 
-export default(state = initialState,action)=>{
+export default (state = initialState,action)=>{
     switch(action.type){
 
         case 'LOAD_FERTILIZERCONFIG_PENDING':
@@ -25,6 +25,9 @@ export default(state = initialState,action)=>{
             return {...state, fertilizerConfig: {data: action.payload, isLoading:false ,isRejected:false}}
         case 'SAVE_FERILIZERCONFIG_REJECTED' :
             return {...state, fertilizerConfig: {data: action.payload, isLoading:false ,isRejected:true}}
+            
+        default:
+            return state
     }
 }
   

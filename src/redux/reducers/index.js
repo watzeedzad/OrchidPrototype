@@ -6,13 +6,14 @@ import { reducer as formReducer } from 'redux-form'
 import weatherReducers from './weatherReducers'
 import planterReducers from './planterReducers'
 import waterReducers from './waterReducers'
-
+import fertilizerReducers from './fertilizerReducers';
 
 
 const rootReducers = combineReducers({
     form: formReducer, //กำหนดชื่อ reducer ไว้ว่าชื่อ form นะครับตามค�ำแนะน�ำของ redux-form
     weatherReducers,
     planterReducers,
-    waterReducers
+    waterReducers,
+    fertilizerReducers
 })
 export default rootReducers
