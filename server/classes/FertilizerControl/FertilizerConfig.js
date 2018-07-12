@@ -9,6 +9,14 @@ export default class FertilizerConfig {
     }
 
     async process(req, res) {
+        if (typeof req.session.farmData === "undefined" || typeof req.session.configFilePath === "undefined") {
+            res.sendStatus(500);
+            return;
+        }
+        console.log("[FertilizerConfig] session id: " + req.session.id);
+        req.session.reload(function (err) {
+            console.log("[FertilizerConfig] " + err);
+        });
         let projectId = req.body.projectId;
         let configTimeRanges = req.body.timeRanges;
         if (
@@ -20,7 +28,7 @@ export default class FertilizerConfig {
                 errorMessage: "เกิดข้อผิดพลาดในการตั้งค่าการให้ปุ๋ยอัตโนมัติ"
             });
         } else {
-            getConfigFile();
+            getConfigFile(req);
             let tempJson = {
                 projectId: projectId,
                 timeRanges: []
@@ -53,10 +61,10 @@ export default class FertilizerConfig {
     }
 }
 
-async function getConfigFile() {
-    console.log("[FertilizerConfig] getConfigFilePath, " + pathGlobal);
+async function getConfigFile(req) {
+    console.log("[FertilizerConfig] getConfigFilePath, " + req.session.configFilePath);
     let config = JSON.parse(
-        require("fs").readFileSync(String(pathGlobal), "utf8")
+        require("fs").readFileSync(String(req.session.configFilePath), "utf8")
     );
     configFile = config;
 }

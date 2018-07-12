@@ -17,7 +17,8 @@ export const login = (values) => {
             method: _method,
             url: `${BASE_URL}/login/`,
             data: values,
-            headers: { 'Content-Type': 'application/json' }
+            headers: { 'Content-Type': 'application/json' },
+            withCredentials: true
             //headers: { authorization: localStorage.getItem('token') }
         }).then(result => {
             //สั่ง redirect ไปหน้าแรก (/)

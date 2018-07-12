@@ -7,6 +7,7 @@ const farm = mongoose.model("farm");
 const know_controller = mongoose.model("know_controller");
 const greenHouseSensor = mongoose.model("greenHouse_Sensor");
 
+let farmData;
 let configFile;
 let controllerData;
 let minSoilMoisture;
@@ -92,6 +93,7 @@ async function getConfigFile(farmIdIn) {
             console.log("[SoilMoistureCheck] getConfigFile, fail");
         } else {
             console.log("[SoilMoistureCheck] getConfigFile, pass");
+            farmData = result;
         }
     });
     let configFilePath = farmResult.configFilePath;

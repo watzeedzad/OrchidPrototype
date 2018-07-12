@@ -16,7 +16,7 @@
 #define MOISTURE_PIN 39
 #define LISTEN_PORT 80
 
-const char *SSID = "aisfibre_2.4G";
+const char *SSID = "Pi_dhcp";
 const char *SSID_PASSWORD = "molena01";
 
 aREST rest = aREST();
@@ -33,8 +33,8 @@ void sendData();
 void checkWaterLitre();
 void checkFertilizerLitre();
 Task sendDataTask(75000, TASK_FOREVER, &sendData);
-Task checkWaterLitreTask(1000, TASK_FOREVER, &checkWaterLitre);
-Task checkFertilizerLitreTask(1000, TASK_FOREVER, &checkFertilizerLitre);
+Task checkWaterLitreTask(500, TASK_FOREVER, &checkWaterLitre);
+Task checkFertilizerLitreTask(500, TASK_FOREVER, &checkFertilizerLitre);
 
 int inputLitre;
 int moisture = 0;
@@ -90,7 +90,7 @@ void setup(void)
         rest.function("manualFertilizer", manualFertilizerPump);
         rest.function("manualMoisture", manualMoisturePump);
         rest.set_id("10000001");
-        rest.set_name("esp8266");
+        rest.set_name("esp32");
 
         WiFi.mode(WIFI_STA);
         WiFi.config(ip, gateway, subnet, primaryDns, secondaryDns);

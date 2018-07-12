@@ -11,6 +11,14 @@ export default class ShowSoilMoisture {
   }
 
   async process(req, res) {
+    if (typeof req.session.farmData === "undefined" || typeof req.session.configFilePath === "undefined") {
+      res.sendStatus(500);
+      return;
+    }
+    console.log("[ShowFertilityHistory] session id: " + req.session.id);
+    req.session.reload(function (err) {
+      console.log("[ShowFertilityHistory] " + err);
+    });
     let greenHouseId = req.body.greenHouseId;
     if (typeof req.body.greenHouseId === "undefined") {
       res.json({
@@ -21,7 +29,7 @@ export default class ShowSoilMoisture {
     }
     console.log("[ShowSoilMoisture] greenHouseId: " + greenHouseId);
     await getGreenhouseSensor(greenHouseId);
-    await getConfigFile();
+    await getConfigFile(req);
     if (typeof greenHouseSensorData === "undefined") {
       res.json({
         status: 500,
@@ -55,16 +63,17 @@ export default class ShowSoilMoisture {
 }
 
 function getConfigFile() {
-  console.log("[ShowSoilMoisture] getConfigFilePath: " + pathGlobal);
+  console.log("[ShowSoilMoisture] getConfigFilePath: " + req.session.configFilePath);
   let config = JSON.parse(
-    require("fs").readFileSync(String(pathGlobal), "utf8")
+    require("fs").readFileSync(String(req.session.configFilePath), "utf8")
   );
   configFile = config;
 }
 
 async function getGreenhouseSensor(greenHouseId) {
   let result = await greenHouseSensor.findOne({
-    greenHouseId: greenHouseId
+    greenHouseId: greenHouseId,
+    farmId: req.session.farmData.farmId
   }, {}, {
     sort: {
       _id: -1

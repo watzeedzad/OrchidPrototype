@@ -13,7 +13,8 @@ export const saveTempConfig = (values) => {
             method: 'post',
             url: `${BASE_URL}/temperatureControl/configTemperature`,
             data: values,
-            headers: { 'Content-Type': 'application/json' }
+            headers: { 'Content-Type': 'application/json' },
+            withCredentials: true
             //headers: { authorization: localStorage.getItem('token') }
         }).then(results => {
             //เมื่อข้อมูลส่งกลับมาต้องเช็คสถานะก่อนว่า code ซ�้ำหรือไม่
@@ -39,7 +40,8 @@ export const getTemp = ({greenHouseId}) => {
             method: 'post',
             url: `${BASE_URL}/temperatureControl/showTemperature`,
             data: values,
-            headers: { 'Content-Type': 'application/json' }
+            headers: { 'Content-Type': 'application/json' },
+            withCredentials: true
             //headers: { authorization: localStorage.getItem('token') }
         }).then(result => {
             //เมื่อข้อมูลส่งกลับมาต้องเช็คสถานะก่อนว่า code ซ�้ำหรือไม่
@@ -65,7 +67,8 @@ export const getTempHistory = ({greenHouseId}) => {
             method: 'post',
             url: `${BASE_URL}/temperatureControl/showTemperatureHistory`,
             data: values,
-            headers: { 'Content-Type': 'application/json' }
+            headers: { 'Content-Type': 'application/json' },
+            withCredentials: true
             //headers: { authorization: localStorage.getItem('token') }
         }).then(result => {
             //เมื่อข้อมูลส่งกลับมาต้องเช็คสถานะก่อนว่า code ซ�้ำหรือไม่
@@ -87,7 +90,8 @@ export const saveHumidityConfig = (values) => {
             method: 'post',
             url: `${BASE_URL}/temperatureControl/configHumidity`,
             data: values,
-            headers: { 'Content-Type': 'application/json' }
+            headers: { 'Content-Type': 'application/json' },
+            withCredentials: true
             //headers: { authorization: localStorage.getItem('token') }
         }).then(results => {
             //เมื่อข้อมูลส่งกลับมาต้องเช็คสถานะก่อนว่า code ซ�้ำหรือไม่
@@ -114,7 +118,8 @@ export const getHumidity = ({greenHouseId}) => {
             method: 'post',
             url: `${BASE_URL}/temperatureControl/showHumidity`,
             data: values,
-            headers: { 'Content-Type': 'application/json' }
+            headers: { 'Content-Type': 'application/json' },
+            withCredentials: true
             //headers: { authorization: localStorage.getItem('token') }
         }).then(result => {
             //เมื่อข้อมูลส่งกลับมาต้องเช็คสถานะก่อนว่า code ซ�้ำหรือไม่
@@ -140,7 +145,8 @@ export const getHumidityHistory = ({greenHouseId}) => {
             method: 'post',
             url: `${BASE_URL}/temperatureControl/showHumidityHistory`,
             data: values,
-            headers: { 'Content-Type': 'application/json' }
+            headers: { 'Content-Type': 'application/json' },
+            withCredentials: true
             //headers: { authorization: localStorage.getItem('token') }
         }).then(result => {
             //เมื่อข้อมูลส่งกลับมาต้องเช็คสถานะก่อนว่า code ซ�้ำหรือไม่

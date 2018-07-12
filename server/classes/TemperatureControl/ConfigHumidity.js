@@ -1,4 +1,5 @@
 const fs = require("fs");
+const session = require("express-session");
 
 let configFile;
 
@@ -8,7 +9,15 @@ export default class ConfigHumidity {
   }
 
   async process(req, res) {
-    await getConfigFile();
+    if (typeof req.session.farmData === "undefined" || typeof req.session.configFilePath === "undefined") {
+      res.sendStatus(500);
+      return;
+    }
+    console.log("[ConfigHumidity] session id: " + req.session.id);
+    req.session.reload(function (err) {
+      console.log("[ConfigHumidity] " + err);
+    });
+    await getConfigFile(req);
     if (typeof configFile === "undefined") {
       res.json({
         status: 500,
@@ -52,10 +61,10 @@ export default class ConfigHumidity {
   }
 }
 
-function getConfigFile() {
-  console.log("getConfigFilePath: " + pathGlobal);
+function getConfigFile(req) {
+  console.log("getConfigFilePath: " + req.session.configFilePath);
   let config = JSON.parse(
-    require("fs").readFileSync(String(pathGlobal), "utf8")
+    require("fs").readFileSync(String(req.session.configFilePath), "utf8")
   );
   configFile = config;
 }

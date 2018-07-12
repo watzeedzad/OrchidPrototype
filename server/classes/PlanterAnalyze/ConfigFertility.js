@@ -1,4 +1,5 @@
 const fs = require("fs");
+const session = require("express-session");
 
 let configFile;
 
@@ -8,7 +9,15 @@ export default class ConfigFertility {
   }
 
   async process(req, res) {
-    await getConfigFile();
+    if (typeof req.session.farmData === "undefined" || typeof req.session.configFilePath === "undefined") {
+      res.sendStatus(500);
+      return;
+    }
+    console.log("[ConfigFertility] session id: " + req.session.id);
+    req.session.reload(function (err) {
+      console.log("[ConfigFertility] " + err);
+    });
+    await getConfigFile(req);
     if (typeof configFile === "undefined") {
       res.json({
         status: 500,
@@ -56,10 +65,10 @@ export default class ConfigFertility {
   }
 }
 
-function getConfigFile() {
-  console.log("[ConfigFertility] getConfigFilePath: " + pathGlobal);
+function getConfigFile(req) {
+  console.log("[ConfigFertility] getConfigFilePath: " + req.session.configFilePath);
   let config = JSON.parse(
-    require("fs").readFileSync(String(pathGlobal), "utf8")
+    require("fs").readFileSync(String(req.session.configFilePath), "utf8")
   );
   configFile = config;
 }

@@ -11,6 +11,14 @@ export default class ShowFertilityHistory {
   }
 
   async process(req, res) {
+    if (typeof req.session.farmData === "undefined" || typeof req.session.configFilePath === "undefined") {
+      res.sendStatus(500);
+      return;
+    }
+    console.log("[ShowFertilityHistory] session id: " + req.session.id);
+    req.session.reload(function (err) {
+      console.log("[ShowFertilityHistory] " + err);
+    });
     let projectId = req.body.projectId;
     if (typeof projectId === "undefined") {
       res.json({
@@ -90,7 +98,8 @@ async function getProjectSensor(projectId) {
     _id: {
       $gt: ObjectId.createFromTime(Date.now() / 1000 - 25 * 60 * 60)
     },
-    projectId: projectId
+    projectId: projectId,
+    farmId: req.session.farmData.farmId
   });
   if (result) {
     projectSensorResult = result;

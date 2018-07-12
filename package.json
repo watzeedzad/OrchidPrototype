@@ -39,7 +39,10 @@
     "redux-form": "^7.3.0",
     "redux-thunk": "^2.2.0",
     "request": "~2.85.0",
-    "yarn": "^1.6.0"
+    "yarn": "^1.6.0",
+    "express-session": "~1.15.6",
+    "cors": "~2.8.4",
+    "memorystore": "~1.6.0"
   },
   "devDependencies": {
     "concurrently": "^3.5.1",

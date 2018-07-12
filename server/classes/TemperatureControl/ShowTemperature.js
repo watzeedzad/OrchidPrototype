@@ -11,6 +11,14 @@ export default class ShowTemprature {
   }
 
   async process(req, res) {
+    if (typeof req.session.farmData === "undefined" || typeof req.session.configFilePath === "undefined") {
+      res.sendStatus(500);
+      return;
+    }
+    console.log("[ShowTemperature] session id: " + req.session.id);
+    req.session.reload(function (err) {
+      console.log("[ShowTemperature] " + err);
+    });
     let greenHouseId = req.body.greenHouseId;
     if (typeof greenHouseId === "undefined") {
       res.json({
@@ -21,7 +29,7 @@ export default class ShowTemprature {
     }
     console.log("[ShowTemperature] greenHouseId: " + greenHouseId);
     await getGreenhouseSensor(greenHouseId);
-    await getConfigFile();
+    await getConfigFile(req);
     if (typeof greenHouseSensorData === "undefined") {
       res.json({
         status: 500,
@@ -56,7 +64,8 @@ export default class ShowTemprature {
 
 async function getGreenhouseSensor(greenHouseId) {
   let result = await greenHouseSensor.findOne({
-    greenHouseId: greenHouseId
+    greenHouseId: greenHouseId,
+    farmId: req.session.farmData.farmId
   }, {}, {
     sort: {
       _id: -1
@@ -68,13 +77,13 @@ async function getGreenhouseSensor(greenHouseId) {
     greenHouseSensorData = undefined;
     console.log("Query fail!");
   }
-  console.log(greenHouseSensorData);
+  // console.log(greenHouseSensorData);
 }
 
-async function getConfigFile() {
-  console.log("getConfigFilePath: " + pathGlobal);
+async function getConfigFile(req) {
+  console.log("getConfigFilePath: " + req.session.configFilePath);
   let config = JSON.parse(
-    require("fs").readFileSync(String(pathGlobal), "utf8")
+    require("fs").readFileSync(String(req.session.configFilePath), "utf8")
   );
   configFile = config;
 }

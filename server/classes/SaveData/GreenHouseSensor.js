@@ -1,8 +1,10 @@
 const mongoose = require("mongoose");
 const greenHouseSensor = mongoose.model("greenHouse_Sensor");
 const know_controller = mongoose.model("know_controller");
+const farm = mongoose.model("farm");
 
 let controllerData;
+let farmData;
 
 export default class GreenHouseSensor {
   constructor(req, res) {
@@ -12,22 +14,24 @@ export default class GreenHouseSensor {
   async process(req, res) {
     let ip = req.body.ip;
     console.log("[GreenHouseSensor] ip: " + req.body.ip);
-    await getControllerData(ip);
+    let piMacAddress = req.body.macAddress;
+    await getFarmData(piMacAddress);
+    await getControllerData(ip, piMacAddress);
     let greenHouseId = controllerData.greenHouseId;
     let temp = req.body.temperature;
     let humid = req.body.humidity;
     let soilMoisture = req.body.soilMoisture;
     let ambientLight = req.body.ambientLight;
-    saveSensorData(greenHouseId, temp, humid, soilMoisture, ambientLight);
+    saveSensorData(greenHouseId, temp, humid, soilMoisture, ambientLight, farmData.farmId);
   }
 }
 
-async function getControllerData(ip) {
-  let controllerResult = await know_controller.findOne(
-    {
-      ip: ip
+async function getControllerData(ip, macAddress) {
+  let controllerResult = await know_controller.findOne({
+      ip: ip,
+      piMacAddress: macAddress
     },
-    function(err, result) {
+    function (err, result) {
       if (err) {
         console.log("[GreenHouseSensor] getControllerData, Query fail!");
       } else {
@@ -37,12 +41,25 @@ async function getControllerData(ip) {
   );
 }
 
+async function getFarmData(piMacAddress) {
+  await farm.findOne({
+    piMacAddress: piMacAddress
+  }, function (err, result) {
+    if (err) {
+      console.log("[GreenHouseSensor] getFarmData, Query failed");
+    } else {
+      farmData = result;
+    }
+  });
+}
+
 async function saveSensorData(
   greenHouseId,
   temp,
   humid,
   soilMoisture,
-  ambientLight
+  ambientLight,
+  farmId
 ) {
   const newGreenHouseData = {
     temperature: temp,
@@ -50,10 +67,11 @@ async function saveSensorData(
     soilMoisture: soilMoisture,
     ambientLight: ambientLight,
     timeStamp: Date.now(),
-    greenHouseId: greenHouseId
+    greenHouseId: greenHouseId,
+    farmId: farmId
   };
 
-  new greenHouseSensor(newGreenHouseData).save(function(err) {
+  new greenHouseSensor(newGreenHouseData).save(function (err) {
     if (!err) {
       console.log("[GreenHouseSensor] created green house!");
     } else {

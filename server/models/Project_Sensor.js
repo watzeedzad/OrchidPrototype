@@ -9,7 +9,8 @@ const project_SensorSchema = new Schema({
   soilFertilizer: Number,
   timeStamp: Date,
   projectId: Number,
-  greenHouseId: Number
+  greenHouseId: Number,
+  farmId: Number
 });
 
 project_SensorSchema.plugin(autoIncrement, {

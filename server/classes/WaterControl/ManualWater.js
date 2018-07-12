@@ -1,8 +1,11 @@
+import InsertRelayManualCommand from "../InsertRelayManualCommand";
+
 const mongoose = require("mongoose");
 const know_controller = mongoose.model("know_controller");
 const request = require("request");
 
 let controllerData;
+let farmData;
 
 export default class ManualWatering {
     constructor(req, res) {
@@ -10,6 +13,14 @@ export default class ManualWatering {
     }
 
     async process(req, res) {
+        if (typeof req.session.farmData === "undefined" || typeof req.session.configFilePath === "undefined") {
+            res.sendStatus(500);
+            return;
+        }
+        console.log("[ManualWater] session id: " + req.session.id);
+        req.session.reload(function (err) {
+            console.log("[ManualWater] " + err);
+        });
         let greenHouseId = req.body.greenHouseId;
         let inputLitre = req.body.litre;
         if (typeof greenHouseId === "undefined" || typeof inputLitre === "undefined") {
@@ -26,6 +37,7 @@ export default class ManualWatering {
             res.sendStatus(200);
             return;
         }
+        new InsertRelayManualCommand(controllerData.ip, "water", )
         let status = manualOnWaterPump(controllerData.ip, inputLitre);
         if (status) {
             res.sendStatus(200);
@@ -53,16 +65,18 @@ async function getControllerData(greenHouseId) {
     });
 }
 
-function manualOnWaterPump(ip, litre) {
-    console.log("Send: /manualWater?params=" + litre);
-    request.get("http://" + String(ip) + "/manualWater?params=" + litre, {
-            timeout: 20000
-        })
-        .on("error", function (err) {
-            return false;
-            console.log(err.code === "ETIMEDOUT");
-            console.log(err.connect == true);
-            console.log(err);
-        });
-    return true;
-}
+// async function getFarmData
+
+// function manualOnWaterPump(ip, litre) {
+//     console.log("Send: /manualWater?params=" + litre);
+//     request.get("http://" + String(ip) + "/manualWater?params=" + litre, {
+//             timeout: 20000
+//         })
+//         .on("error", function (err) {
+//             return false;
+//             console.log(err.code === "ETIMEDOUT");
+//             console.log(err.connect == true);
+//             console.log(err);
+//         });
+//     return true;
+// }

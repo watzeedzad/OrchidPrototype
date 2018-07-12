@@ -10,6 +10,14 @@ export default class WateringConfig {
   }
 
   async process(req, res) {
+    if (typeof req.session.farmData === "undefined" || typeof req.session.configFilePath === "undefined") {
+      res.sendStatus(500);
+      return;
+    }
+    console.log("[WateringConfigs] session id: " + req.session.id);
+    req.session.reload(function (err) {
+      console.log("[WateringConfigs] " + err);
+    });
     let greenHouseId = req.body.greenHouseId;
     let configTimeRanges = req.body.timeRanges;
     if (
@@ -22,7 +30,7 @@ export default class WateringConfig {
       });
     }
     console.log("[WateringConfigs] greenHouseId: " + greenHouseId);
-    getConfigFile();
+    getConfigFile(req);
     let tempJson = {
       greenHouseId: greenHouseId,
       timeRanges: []
@@ -66,10 +74,10 @@ export default class WateringConfig {
   }
 }
 
-async function getConfigFile() {
-  console.log("[WateringConfig] getConfigFilePath, " + pathGlobal);
+async function getConfigFile(req) {
+  console.log("[WateringConfig] getConfigFilePath, " + req.session.configFilePath);
   let config = JSON.parse(
-    require("fs").readFileSync(String(pathGlobal), "utf8")
+    require("fs").readFileSync(String(req.session.configFilePath), "utf8")
   );
   configFile = config;
 }

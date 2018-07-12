@@ -19,13 +19,15 @@ export default class FertilityCheck {
     }
 
     async process(req, res) {
+        let piMacAddress = req.body.macAddress;
         let ipIn = req.body.ip;
-        if (typeof ipIn === "undefined") {
+        if (typeof ipIn === "undefined" || typeof piMacAddress === "undefined") {
             fertilityCheckStatus = 500;
             return;
         }
         let controllerResult = await know_controller.findOne({
-            ip: ipIn
+            ip: ipIn,
+            piMacAddress: piMacAddress
         }, function (err, result) {
             if (err) {
                 console.log("[FertilityCheck] Query fail!, know_controller");
@@ -35,7 +37,7 @@ export default class FertilityCheck {
         });
         let greenHouseId = controllerResult.greenHouseId;
         console.log("[FertilityCheck] greenHouseId_Class, " + greenHouseId);
-        await getControllerData(greenHouseId);
+        await getControllerData(greenHouseId, piMacAddress);
         if (typeof controllerData === "undefined") {
             fertilityCheckStatus = 200;
             return;
@@ -66,11 +68,12 @@ export default class FertilityCheck {
     }
 }
 
-async function getControllerData(greenHouseId) {
+async function getControllerData(projectId, piMacAddress) {
     let controllerResult = await know_controller.findOne({
         isHavePump: true,
         "pumpType.fertilizer": true,
-        projectId: projectId
+        projectId: projectId,
+        piMacAddress: piMacAddress
     }, function (err, result) {
         if (err) {
             controllerData = undefined;

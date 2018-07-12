@@ -4,12 +4,13 @@ const logger = require("morgan");
 const cookieParser = require("cookie-parser");
 const bodyParser = require("body-parser");
 const mongoose = require("mongoose");
+const session = require("express-session");
+const memoryStore = require("memorystore")(session);
+const cors = require("cors");
 const ipfilter = require("express-ipfilter").IpFilter;
 require("dotenv").config();
 
 var ips = ["127.0.0.1", "::1", "192.168.1.12"];
-farmIdGlobal = 123456789;
-pathGlobal = './conf/farm-1.json';
 temperatureCheckStatus = 0;
 soilMoistureCheckStatus = 0;
 fertilityCheckStatus = 0;
@@ -51,16 +52,17 @@ require("./models/water_history");
 require("./models/growth_rate");
 require("./models/Project");
 require("./models/relay_queue");
+require("./models/relayManualQueue");
 
 //load routes
 const sensorRoutes = require("./routes/sensorRoutes");
 const index = require("./routes/index");
-const users = require("./routes/users");
 const greenHouseRoutes = require("./routes/greenHouseRoutes");
 const temperatureControl = require("./routes/temperatureControl");
 const planterAnalyze = require("./routes/planterAnalyze");
 const login = require("./routes/login");
 const waterControl = require("./routes/waterControl");
+const fertilizerControl = require("./routes/fertilizerControl");
 
 const app = express();
 
@@ -72,30 +74,50 @@ app.set("view engine", "pug");
 //app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')));
 app.use(logger("dev"));
 app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: false }));
+app.use(bodyParser.urlencoded({
+  extended: false
+}));
 app.use(cookieParser());
+app.use(session({
+  secret: 'a4f8071f-c873-4447-8ee2',
+  cookie: {
+    maxAge: 2628000000
+  },
+  store: new memoryStore({
+    checkPeriod: 86400000
+  }),
+  resave: true,
+  saveUninitialized: false
+}));
+app.use(cors({
+  origin: [origin_url],
+  methods: ["GET", "POST"],
+  credentials: true
+}));
 app.use(express.static(path.join(__dirname, "public")));
-app.use(ipfilter(ips, { mode: "allow" }));
+app.use(ipfilter(ips, {
+  mode: "allow"
+}));
 
 //use Routes
 app.use("/", index);
-app.use("/users", users);
 app.use("/sensorRoutes", sensorRoutes);
 app.use("/greenHouse", greenHouseRoutes);
 app.use("/temperatureControl", temperatureControl);
 app.use("/planterAnalyze", planterAnalyze);
 app.use("/login", login);
 app.use("/waterControl", waterControl);
+app.use("/fertilizerControl", fertilizerControl);
 
 // catch 404 and forward to error handler
-app.use(function(req, res, next) {
+app.use(function (req, res, next) {
   var err = new Error("Not Found");
   err.status = 404;
   next(err);
 });
 
 // error handler
-app.use(function(err, req, res, next) {
+app.use(function (err, req, res, next) {
   // set locals, only providing error in development
   res.locals.message = err.message;
   res.locals.error = req.app.get("env") === "development" ? err : {};

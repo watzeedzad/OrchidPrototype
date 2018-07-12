@@ -12,6 +12,13 @@ const know_controllerSchema = new Schema({
     projectId: Number,
     greenHouseId: Number,
     farmId: Number,
+    isHavePump: Boolean,
+    pumpType: {
+        moisture: Boolean,
+        water: Boolean,
+        fertilizer: Boolean
+    },
+    piMacAddress: String
 });
 
 know_controllerSchema.plugin(autoIncrement, {

@@ -1,5 +1,6 @@
 const mongoose = require("mongoose");
 const relayQueue = mongoose.model("relay_queue");
+const relayManualQueue = mongoose.model("relay_manual_queue");
 let ObjectID = require("mongodb").ObjectID;
 
 export default class InsertRelayCommand {

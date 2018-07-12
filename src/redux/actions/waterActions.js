@@ -14,7 +14,8 @@ export const saveWaterConfig = (values) => {
             method: 'post',
             url: `${BASE_URL}/waterControl/wateringConfig`,
             data: values,
-            headers: { 'Content-Type': 'application/json' }
+            headers: { 'Content-Type': 'application/json' },
+            withCredentials: true
             //headers: { authorization: localStorage.getItem('token') }
         }).then(results => {
             //เมื่อข้อมูลส่งกลับมาต้องเช็คสถานะก่อนว่า code ซ�้ำหรือไม่
@@ -41,7 +42,8 @@ export const getWateringTime = ({greenHouseId}) => {
             method: 'post',
             url: `${BASE_URL}/waterControl/showWateringConfig`,
             data: values,
-            headers: { 'Content-Type': 'application/json' }
+            headers: { 'Content-Type': 'application/json' },
+            withCredentials: true
             //headers: { authorization: localStorage.getItem('token') }
         }).then(result => {
             //เมื่อข้อมูลส่งกลับมาต้องเช็คสถานะก่อนว่า code ซ�้ำหรือไม่

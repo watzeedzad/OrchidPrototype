@@ -13,7 +13,8 @@ export const saveMoistureConfig = (values) => {
             method: 'post',
             url: `${BASE_URL}/planterAnalyze/configSoilMoisture`,
             data: values,
-            headers: { 'Content-Type': 'application/json' }
+            headers: { 'Content-Type': 'application/json' },
+            withCredentials: true
             //headers: { authorization: localStorage.getItem('token') }
         }).then(results => {
             //เมื่อข้อมูลส่งกลับมาต้องเช็คสถานะก่อนว่า code ซ�้ำหรือไม่
@@ -39,7 +40,8 @@ export const getMoisture = ({greenHouseId}) => {
             method: 'post',
             url: `${BASE_URL}/planterAnalyze/showSoilMoisture`,
             data: values,
-            headers: { 'Content-Type': 'application/json' }
+            headers: { 'Content-Type': 'application/json' },
+            withCredentials: true
             //headers: { authorization: localStorage.getItem('token') }
         }).then(result => {
             //เมื่อข้อมูลส่งกลับมาต้องเช็คสถานะก่อนว่า code ซ�้ำหรือไม่
@@ -65,7 +67,8 @@ export const getMoistureHistory = ({greenHouseId}) => {
             method: 'post',
             url: `${BASE_URL}/planterAnalyze/showSoilMoistureHistory`,
             data: values,
-            headers: { 'Content-Type': 'application/json' }
+            headers: { 'Content-Type': 'application/json' },
+            withCredentials: true
             //headers: { authorization: localStorage.getItem('token') }
         }).then(result => {
             //เมื่อข้อมูลส่งกลับมาต้องเช็คสถานะก่อนว่า code ซ�้ำหรือไม่
@@ -87,7 +90,8 @@ export const saveFertilityConfig = (values) => {
             method: 'post',
             url: `${BASE_URL}/planterAnalyze/configFertility`,
             data: values,
-            headers: { 'Content-Type': 'application/json' }
+            headers: { 'Content-Type': 'application/json' },
+            withCredentials: true
             //headers: { authorization: localStorage.getItem('token') }
         }).then(results => {
             //เมื่อข้อมูลส่งกลับมาต้องเช็คสถานะก่อนว่า code ซ�้ำหรือไม่
@@ -114,7 +118,8 @@ export const getFertility = ({projectId}) => {
             method: 'post',
             url: `${BASE_URL}/planterAnalyze/showFertility`,
             data: values,
-            headers: { 'Content-Type': 'application/json' }
+            headers: { 'Content-Type': 'application/json' },
+            withCredentials: true
             //headers: { authorization: localStorage.getItem('token') }
         }).then(result => {
             //เมื่อข้อมูลส่งกลับมาต้องเช็คสถานะก่อนว่า code ซ�้ำหรือไม่
@@ -141,7 +146,8 @@ export const getFertilityHistory = ({projectId}) => {
             method: 'post',
             url: `${BASE_URL}/planterAnalyze/showFertilityHistory`,
             data: values,
-            headers: { 'Content-Type': 'application/json' }
+            headers: { 'Content-Type': 'application/json' },
+            withCredentials: true
             //headers: { authorization: localStorage.getItem('token') }
         }).then(result => {
             //เมื่อข้อมูลส่งกลับมาต้องเช็คสถานะก่อนว่า code ซ�้ำหรือไม่
@@ -168,7 +174,8 @@ export const getAllFertility = ({greenHouseId}) => {
             method: 'post',
             url: `${BASE_URL}/planterAnalyze/showAllFertility`,
             data: values,
-            headers: { 'Content-Type': 'application/json' }
+            headers: { 'Content-Type': 'application/json' },
+            withCredentials: true
             //headers: { authorization: localStorage.getItem('token') }
         }).then(result => {
             //เมื่อข้อมูลส่งกลับมาต้องเช็คสถานะก่อนว่า code ซ�้ำหรือไม่

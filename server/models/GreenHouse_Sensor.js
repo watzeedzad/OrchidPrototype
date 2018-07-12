@@ -11,7 +11,8 @@ const greenHouse_SensorSchema = new Schema({
   soilMoisture: Number,
   ambientLight: Number,
   timeStamp: Date,
-  greenHouseId: Number
+  greenHouseId: Number,
+  farmId: Number
 });
 
 greenHouse_SensorSchema.plugin(autoIncrement, {

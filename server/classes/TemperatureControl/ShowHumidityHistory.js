@@ -11,6 +11,14 @@ export default class ShowHumidityHistory {
   }
 
   async process(req, res) {
+    if (typeof req.session.farmData === "undefined" || typeof req.session.configFilePath === "undefined") {
+      res.sendStatus(500);
+      return;
+    }
+    console.log("[ShowHumidityHistory] session id: " + req.session.id);
+    req.session.reload(function (err) {
+      console.log("[ShowHumidityHistory] " + err);
+    });
     let greenHouseId = req.body.greenHouseId;
     if (typeof greenHouseId === "undefined") {
       res.json({
@@ -92,7 +100,8 @@ async function getGreenHouseSensor(greenHouseId) {
     _id: {
       $gt: ObjectId.createFromTime(Date.now() / 1000 - 25 * 60 * 60)
     },
-    greenHouseId: greenHouseId
+    greenHouseId: greenHouseId,
+    farmId: req.session.farmData.farmId
   });
   if (result) {
     greenHouseSensorResult = result;

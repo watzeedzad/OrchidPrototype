@@ -1,6 +1,7 @@
 const fs = require("fs");
 const mongoose = require("mongoose");
 const project_sensor = mongoose.model("project_Sensor");
+const session = require("express-session");
 
 let configFile;
 let projectSensorData;
@@ -11,6 +12,14 @@ export default class ShowFertility {
   }
 
   async process(req, res) {
+    if (typeof req.session.farmData === "undefined" || typeof req.session.configFilePath === "undefined") {
+      res.sendStatus(500);
+      return;
+    }
+    console.log("[ShowFertility] session id: " + req.session.id);
+    req.session.reload(function (err) {
+      console.log("[ShowFertility] " + err);
+    });
     let projectId = req.body.projectId;
     if (typeof projectId === "undefined") {
       res.json({
@@ -21,7 +30,7 @@ export default class ShowFertility {
     }
     console.log("[ShowFertility] projectId: " + projectId);
     await getProjectSensor(projectId);
-    await getConfigFile();
+    await getConfigFile(req);
     let projectIdIndex = await seekProjectIdIndex(
       configFile.fertilityConfigs,
       projectId
@@ -58,17 +67,18 @@ export default class ShowFertility {
   }
 }
 
-function getConfigFile() {
-  console.log("[ShowFertility] getConfigFilePath: " + pathGlobal);
+function getConfigFile(req) {
+  console.log("[ShowFertility] getConfigFilePath: " + req.session.configFilePath);
   let config = JSON.parse(
-    require("fs").readFileSync(String(pathGlobal), "utf8")
+    require("fs").readFileSync(String(req.session.configFilePath), "utf8")
   );
   configFile = config;
 }
 
 async function getProjectSensor(projectId) {
   let result = await project_sensor.findOne({
-      projectId: projectId
+      projectId: projectId,
+      farmId: req.session.farmData.farmId
     }, {}, {
       sort: {
         _id: -1
