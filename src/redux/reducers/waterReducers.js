@@ -2,7 +2,9 @@
 //ซึ่งถ้าเราไม่ก�ำหนด state เริ่มต้นก็จะไม่มี object ชื่อ isRejected ให้เรียกใช้งาน
 const initialState = {
     waterConfig: { data: null, isLoading: true, isRejected: false },
-    wateringTimeList: { data: null, isLoading: true, isRejected: false }
+    wateringTimeList: { data: null, isLoading: true, isRejected: false },
+    manualWatering: { data: null, isLoading: true, isRejected: false }
+
 }
 export default (state = initialState, action) => {
     switch (action.type) {
@@ -18,6 +20,11 @@ export default (state = initialState, action) => {
             return { ...state, waterConfig: { data: action.payload, isLoading: false, isRejected: false } }
         case 'SAVE_WATERCONFIG_REJECTED':
             return { ...state, waterConfig: { data: action.payload, isLoading: false, isRejected: true } }
+
+        case 'SAVE_MANUALWATERING_SUCCESS':
+            return { ...state, manualWatering: { data: action.payload, isLoading: false, isRejected: false } }
+        case 'SAVE_MANUALWATERING_REJECTED':
+            return { ...state, manualWatering: { data: action.payload, isLoading: false, isRejected: true } }
 
         default:
             return state

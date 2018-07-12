@@ -2,6 +2,7 @@ import React, { Component } from 'react'
 import Sidebar from '../components/Sidebar/Drawers'
 import { withStyles } from '@material-ui/core/styles';
 import AutoWaterControl from '../components/WaterControl/AutoWaterControl';
+import ManualWaterControl from '../components/WaterControl/ManualWaterControl';
 
 const styles = theme => ({
     root: {
@@ -28,7 +29,8 @@ function WaterControl(props){
                 </div>
                 <main className={classes.content}>
                 <div className={classes.toolbar} />
-                <AutoWaterControl/>
+                <AutoWaterControl/><br/><hr/>
+                <ManualWaterControl/>
                 </main>
             </div>
         )

@@ -49,16 +49,14 @@ class WateringTimeList extends Component {
                             {this.state.mss}
                             <Button color="primary" onClick={() => this.toggle()}>เพิ่มเวลา</Button>{' '}
                             <br/><hr/>
-                            <div align="center">
-                                <Modal isOpen={this.state.modal} toggle={this.toggle} autoFocus={false} size='sm'>
-                                    <ModalHeader toggle={this.toggle}>ตั้งเวลารดน้ำ</ModalHeader>
-                                    <div align="center">
-                                        <br/>
-                                        <ClockPiker toggle={this.toggle} addTime={this.addTime}/>
-                                    </div>
-                                    &nbsp;
-                                </Modal>
-                            </div>
+                            <Modal isOpen={this.state.modal} toggle={this.toggle} autoFocus={false} size='sm'>
+                                <ModalHeader toggle={this.toggle}>ตั้งเวลารดน้ำ</ModalHeader>
+                                <div align="center">
+                                    <br/>
+                                    <ClockPiker toggle={this.toggle} addTime={this.addTime}/>
+                                </div>
+                                &nbsp;
+                            </Modal>
                         </Col>
                     </Row>
                     <Row>

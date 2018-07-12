@@ -25,8 +25,8 @@ class AutoWaterControl extends Component {
         if (wateringTimeList.isLoading) {
             return <div>Loading...</div>
         }
-        if (wateringTimeList.errorMessage) {
-            return <div className="alert alert-danger">Error: {wateringTimeList.errorMessage}</div>
+        if (wateringTimeList.data.errorMessage) {
+            return <div className="alert alert-danger">Error: {wateringTimeList.data.errorMessage}</div>
         }
 
         return (

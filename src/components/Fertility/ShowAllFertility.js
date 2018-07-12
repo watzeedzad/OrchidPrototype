@@ -44,7 +44,9 @@ class ShowAllFertility extends Component {
                                         minColor={"#E8B79E"}
                                         midColor={"#D98559"}
                                         maxColor={"#BE5C2A"} />
-                                    <Button color="primary" onClick={debounce(() => { this.props.dispatch(getFertility({ projectId })) },500)}>ตั้งค่า</Button>
+                                    <Button color="primary" onClick={debounce(() => { this.props.dispatch(getFertility({ projectId })).then(()=>{
+                                        browserHistory.push('/fertilityControl')
+                                        }) },500)}>ตั้งค่า</Button>
                                     <br /><hr />
                                 </Col>
                             )

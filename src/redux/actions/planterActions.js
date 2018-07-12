@@ -124,7 +124,7 @@ export const getFertility = ({projectId}) => {
         }).then(result => {
             //เมื่อข้อมูลส่งกลับมาต้องเช็คสถานะก่อนว่า code ซ�้ำหรือไม่
             //โดยserver จะส่ง object ที่ชื่อว่า status และ message กลับมา
-            browserHistory.push('/fertilityControl')
+            //browserHistory.push('/fertilityControl')
             dispatch({ type: 'LOAD_FERTILITY_SUCCESS', payload: result.data })           
         }).catch(err => {
             //กรณี error         
