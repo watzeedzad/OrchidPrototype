@@ -1,5 +1,3 @@
-const fs = require("fs");
-
 let configFile;
 let existProjectIndex;
 
@@ -14,9 +12,10 @@ export default class ShowFertilizerConfig {
             return;
         }
         console.log("[ShowFertilizerConfig] session id: " + req.session.id);
-        req.session.reload(function (err) {
-            console.log("[ShowFertilizerConfig] " + err);
-        });
+        // req.session.reload(function (err) {
+        //     console.log("[ShowFertilizerConfig] " + err);
+        // });
+        configFile = req.session.configFile;
         let projectId = req.body.projectId;
         if (typeof projectId === "undefined") {
             res.json({
@@ -25,7 +24,7 @@ export default class ShowFertilizerConfig {
             });
             return;
         }
-        getConfigFile(req);
+        // getConfigFile(req);
         if (typeof configFile === "undefined") {
             res.json({
                 status: 500,
@@ -59,10 +58,10 @@ export default class ShowFertilizerConfig {
     }
 }
 
-function getConfigFile(req) {
-    console.log("[ShowFertilizerConfig] getConfigFilePath, " + req.session.configFilePath);
-    let config = JSON.parse(
-        require("fs").readFileSync(String(req.session.configFilePath), "utf8")
-    );
-    configFile = config;
-}
+// function getConfigFile(req) {
+//     console.log("[ShowFertilizerConfig] getConfigFilePath, " + req.session.configFilePath);
+//     let config = JSON.parse(
+//         require("fs").readFileSync(String(req.session.configFilePath), "utf8")
+//     );
+//     configFile = config;
+// }

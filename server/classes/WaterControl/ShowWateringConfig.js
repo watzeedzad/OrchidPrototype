@@ -1,5 +1,3 @@
-const fs = require("fs");
-
 let configFile;
 let existGreenHouseIndex;
 
@@ -14,9 +12,10 @@ export default class ShowWateringConfig {
             return;
         }
         console.log("[ShowWateringConfig] session id: " + req.session.id);
-        req.session.reload(function (err) {
-            console.log("[ShowWateringConfig] " + err);
-        });
+        // req.session.reload(function (err) {
+        //     console.log("[ShowWateringConfig] " + err);
+        // });
+        configFile = req.session.configFile;
         let greenHouseId = req.body.greenHouseId;
         if (typeof greenHouseId === "undefined") {
             res.json({
@@ -25,7 +24,7 @@ export default class ShowWateringConfig {
             });
             return;
         }
-        getConfigFile();
+        // getConfigFile();
         if (typeof configFile === "undefined") {
             res.json({
                 status: 500,
@@ -60,10 +59,10 @@ export default class ShowWateringConfig {
     }
 }
 
-function getConfigFile() {
-    console.log("[ShowWateringConfig] getConfigFilePath, " + pathGlobal);
-    let config = JSON.parse(
-        require("fs").readFileSync(String(pathGlobal), "utf8")
-    );
-    configFile = config;
-}
+// function getConfigFile() {
+//     console.log("[ShowWateringConfig] getConfigFilePath, " + pathGlobal);
+//     let config = JSON.parse(
+//         require("fs").readFileSync(String(pathGlobal), "utf8")
+//     );
+//     configFile = config;
+// }

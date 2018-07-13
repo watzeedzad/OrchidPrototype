@@ -1,4 +1,3 @@
-const fs = require("fs");
 const mongoose = require("mongoose");
 const greenHouseSensor = mongoose.model("greenHouse_Sensor");
 let ObjectId = require("mongodb").ObjectID;
@@ -16,9 +15,9 @@ export default class ShowSoilMoistureHistory {
       return;
     }
     console.log("[ShowSoilMoistureHistory] session id: " + req.session.id);
-    req.session.reload(function (err) {
-      console.log("[ShowSoilMoistureHistory] " + err);
-    });
+    // req.session.reload(function (err) {
+    //   console.log("[ShowSoilMoistureHistory] " + err);
+    // });
     let greenHouseId = req.body.greenHouseId;
     if (typeof greenHouseId === "undefined") {
       res.json({
@@ -94,18 +93,34 @@ export default class ShowSoilMoistureHistory {
   }
 }
 
-async function getGreenHouseSensor(greenHouseId) {
-  let result = await greenHouseSensor.find({
+async function getGreenHouseSensor(greenHouseId, farmId) {
+  // let result = await greenHouseSensor.find({
+  //   _id: {
+  //     $gt: ObjectId.createFromTime(Date.now() / 1000 - 25 * 60 * 60)
+  //   },
+  //   greenHouseId: greenHouseId,
+  //   farmId: req.session.farmData.farmId
+  // });
+  // if (result) {
+  //   greenHouseSensorResult = result;
+  // } else {
+  //   greenHouseSensorResult = undefined;
+  //   console.log("[ShowSoilMoistureHistory] getGreenHouseSensor, Query fail!");
+  // }
+  await greenHouseSensor.findOne({
+    greenHouseId: greenHouseId,
+    farmId: farmId
+  }, null, {
     _id: {
       $gt: ObjectId.createFromTime(Date.now() / 1000 - 25 * 60 * 60)
-    },
-    greenHouseId: greenHouseId,
-    farmId: req.session.farmData.farmId
-  });
-  if (result) {
-    greenHouseSensorResult = result;
-  } else {
-    greenHouseSensorResult = undefined;
-    console.log("[ShowSoilMoistureHistory] getGreenHouseSensor, Query fail!");
-  }
+    }
+  }, (err, result) => {
+    if (err) {
+      greenHouseSensorResult = undefined
+      console.log("[ShowSoilMoistureHistory] getGreenhouseSensor (err): " + err);
+    } else {
+      greenHouseSensorResult = result;
+      console.log("[ShowSoilMoistureHistory] getGreenhouseSensor (!err): " + result);
+    }
+  })
 }

@@ -1,5 +1,4 @@
 const mongoose = require("mongoose");
-const fs = require("fs");
 const greenHouseSensor = mongoose.model("greenHouse_Sensor");
 
 let configFile;
@@ -19,6 +18,7 @@ export default class ShowSoilMoisture {
     req.session.reload(function (err) {
       console.log("[ShowFertilityHistory] " + err);
     });
+    configFile = req.session.configFile;
     let greenHouseId = req.body.greenHouseId;
     if (typeof req.body.greenHouseId === "undefined") {
       res.json({
@@ -28,8 +28,8 @@ export default class ShowSoilMoisture {
       return;
     }
     console.log("[ShowSoilMoisture] greenHouseId: " + greenHouseId);
-    await getGreenhouseSensor(greenHouseId);
-    await getConfigFile(req);
+    await getGreenhouseSensor(greenHouseId, req.session.farmId);
+    // await getConfigFile(req);
     if (typeof greenHouseSensorData === "undefined") {
       res.json({
         status: 500,
@@ -62,29 +62,45 @@ export default class ShowSoilMoisture {
   }
 }
 
-function getConfigFile() {
-  console.log("[ShowSoilMoisture] getConfigFilePath: " + req.session.configFilePath);
-  let config = JSON.parse(
-    require("fs").readFileSync(String(req.session.configFilePath), "utf8")
-  );
-  configFile = config;
-}
+// function getConfigFile() {
+//   console.log("[ShowSoilMoisture] getConfigFilePath: " + req.session.configFilePath);
+//   let config = JSON.parse(
+//     require("fs").readFileSync(String(req.session.configFilePath), "utf8")
+//   );
+//   configFile = config;
+// }
 
-async function getGreenhouseSensor(greenHouseId) {
-  let result = await greenHouseSensor.findOne({
+async function getGreenhouseSensor(greenHouseId, farmId) {
+  // let result = await greenHouseSensor.findOne({
+  //   greenHouseId: greenHouseId,
+  //   farmId: req.session.farmData.farmId
+  // }, {}, {
+  //   sort: {
+  //     _id: -1
+  //   }
+  // });
+  // if (result) {
+  //   greenHouseSensorData = result;
+  // } else {
+  //   greenHouseSensorData = undefined;
+  //   console.log("[ShowSoilMoisture] getGreenhouseSensor: Query fail!");
+  // }
+  await greenHouseSensor.findOne({
     greenHouseId: greenHouseId,
-    farmId: req.session.farmData.farmId
-  }, {}, {
+    farmId: farmId
+  }, null, {
     sort: {
       _id: -1
     }
+  }, (err, result) => {
+    if (err) {
+      greenHouseSensorData = undefined
+      console.log("[ShowSoilMoisture] getGreenhouseSensor (err): " + err);
+    } else {
+      greenHouseSensorData = result;
+      console.log("[ShowSoilMoisture] getGreenhouseSensor (!err): " + result);
+    }
   });
-  if (result) {
-    greenHouseSensorData = result;
-  } else {
-    greenHouseSensorData = undefined;
-    console.log("[ShowSoilMoisture] getGreenhouseSensor: Query fail!");
-  }
 }
 
 function seekGreenHouseIdIndex(dataArray, greenHouseId) {

@@ -1,5 +1,4 @@
 const mongoose = require("mongoose");
-const fs = require("fs");
 const greenHouseSensor = mongoose.model("greenHouse_Sensor")
 
 let configFile;
@@ -16,11 +15,20 @@ export default class ShowLightIntensity {
             return;
         }
         console.log("[ShowLightIntensity] session id: " + req.session.id);
-        req.session.reload(function (err) {
-            console.log("[ShowLightIntensity] " + err);
-        });
-        await getGreenHouseSesor(greenHouseId);
-        await getConfigFile(req);
+        // req.session.reload(function (err) {
+        //     console.log("[ShowLightIntensity] " + err);
+        // });
+        configFile = req.session.farmId;
+        let greenHouseId = req.body.greenHouseId;
+        if (typeof greenHouseId === "undefined") {
+            res.json({
+                status: 500,
+                errorMessage: "เกิดข้อผิดพลาดในการแสดงค่าความเข้มแสง"
+            });
+            return;
+        }
+        await getGreenHouseSesor(greenHouseId, req.session.farmId);
+        // await getConfigFile(req);
         if (typeof greenHouseSensorData === "undefined") {
             res.json({
                 status: 500,
@@ -53,28 +61,43 @@ export default class ShowLightIntensity {
     }
 }
 
-function getConfigFile(req) {
-    console.log("[LightIntensityConfig] getConfigFilePath: " + req.session.configFilePath);
-    let config = JSON.parse(
-        require("fs").readFileSync(String(req.session.configFilePath), "utf8")
-    );
-    configFile = config;
-}
+// function getConfigFile(req) {
+//     console.log("[LightIntensityConfig] getConfigFilePath: " + req.session.configFilePath);
+//     let config = JSON.parse(
+//         require("fs").readFileSync(String(req.session.configFilePath), "utf8")
+//     );
+//     configFile = config;
+// }
 
-async function getGreenHouseSesor(greenHouseId) {
-    let result = await greenHouseSensor.findOne({
+async function getGreenHouseSesor(greenHouseId, farmId) {
+    // let result = await greenHouseSensor.findOne({
+    //     greenHouseId: greenHouseId,
+    //     farmId: req.session.farmData.farmId
+    // }, {}, {
+    //     sort: {
+    //         _id: -1
+    //     }
+    // });
+    // if (result) {
+    //     greenHouseSensorData = result;
+    // } else {
+    //     greenHouseSensorData = undefined;
+    //     console.log("Query fail!");
+    // }
+    await greenHouseSensor.findOne({
         greenHouseId: greenHouseId,
-        farmId: req.session.farmData.farmId
-    }, {}, {
+        farmId: farmId
+    }, null, {
         sort: {
             _id: -1
         }
+    }, (err, result) => {
+        if (err) {
+            greenHouseSensorData = undefined
+            console.log("[ShowLightIntensity] getGreenhouseSensor (err): " + err);
+        } else {
+            greenHouseSensorData = result;
+            console.log("[ShowLightIntensity] getGreenhouseSensor (!err): " + result);
+        }
     });
-    if (result) {
-        greenHouseSensorData = result;
-    } else {
-        greenHouseSensorData = undefined;
-        console.log("Query fail!");
-    }
-    // console.log(greenHouseSensorData);
 }

@@ -1,6 +1,3 @@
-const fs = require("fs");
-const session = require("express-session");
-
 let configFile;
 
 export default class ConfigSoilMoisture {
@@ -14,10 +11,11 @@ export default class ConfigSoilMoisture {
       return;
     }
     console.log("[ConfigSoilMoisture] session id: " + req.session.id);
-    req.session.reload(function (err) {
-      console.log("[ConfigSoilMoisture] " + err);
-    });
-    await getConfigFile(req);
+    // req.session.reload(function (err) {
+    //   console.log("[ConfigSoilMoisture] " + err);
+    // });
+    // await getConfigFile(req);
+    configFile = req.session.configFile;
     if (typeof configFile === "undefined") {
       res.json({
         status: 500,
@@ -63,13 +61,13 @@ export default class ConfigSoilMoisture {
   }
 }
 
-function getConfigFile(req) {
-  console.log("[ConfigSoilMoisture] getConfigFilePath: " + req.session.configFilePath);
-  let config = JSON.parse(
-    require("fs").readFileSync(String(req.session.configFilePath), "utf8")
-  );
-  configFile = config;
-}
+// function getConfigFile(req) {
+//   console.log("[ConfigSoilMoisture] getConfigFilePath: " + req.session.configFilePath);
+//   let config = JSON.parse(
+//     require("fs").readFileSync(String(req.session.configFilePath), "utf8")
+//   );
+//   configFile = config;
+// }
 
 function writeConfigFile(configFile, res) {
   let writeFileResult;
