@@ -6,13 +6,13 @@ const {
 } = mongoose;
 
 const greenHouse_SensorSchema = new Schema({
+  greenHouseId: Number,
+  farmId: Number,
   temperature: Number,
   humidity: Number,
   soilMoisture: Number,
   ambientLight: Number,
   timeStamp: Date,
-  greenHouseId: Number,
-  farmId: Number
 });
 
 greenHouse_SensorSchema.plugin(autoIncrement, {

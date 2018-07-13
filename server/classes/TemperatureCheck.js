@@ -2,10 +2,8 @@ import InsertRelayCommand from "./InsertRelayCommand";
 
 const mongoose = require("mongoose");
 const fs = require("fs");
-const request = require("request");
 const farm = mongoose.model("farm");
 const know_controller = mongoose.model("know_controller");
-const greenHouseSensor = mongoose.model("greenHouse_Sensor");
 
 let farmData;
 let configFile;
@@ -22,12 +20,14 @@ export default class TemperatureCheck {
 
     async check(req, res) {
         let ipIn = req.body.ip;
-        if (typeof ipIn === "undefined") {
+        let piMacAddress = req.body.macAddress;
+        if (typeof ipIn === "undefined" || typeof piMacAddress === "undefined") {
             temperatureCheckStatus = 500;
             return;
         }
         let controllerResult = await know_controller.findOne({
-            ip: ipIn
+            ip: ipIn,
+            piMacAddress: piMacAddress
         }, function (err, result) {
             if (err) {
                 console.log("[TemperatureCheck] Query fail!, know_controller");
@@ -36,17 +36,19 @@ export default class TemperatureCheck {
             }
         });
         let greenHouseId = controllerResult.greenHouseId;
+        let farmId = controllerResult.farmId;
         console.log("[TemperatureCheck] greenHouseId_Class, " + greenHouseId);
+        console.log("[TemperatureCheck] farmId_Class, " + farmId);
+        await getConfigFile(farmId);
         await getControllerData(greenHouseId);
         if (typeof controllerData === "undefined") {
             temperatureCheckStatus = 200;
             return;
         }
-        let farmId = controllerResult.farmId;
-        console.log("[TemperatureCheck] farmId_Class, " + farmId);
-        await getConfigFile(farmId);
         let greenHouseIdIndexTemperature = await seekGreenHouseIdIndex(configFile.temperatureConfigs, greenHouseId);
         let greenHouseIdIndexHumidity = await seekGreenHouseIdIndex(configFile.humidityConfigs, greenHouseId);
+        console.log("[TemperatureCheck] greenHouseIdIndexTemperature: " + greenHouseIdIndexTemperature);
+        console.log("[TemperatureCheck] greenHouseIdIndexHumidity: " + greenHouseIdIndexHumidity);
         if (greenHouseIdIndexTemperature == -1 || greenHouseIdIndexHumidity == -1) {
             temperatureCheckStatus = 500;
             return;
@@ -115,9 +117,7 @@ async function getConfigFile(farmIdIn) {
         }
     });
     let configFilePath = farmResult.configFilePath;
-    let config = JSON.parse(
-        require("fs").readFileSync(String(configFilePath), "utf8")
-    );
+    let config = JSON.parse(fs.readFileSync(String(configFilePath), "utf8"));
     configFile = config;
 }
 
@@ -149,7 +149,7 @@ async function getConfigFile(farmIdIn) {
 
 function compareTemperature(configFile, currentTemp, greenHouseIdIndexTemperature) {
     minTemperature = configFile.temperatureConfigs[greenHouseIdIndexTemperature].minTemperature;
-    maxTemperature = configFile.maxTemperature;
+    maxTemperature = configFile.temperatureConfigs[greenHouseIdIndexTemperature].maxTemperature;
     console.log("[TemperatureCheck] MIN-T: " + minTemperature);
     console.log("[TemperatureCheck] MAX-T: " + maxTemperature);
     console.log("[TemperatureCheck] CURRENT-T: " + currentTemp);

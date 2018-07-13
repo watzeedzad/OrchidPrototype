@@ -2,10 +2,8 @@ import InsertRelayCommand from "./InsertRelayCommand";
 
 const mongoose = require("mongoose");
 const fs = require("fs");
-const request = require("request");
 const farm = mongoose.model("farm");
 const know_controller = mongoose.model("know_controller");
-const greenHouseSensor = mongoose.model("greenHouse_Sensor");
 
 let farmData;
 let configFile;
@@ -20,12 +18,14 @@ export default class SoilMoistureCheck {
 
     async check(req, res) {
         let ipIn = req.body.ip;
-        if (typeof ipIn === "undefined") {
+        let piMacAddress = req.body.macAddress;
+        if (typeof ipIn === "undefined" || typeof piMacAddress === "undefined") {
             soilMoistureCheckStatus = 500;
             return;
         }
         let controllerResult = await know_controller.findOne({
-            ip: ipIn
+            ip: ipIn,
+            piMacAddress: piMacAddress
         }, function (err, result) {
             if (err) {
                 console.log("[SoilMoistureCheck] Query fail!, know_controller");
@@ -34,16 +34,17 @@ export default class SoilMoistureCheck {
             }
         });
         let greenHouseId = controllerResult.greenHouseId;
+        let farmId = controllerResult.farmId;
         console.log("[SoilMoistureCheck] greenHouseId_Class, " + greenHouseId);
+        console.log("[SoilMoistureCheck] farmId_Class, " + farmId);
+        await getConfigFile(farmId);
         await getControllerData(greenHouseId);
         if (typeof controllerData === "undefined") {
             soilMoistureCheckStatus = 200;
             return;
         }
-        let farmId = controllerResult.farmId;
-        console.log("[SoilMoistureCheck] farmId_Class, " + farmId);
-        await getConfigFile(farmId);
         let greenHouseIdIndex = await seekGreenHouseIdIndex(configFile.soilMoistureConfigs, greenHouseId);
+        console.log("[SoilMoistureCheck] greenHouseIdIndex: " + greenHouseIdIndex);
         if (greenHouseIdIndex == -1) {
             soilMoistureCheckStatus = 500;
             return;
@@ -97,9 +98,7 @@ async function getConfigFile(farmIdIn) {
         }
     });
     let configFilePath = farmResult.configFilePath;
-    let config = JSON.parse(
-        require("fs").readFileSync(String(configFilePath), "utf8")
-    );
+    let config = JSON.parse(fs.readFileSync(String(configFilePath), "utf8"));
     configFile = config;
 }
 

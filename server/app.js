@@ -32,7 +32,7 @@ mongoose.promise = global.promise;
 //Mongoose connect
 mongoose.Promise = global.Promise;
 let connection = mongoose
-  .connect(keys.mongoURI)
+  .connect(keys.mongoURI, {useNewUrlParser: true})
   .then(console.log("MongoDb Connected"))
   .catch(err => {
     if (err) {

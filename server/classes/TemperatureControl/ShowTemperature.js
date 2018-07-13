@@ -16,9 +16,10 @@ export default class ShowTemprature {
       return;
     }
     console.log("[ShowTemperature] session id: " + req.session.id);
-    req.session.reload(function (err) {
-      console.log("[ShowTemperature] " + err);
-    });
+    // req.session.reload(function (err) {
+    //   console.log("[ShowTemperature] " + err);
+    // });
+    configFile = req.session.configFile;
     let greenHouseId = req.body.greenHouseId;
     if (typeof greenHouseId === "undefined") {
       res.json({
@@ -28,9 +29,9 @@ export default class ShowTemprature {
       return;
     }
     console.log("[ShowTemperature] greenHouseId: " + greenHouseId);
-    await getGreenhouseSensor(greenHouseId);
-    await getConfigFile(req);
-    if (typeof greenHouseSensorData === "undefined") {
+    await getGreenhouseSensor(greenHouseId, req.session.farmId);
+    // await getConfigFile(req);
+    if (typeof greenHouseSensorData === "undefined" || greenHouseSensorData == null) {
       res.json({
         status: 500,
         errorMessage: "เกิดข้อผิดพลาดไม่มีข้อมูลจากเซนเซอร์ของโรงเรือน"
@@ -62,34 +63,36 @@ export default class ShowTemprature {
   }
 }
 
-async function getGreenhouseSensor(greenHouseId) {
-  let result = await greenHouseSensor.findOne({
+async function getGreenhouseSensor(greenHouseId, farmId) {
+  // let result = await greenHouseSensor.findOne({
+  //   greenHouseId: greenHouseId,
+  //   farmId: req.session.farmId
+  // });
+  // if (result) {
+  //   greenHouseSensorData = result;
+  // } else {
+  //   greenHouseSensorData = undefined;
+  //   console.log("Query fail!");
+  // }
+  await greenHouseSensor.findOne({
     greenHouseId: greenHouseId,
-    farmId: req.session.farmData.farmId
-  }, {}, {
+    farmId: farmId
+  }, null, {
     sort: {
       _id: -1
     }
+  }, (err, result) => {
+    if (err) {
+      greenHouseSensorData = undefined
+      console.log("[ShowTemperature] getGreenhouseSensor (err): " + err);
+    } else {
+      greenHouseSensorData = result;
+      console.log("[ShowTemperature] getGreenhouseSensor (!err): " + result);
+    }
   });
-  if (result) {
-    greenHouseSensorData = result;
-  } else {
-    greenHouseSensorData = undefined;
-    console.log("Query fail!");
-  }
-  // console.log(greenHouseSensorData);
-}
-
-async function getConfigFile(req) {
-  console.log("getConfigFilePath: " + req.session.configFilePath);
-  let config = JSON.parse(
-    require("fs").readFileSync(String(req.session.configFilePath), "utf8")
-  );
-  configFile = config;
 }
 
 function seekGreenHouseIdIndex(dataArray, greenHouseId) {
-  console.log(dataArray);
   let index = dataArray.findIndex(function (item, i) {
     return item.greenHouseId === greenHouseId;
   });

@@ -16,9 +16,6 @@ export default class ShowTemperatureHistory {
       return;
     }
     console.log("[ShowTemperatureHistory] session id: " + req.session.id);
-    req.session.reload(function (err) {
-      console.log("[ShowTemperatureHistory] " + err);
-    });
     let greenHouseId = req.body.greenHouseId;
     if (typeof greenHouseId === "undefined") {
       res.json({
@@ -28,7 +25,7 @@ export default class ShowTemperatureHistory {
       return;
     }
     console.log("[ShowTemperatureHistory] greenHouseId: " + greenHouseId);
-    await getGreenHouseSensor(greenHouseId);
+    await getGreenHouseSensor(greenHouseId, req);
     if (typeof greenHouseSensorResult === "undefined") {
       console.log("[ShowTemperatureHistory] greenHouseSensorResult undefined");
       res.json({
@@ -93,13 +90,13 @@ export default class ShowTemperatureHistory {
   }
 }
 
-async function getGreenHouseSensor(greenHouseId) {
+async function getGreenHouseSensor(greenHouseId, req) {
   let result = await greenHouseSensor.find({
     _id: {
       $gt: ObjectId.createFromTime(Date.now() / 1000 - 25 * 60 * 60)
     },
     greenHouseId: greenHouseId,
-    farmId: req.session.farmData.farmId
+    farmId: req.session.farmId
   });
   if (result) {
     greenHouseSensorResult = result;
