@@ -24,4 +24,4 @@ const know_controllerSchema = new Schema({
 know_controllerSchema.plugin(autoIncrement, {
     inc_field: "knowControllerId"
 });
-mongoose.model("know_controller", know_controllerSchema);
+mongoose.model("know_controller", know_controllerSchema, "know_controller");

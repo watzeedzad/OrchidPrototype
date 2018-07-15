@@ -2,7 +2,6 @@ import InsertRelayCommand from "./InsertRelayCommand";
 
 const mongoose = require("mongoose");
 const fs = require("fs");
-const request = require("request");
 const farm = mongoose.model("farm");
 const know_controller = mongoose.model("know_controller");
 const project = mongoose.model("project");
@@ -22,7 +21,7 @@ export default class FertilityCheck {
         let piMacAddress = req.body.macAddress;
         let ipIn = req.body.ip;
         if (typeof ipIn === "undefined" || typeof piMacAddress === "undefined") {
-            fertilityCheckStatus = 500;
+            req.session.fertilityCheckStatus = 500;
             return;
         }
         let controllerResult = await know_controller.findOne({
@@ -36,24 +35,24 @@ export default class FertilityCheck {
             }
         });
         let greenHouseId = controllerResult.greenHouseId;
-        console.log("[FertilityCheck] greenHouseId_Class, " + greenHouseId);
-        await getControllerData(greenHouseId, piMacAddress);
-        if (typeof controllerData === "undefined") {
-            fertilityCheckStatus = 200;
-            return;
-        }
         let farmId = controllerResult.farmId;
+        console.log("[FertilityCheck] greenHouseId_Class, " + greenHouseId);
         console.log("[FertilityCheck] farmId_Class, " + farmId);
         await getConfigFile(farmId);
-        let projectIdIndex = await seekProjectIdIndex(configFile, projectId);
-        if (greenHouseIdIndex == -1) {
-            fertilityCheckStatus = 500;
+        await getControllerData(greenHouseId, piMacAddress);
+        if (typeof controllerData === "undefined") {
+            req.session.fertilityCheckStatus = 200;
+            return;
+        }
+        let projectIdIndex = await seekProjectIdIndex(configFile.fertilityConfigs, projectId);
+        if (projectIdIndex == -1) {
+            req.session.fertilityCheckStatus = 500;
             return;
         }
         let resultCompareFertility = await compareFertility(configFile, req.body.fertility, projectIdIndex);
         console.log("[FertilityCheck] compareFertility: " + resultCompareFertility);
         if (typeof resultCompareFertility === "undefined") {
-            fertilityCheckStatus = 500;
+            req.session.fertilityCheckStatus = 500;
             return;
         }
         if (resultCompareFertility) {
@@ -63,7 +62,7 @@ export default class FertilityCheck {
             new InsertRelayCommand(controllerData.ip, "fertilizer", false, farmData.piMacAddress);
             // onOffFertilizerPump(controllerData.ip, false);
         }
-        fertilityCheckStatus = 200;
+        req.session.fertilityCheckStatus = 200;
         return;
     }
 }
@@ -122,9 +121,7 @@ async function getConfigFile(farmIdIn) {
         }
     });
     let configFilePath = farmResult.configFilePath;
-    let config = JSON.parse(
-        require("fs").readFileSync(String(configFilePath), "utf8")
-    );
+    let config = JSON.parse(fs.readFileSync(String(configFilePath), "utf8"));
     configFile = config;
 }
 

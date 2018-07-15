@@ -69,7 +69,7 @@ export default class ShowHumidityHistory {
     if (greenHouseSensorDataFlitered.length == 0) {
       res.json({
         status: 500,
-        message: 'เกิดข้อผิดพลาดไม่มีประวัติอยู่ในระบบ'
+        errorMessage: 'เกิดข้อผิดพลาดไม่มีประวัติอยู่ในระบบ'
       });
       return;
     }

@@ -63,6 +63,7 @@ const planterAnalyze = require("./routes/planterAnalyze");
 const login = require("./routes/login");
 const waterControl = require("./routes/waterControl");
 const fertilizerControl = require("./routes/fertilizerControl");
+const controllerManagement = require("./routes/controllerManagement");
 
 const app = express();
 
@@ -108,6 +109,7 @@ app.use("/planterAnalyze", planterAnalyze);
 app.use("/login", login);
 app.use("/waterControl", waterControl);
 app.use("/fertilizerControl", fertilizerControl);
+app.use("/controllerManagement", controllerManagement);
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {

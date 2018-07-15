@@ -12,4 +12,4 @@ const lightDurationSchema = new Schema({
 lightDurationSchema.plugin(autoIncrement, {
   inc_field: "lightDurationId"
 });
-mongoose.model("light_duration", lightDurationSchema);
+mongoose.model("light_duration", lightDurationSchema, "light_duration");

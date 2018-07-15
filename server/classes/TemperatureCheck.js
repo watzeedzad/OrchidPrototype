@@ -20,19 +20,19 @@ export default class TemperatureCheck {
 
     async check(req, res) {
         let ipIn = req.body.ip;
-        let piMacAddress = req.body.macAddress;
+        let piMacAddress = req.body.piMacAddress;
         if (typeof ipIn === "undefined" || typeof piMacAddress === "undefined") {
-            temperatureCheckStatus = 500;
+            req.session.temperatureCheckStatus = 500;
             return;
         }
         let controllerResult = await know_controller.findOne({
             ip: ipIn,
             piMacAddress: piMacAddress
-        }, function (err, result) {
+        }, function (err) {
             if (err) {
                 console.log("[TemperatureCheck] Query fail!, know_controller");
             } else {
-                console.log("[TemperatureCheck] Query success, know_controller")
+                console.log("[TemperatureCheck] Query success, know_controller");
             }
         });
         let greenHouseId = controllerResult.greenHouseId;
@@ -40,9 +40,9 @@ export default class TemperatureCheck {
         console.log("[TemperatureCheck] greenHouseId_Class, " + greenHouseId);
         console.log("[TemperatureCheck] farmId_Class, " + farmId);
         await getConfigFile(farmId);
-        await getControllerData(greenHouseId);
+        await getControllerData(greenHouseId, piMacAddress);
         if (typeof controllerData === "undefined") {
-            temperatureCheckStatus = 200;
+            req.session.temperatureCheckStatus = 200;
             return;
         }
         let greenHouseIdIndexTemperature = await seekGreenHouseIdIndex(configFile.temperatureConfigs, greenHouseId);
@@ -50,7 +50,7 @@ export default class TemperatureCheck {
         console.log("[TemperatureCheck] greenHouseIdIndexTemperature: " + greenHouseIdIndexTemperature);
         console.log("[TemperatureCheck] greenHouseIdIndexHumidity: " + greenHouseIdIndexHumidity);
         if (greenHouseIdIndexTemperature == -1 || greenHouseIdIndexHumidity == -1) {
-            temperatureCheckStatus = 500;
+            req.session.temperatureCheckStatus = 500;
             return;
         }
         let resultCompareHumid = await compareHumidity(
@@ -69,9 +69,10 @@ export default class TemperatureCheck {
             typeof resultCompareTemp === "undefined" ||
             typeof resultCompareHumid === "undefined"
         ) {
-            temperatureCheckStatus = 500;
+            req.session.temperatureCheckStatus = 500;
             return;
         } else {
+            console.log("[TemperatureCheck] enter insert relay command phase");
             if (!resultCompareTemp) {
                 new InsertRelayCommand(controllerData.ip, "water", true, farmData.piMacAddress);
                 // onOffMoisturePump(controllerData.ip, true);
@@ -84,21 +85,24 @@ export default class TemperatureCheck {
                 new InsertRelayCommand(controllerData.ip, "water", false, farmData.piMacAddress);
                 // onOffMoisturePump(controllerData.ip, false);
             }
-            temperatureCheckStatus = 200
+            req.session.temperatureCheckStatus = 200
             return;
         }
     }
 }
 
 async function getControllerData(greenHouseId) {
-    let controllerResult = await know_controller.findOne({
+    await know_controller.findOne({
         isHavePump: true,
         "pumpType.moisture": true,
         greenHouseId: greenHouseId
     }, function (err, result) {
         if (err) {
             controllerData = undefined;
-            console.log("[TemperatureCheck] Query fail!, know_controller2");
+            console.log("[TemperatureCheck] getControllerData (err): " + err);
+        } else if (!result) {
+            controllerData = undefined;
+            console.log("[TemperatureCheck] getControllerData (!result): " + result);
         } else {
             controllerData = result;
         }

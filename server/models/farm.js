@@ -18,4 +18,4 @@ const farmSchema = new Schema({
 farmSchema.plugin(autoIncrement, {
   inc_field: "farmId"
 });
-mongoose.model("farm", farmSchema);
+mongoose.model("farm", farmSchema, "farm");

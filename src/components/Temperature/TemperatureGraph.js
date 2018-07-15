@@ -20,8 +20,8 @@ class TemperatureGraph extends Component {
         if (tempHistory.isLoading) {
             return <div>Loading...</div>
         }
-        if (data.message){
-            return <div className="alert alert-danger">{data.message}</div>
+        if (data.errorMessage){
+            return <div className="alert alert-danger">{data.errorMessage}</div>
         }
         const history = []
         for (let index = 0; index < data.temperatureHistory.length; index++) {

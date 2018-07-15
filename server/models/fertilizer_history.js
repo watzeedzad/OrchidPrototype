@@ -17,4 +17,4 @@ const fertilizerHistorySchema = new Schema({
 fertilizerHistorySchema.plugin(autoIncrement, {
     inc_field: "fertilizerHistoryId"
 });
-mongoose.model("fertilizer_history", fertilizerHistorySchema);
+mongoose.model("fertilizer_history", fertilizerHistorySchema, "fertilizer_history");

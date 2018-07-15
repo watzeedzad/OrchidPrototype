@@ -12,4 +12,4 @@ const userSchema = new Schema({
   password: String
 });
 
-mongoose.model("user", userSchema);
+mongoose.model("user", userSchema, "user");

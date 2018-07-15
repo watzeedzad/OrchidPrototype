@@ -18,19 +18,19 @@ export default class SoilMoistureCheck {
 
     async check(req, res) {
         let ipIn = req.body.ip;
-        let piMacAddress = req.body.macAddress;
+        let piMacAddress = req.body.piMacAddress;
         if (typeof ipIn === "undefined" || typeof piMacAddress === "undefined") {
-            soilMoistureCheckStatus = 500;
+            req.session.soilMoistureCheckStatus = 500;
             return;
         }
         let controllerResult = await know_controller.findOne({
             ip: ipIn,
             piMacAddress: piMacAddress
-        }, function (err, result) {
+        }, function (err) {
             if (err) {
                 console.log("[SoilMoistureCheck] Query fail!, know_controller");
             } else {
-                console.log("[SoilMoistureCheck] Query success, know_controller")
+                console.log("[SoilMoistureCheck] Query success, know_controller");
             }
         });
         let greenHouseId = controllerResult.greenHouseId;
@@ -38,15 +38,15 @@ export default class SoilMoistureCheck {
         console.log("[SoilMoistureCheck] greenHouseId_Class, " + greenHouseId);
         console.log("[SoilMoistureCheck] farmId_Class, " + farmId);
         await getConfigFile(farmId);
-        await getControllerData(greenHouseId);
+        await getControllerData(greenHouseId, piMacAddress);
         if (typeof controllerData === "undefined") {
-            soilMoistureCheckStatus = 200;
+            req.session.soilMoistureCheckStatus = 200;
             return;
         }
         let greenHouseIdIndex = await seekGreenHouseIdIndex(configFile.soilMoistureConfigs, greenHouseId);
         console.log("[SoilMoistureCheck] greenHouseIdIndex: " + greenHouseIdIndex);
         if (greenHouseIdIndex == -1) {
-            soilMoistureCheckStatus = 500;
+            req.session.soilMoistureCheckStatus = 500;
             return;
         }
         let resultCompareSoilMoisture = await compareSoilMositure(
@@ -56,30 +56,36 @@ export default class SoilMoistureCheck {
         );
         console.log("[SoilMoistureCheck] compareSoilMoisture, " + resultCompareSoilMoisture);
         if (typeof resultCompareSoilMoisture === "undefined") {
-            soilMoistureCheckStatus = 500;
+            req.session.soilMoistureCheckStatus = 500;
+            return;
+        } else {
+            console.log("[SoilMoistureCheck] enter insert relay command phase");
+            if (resultCompareSoilMoisture) {
+                new InsertRelayCommand(controllerData.ip, "moisture", true, farmData.piMacAddress);
+                // onOffWaterPump(controllerData.ip, true);
+            } else {
+                new InsertRelayCommand(controllerData.ip, "moisture", false, farmData.piMacAddress);
+                // onOffWaterPump(controllerData.ip, false);
+            }
+            req.session.soilMoistureCheckStatus = 200
             return;
         }
-        if (resultCompareSoilMoisture) {
-            new InsertRelayCommand(controllerData.ip, "moisture", true, farmData.piMacAddress);
-            // onOffWaterPump(controllerData.ip, true);
-        } else {
-            new InsertRelayCommand(controllerData.ip, "moisture", false, farmData.piMacAddress);
-            // onOffWaterPump(controllerData.ip, false);
-        }
-        soilMoistureCheckStatus = 200
-        return;
     }
 }
 
-async function getControllerData(greenHouseId) {
-    let controllerResult = await know_controller.findOne({
+async function getControllerData(greenHouseId, piMacAddress) {
+    await know_controller.findOne({
         isHavePump: true,
         "pumpType.water": true,
-        greenHouseId: greenHouseId
+        greenHouseId: greenHouseId,
+        piMacAddress: piMacAddress
     }, function (err, result) {
         if (err) {
             controllerData = undefined;
-            console.log("[SoilMoistureCheck] Query fail!, know_controller2");
+            console.log("[SoilMoistureCheck] getControllerData (err): " + err);
+        } else if (!result) {
+            controllerData = undefined;
+            console.log("[SoilMoistureCheck] getControllerData (!result): " + result);
         } else {
             controllerData = result;
         }

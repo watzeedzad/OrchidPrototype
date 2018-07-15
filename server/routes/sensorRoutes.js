@@ -11,43 +11,58 @@ let status = 0;
 
 //Add greenHouseSensor
 router.post("/greenHouseSensor", (req, res) => {
-  async function doThis() {
-    new GreenHouseSensor(req, res);
-    await new TemperatureCheck(req, res);
-    await new SoilMoistureCheck(req, res);
-    await checkStatus(res);
-    if (temperatureCheckStatus == 200 && soilMoistureCheckStatus == 200) {
+  req.session.temperatureCheckStatus = 0;
+  req.session.soilMoistureCheckStatus = 0;
+  new GreenHouseSensor(req, res);
+  new TemperatureCheck(req, res);
+  new SoilMoistureCheck(req, res);
+  if (req.session.temperatureCheckStatus == 200 && req.session.soilMoistureCheckStatus == 200) {
+    res.sendStatus(200);
+  } else {
+    checkStatus(req, res, "greenHouse");
+  }
+});
+
+//Add projectSensor
+router.post("/projectSensor", (req, res) => {
+  async function doThis(req, res) {
+    req.session.fertilityCheckStatus = 0;
+    new ProjectSensor(req, res);
+    await new FertilityCheck(req, res);
+    await checkStatus(req, res, "project");
+    if (req.session.fertilityCheckStatus == 200) {
       res.sendStatus(200);
     }
   }
   doThis();
 });
 
-//Add projectSensor
-router.post("/projectSensor", (req, res) => {
-  new ProjectSensor(req, res);
-  new FertilityCheck(req, res);
-  res.sendStatus(200);
-});
-
-function checkStatus(res) {
+function checkStatus(req, res, checkType) {
   console.log("start check status");
   let messageArray = [];
-  if (temperatureCheckStatus == 500) {
-    messageArray.push('เกิดข้อผิดพลาดในการตรวจสอบอุณหภูมิ');
-  }
-  if (soilMoistureCheckStatus == 500) {
-    messageArray.push('เกิดข้อผิดพลาดในการตรวจสอบความชิ้นในเครื่องปลูก');
-  }
-  if (fertilityCheckStatus == 500) {
-    messageArray.push('เกิดข้อผิดพลาดในการตรวจสอบความอุดมสมบูรณ์ในเครื่องปลูก');
-  }
-  if (temperatureCheckStatus == 500 || soilMoistureCheckStatus == 500) {
-    status = 500;
-    res.json({
-      status: 500,
-      errorMessage: messageArray
-    })
+  if (checkType == "greenHouse") {
+    if (req.session.temperatureCheckStatus == 500) {
+      messageArray.push('เกิดข้อผิดพลาดในการตรวจสอบอุณหภูมิ');
+    }
+    if (req.session.soilMoistureCheckStatus == 500) {
+      messageArray.push('เกิดข้อผิดพลาดในการตรวจสอบความชิ้นในเครื่องปลูก');
+    }
+    if (req.session.temperatureCheckStatus == 500 || req.session.soilMoistureCheckStatus == 500) {
+      res.json({
+        status: 500,
+        errorMessage: messageArray
+      });
+    }
+  } else if (checkType == "project") {
+    if (req.session.fertilityCheckStatus == 500) {
+      messageArray.push('เกิดข้อผิดพลาดในการตรวจสอบความอุดมสมบูรณ์ในเครื่องปลูก');
+    }
+    if (req.session.fertilityCheckStatus == 500) {
+      res.json({
+        status: 500,
+        errorMessage: messageArray
+      });
+    }
   }
 }
 

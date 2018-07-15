@@ -14,4 +14,4 @@ const waterHistorySchema = new Schema({
 });
 
 waterHistorySchema.plugin(autoIncrement, {inc_field: "waterHistoryId"});
-mongoose.model("water_history", waterHistorySchema);
+mongoose.model("water_history", waterHistorySchema, "water_history");

@@ -16,4 +16,4 @@ const project_SensorSchema = new Schema({
 project_SensorSchema.plugin(autoIncrement, {
   inc_field: "projectSensorId"
 });
-mongoose.model("project_Sensor", project_SensorSchema);
+mongoose.model("project_Sensor", project_SensorSchema, "project_sensor");

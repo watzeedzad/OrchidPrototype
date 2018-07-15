@@ -24,4 +24,4 @@ const growthRateSchema = new Schema({
 growthRateSchema.plugin(autoIncrement, {
     inc_field: "growthRateId"
 });
-mongoose.model("growth_rate", growthRateSchema);
+mongoose.model("growth_rate", growthRateSchema, "growth_rate");

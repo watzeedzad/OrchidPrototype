@@ -14,4 +14,4 @@ const projectSchema = new Schema({
 projectSchema.plugin(autoIncrement, {
     inc_field: "projectId"
 });
-mongoose.model("project", projectSchema);
+mongoose.model("project", projectSchema, "projecet");

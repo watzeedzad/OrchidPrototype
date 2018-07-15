@@ -108,19 +108,21 @@ async function getGreenHouseSensor(greenHouseId, farmId) {
   //   console.log("[ShowSoilMoistureHistory] getGreenHouseSensor, Query fail!");
   // }
   await greenHouseSensor.findOne({
-    greenHouseId: greenHouseId,
-    farmId: farmId
-  }, null, {
     _id: {
       $gt: ObjectId.createFromTime(Date.now() / 1000 - 25 * 60 * 60)
-    }
-  }, (err, result) => {
+    },
+    greenHouseId: greenHouseId,
+    farmId: farmId
+  }, {}, {}, (err, result) => {
     if (err) {
       greenHouseSensorResult = undefined
       console.log("[ShowSoilMoistureHistory] getGreenhouseSensor (err): " + err);
+    } else if (!result) {
+      greenHouseSensorResult = undefined
+      console.log("[ShowSoilMoistureHistory] getGreenhouseSensor (!result): " + result);
     } else {
       greenHouseSensorResult = result;
-      console.log("[ShowSoilMoistureHistory] getGreenhouseSensor (!err): " + result);
+      console.log("[ShowSoilMoistureHistory] getGreenhouseSensor (result): " + result);
     }
   })
 }
