@@ -1,6 +1,7 @@
 const express = require("express");
 const router = express.Router();
-const mongoose = require("mongoose");
+const syncNode = require("sync-node");
+const jobQueue = syncNode.createQueue();
 import TemperatureCheck from "../classes/TemperatureCheck";
 import GreenHouseSensor from "../classes/SaveData/GreenHouseSensor";
 import ProjectSensor from "../classes/SaveData/ProjectSensor";
@@ -16,25 +17,35 @@ router.post("/greenHouseSensor", (req, res) => {
   new GreenHouseSensor(req, res);
   new TemperatureCheck(req, res);
   new SoilMoistureCheck(req, res);
-  if (req.session.temperatureCheckStatus == 200 && req.session.soilMoistureCheckStatus == 200) {
-    res.sendStatus(200);
-  } else {
-    checkStatus(req, res, "greenHouse");
-  }
+  setTimeout(() => {
+    if (req.session.temperatureCheckStatus == 200 && req.session.soilMoistureCheckStatus == 200) {
+      res.sendStatus(200);
+    } else {
+      checkStatus(req, res, "greenHouse");
+    }
+  }, 3500);
+  // new GreenHouseSensor(req, res);
+  // new TemperatureCheck(req, res);
+  // new SoilMoistureCheck(req, res);
+  // if (req.session.temperatureCheckStatus == 200 && req.session.soilMoistureCheckStatus == 200) {
+  //   res.sendStatus(200);
+  // } else {
+  //   checkStatus(req, res, "greenHouse");
+  // }
 });
 
 //Add projectSensor
 router.post("/projectSensor", (req, res) => {
-  async function doThis(req, res) {
-    req.session.fertilityCheckStatus = 0;
-    new ProjectSensor(req, res);
-    await new FertilityCheck(req, res);
-    await checkStatus(req, res, "project");
+  req.session.fertilityCheckStatus = 0;
+  new ProjectSensor(req, res);
+  new FertilityCheck(req, res);
+  setTimeout(() => {
     if (req.session.fertilityCheckStatus == 200) {
       res.sendStatus(200);
+    } else {
+      checkStatus(req, res, "project");
     }
-  }
-  doThis();
+  }, 3500);
 });
 
 function checkStatus(req, res, checkType) {

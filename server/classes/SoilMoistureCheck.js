@@ -35,9 +35,9 @@ export default class SoilMoistureCheck {
         });
         let greenHouseId = controllerResult.greenHouseId;
         let farmId = controllerResult.farmId;
+        await getConfigFile(farmId);
         console.log("[SoilMoistureCheck] greenHouseId_Class, " + greenHouseId);
         console.log("[SoilMoistureCheck] farmId_Class, " + farmId);
-        await getConfigFile(farmId);
         await getControllerData(greenHouseId, piMacAddress);
         if (typeof controllerData === "undefined") {
             req.session.soilMoistureCheckStatus = 200;

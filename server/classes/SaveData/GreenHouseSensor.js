@@ -2,6 +2,8 @@ const mongoose = require("mongoose");
 const greenHouseSensor = mongoose.model("greenHouse_Sensor");
 const know_controller = mongoose.model("know_controller");
 const farm = mongoose.model("farm");
+const syncNode = require("sync-node");
+const jobQueue = syncNode.createQueue();
 
 let controllerData;
 let farmData;
@@ -23,7 +25,9 @@ export default class GreenHouseSensor {
     let humid = req.body.humidity;
     let soilMoisture = req.body.soilMoisture;
     let ambientLight = req.body.ambientLight;
-    saveSensorData(greenHouseId, farmData.farmId, temp, humid, soilMoisture, ambientLight);
+    setTimeout(() => {
+      saveSensorData(greenHouseId, farmData.farmId, temp, humid, soilMoisture, ambientLight)
+    }, 500);
   }
 }
 
@@ -40,7 +44,6 @@ async function getControllerData(ip, piMacAddress) {
         console.log("[GreenHouseSensor] getControllerData (!result): " + result);
       } else {
         controllerData = result;
-        // console.log("[GreenHouseSensor] getControllerData: " + controllerData);
       }
     }
   );

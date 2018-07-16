@@ -18,8 +18,8 @@ export default class FertilityCheck {
     }
 
     async process(req, res) {
-        let piMacAddress = req.body.macAddress;
         let ipIn = req.body.ip;
+        let piMacAddress = req.body.piMacAddress;
         if (typeof ipIn === "undefined" || typeof piMacAddress === "undefined") {
             req.session.fertilityCheckStatus = 500;
             return;
@@ -34,17 +34,18 @@ export default class FertilityCheck {
                 console.log("[FertilityCheck] Query success, know_controller")
             }
         });
-        let greenHouseId = controllerResult.greenHouseId;
+        let projectId = controllerResult.projectId;
         let farmId = controllerResult.farmId;
-        console.log("[FertilityCheck] greenHouseId_Class, " + greenHouseId);
-        console.log("[FertilityCheck] farmId_Class, " + farmId);
         await getConfigFile(farmId);
-        await getControllerData(greenHouseId, piMacAddress);
+        console.log("[FertilityCheck] projectId_Class, " + projectId);
+        console.log("[FertilityCheck] farmId_Class, " + farmId);
+        await getControllerData(projectId, farmData.farmId);
         if (typeof controllerData === "undefined") {
             req.session.fertilityCheckStatus = 200;
             return;
         }
         let projectIdIndex = await seekProjectIdIndex(configFile.fertilityConfigs, projectId);
+        console.log("[FertilityCheck] projectIdIndex: " + projectIdIndex);
         if (projectIdIndex == -1) {
             req.session.fertilityCheckStatus = 500;
             return;
@@ -54,31 +55,37 @@ export default class FertilityCheck {
         if (typeof resultCompareFertility === "undefined") {
             req.session.fertilityCheckStatus = 500;
             return;
-        }
-        if (resultCompareFertility) {
-            new InsertRelayCommand(controllerData.ip, "fertilizer", true, farmData.piMacAddress);
-            // onOffFertilizerPump(controllerData.ip, true);
         } else {
-            new InsertRelayCommand(controllerData.ip, "fertilizer", false, farmData.piMacAddress);
-            // onOffFertilizerPump(controllerData.ip, false);
+            console.log("[FertilityCheck] enter insert relay command phase");
+            if (resultCompareFertility) {
+                new InsertRelayCommand(controllerData.ip, "fertilizer", true, farmData.piMacAddress);
+                // onOffFertilizerPump(controllerData.ip, true);
+            } else {
+                new InsertRelayCommand(controllerData.ip, "fertilizer", false, farmData.piMacAddress);
+                // onOffFertilizerPump(controllerData.ip, false);
+            }
+            req.session.fertilityCheckStatus = 200;
+            return;
         }
-        req.session.fertilityCheckStatus = 200;
-        return;
     }
 }
 
-async function getControllerData(projectId, piMacAddress) {
-    let controllerResult = await know_controller.findOne({
+async function getControllerData(projectId, farmId) {
+    console.log("[FertilityCheck] getControllerData: " + projectId + ", " + farmId);
+    await know_controller.findOne({
         isHavePump: true,
         "pumpType.fertilizer": true,
         projectId: projectId,
-        piMacAddress: piMacAddress
+        farmId: farmId
     }, function (err, result) {
         if (err) {
             controllerData = undefined;
             console.log("[FertilityCheck] Query fail!, know_controller2");
+        } else if (!result) {
+            console.log("[FertilityCheck] getControllerData (!result): " + result);
         } else {
             controllerData = result;
+            console.log("[FertilityCheck] getControllerData (result): " + result);
         }
     });
 }
@@ -128,8 +135,8 @@ async function getConfigFile(farmIdIn) {
 function compareFertility(configFile, currentFertility, projectIdIndex) {
     minFertility = configFile.fertilityConfigs[projectIdIndex].minFertility;
     maxFertility = configFile.fertilityConfigs[projectIdIndex].maxFertility;
-    console.log("[FertilityCheck] MIN-F: " + minSoilMoisture);
-    console.log("[FertilityCheck] MAX-F: " + maxSoilMoisture);
+    console.log("[FertilityCheck] MIN-F: " + minFertility);
+    console.log("[FertilityCheck] MAX-F: " + maxFertility);
     console.log("[FertilityCheck] CURRENT-F: " + currentFertility);
     if (minFertility == null || maxFertility == null) {
         return undefined;

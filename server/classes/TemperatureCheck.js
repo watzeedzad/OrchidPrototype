@@ -37,10 +37,10 @@ export default class TemperatureCheck {
         });
         let greenHouseId = controllerResult.greenHouseId;
         let farmId = controllerResult.farmId;
+        await getConfigFile(farmId);
         console.log("[TemperatureCheck] greenHouseId_Class, " + greenHouseId);
         console.log("[TemperatureCheck] farmId_Class, " + farmId);
-        await getConfigFile(farmId);
-        await getControllerData(greenHouseId, piMacAddress);
+        await getControllerData(greenHouseId, farmData.farmId);
         if (typeof controllerData === "undefined") {
             req.session.temperatureCheckStatus = 200;
             return;
@@ -91,11 +91,12 @@ export default class TemperatureCheck {
     }
 }
 
-async function getControllerData(greenHouseId) {
+async function getControllerData(greenHouseId, farmId) {
     await know_controller.findOne({
         isHavePump: true,
         "pumpType.moisture": true,
-        greenHouseId: greenHouseId
+        greenHouseId: greenHouseId,
+        farmId: farmId
     }, function (err, result) {
         if (err) {
             controllerData = undefined;

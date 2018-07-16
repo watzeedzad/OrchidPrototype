@@ -13,25 +13,31 @@ export default class ProjectSensor {
 
   async process(req, res) {
     let ip = req.body.ip;
+    let piMacAddress = req.body.piMacAddress;
     console.log("[ProjectSensor] ip: " + req.body.ip);
-    let piMacAddress = req.body.macAddress;
-    await getFarmData(piMacAddress);
+    console.log("[ProjectSensor] piMacAddress: " + req.body.piMacAddress);
     await getControllerData(ip, piMacAddress);
+    await getFarmData(piMacAddress);
+    let greenHouseId = controllerData.greenHouseId;
     let soilFertilizer = req.body.soilFertilizer;
     let projectId = controllerData.projectId;
-    let greenHouseId = controllerData.greenHouseId;
-    saveSensorData(soilFertilizer, projectId, greenHouseId, farmData.farmId);
+    setTimeout(() => {
+      saveSensorData(soilFertilizer, projectId, greenHouseId, farmData.farmId);
+    }, 500);
   }
 }
 
-async function getControllerData(ip, macAddress) {
-  let controllerResult = await know_controller.findOne({
+async function getControllerData(ip, piMacAddress) {
+  console.log("[ProjectSensor] getControllerData: " + ip + ", " + piMacAddress);
+  await know_controller.findOne({
       ip: ip,
-      piMacAddress: macAddress
+      piMacAddress: piMacAddress
     },
     function (err, result) {
       if (err) {
         console.log("[ProjectSensor] getControllerData, Query fail!");
+      } else if (!result) {
+        console.log("[ProjectSensor] getControllerData (!result): " + result);
       } else {
         controllerData = result;
       }
