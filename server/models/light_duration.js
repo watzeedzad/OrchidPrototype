@@ -4,9 +4,11 @@ const autoIncrement = require("mongoose-sequence")(mongoose);
 const { Schema } = mongoose;
 
 const lightDurationSchema = new Schema({
-  greenHouseId: Number,
   farmId: Number,
-  duration: Number
+  greenHouseId: Number,
+  duration: Number,
+  lastestResult: Boolean,
+  timeStamp: Date
 });
 
 lightDurationSchema.plugin(autoIncrement, {
