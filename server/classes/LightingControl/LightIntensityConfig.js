@@ -13,10 +13,11 @@ export default class LightIntensityConfig {
             return;
         }
         console.log("[LightIntensityConfig] session id: " + req.session.id);
-        req.session.reload(function (err) {
-            console.log("[LightIntensityConfig] " + err);
-        });
-        await getConfigFile(req);
+        // req.session.reload(function (err) {
+        //     console.log("[LightIntensityConfig] " + err);
+        // });
+        // await getConfigFile(req);
+        configFile = req.session.configFile;
         if (typeof configFile === "undefined") {
             res.json({
                 status: 500,
@@ -61,13 +62,13 @@ export default class LightIntensityConfig {
     }
 }
 
-function getConfigFile(req) {
-    console.log("[LightIntensityConfig] getConfigFilePath: " + req.session.configFilePath);
-    let config = JSON.parse(
-        require("fs").readFileSync(String(req.session.configFilePath), "utf8")
-    );
-    configFile = config;
-}
+// function getConfigFile(req) {
+//     console.log("[LightIntensityConfig] getConfigFilePath: " + req.session.configFilePath);
+//     let config = JSON.parse(
+//         require("fs").readFileSync(String(req.session.configFilePath), "utf8")
+//     );
+//     configFile = config;
+// }
 
 function writeConfigFile(configFile, res) {
     let writeFileResult;

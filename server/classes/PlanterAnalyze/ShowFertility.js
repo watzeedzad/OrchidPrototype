@@ -17,9 +17,10 @@ export default class ShowFertility {
       return;
     }
     console.log("[ShowFertility] session id: " + req.session.id);
-    req.session.reload(function (err) {
-      console.log("[ShowFertility] " + err);
-    });
+    // req.session.reload(function (err) {
+    //   console.log("[ShowFertility] " + err);
+    // });
+    configFile = req.session.configFile;
     let projectId = req.body.projectId;
     if (typeof projectId === "undefined") {
       res.json({
@@ -30,7 +31,7 @@ export default class ShowFertility {
     }
     console.log("[ShowFertility] projectId: " + projectId);
     await getProjectSensor(projectId);
-    await getConfigFile(req);
+    // await getConfigFile(req);
     let projectIdIndex = await seekProjectIdIndex(
       configFile.fertilityConfigs,
       projectId
@@ -67,13 +68,13 @@ export default class ShowFertility {
   }
 }
 
-function getConfigFile(req) {
-  console.log("[ShowFertility] getConfigFilePath: " + req.session.configFilePath);
-  let config = JSON.parse(
-    require("fs").readFileSync(String(req.session.configFilePath), "utf8")
-  );
-  configFile = config;
-}
+// function getConfigFile(req) {
+//   console.log("[ShowFertility] getConfigFilePath: " + req.session.configFilePath);
+//   let config = JSON.parse(
+//     require("fs").readFileSync(String(req.session.configFilePath), "utf8")
+//   );
+//   configFile = config;
+// }
 
 async function getProjectSensor(projectId) {
   let result = await project_sensor.findOne({

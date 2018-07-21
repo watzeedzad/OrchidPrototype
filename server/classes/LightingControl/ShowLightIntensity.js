@@ -18,7 +18,7 @@ export default class ShowLightIntensity {
         // req.session.reload(function (err) {
         //     console.log("[ShowLightIntensity] " + err);
         // });
-        configFile = req.session.farmId;
+        configFile = req.session.configFile;
         let greenHouseId = req.body.greenHouseId;
         if (typeof greenHouseId === "undefined") {
             res.json({

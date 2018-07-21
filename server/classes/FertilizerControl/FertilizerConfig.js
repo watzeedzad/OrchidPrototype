@@ -14,9 +14,10 @@ export default class FertilizerConfig {
             return;
         }
         console.log("[FertilizerConfig] session id: " + req.session.id);
-        req.session.reload(function (err) {
-            console.log("[FertilizerConfig] " + err);
-        });
+        // req.session.reload(function (err) {
+        //     console.log("[FertilizerConfig] " + err);
+        // });
+        configFile = req.session.configFile;
         let projectId = req.body.projectId;
         let configTimeRanges = req.body.timeRanges;
         if (
@@ -28,7 +29,7 @@ export default class FertilizerConfig {
                 errorMessage: "เกิดข้อผิดพลาดในการตั้งค่าการให้ปุ๋ยอัตโนมัติ"
             });
         } else {
-            getConfigFile(req);
+            // getConfigFile(req);
             let tempJson = {
                 projectId: projectId,
                 timeRanges: []
@@ -61,13 +62,13 @@ export default class FertilizerConfig {
     }
 }
 
-async function getConfigFile(req) {
-    console.log("[FertilizerConfig] getConfigFilePath, " + req.session.configFilePath);
-    let config = JSON.parse(
-        require("fs").readFileSync(String(req.session.configFilePath), "utf8")
-    );
-    configFile = config;
-}
+// async function getConfigFile(req) {
+//     console.log("[FertilizerConfig] getConfigFilePath, " + req.session.configFilePath);
+//     let config = JSON.parse(
+//         require("fs").readFileSync(String(req.session.configFilePath), "utf8")
+//     );
+//     configFile = config;
+// }
 
 function writeConfigFile(configFile, res) {
     let writeFileResult;

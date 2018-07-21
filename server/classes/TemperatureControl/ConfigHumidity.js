@@ -14,10 +14,11 @@ export default class ConfigHumidity {
       return;
     }
     console.log("[ConfigHumidity] session id: " + req.session.id);
-    req.session.reload(function (err) {
-      console.log("[ConfigHumidity] " + err);
-    });
-    await getConfigFile(req);
+    // req.session.reload(function (err) {
+    //   console.log("[ConfigHumidity] " + err);
+    // });
+    // await getConfigFile(req);
+    configFile = req.session.configFile;
     if (typeof configFile === "undefined") {
       res.json({
         status: 500,
@@ -61,13 +62,13 @@ export default class ConfigHumidity {
   }
 }
 
-function getConfigFile(req) {
-  console.log("getConfigFilePath: " + req.session.configFilePath);
-  let config = JSON.parse(
-    require("fs").readFileSync(String(req.session.configFilePath), "utf8")
-  );
-  configFile = config;
-}
+// function getConfigFile(req) {
+//   console.log("getConfigFilePath: " + req.session.configFilePath);
+//   let config = JSON.parse(
+//     require("fs").readFileSync(String(req.session.configFilePath), "utf8")
+//   );
+//   configFile = config;
+// }
 
 function writeConfigFile(configFile, res) {
   let writeFileResult;

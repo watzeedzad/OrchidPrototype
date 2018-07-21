@@ -17,9 +17,9 @@ export default class ManualFertilizer {
             return;
         }
         console.log("[ManualFertilizer] session id: " + req.session.id);
-        req.session.reload(function (err) {
-            console.log("[ManualFertilizer] " + err);
-        });
+        // req.session.reload(function (err) {
+        //     console.log("[ManualFertilizer] " + err);
+        // });
         let greenHouseId = req.body.greenHouseId;
         let inputLitre = req.body.litre;
         if (typeof greenHouseId === "undefined" || typeof inputLitre === "undefined") {
