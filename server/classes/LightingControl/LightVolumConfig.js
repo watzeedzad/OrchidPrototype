@@ -1,6 +1,7 @@
 const fs = require("fs");
 
 let configFile;
+let writeFileStatus;
 
 export default class LightVolumeConfig {
     constructor(req, res) {
@@ -40,25 +41,33 @@ export default class LightVolumeConfig {
         let greenHouseIndex = seekGreenHouseIdIndex(configFile, greenHouseId);
         if (greenHouseIdIndex == -1) {
             res.json({
-              status: 500,
-              errorMessage: "เกิดข้อผิดพลาดในการตั้งค่าปริมาณแสง"
+                status: 500,
+                errorMessage: "เกิดข้อผิดพลาดในการตั้งค่าปริมาณแสง"
             });
             return;
-          }
-          if (minLightVolume > maxLightVolume) {
+        }
+        if (minLightVolume > maxLightVolume) {
             res.json({
-              status: 500,
-              errorMessage: "เกิดข้อผิดพลาดในการตั้งค่าปริมาณแสง"
+                status: 500,
+                errorMessage: "เกิดข้อผิดพลาดในการตั้งค่าปริมาณแสง"
             });
             return;
-          }
-          let updateData = {
+        }
+        let updateData = {
             greenHouseId: greenHouseId,
             minLightVolume: minLightVolume,
             maxLightVolume: maxLightVolume
-          }
-          configFile.lightVolumeConfigs[greenHouseIdIndex] = updateData;
-          await writeConfigFile(configFile, res);
+        }
+        configFile.lightVolumeConfigs[greenHouseIdIndex] = updateData;
+        await writeConfigFile(configFile, req.session.configFilePath);
+        if (writeFileStatus) {
+            res.sendStatus(200);
+        } else {
+            res.json({
+                status: 500,
+                errorMessage: "เกิดข้อผิดพลาดไม่สามารถเขียนไฟล์การตั้งค่าได้"
+            });
+        }
     }
 }
 
@@ -70,25 +79,17 @@ export default class LightVolumeConfig {
 //     configFile = config;
 // }
 
-function writeConfigFile(configFile, res) {
-    let writeFileResult;
+function writeConfigFile(configFile, configFilePath) {
     let content = JSON.stringify(configFile);
-    fs.writeFile(String(pathGlobal), content, "utf8", function (err) {
+    fs.writeFile(String(configFilePath), content, "utf8", function (err) {
         if (err) {
             console.log(err);
-            writeFileResult = false;
-        }
-        writeFileResult = true;
-        console.log("[LightVolumeConfig] write file with no error");
-        if (writeFileResult) {
-            res.sendStatus(200);
-        } else {
-            res.json({
-                status: 500,
-                errorMessage: "เกิดข้อผิดพลาดไม่สามารถเขียนไฟล์การตั้งค่าได้"
-            });
+            writeFileStatus = false;
+            return;
         }
     });
+    writeFileStatus = true;
+    console.log("[LightVolumeConfig] write file with no error");
 }
 
 function seekGreenHouseIdIndex(dataArray, greenHouseId) {

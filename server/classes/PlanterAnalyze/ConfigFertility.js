@@ -1,7 +1,7 @@
 const fs = require("fs");
-const session = require("express-session");
 
 let configFile;
+let writeFilStatus;
 
 export default class ConfigFertility {
   constructor(req, res) {
@@ -62,7 +62,15 @@ export default class ConfigFertility {
       maxFertility: maxConfigFertility
     };
     configFile.fertilityConfigs[projectConfigIndex] = updateData;
-    await writeConfigFile(configFile, res)
+    await writeConfigFile(configFile, req.session.configFilePath);
+    if (writeFilStatus) {
+      res.sendStatus(200);
+    } else {
+      res.json({
+        status: 500,
+        errorMessage: "เกิดข้อผิดพลาดไม่สามารถเขียนไฟล์การตั้งค่าได้"
+      });
+    }
   }
 }
 
@@ -74,25 +82,17 @@ export default class ConfigFertility {
 //   configFile = config;
 // }
 
-function writeConfigFile(configFile, res) {
-  let writeFileResult;
+function writeConfigFile(configFile, configFilePath) {
   let content = JSON.stringify(configFile);
-  fs.writeFile(String(pathGlobal), content, "utf8", function (err) {
+  fs.writeFile(String(configFilePath), content, "utf8", function (err) {
     if (err) {
       console.log(err);
-      writeFileResult = false;
-    }
-    writeFileResult = true;
-    console.log("[ConfigFertility] write file with no error");
-    if (writeFileResult) {
-      res.sendStatus(200);
-    } else {
-      res.json({
-        status: 500,
-        errorMessage: "เกิดข้อผิดพลาดไม่สามารถเขียนไฟล์การตั้งค่าได้"
-      });
+      writeFileStatus = false;
+      return;
     }
   });
+  writeFileStatus = true;
+  console.log("[ConfigFertility] write file with no error");
 }
 
 function seekProjectIdIndex(dataArray, projectId) {

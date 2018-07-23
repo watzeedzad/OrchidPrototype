@@ -18,7 +18,7 @@ export default class WateringConfig {
     // req.session.reload(function (err) {
     //   console.log("[WateringConfigs] " + err);
     // });
-    configFile = req.session.farmId;
+    configFile = req.session.configFile;
     let greenHouseId = req.body.greenHouseId;
     let configTimeRanges = req.body.timeRanges;
     if (
@@ -37,7 +37,7 @@ export default class WateringConfig {
       timeRanges: []
     };
     let wateringConfig = configFile.watering;
-    let tempArray = [];
+    // let tempArray = [];
     if (!Object.keys(wateringConfig).length == 0) {
       for (let index = 0; index < Object.keys(wateringConfig).length; index++) {
         let temp = wateringConfig[index];
@@ -63,7 +63,7 @@ export default class WateringConfig {
       return;
     }
     configFile.watering[existGreenHouseIndex] = tempJson;
-    await writeConfigFile(configFile);
+    await writeConfigFile(configFile, req.session.configFilePath);
     if (writeFileStatus) {
       res.sendStatus(200);
     } else {
@@ -83,9 +83,9 @@ export default class WateringConfig {
 //   configFile = config;
 // }
 
-function writeConfigFile(configFile, res) {
+function writeConfigFile(configFile, configFilePath) {
   let content = JSON.stringify(configFile);
-  fs.writeFile(String(pathGlobal), content, "utf8", function (err) {
+  fs.writeFile(String(configFilePath), content, "utf8", function (err) {
     if (err) {
       console.log(err);
       writeFileStatus = false;

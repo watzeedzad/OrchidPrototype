@@ -1,4 +1,7 @@
+let fs = require("fs");
+
 let configFile;
+let writeFileStatus;
 
 export default class ConfigSoilMoisture {
   constructor(req, res) {
@@ -57,7 +60,15 @@ export default class ConfigSoilMoisture {
       maxSoilMoisture: maxConfigSoilMois
     }
     configFile.soilMoistureConfigs[greenHouseConfigIndex] = updateData;
-    await writeConfigFile(configFile, res);
+    await writeConfigFile(configFile, req.session.configFilePath);
+    if (writeFileStatus) {
+      res.sendStatus(200);
+    } else {
+      res.json({
+        status: 500,
+        errorMessage: "เกิดข้อผิดพลาดไม่สามารถเขียนไฟล์การตั้งค่าได้"
+      });
+    }
   }
 }
 
@@ -69,25 +80,17 @@ export default class ConfigSoilMoisture {
 //   configFile = config;
 // }
 
-function writeConfigFile(configFile, res) {
-  let writeFileResult;
+function writeConfigFile(configFile, configFilePath) {
   let content = JSON.stringify(configFile);
-  fs.writeFile(String(pathGlobal), content, "utf8", function (err) {
+  fs.writeFile(String(configFilePath), content, "utf8", function (err) {
     if (err) {
       console.log(err);
-      writeFileResult = false;
-    }
-    writeFileResult = true;
-    console.log("[ConfigSoilMoisture] write file with no error");
-    if (writeFileResult) {
-      res.sendStatus(200);
-    } else {
-      res.json({
-        status: 500,
-        errorMessage: "เกิดข้อผิดพลาดไม่สามารถเขียนไฟล์การตั้งค่าได้"
-      });
+      writeFileStatus = false;
+      return;
     }
   });
+  writeFileStatus = true;
+  console.log("[ConfigSoilMoisture] write file with no error");
 }
 
 function seekGreenHouseIdIndex(dataArray, greenHouseId) {

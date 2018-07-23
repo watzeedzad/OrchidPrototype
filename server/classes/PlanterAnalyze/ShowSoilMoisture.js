@@ -96,9 +96,11 @@ async function getGreenhouseSensor(greenHouseId, farmId) {
     if (err) {
       greenHouseSensorData = undefined
       console.log("[ShowSoilMoisture] getGreenhouseSensor (err): " + err);
+    } else if (!result) {
+      greenHouseSensorData = undefined;
+      console.log("[ShowSoilMoisture] getGreenhouseSensor (!result): " + result);
     } else {
       greenHouseSensorData = result;
-      console.log("[ShowSoilMoisture] getGreenhouseSensor (!err): " + result);
     }
   });
 }

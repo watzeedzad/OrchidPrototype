@@ -9,7 +9,8 @@ export const saveFertilizerConfig = (values)=>{
             method:'post',
             url:`${BASE_URL}/fertilizerControl/fertilizerConfig`,
             data: values,
-            headers:{'Content-type': 'application/json'}
+            headers:{'Content-type': 'application/json'},
+            withCredentials: true
         }).then(result=>{
             dispatch({type:'SAVE_FERTILIZER_SUCCESS' , payload: result.data});
         }).catch(err=>{
@@ -28,10 +29,10 @@ export const getFertilizerTime = ({projectId})=>{
         dispatch({type: 'LOAD_FERTILIZERCONFIG_PENDING'});
         return axios({
             method: 'post',
-            url: `${BASE_URL}/fertilizerControl//showFertilizerConfig`,
+            url: `${BASE_URL}/fertilizerControl/showFertilizerConfig`,
             data:values,
-            headers:{'Content-Type':'application/json'}
-
+            headers:{'Content-Type':'application/json'},
+            withCredentials: true
         }).then(result =>{
             dispatch({ type:'LOAD_FERTILIZERCONFIG_SUCCESS',payload:result.data})
 
@@ -50,7 +51,8 @@ export const manaulFertilizer = (values) => {
             method: 'post',
             url: `${BASE_URL}/fertilizerControl/manualFertilizer`,
             data: values,
-            headers: { 'Content-Type': 'application/json' }
+            headers: { 'Content-Type': 'application/json' },
+            withCredentials: true
             //headers: { authorization: localStorage.getItem('token') }
         }).then(results => {
             //เมื่อข้อมูลส่งกลับมาต้องเช็คสถานะก่อนว่า code ซ�้ำหรือไม่

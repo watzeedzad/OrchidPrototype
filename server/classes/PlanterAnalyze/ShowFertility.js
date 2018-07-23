@@ -30,7 +30,7 @@ export default class ShowFertility {
       return;
     }
     console.log("[ShowFertility] projectId: " + projectId);
-    await getProjectSensor(projectId);
+    await getProjectSensor(projectId, req.session.farmId);
     // await getConfigFile(req);
     let projectIdIndex = await seekProjectIdIndex(
       configFile.fertilityConfigs,
@@ -76,10 +76,10 @@ export default class ShowFertility {
 //   configFile = config;
 // }
 
-async function getProjectSensor(projectId) {
-  let result = await project_sensor.findOne({
+async function getProjectSensor(projectId, farmId) {
+  await project_sensor.findOne({
       projectId: projectId,
-      farmId: req.session.farmData.farmId
+      farmId: farmId
     }, {}, {
       sort: {
         _id: -1
