@@ -5,8 +5,8 @@ import { Button } from 'reactstrap';
 import ClockPiker from '../../Utils/ClockPicker';
 import { Modal, ModalHeader} from 'reactstrap';
 import { saveWaterConfig } from '../../redux/actions/waterActions'
-import {Timeline, TimelineEvent} from 'react-event-timeline'
-import 'bootstrap/dist/css/bootstrap.min.css';
+import { VerticalTimeline, VerticalTimelineElement }  from 'react-vertical-timeline-component';
+import 'react-vertical-timeline-component/style.min.css';
 
 class WateringTimeList extends Component {
     
@@ -60,45 +60,36 @@ class WateringTimeList extends Component {
                             </Modal>
                         </Col>
                     </Row>
-                    {/* <Row> */}
-                    <Timeline>
-                                <TimelineEvent createdAt="12.00 น.">
-                                                <Button color="secondary" size="sm">แก้ไข</Button>{' '}
-                                                <Button color="danger" size="sm">ลบ</Button>
-                                            </TimelineEvent>
-                                            <TimelineEvent createdAt="16.00 น.">
-                                                <Button color="secondary" size="sm">แก้ไข</Button>{' '}
-                                                <Button color="danger" size="sm">ลบ</Button>
-                                            </TimelineEvent>
-                                            <TimelineEvent createdAt="18.00 น.">
-                                                <Button color="secondary" size="sm">แก้ไข</Button>{' '}
-                                                <Button color="danger" size="sm">ลบ</Button>
-                                            </TimelineEvent> 
-                                </Timeline>
-                        {/* {this.state.setTimeList.length > 0 && this.state.setTimeList.map(e => {
+                    <Row>
+                        <VerticalTimeline>
+                        {this.state.setTimeList.length > 0 && this.state.setTimeList.map(e => {
                             let hour = e.getHours()<10? '0'+e.getHours():e.getHours()
                             let minute = e.getMinutes()<10? '0'+e.getMinutes():e.getMinutes()
                             let time = hour+":"+minute+" น. หรือ "+this.tConvert(hour+":"+minute)
-                            return (
-                                        
-                                <TimelineEvent createdAt="2016-09-12 10:06 PM">
-                                    <Button color="secondary" size="sm">แก้ไข</Button>{' '}
-                                    <Button color="danger" size="sm">ลบ</Button>
-                                </TimelineEvent>
-                                
+                            return (    
+                                <VerticalTimelineElement
+                                className="vertical-timeline-element--work"
+                                iconStyle={{ background: 'rgb(33, 150, 243)', color: '#fff' }}
+                                >
+                                <h3 className="vertical-timeline-element-title">{time}</h3>
+                                <p>
+                                <Button color="secondary" size="sm">แก้ไข</Button>{' '}
+                                     <Button color="danger" size="sm">ลบ</Button> 
+                                </p>
+                                </VerticalTimelineElement>
 
-                                 <Col xs='12' sm='12' md='12' lg='12' xl='12' >
-                                     {hour}:{minute} น. หรือ {this.tConvert(hour+":"+minute)}
-                                     <Field name="time" component={renderField} type="text" readOnly/> 
-                                     <Button color="secondary" size="sm"
-                                         onClick={() => buttonEdit(e._id)}>แก้ไข</Button>{' '}
-                                     <Button color="danger" size="sm"
-                                         onClick={() => buttonDelete(e._id)}>ลบ</Button>  
-                                 </Col>
+                                //  <Col xs='12' sm='12' md='12' lg='12' xl='12' >
+                                //      {hour}:{minute} น. หรือ {this.tConvert(hour+":"+minute)}
+                                //      <Field name="time" component={renderField} type="text" readOnly/> 
+                                //      <Button color="secondary" size="sm"
+                                //          onClick={() => buttonEdit(e._id)}>แก้ไข</Button>{' '}
+                                //      <Button color="danger" size="sm"
+                                //          onClick={() => buttonDelete(e._id)}>ลบ</Button>  
+                                //  </Col>
                             )
                         })}
-                        </Timeline> */}
-                    {/* </Row> */}
+                        </VerticalTimeline>
+                    </Row>
                 </div>
             </Container>
         )

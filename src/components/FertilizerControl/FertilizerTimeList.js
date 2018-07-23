@@ -6,6 +6,8 @@ import ClockPiker from '../../Utils/ClockPicker';
 import { Modal, ModalHeader} from 'reactstrap';
 import { saveFertilizerConfig } from '../../redux/actions/fertilizerActions';
 import 'bootstrap/dist/css/bootstrap.min.css';
+import { VerticalTimeline, VerticalTimelineElement }  from 'react-vertical-timeline-component';
+import 'react-vertical-timeline-component/style.min.css';
 
 class FertilizerTimeList extends Component{
 
