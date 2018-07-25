@@ -1,10 +1,9 @@
 const mongoose = require("mongoose");
 const growthRate = mongoose.model("growth_rate");
 
-let configFile;
 let growthRateResult;
 
-export default class ShowGrowthRateGraph {
+export default class ShowSpecificGrowthRateGraph {
     constructor(req, res) {
         this.operation(req, res);
     }
@@ -15,14 +14,6 @@ export default class ShowGrowthRateGraph {
             return;
         }
         console.log("[ShowGrowthRateGraph] session id: " + req.session.id);
-        configFile = req.session.configFile;
-        if (typeof configFile === "undefined") {
-            res.json({
-                status: 500,
-                errorMessage: "เกิดข้อผิดพลาดไม่สามารถอ่านไฟล์การตั้งค่าได้"
-            });
-            return;
-        }
         let projectId = req.body.projectId;
         if (typeof projectId === "undefined") {
             res.json({
@@ -38,17 +29,15 @@ export default class ShowGrowthRateGraph {
                 errorMessage: "เกิดข้อผิดพลาดไม่มีข้อมูลการเจริญเติบโต"
             });
             return;
-        }
-        let projectIdIndex = await seekProjectIdIndex(configFile.expectedGrowthRate, projectId);
-        let expectedGrowthRate = configFile.expectedGrowthRate[projectIdIndex];
-        let growthRateRaw = growthRateResult.accualRate;
+        };
+        let growthRateRaw = growthRateResult.actualRate;
         let growthRateArray = [];
         for (let index = 0; index < growthRateRaw.length; index++) {
             growthRateArray.push(growthRateRaw[index].height);
         }
         res.json({
             expectedRate: expectedGrowthRate,
-            accualRate: growthRateArray
+            actualRate: growthRateArray
         });
     }
 }
@@ -72,11 +61,4 @@ async function getGrowthRateData(projectId, farmId) {
             growthRateResult = result;
         }
     });
-}
-
-function seekProjectIdIndex(dataArray, projectId) {
-    let index = dataArray.findIndex(function (item) {
-        return item.projectId === projectId;
-    });
-    return index;
 }

@@ -7,13 +7,8 @@ const {
 
 const growthRateSchema = new Schema({
     projectId: Number,
-    expectedRate: [{
-        beginHeight: Number,
-        endHeight: Number,
-        beginTimeStamp: Date,
-        endTimeStamp: Date
-    }],
-    accualRate: [{
+    actualRate: [{
+        count: Number,
         height: Number,
         description: String,
         timeStamp: Date,
