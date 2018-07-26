@@ -1,4 +1,4 @@
-import InsertRelayManualCommand from "../InsertRelayManualCommand";
+import InsertRelayManualCommand from "../Utils/InsertRelayManualCommand";
 
 const mongoose = require("mongoose");
 const know_controller = mongoose.model("know_controller");

@@ -1,4 +1,4 @@
-import Login from "../classes/Login";
+import Login from "../classes/Utils/Login";
 
 const express = require("express");
 const router = express.Router();

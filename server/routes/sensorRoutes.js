@@ -2,11 +2,11 @@ const express = require("express");
 const router = express.Router();
 const syncNode = require("sync-node");
 const jobQueue = syncNode.createQueue();
-import TemperatureCheck from "../classes/TemperatureCheck";
 import GreenHouseSensor from "../classes/SaveData/GreenHouseSensor";
 import ProjectSensor from "../classes/SaveData/ProjectSensor";
-import SoilMoistureCheck from "../classes/SoilMoistureCheck";
-import FertilityCheck from "../classes/FertilityCheck";
+import TemperatureCheck from "../classes/CheckFunction/TemperatureCheck";
+import SoilMoistureCheck from "../classes/CheckFunction/SoilMoistureCheck";
+import FertilityCheck from "../classes/CheckFunction/FertilityCheck";
 
 let status = 0;
 

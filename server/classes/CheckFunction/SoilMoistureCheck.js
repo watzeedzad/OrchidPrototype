@@ -1,4 +1,4 @@
-import InsertRelayCommand from "./InsertRelayCommand";
+import InsertRelayCommand from "../Utils/InsertRelayCommand";
 
 const mongoose = require("mongoose");
 const fs = require("fs");
