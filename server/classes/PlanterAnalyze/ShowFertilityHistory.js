@@ -1,4 +1,3 @@
-const fs = require("fs");
 const mongoose = require("mongoose");
 const project_sensor = mongoose.model("project_Sensor");
 let ObjectId = require("mongodb").ObjectID;
@@ -11,14 +10,11 @@ export default class ShowFertilityHistory {
   }
 
   async process(req, res) {
+    console.log("[ShowFertilityHistory] session id: " + req.session.id);
     if (typeof req.session.farmData === "undefined" || typeof req.session.configFilePath === "undefined") {
       res.sendStatus(500);
       return;
     }
-    console.log("[ShowFertilityHistory] session id: " + req.session.id);
-    req.session.reload(function (err) {
-      console.log("[ShowFertilityHistory] " + err);
-    });
     let projectId = req.body.projectId;
     if (typeof projectId === "undefined") {
       res.json({
@@ -28,7 +24,7 @@ export default class ShowFertilityHistory {
       return;
     }
     console.log("[ShowFertilityHistory] projectId: " + projectId);
-    await getProjectSensor(projectId);
+    await getProjectSensor(projectId, req.session.farmId);
     if (typeof projectSensorResult === "undefined") {
       console.log("[ShowFertilityHistory] projectSensorResult undefined");
       res.json({
@@ -93,13 +89,13 @@ export default class ShowFertilityHistory {
   }
 }
 
-async function getProjectSensor(projectId, req) {
+async function getProjectSensor(projectId, farmId) {
   let result = await project_sensor.find({
     _id: {
       $gt: ObjectId.createFromTime(Date.now() / 1000 - 25 * 60 * 60)
     },
     projectId: projectId,
-    farmId: req.session.farmId
+    farmId: farmId
   });
   if (result) {
     projectSensorResult = result;

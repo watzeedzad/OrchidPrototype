@@ -10,14 +10,11 @@ export default class FertilizerConfig {
     }
 
     async process(req, res) {
+        console.log("[FertilizerConfig] session id: " + req.session.id);
         if (typeof req.session.farmData === "undefined" || typeof req.session.configFilePath === "undefined") {
             res.sendStatus(500);
             return;
         }
-        console.log("[FertilizerConfig] session id: " + req.session.id);
-        // req.session.reload(function (err) {
-        //     console.log("[FertilizerConfig] " + err);
-        // });
         configFile = req.session.configFile;
         let projectId = req.body.projectId;
         let configTimeRanges = req.body.timeRanges;
@@ -30,7 +27,6 @@ export default class FertilizerConfig {
                 errorMessage: "เกิดข้อผิดพลาดในการตั้งค่าการให้ปุ๋ยอัตโนมัติ"
             });
         } else {
-            // getConfigFile(req);
             let tempJson = {
                 projectId: projectId,
                 timeRanges: []

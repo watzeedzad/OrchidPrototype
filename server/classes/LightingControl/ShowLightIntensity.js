@@ -10,14 +10,11 @@ export default class ShowLightIntensity {
     }
 
     async operation(req, res) {
+        console.log("[ShowLightIntensity] session id: " + req.session.id);
         if (typeof req.session.farmData === "undefined" || typeof req.session.configFilePath === "undefined") {
             res.sendStatus(500);
             return;
         }
-        console.log("[ShowLightIntensity] session id: " + req.session.id);
-        // req.session.reload(function (err) {
-        //     console.log("[ShowLightIntensity] " + err);
-        // });
         configFile = req.session.configFile;
         let greenHouseId = req.body.greenHouseId;
         if (typeof greenHouseId === "undefined") {
@@ -28,7 +25,6 @@ export default class ShowLightIntensity {
             return;
         }
         await getGreenHouseSesor(greenHouseId, req.session.farmId);
-        // await getConfigFile(req);
         if (typeof greenHouseSensorData === "undefined") {
             res.json({
                 status: 500,
@@ -54,7 +50,7 @@ export default class ShowLightIntensity {
             var showTemp = {
                 minLightIntensity: minLightIntensity,
                 maxLightIntensity: maxLightIntensity,
-                currentLightIntensity: ambientLight
+                currentLightIntensity: currentLightIntensity
             };
             res.json(showTemp);
         }

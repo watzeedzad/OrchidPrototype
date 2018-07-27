@@ -9,15 +9,11 @@ export default class ConfigTemperature {
   }
 
   async process(req, res) {
+    console.log("[ConfigTemperature] session id: " + req.session.id);
     if (typeof req.session.farmData === "undefined" || typeof req.session.configFilePath === "undefined") {
       res.sendStatus(500);
       return;
     }
-    console.log("[ConfigTemperature] session id: " + req.session.id);
-    // req.session.reload(function (err) {
-    //   console.log("[ConfigTemperature] " + err);
-    // });
-    // await getConfigFile(req);
     configFile = req.session.configFile;
     if (typeof configFile === "undefined") {
       res.json({

@@ -11,14 +11,11 @@ export default class ShowAllFertility {
   }
 
   async process(req, res) {
+    console.log("[ShowAllFertility] session id: " + req.session.id);
     if (typeof req.session.farmData === "undefined" || typeof req.session.configFilePath === "undefined") {
       res.sendStatus(500);
       return;
     }
-    console.log("[ShowAllFertility] session id: " + req.session.id);
-    // req.session.reload(function (err) {
-    //   console.log("[ShowAllFertility] " + err);
-    // });
     configFile = req.session.configFile;
     if (typeof req.body.greenHouseId === "undefined") {
       res.json({

@@ -10,14 +10,11 @@ export default class ShowSoilMoistureHistory {
   }
 
   async process(req, res) {
+    console.log("[ShowSoilMoistureHistory] session id: " + req.session.id);
     if (typeof req.session.farmData === "undefined" || typeof req.session.configFilePath === "undefined") {
       res.sendStatus(500);
       return;
     }
-    console.log("[ShowSoilMoistureHistory] session id: " + req.session.id);
-    // req.session.reload(function (err) {
-    //   console.log("[ShowSoilMoistureHistory] " + err);
-    // });
     let greenHouseId = req.body.greenHouseId;
     if (typeof greenHouseId === "undefined") {
       res.json({

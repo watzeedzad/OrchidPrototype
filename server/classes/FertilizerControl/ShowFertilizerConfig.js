@@ -7,14 +7,11 @@ export default class ShowFertilizerConfig {
     }
 
     async process(req, res) {
+        console.log("[ShowFertilizerConfig] session id: " + req.session.id);
         if (typeof req.session.farmData === "undefined" || typeof req.session.configFilePath === "undefined") {
             res.sendStatus(500);
             return;
         }
-        console.log("[ShowFertilizerConfig] session id: " + req.session.id);
-        // req.session.reload(function (err) {
-        //     console.log("[ShowFertilizerConfig] " + err);
-        // });
         configFile = req.session.configFile;
         let projectId = req.body.projectId;
         if (typeof projectId === "undefined") {
@@ -24,7 +21,6 @@ export default class ShowFertilizerConfig {
             });
             return;
         }
-        // getConfigFile(req);
         if (typeof configFile === "undefined") {
             res.json({
                 status: 500,

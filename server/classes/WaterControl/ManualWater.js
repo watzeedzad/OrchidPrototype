@@ -13,14 +13,11 @@ export default class ManualWatering {
     }
 
     async process(req, res) {
+        console.log("[ManualWater] session id: " + req.session.id);
         if (typeof req.session.farmData === "undefined" || typeof req.session.configFilePath === "undefined") {
             res.sendStatus(500);
             return;
         }
-        console.log("[ManualWater] session id: " + req.session.id);
-        // req.session.reload(function (err) {
-        //     console.log("[ManualWater] " + err);
-        // });
         let greenHouseId = req.body.greenHouseId;
         let inputLitre = req.body.litre;
         if (typeof greenHouseId === "undefined" || typeof inputLitre === "undefined") {

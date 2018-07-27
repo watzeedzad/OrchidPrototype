@@ -10,14 +10,11 @@ export default class ShowLightVolumeConfig {
     }
 
     async operation(req, res) {
+        console.log("[ShowLightVolume] session id: " + req.session.id);
         if (typeof req.session.farmData === "undefined" || typeof req.session.configFilePath === "undefined") {
             res.sendStatus(500);
             return;
         }
-        console.log("[ShowLightVolume] session id: " + req.session.id);
-        // req.session.reload(function (err) {
-        //     console.log("[ShowLightVolume] " + err);
-        // });
         configFile = req.session.configFile;
         let greenHouseId = req.body.greenHouseId;
         if (typeof greenHouseId === "undefined") {
@@ -27,8 +24,7 @@ export default class ShowLightVolumeConfig {
             })
             return;
         }
-        await getLightDurationData(greenHouseId, req.session.farmId)
-        // await getConfigFile(req);
+        await getLightDurationData(greenHouseId, req.session.farmId);
         if (typeof lightDurationData === "undefined") {
             res.json({
                 status: 500,

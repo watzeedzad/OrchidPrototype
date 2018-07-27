@@ -9,11 +9,11 @@ export default class CheckAvailablePump {
     }
 
     async operation(req, res) {
+        console.log("[CheckAvailablePump] session id: " + req.session.id);
         if (typeof req.session.farmData === "undefined" || typeof req.session.configFilePath === "undefined") {
             res.sendStatus(500);
             return;
         }
-        console.log("[CheckAvailablePump] session id: " + req.session.id);
         let greenHouseId = req.body.greenHouseId;
         let projectId = req.farmId.projectId;
         let pumpType = req.body.pumpType;

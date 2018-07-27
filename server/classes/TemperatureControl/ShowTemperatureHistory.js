@@ -11,11 +11,11 @@ export default class ShowTemperatureHistory {
   }
 
   async process(req, res) {
+    console.log("[ShowTemperatureHistory] session id: " + req.session.id);
     if (typeof req.session.farmData === "undefined" || typeof req.session.configFilePath === "undefined") {
       res.sendStatus(500);
       return;
     }
-    console.log("[ShowTemperatureHistory] session id: " + req.session.id);
     let greenHouseId = req.body.greenHouseId;
     if (typeof greenHouseId === "undefined") {
       res.json({

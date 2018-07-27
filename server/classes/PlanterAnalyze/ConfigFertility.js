@@ -1,7 +1,7 @@
 const fs = require("fs");
 
 let configFile;
-let writeFilStatus;
+let writeFileStatus;
 
 export default class ConfigFertility {
   constructor(req, res) {
@@ -9,15 +9,11 @@ export default class ConfigFertility {
   }
 
   async process(req, res) {
+    console.log("[ConfigFertility] session id: " + req.session.id);
     if (typeof req.session.farmData === "undefined" || typeof req.session.configFilePath === "undefined") {
       res.sendStatus(500);
       return;
     }
-    console.log("[ConfigFertility] session id: " + req.session.id);
-    // req.session.reload(function (err) {
-    //   console.log("[ConfigFertility] " + err);
-    // });
-    // await getConfigFile(req);
     configFile = req.session.configFile;
     if (typeof configFile === "undefined") {
       res.json({
@@ -63,7 +59,7 @@ export default class ConfigFertility {
     };
     configFile.fertilityConfigs[projectConfigIndex] = updateData;
     await writeConfigFile(configFile, req.session.configFilePath);
-    if (writeFilStatus) {
+    if (writeFileStatus) {
       res.sendStatus(200);
     } else {
       res.json({

@@ -9,15 +9,11 @@ export default class LightVolumeConfig {
     }
 
     async operation(req, res) {
+        console.log("[LightVolumeConfig] session id: " + req.session.id);
         if (typeof req.session.farmData === "undefined" || typeof req.session.configFilePath === "undefined") {
             res.sendStatus(500);
             return;
         }
-        console.log("[LightVolumeConfig] session id: " + req.session.id);
-        // req.session.reload(function (err) {
-        //     console.log("[LightVolumeConfig] " + err);
-        // });
-        // await getConfigFile(req);
         configFile = req.session.configFile;
         if (typeof configFile === "undefined") {
             res.json({
@@ -38,7 +34,7 @@ export default class LightVolumeConfig {
         console.log("[LightVolumeConfig] minLightVolume: " + minLightVolume);
         console.log("[LightVolumeConfig] maxLightVolume: " + maxLightVolume);
         console.log("[LightVolumeConfig] greenHouseId: " + greenHouseId);
-        let greenHouseIndex = seekGreenHouseIdIndex(configFile, greenHouseId);
+        let greenHouseIdIndex = seekGreenHouseIdIndex(configFile, greenHouseId);
         if (greenHouseIdIndex == -1) {
             res.json({
                 status: 500,

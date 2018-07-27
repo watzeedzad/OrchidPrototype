@@ -11,14 +11,11 @@ export default class ShowHumidity {
   }
 
   async process(req, res) {
+    console.log("[ShowHumidity] session id: " + req.session.id);
     if (typeof req.session.farmData === "undefined" || typeof req.session.configFilePath === "undefined") {
       res.sendStatus(500);
       return;
     }
-    console.log("[ShowHumidity] session id: " + req.session.id);
-    // req.session.reload(function (err) {
-    //   console.log("[ShowHumidity] " + err);
-    // });
     configFile = req.session.configFile;
     let greenHouseId = req.body.greenHouseId;
     if (typeof greenHouseId === "undefined") {

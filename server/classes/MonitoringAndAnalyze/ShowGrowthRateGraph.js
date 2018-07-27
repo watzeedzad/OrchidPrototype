@@ -10,11 +10,11 @@ export default class ShowGrowthRateGraph {
     }
 
     async operation(req, res) {
+        console.log("[ShowGrowthRateGraph] session id: " + req.session.id);
         if (typeof req.session.farmData === "undefined" || typeof req.session.configFilePath === "undefined") {
             res.sendStatus(500);
             return;
         }
-        console.log("[ShowGrowthRateGraph] session id: " + req.session.id);
         configFile = req.session.configFile;
         if (typeof configFile === "undefined") {
             res.json({

@@ -1,7 +1,6 @@
 const fs = require("fs");
 const mongoose = require("mongoose");
 const project_sensor = mongoose.model("project_Sensor");
-const session = require("express-session");
 
 let configFile;
 let projectSensorData;
@@ -12,14 +11,11 @@ export default class ShowFertility {
   }
 
   async process(req, res) {
+    console.log("[ShowFertility] session id: " + req.session.id);
     if (typeof req.session.farmData === "undefined" || typeof req.session.configFilePath === "undefined") {
       res.sendStatus(500);
       return;
     }
-    console.log("[ShowFertility] session id: " + req.session.id);
-    // req.session.reload(function (err) {
-    //   console.log("[ShowFertility] " + err);
-    // });
     configFile = req.session.configFile;
     let projectId = req.body.projectId;
     if (typeof projectId === "undefined") {
@@ -31,7 +27,6 @@ export default class ShowFertility {
     }
     console.log("[ShowFertility] projectId: " + projectId);
     await getProjectSensor(projectId, req.session.farmId);
-    // await getConfigFile(req);
     let projectIdIndex = await seekProjectIdIndex(
       configFile.fertilityConfigs,
       projectId

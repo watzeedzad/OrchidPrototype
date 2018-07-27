@@ -10,14 +10,11 @@ export default class WateringConfig {
   }
 
   async process(req, res) {
+    console.log("[WateringConfigs] session id: " + req.session.id);
     if (typeof req.session.farmData === "undefined" || typeof req.session.configFilePath === "undefined") {
       res.sendStatus(500);
       return;
     }
-    console.log("[WateringConfigs] session id: " + req.session.id);
-    // req.session.reload(function (err) {
-    //   console.log("[WateringConfigs] " + err);
-    // });
     configFile = req.session.configFile;
     let greenHouseId = req.body.greenHouseId;
     let configTimeRanges = req.body.timeRanges;

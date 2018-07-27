@@ -2,7 +2,6 @@ import InsertRelayManualCommand from "../Utils/InsertRelayManualCommand";
 
 const mongoose = require("mongoose");
 const know_controller = mongoose.model("know_controller");
-const request = require("request");
 
 let controllerData;
 
@@ -12,14 +11,11 @@ export default class ManualFertilizer {
     }
 
     async process(req, res) {
+        console.log("[ManualFertilizer] session id: " + req.session.id);
         if (typeof req.session.farmData === "undefined" || typeof req.session.configFilePath === "undefined") {
             res.sendStatus(500);
             return;
         }
-        console.log("[ManualFertilizer] session id: " + req.session.id);
-        // req.session.reload(function (err) {
-        //     console.log("[ManualFertilizer] " + err);
-        // });
         let greenHouseId = req.body.greenHouseId;
         let inputLitre = req.body.litre;
         if (typeof greenHouseId === "undefined" || typeof inputLitre === "undefined") {
@@ -42,7 +38,7 @@ export default class ManualFertilizer {
 }
 
 async function getControllerData(greenHouseId) {
-    let controllerResult = await know_controller.findOne({
+    await know_controller.findOne({
         isHavePump: true,
         "pumpType.fertilizer": true,
         greenHouseId: greenHouseId

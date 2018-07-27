@@ -9,15 +9,11 @@ export default class LightIntensityConfig {
     }
 
     async operation(req, res) {
+        console.log("[LightIntensityConfig] session id: " + req.session.id);
         if (typeof req.session.farmData === "undefined" || typeof req.session.configFilePath === "undefined") {
             res.sendStatus(500);
             return;
         }
-        console.log("[LightIntensityConfig] session id: " + req.session.id);
-        // req.session.reload(function (err) {
-        //     console.log("[LightIntensityConfig] " + err);
-        // });
-        // await getConfigFile(req);
         configFile = req.session.configFile;
         if (typeof configFile === "undefined") {
             res.json({

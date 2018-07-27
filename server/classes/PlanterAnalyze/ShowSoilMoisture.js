@@ -10,14 +10,11 @@ export default class ShowSoilMoisture {
   }
 
   async process(req, res) {
+    console.log("[ShowFertilityHistory] session id: " + req.session.id);
     if (typeof req.session.farmData === "undefined" || typeof req.session.configFilePath === "undefined") {
       res.sendStatus(500);
       return;
     }
-    console.log("[ShowFertilityHistory] session id: " + req.session.id);
-    req.session.reload(function (err) {
-      console.log("[ShowFertilityHistory] " + err);
-    });
     configFile = req.session.configFile;
     let greenHouseId = req.body.greenHouseId;
     if (typeof req.body.greenHouseId === "undefined") {
@@ -29,7 +26,6 @@ export default class ShowSoilMoisture {
     }
     console.log("[ShowSoilMoisture] greenHouseId: " + greenHouseId);
     await getGreenhouseSensor(greenHouseId, req.session.farmId);
-    // await getConfigFile(req);
     if (typeof greenHouseSensorData === "undefined") {
       res.json({
         status: 500,

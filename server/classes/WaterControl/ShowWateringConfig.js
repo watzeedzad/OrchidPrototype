@@ -7,14 +7,11 @@ export default class ShowWateringConfig {
     }
 
     async process(req, res) {
+        console.log("[ShowWateringConfig] session id: " + req.session.id);
         if (typeof req.session.farmData === "undefined" || typeof req.session.configFilePath === "undefined") {
             res.sendStatus(500);
             return;
         }
-        console.log("[ShowWateringConfig] session id: " + req.session.id);
-        // req.session.reload(function (err) {
-        //     console.log("[ShowWateringConfig] " + err);
-        // });
         configFile = req.session.configFile;
         let greenHouseId = req.body.greenHouseId;
         if (typeof greenHouseId === "undefined") {
@@ -24,7 +21,6 @@ export default class ShowWateringConfig {
             });
             return;
         }
-        // getConfigFile();
         if (typeof configFile === "undefined") {
             res.json({
                 status: 500,
