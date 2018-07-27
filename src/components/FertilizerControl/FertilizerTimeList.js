@@ -66,15 +66,25 @@ class FertilizerTimeList extends Component{
             </div>
             <div id='time-list'>
                 <Row>
+                    <VerticalTimeline>
                     {this.state.setTimeList.length > 0 && this.state.setTimeList.map(e=>{
-                        let hour = e.getHours()<10? '0'+e.getHours():e.getHours();
-                        let minute = e.getMinutes()<10? '0'+e.getMinutes():e.getMinutes();
+                        let hour = e.getHours()<10? '0'+e.getHours():e.getHours()
+                        let minute = e.getMinutes()<10? '0'+e.getMinutes():e.getMinutes()
+                        let time = hour+":"+minute+" น. หรือ "+this.tConvert(hour+":"+minute)
                         return(
-                            <Col xs='12' sm='12' md='12' lg='12' xl='12'>
-                                {hour}:{minute} น. หรือ {this.tConvert(hour+":"+minute)}
-                            </Col>
+                            <VerticalTimelineElement
+                                className="vertical-timeline-element--work"
+                                iconStyle={{ background: 'rgb(150, 84, 0)', color: '#fff' }}
+                                >
+                                <h3 className="vertical-timeline-element-title">{time}</h3>
+                                <p>
+                                <Button color="secondary" size="sm">แก้ไข</Button>{' '}
+                                     <Button color="danger" size="sm">ลบ</Button> 
+                                </p>
+                            </VerticalTimelineElement>
                         )
                     })}
+                    </VerticalTimeline>
                 </Row>
             </div>
         </Container>

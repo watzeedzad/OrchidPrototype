@@ -14,6 +14,7 @@ class SettingMoisture extends Component {
 
     handleInitialize() {
         let initData = {
+            "greenHouseId": 789456123,
             "minSoilMoisture": this.props.minConfig,
             "maxSoilMoisture": this.props.maxConfig,
         };
@@ -27,6 +28,7 @@ class SettingMoisture extends Component {
             <div>
                 <Form >
                     <FormGroup>
+                        <Field name="greenHouseId" component={renderField} type="hidden" />
                         <Field name="minSoilMoisture" component={renderField} type="number" label="ความชื้นต่ำสุด" />
                         <Field name="maxSoilMoisture" component={renderField} type="number" label="ความชื้นสูงสุด" />
                         <Button color="primary" onClick={handleSubmit(this.onSubmit)}>บันทึก</Button>

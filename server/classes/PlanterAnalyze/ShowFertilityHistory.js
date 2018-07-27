@@ -23,7 +23,7 @@ export default class ShowFertilityHistory {
     if (typeof projectId === "undefined") {
       res.json({
         status: 500,
-        message: "เกิดข้อผิดพลาดในการแสดงค่าประวัติความอุดมสมบูรณ์ในเครื่องปลูก"
+        errorMessage: "เกิดข้อผิดพลาดในการแสดงค่าประวัติความอุดมสมบูรณ์ในเครื่องปลูก"
       });
       return;
     }
@@ -33,7 +33,7 @@ export default class ShowFertilityHistory {
       console.log("[ShowFertilityHistory] projectSensorResult undefined");
       res.json({
         status: 500,
-        message: "เกิดข้อผิดพลาดไม่มีข้อมูลประวัติจากเซนเซอร์"
+        errorMessage: "เกิดข้อผิดพลาดไม่มีข้อมูลประวัติจากเซนเซอร์"
       })
       return;
     }
@@ -72,7 +72,7 @@ export default class ShowFertilityHistory {
     if (projectSensorDataSplice.length == 0) {
       res.json({
         status: 500,
-        message: 'เกิดข้อผิดพลาดไม่มีประวัติอยู่ในระบบ'
+        errorMessage: 'เกิดข้อผิดพลาดไม่มีประวัติอยู่ในระบบ'
       });
       return;
     }
@@ -93,13 +93,13 @@ export default class ShowFertilityHistory {
   }
 }
 
-async function getProjectSensor(projectId) {
+async function getProjectSensor(projectId, req) {
   let result = await project_sensor.find({
     _id: {
       $gt: ObjectId.createFromTime(Date.now() / 1000 - 25 * 60 * 60)
     },
     projectId: projectId,
-    farmId: req.session.farmData.farmId
+    farmId: req.session.farmId
   });
   if (result) {
     projectSensorResult = result;

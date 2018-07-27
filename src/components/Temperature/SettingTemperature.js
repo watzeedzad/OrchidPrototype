@@ -14,6 +14,7 @@ class SettingTemperature extends Component {
 
     handleInitialize() {
         let initData = {
+            "greenHouseId": 789456123,
             "minTemperature": this.props.minConfig,
             "maxTemperature": this.props.maxConfig,
         };
@@ -27,6 +28,7 @@ class SettingTemperature extends Component {
             <div>
                 <form>
                     <FormGroup >
+                        <Field name="greenHouseId" component={renderField} type="hidden" />
                         <Field name="minTemperature" component={renderField} type="number" label="อุณหภูมิต่ำสุด" />
                         <Field name="maxTemperature" component={renderField} type="number" label="อุณหภูมิสูงสุด" />
                         <Button color="primary" onClick={handleSubmit(this.onSubmit)}>บันทึก</Button>
