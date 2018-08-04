@@ -4,6 +4,7 @@ import { connect } from 'react-redux'
 import { Button } from 'reactstrap';
 import ClockPiker from '../../Utils/ClockPicker';
 import { Modal, ModalHeader} from 'reactstrap';
+import { confirmModalDialog } from '../../Utils/reactConfirmModalDialog'
 import { saveWaterConfig } from '../../redux/actions/waterActions'
 import { VerticalTimeline, VerticalTimelineElement }  from 'react-vertical-timeline-component';
 import 'react-vertical-timeline-component/style.min.css';
@@ -62,7 +63,7 @@ class WateringTimeList extends Component {
                     </Row>
                     <Row>
                         <VerticalTimeline>
-                        {this.state.setTimeList.length > 0 && this.state.setTimeList.map(e => {
+                        {this.state.setTimeList.length > 0 && this.state.setTimeList.map((e,index) => {
                             let hour = e.getHours()<10? '0'+e.getHours():e.getHours()
                             let minute = e.getMinutes()<10? '0'+e.getMinutes():e.getMinutes()
                             let time = hour+":"+minute+" น. หรือ "+this.tConvert(hour+":"+minute)
@@ -73,19 +74,9 @@ class WateringTimeList extends Component {
                                 >
                                 <h3 className="vertical-timeline-element-title">{time}</h3>
                                 <p>
-                                <Button color="secondary" size="sm">แก้ไข</Button>{' '}
-                                     <Button color="danger" size="sm">ลบ</Button> 
+                                    <Button color="danger" size="sm" onClick={() => this.buttonDelete(index)}>ลบ</Button> 
                                 </p>
                                 </VerticalTimelineElement>
-
-                                //  <Col xs='12' sm='12' md='12' lg='12' xl='12' >
-                                //      {hour}:{minute} น. หรือ {this.tConvert(hour+":"+minute)}
-                                //      <Field name="time" component={renderField} type="text" readOnly/> 
-                                //      <Button color="secondary" size="sm"
-                                //          onClick={() => buttonEdit(e._id)}>แก้ไข</Button>{' '}
-                                //      <Button color="danger" size="sm"
-                                //          onClick={() => buttonDelete(e._id)}>ลบ</Button>  
-                                //  </Col>
                             )
                         })}
                         </VerticalTimeline>
@@ -154,6 +145,24 @@ class WateringTimeList extends Component {
         }
         var formatted_time = time_part_array[0] + ':' + time_part_array[1] + ampm;    
         return formatted_time;
+    }
+
+    buttonDelete = (index) => {
+        confirmModalDialog({
+            show: true,
+            title: 'ยืนยันการลบ',
+            message: 'คุณต้องการลบข้อมูลนี้ใช่หรือไม่',
+            confirmLabel: 'ยืนยัน ลบทันที!!',
+            onConfirm: () => {
+                var newArray = this.state.setTimeList.slice()
+                console.log(newArray)
+                newArray.splice(index,1)
+                console.log(newArray)
+                this.props.dispatch(saveWaterConfig({greenHouseId:789456123,timeRanges:newArray})).then(() => {
+                    this.props.onDelete()
+                })
+            }
+        })
     }
 
 }

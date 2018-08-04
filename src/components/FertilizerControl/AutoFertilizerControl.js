@@ -39,7 +39,10 @@ class AutoFertilizerControl extends Component{
                 <div id="FertilizerTimeList-content">
                     <Row>
                         <Col xs='12' sm='12' md='12' lg='12' xl='12'>
-                            <FertilizerTimeList fertilizerTimeList={fertilizerTimeList} onToggle={this.toggle} mss={this.state.mss}/>
+                            <FertilizerTimeList fertilizerTimeList={fertilizerTimeList} 
+                            onToggle={this.toggle}
+                            onDelete={this.delete}  
+                            mss={this.state.mss}/>
                         </Col>
                     </Row>
                 </div>
@@ -55,9 +58,21 @@ class AutoFertilizerControl extends Component{
                         บันทึกการตั้งค่าเวลาการให้ปุ๋ยสำเร็จ
                     </UncontrolledAlert>
                 </div>
-            });
-            this.props.dispatch(getFertilizerTime({ projectId: 1}))
-        }
+        });
+        this.props.dispatch(getFertilizerTime({ projectId: 1}))
+    }
+
+    delete = ()=>{
+        this.setState({
+            mss:
+                <div>
+                    <UncontrolledAlert color='success'>
+                        ทำการลบเวลาการให้ปุ๋ยสำเร็จ
+                    </UncontrolledAlert>
+                </div>
+        });
+        this.props.dispatch(getFertilizerTime({ projectId: 1}))
+    }
     
 }
 
