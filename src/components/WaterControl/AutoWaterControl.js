@@ -34,7 +34,10 @@ class AutoWaterControl extends Component {
                 <div>
                     <Row>
                         <Col xs='12' sm='12' md='12' lg='12' xl='12'>
-                            <WateringTimeList wateringTimeList={wateringTimeList} onToggle={this.toggle} mss={this.state.mss}/>
+                            <WateringTimeList wateringTimeList={wateringTimeList} 
+                            onToggle={this.toggle} 
+                            onDelete={this.delete} 
+                            mss={this.state.mss}/>
                         </Col>
                     </Row>
                 </div>
@@ -48,6 +51,18 @@ class AutoWaterControl extends Component {
                 <div>
                     <UncontrolledAlert  color="success">
                         บันทึกการตั้งค่าเวลาการให้น้ำสำเร็จ
+                    </UncontrolledAlert >
+                </div>
+        })
+        this.props.dispatch(getWateringTime({ greenHouseId: 789456123 }))
+    }
+
+    delete = () => {
+        this.setState({
+            mss: 
+                <div>
+                    <UncontrolledAlert  color="success">
+                        ทำการลบเวลาการให้น้ำสำเร็จ
                     </UncontrolledAlert >
                 </div>
         })

@@ -4,6 +4,7 @@ import { connect } from 'react-redux';
 import { Button } from 'reactstrap';
 import ClockPiker from '../../Utils/ClockPicker';
 import { Modal, ModalHeader} from 'reactstrap';
+import { confirmModalDialog } from '../../Utils/reactConfirmModalDialog';
 import { saveFertilizerConfig } from '../../redux/actions/fertilizerActions';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { VerticalTimeline, VerticalTimelineElement }  from 'react-vertical-timeline-component';
@@ -67,7 +68,7 @@ class FertilizerTimeList extends Component{
             <div id='time-list'>
                 <Row>
                     <VerticalTimeline>
-                    {this.state.setTimeList.length > 0 && this.state.setTimeList.map(e=>{
+                    {this.state.setTimeList.length > 0 && this.state.setTimeList.map((e,index)=>{
                         let hour = e.getHours()<10? '0'+e.getHours():e.getHours()
                         let minute = e.getMinutes()<10? '0'+e.getMinutes():e.getMinutes()
                         let time = hour+":"+minute+" น. หรือ "+this.tConvert(hour+":"+minute)
@@ -78,8 +79,7 @@ class FertilizerTimeList extends Component{
                                 >
                                 <h3 className="vertical-timeline-element-title">{time}</h3>
                                 <p>
-                                <Button color="secondary" size="sm">แก้ไข</Button>{' '}
-                                     <Button color="danger" size="sm">ลบ</Button> 
+                                     <Button color="danger" size="sm" onClick={() => this.buttonDelete(index)}>ลบ</Button> 
                                 </p>
                             </VerticalTimelineElement>
                         )
@@ -149,6 +149,22 @@ class FertilizerTimeList extends Component{
         }
         var formatted_time = time_part_array[0] + ':' + time_part_array[1] + ampm;    
         return formatted_time;
+    }
+
+    buttonDelete = (index) => {
+        confirmModalDialog({
+            show: true,
+            title: 'ยืนยันการลบ',
+            message: 'คุณต้องการลบข้อมูลนี้ใช่หรือไม่',
+            confirmLabel: 'ยืนยัน ลบทันที!!',
+            onConfirm: () => {
+                var newArray = this.state.setTimeList.slice()
+                newArray.splice(index,1)
+                this.props.dispatch(saveFertilizerConfig({projectId:1,timeRanges:newArray})).then(() => {
+                    this.props.onDelete()
+                })
+            }
+        })
     }
 
 }
