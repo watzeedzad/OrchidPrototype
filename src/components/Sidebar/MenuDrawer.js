@@ -61,6 +61,11 @@ function MenuDrawer(props) {
                     ตั้งค่าการให้ปุ๋ย
                 </ListItem>
             </Link>
+            <Link to="/lightControl">
+                <ListItem button>
+                    จัดการการให้แสง
+                </ListItem>
+            </Link>
         </MenuList>
     )
 }

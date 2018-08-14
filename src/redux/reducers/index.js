@@ -7,6 +7,7 @@ import weatherReducers from './weatherReducers'
 import planterReducers from './planterReducers'
 import waterReducers from './waterReducers'
 import fertilizerReducers from './fertilizerReducers';
+import lightReducers from './lightReducers'
 
 
 const rootReducers = combineReducers({
@@ -14,6 +15,7 @@ const rootReducers = combineReducers({
     weatherReducers,
     planterReducers,
     waterReducers,
-    fertilizerReducers
+    fertilizerReducers,
+    lightReducers
 })
 export default rootReducers

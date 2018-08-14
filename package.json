@@ -34,6 +34,7 @@
     "react-dom": "^16.3.1",
     "react-event-timeline": "^1.5.4",
     "react-jsx-highcharts": "2.1.0",
+    "react-progress-meter": "^1.1.0",
     "react-redux": "^5.0.7",
     "react-router": "^3.2.1",
     "react-scripts": "~1.1.4",
