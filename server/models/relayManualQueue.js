@@ -15,4 +15,4 @@ const relayManualQueueSchema = new Schema({
 relayManualQueueSchema.plugin(autoIncrement, {
     inc_field: "manualQueueId"
 });
-mongoose.model("relay_manual_queue", relayManualQueueSchema);
+mongoose.model("relay_manual_queue", relayManualQueueSchema, "relay_manual_queue");

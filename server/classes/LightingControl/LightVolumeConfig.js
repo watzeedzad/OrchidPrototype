@@ -22,16 +22,14 @@ export default class LightVolumeConfig {
             });
             return;
         }
-        if (typeof req.body.minLightVolume === "undefined" || req.body.maxLightVolume === "undefined" || req.body.greenHouseid === "undefined") {
+        if (req.body.maxLightVolume === "undefined" || req.body.greenHouseid === "undefined") {
             res.json({
                 status: 500,
                 errorMessage: "เกิดข้อผิดพลาดในการตั้งค่าปริมาณแสง"
             });
         }
-        let minLightVolume = req.body.minLightVolume;
         let maxLightVolume = req.body.maxLightVolume;
         let greenHouseId = req.body.greenHouseId;
-        console.log("[LightVolumeConfig] minLightVolume: " + minLightVolume);
         console.log("[LightVolumeConfig] maxLightVolume: " + maxLightVolume);
         console.log("[LightVolumeConfig] greenHouseId: " + greenHouseId);
         let greenHouseIdIndex = seekGreenHouseIdIndex(configFile, greenHouseId);
@@ -42,16 +40,8 @@ export default class LightVolumeConfig {
             });
             return;
         }
-        if (minLightVolume > maxLightVolume) {
-            res.json({
-                status: 500,
-                errorMessage: "เกิดข้อผิดพลาดในการตั้งค่าปริมาณแสง"
-            });
-            return;
-        }
         let updateData = {
             greenHouseId: greenHouseId,
-            minLightVolume: minLightVolume,
             maxLightVolume: maxLightVolume
         }
         configFile.lightVolumeConfigs[greenHouseIdIndex] = updateData;

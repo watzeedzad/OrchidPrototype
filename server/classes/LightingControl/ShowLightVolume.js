@@ -44,11 +44,9 @@ export default class ShowLightVolumeConfig {
                 });
                 return;
             }
-            let minLightVolume = configFile.lightVolumeConfigs[greenHouseIdIndex].minLightVolume;
             let maxLightVolume = configFile.lightVolumeConfigs[greenHouseIdIndex].maxLightVolume;
             let crruentLightVolume = lightDurationData.duration;
             var showTemp = {
-                minLightVolume: minLightVolume,
                 maxLightVolume: maxLightVolume,
                 crruentLightVolume: crruentLightVolume
             };
