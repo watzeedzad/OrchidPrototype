@@ -7,6 +7,7 @@ import ProjectSensor from "../classes/SaveData/ProjectSensor";
 import TemperatureCheck from "../classes/CheckFunction/TemperatureCheck";
 import SoilMoistureCheck from "../classes/CheckFunction/SoilMoistureCheck";
 import FertilityCheck from "../classes/CheckFunction/FertilityCheck";
+import LightCheck from "../classes/CheckFunction/LightCheck";
 
 let status = 0;
 
@@ -17,6 +18,7 @@ router.post("/greenHouseSensor", (req, res) => {
   new GreenHouseSensor(req, res);
   new TemperatureCheck(req, res);
   new SoilMoistureCheck(req, res);
+  new LightCheck(req, res);
   setTimeout(() => {
     if (req.session.temperatureCheckStatus == 200 && req.session.soilMoistureCheckStatus == 200) {
       res.sendStatus(200);

@@ -2,7 +2,7 @@ import InsertRelayCommand from "../Utils/InsertRelayCommand";
 
 const mongoose = require("mongoose");
 const fs = require("fs");
-const farm = require("farm");
+const farm = mongoose.model("farm");
 const know_controller = mongoose.model("know_controller");
 const lightDuration = mongoose.model("light_duration");
 
@@ -26,12 +26,11 @@ export default class LightCheck {
       req.session.lightCheckStatus = 500;
       return;
     }
-    let controllerResult = await know_controller.findOne(
-      {
+    let controllerResult = await know_controller.findOne({
         ip: ip,
         piMacAddress: piMacAddress
       },
-      function(err) {
+      function (err) {
         if (err) {
           console.log("[LightCheck] Query fail!, know_controller");
         } else {
@@ -49,13 +48,19 @@ export default class LightCheck {
       req.session.lightCheckStatus = 200;
       return;
     }
+    let nowLightCheckDate = new Date();
+    if (nowLightCheckDate.getHours() < 7 && nowLightCheckDate.getHours() > 18) {
+      return;
+    } else {
+      new InsertRelayCommand(controllerData.ip, "light", false, farmData.piMacAddress);
+    }
     let greenHouseIndexLightIntensity = await seekGreenHouseIdIndex(
       configFile.lightIntensityConfigs,
       greenHouseId
     );
     console.log(
       "[LightCheck] greenHouseIndexLightIntensity: " +
-        greenHouseIndexLightIntensity
+      greenHouseIndexLightIntensity
     );
     if (greenHouseIndexLightIntensity == -1) {
       req.session.lightCheckStatus = 200;
@@ -86,6 +91,7 @@ export default class LightCheck {
         );
       }
       await getLastestLightDurationData(farmData.farmId, greenHouseId);
+      let currentDuration;
       if (lightDurationResult.lastestResult) {
         let previousDate = new Date(lightDurationResult.timeStamp);
         let nowDate = new Date();
@@ -93,6 +99,7 @@ export default class LightCheck {
         nowDate = nowDate.getTime();
         let updateTimeDuration =
           (nowDate = previousDate) + lightDurationResult.duration;
+        currentDuration = updateTimeDuration;
         await updateLightDurationData(
           lightDurationResult._id,
           lightDurationResult.farmId,
@@ -101,6 +108,7 @@ export default class LightCheck {
           resultCompareLightIntensity
         );
       } else {
+        currentDuration = lightDurationResult.duration;
         await updateLightDurationData(
           lightDurationResult._id,
           lightDurationResult.farmId,
@@ -117,17 +125,19 @@ export default class LightCheck {
         return;
       }
     }
+    if (nowLightCheckDate.getHours() > 7 && nowLightCheckDate.getHours() < 18 && !resultCompareLightIntensity && (configFile.lightVolumeConfigs[greenHouseIndexLightIntensity] > currentDuration)) {
+      new InsertRelayCommand(controllerData.ip, "light", true, farmData.piMacAddress);
+    }
   }
 }
 
 async function getControllerData(greenHouseId, farmId) {
-  await know_controller.findOne(
-    {
+  await know_controller.findOne({
       isHaveLight: true,
       greenHouseId: greenHouseId,
       farmId: farmId
     },
-    function(err, result) {
+    function (err, result) {
       if (err) {
         controllerData = undefined;
         console.log("[LightCheck] getControllerData (err): " + err);
@@ -142,11 +152,10 @@ async function getControllerData(greenHouseId, farmId) {
 }
 
 async function getConfigFile(farmIdIn) {
-  let farmResult = await farm.findOne(
-    {
+  let farmResult = await farm.findOne({
       farmId: farmIdIn
     },
-    function(err, result) {
+    function (err, result) {
       if (err) {
         console.log("[LightCheck] getConfigFile, fail");
       } else {
@@ -182,19 +191,18 @@ function compareLightIntensity(
 
 function seekGreenHouseIdIndex(dataArray, greenHouseId) {
   // console.log(dataArray);
-  let index = dataArray.findIndex(function(item) {
+  let index = dataArray.findIndex(function (item) {
     return item.greenHouseId === greenHouseId;
   });
   return index;
 }
 
 async function getLastestLightDurationData(farmId, greenHouseId) {
-  await lightDuration.findOne(
-    {
+  await lightDuration.findOne({
       farmId: farmId,
       greenHouseId: greenHouseId
     },
-    function(err, result) {
+    function (err, result) {
       if (err) {
         console.log("[LightCheck] getLastestLightDurationData (err): " + err);
       } else if (!result) {
@@ -223,7 +231,9 @@ function updateLightDurationData(
     timeStamp: new Date()
   };
 
-  lightDuration.findByIdAndUpdate(id, updateData, { new: true }, function(
+  lightDuration.findByIdAndUpdate(id, updateData, {
+    new: true
+  }, function (
     err,
     result
   ) {

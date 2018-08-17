@@ -36,7 +36,7 @@ let connection = mongoose
   .then(console.log("MongoDb Connected"))
   .catch(err => {
     if (err) {
-      return handleError(err);
+      return console.error(err);
     }
   });
 
