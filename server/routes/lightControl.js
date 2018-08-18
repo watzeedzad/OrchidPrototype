@@ -61,3 +61,5 @@ router.use("/lightVolumeConfig", (req, res, next) => {
 router.post("/lightVolumeConfig", (req, res) => {
     new LightVolumeConfig(req, res);
 });
+
+module.exports = router;

@@ -91,9 +91,11 @@ async function getGreenHouseSesor(greenHouseId, farmId) {
         if (err) {
             greenHouseSensorData = undefined
             console.log("[ShowLightIntensity] getGreenhouseSensor (err): " + err);
+        } else if (!result) {
+            greenHouseSensorData = undefined;
+            console.log("[ShowLightIntensity] getGreenhouseSensor (!result): " + result);
         } else {
             greenHouseSensorData = result;
-            console.log("[ShowLightIntensity] getGreenhouseSensor (!err): " + result);
         }
     });
 }

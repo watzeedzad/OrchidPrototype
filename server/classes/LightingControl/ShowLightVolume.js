@@ -90,7 +90,7 @@ async function getLightDurationData(greenHouseId, farmId) {
             lightDurationData = undefined
             console.log("[ShowLightIntensity] getLightDurationData (err): " + err);
         } else {
-            lightDuration = result;
+            lightDurationData = result;
             console.log("[ShowLightIntensity] getLightDurationData (!err): " + result);
         }
     });
