@@ -11,7 +11,7 @@ export const saveLightIntensity = (values) => {
         //ต้องส่ง heder ชื่อ authorization โดยส่ง token เขาไปด้วยครับ
         return axios({
             method: 'post',
-            url: `${BASE_URL}/lightingControl/lightIntensityConfig`,
+            url: `${BASE_URL}/lightControl/lightIntensityConfig`,
             data: values,
             headers: { 'Content-Type': 'application/json' },
             withCredentials: true
@@ -38,7 +38,7 @@ export const getLightIntensity = ({greenHouseId}) => {
         dispatch({ type: 'LOAD_LIGHTINTENSITY_PENDING' })
         return axios({
             method: 'post',
-            url: `${BASE_URL}/lightingControl/showLightIntensity`,
+            url: `${BASE_URL}/lightControl/showLightIntensity`,
             data: values,
             headers: { 'Content-Type': 'application/json' },
             withCredentials: true
@@ -61,7 +61,7 @@ export const saveLightVolume = (values) => {
         //ต้องส่ง heder ชื่อ authorization โดยส่ง token เขาไปด้วยครับ
         return axios({
             method: 'post',
-            url: `${BASE_URL}/lightingControl/lightVolumeConfig`,
+            url: `${BASE_URL}/lightControl/lightVolumeConfig`,
             data: values,
             headers: { 'Content-Type': 'application/json' },
             withCredentials: true
@@ -88,7 +88,7 @@ export const getLightVolume = ({greenHouseId}) => {
         dispatch({ type: 'LOAD_LIGHTVOLUME_PENDING' })
         return axios({
             method: 'post',
-            url: `${BASE_URL}/lightingControl/showLightVolume`,
+            url: `${BASE_URL}/lightControl/showLightVolume`,
             data: values,
             headers: { 'Content-Type': 'application/json' },
             withCredentials: true
