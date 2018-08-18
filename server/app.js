@@ -114,7 +114,7 @@ app.use("/waterControl", waterControl);
 app.use("/fertilizerControl", fertilizerControl);
 app.use("/controllerManagement", controllerManagement);
 app.use("/monitoringAndAnalyze", monitoringAndAnalyze);
-app.use("/lightingControl", lightControl);
+app.use("/lightControl", lightControl);
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
