@@ -36,7 +36,7 @@ export default class ShowLightIntensity {
                 errorMessage: "เกิดข้อผิดพลาดไม่สามารถอ่านไฟล์การตั้งค่าได้"
             });
         } else {
-            let greenHouseIdIndex = await seekGreenHouseIdIndex(configFile.humidityConfigs, greenHouseId);
+            let greenHouseIdIndex = await seekGreenHouseIdIndex(configFile.lightIntensityConfigs, greenHouseId);
             if (greenHouseIdIndex == -1) {
                 res.json({
                     status: 500,
@@ -99,3 +99,10 @@ async function getGreenHouseSesor(greenHouseId, farmId) {
         }
     });
 }
+
+function seekGreenHouseIdIndex(dataArray, greenHouseId) {
+    let index = dataArray.findIndex(function (item, i) {
+      return item.greenHouseId === greenHouseId;
+    });
+    return index;
+  }
