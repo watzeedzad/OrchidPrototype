@@ -242,6 +242,7 @@ function updateLightDurationData(
       updateLightDurationResult = undefined;
     } else if (!result) {
       console.log("[LightCheck] updateLightDurationData (!result): " + result);
+      updateLightDurationResult = undefined;
     } else {
       updateLightDurationResult = result;
     }
