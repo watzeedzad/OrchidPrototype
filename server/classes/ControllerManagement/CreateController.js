@@ -7,26 +7,48 @@ export default class CreateController {
     }
 
     async operation(req, res) {
-        await saveControllerData();
+        let ip = req.body.ip;
+        let macAddress = req.body.mac_address;
+        let name = req.body.name;
+        let projectId = req.body.projectId;
+        let greenHouseId = req.body.greenHouseId;
+        let farmId = req.body.farmId;
+
+        let isHavePump = req.body.isHavePump;
+        let moisture;
+        let water;
+        let fertilizer;
+        
+        if(isHavePump === false){
+            moisture = false;
+            water = false;
+            fertilizer = false;
+        }else{
+            moisture = req.body.moisture;
+            water = req.body.water;
+            fertilizer = req.body.fertilizer;
+        }
+        
+        await saveControllerData(ip,macAddress,name,projectId,greenHouseId,farmId,moisture,water,fertilizer);
         res.sendStatus(200);
     }
 }
 
-function saveControllerData() {
+async function saveControllerData(ip,macAddress,name,projectId,greenHouseId,farmId,moisture,water,fertilizer,isHavePump,piMacAddress) {
     const newKnowControllerData = {
-        ip: "192.168.1.12",
-        mac_address: "12:48:AF:87:FD:58",
-        name: "Proto_Board01",
-        projectId: 1,
-        greenHouseId: 789456123,
-        farmId: 123456789,
+        ip: ip,
+        mac_address: macAddress,
+        name: name,
+        projectId: projectId,
+        greenHouseId: greenHouseId,
+        farmId: farmId,
         pumpType: {
-            moisture: true,
-            water: true,
-            fertilizer: true
+            moisture: moisture,
+            water: water,
+            fertilizer: fertilizer
         },
-        isHavePump: true,
-        piMacAddress: "b8,27,eb,a7,78,ad"
+        isHavePump: isHavePump,
+        piMacAddress: piMacAddress
     }
 
     new know_controller(newKnowControllerData).save(function (err) {

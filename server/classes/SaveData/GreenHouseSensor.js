@@ -72,7 +72,7 @@ async function saveSensorData(
   ambientLight
 ) {
   console.log("[GreenHouseSensor] saveSensorData (greenHouseId): " + greenHouseId);
-  console.log("[GreenHouseSensor] savwSensorData (farmId): " + farmId);
+  console.log("[GreenHouseSensor] saveSensorData (farmId): " + farmId);
   const newGreenHouseData = {
     temperature: temp,
     humidity: humid,
