@@ -50,7 +50,7 @@ async function insertKnowController(ip, macAddress, piMacAddress, farmId) {
     let insertData = {
         ip: ip,
         macAddress: macAddress,
-        farmId: farmId,
+        // farmId: farmId,
         piMacAddress: piMacAddress
     }
     await knowController(insertData).save(function (err) {
@@ -66,7 +66,7 @@ async function findExistController(macAddress, piMacAddress, farmId) {
     await knowController.findOne({
         macAddress: macAddress,
         piMacAddress: piMacAddress,
-        farmId: farmId
+        // farmId: farmId
     }, (err, result) => {
         if (err) {
             knowControllerDataResult = undefined;

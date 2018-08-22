@@ -37,14 +37,16 @@ export default class CreateController {
       name,
       projectId,
       greenHouseId,
+      farmId,
       moisture,
       water,
       fertilizer
     );
-    if (assignControllerResul) {
-      res.sendStatus(500);
-    } else {
+
+    if (assignControllerResult) {
       res.sendStatus(200);
+    } else {
+      res.sendStatus(500);
     }
   }
 }
@@ -94,6 +96,7 @@ async function findAndUpdateController(
   name,
   projectId,
   greenHouseId,
+  farmId,
   moisture,
   water,
   fertilizer,
@@ -111,6 +114,7 @@ async function findAndUpdateController(
         name: name,
         projectId: projectId,
         greenHouseId: greenHouseId,
+        farmId:farmId,
         pumpType: {
           moisture: moisture,
           water: water,

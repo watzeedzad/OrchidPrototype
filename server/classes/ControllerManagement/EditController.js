@@ -70,7 +70,7 @@ async function editControllerData(ip,macAddress, name, projectId, greenHouseId, 
                 editControllerResult = false;
                 console.log("[EditController] findAndUpdateController (!doc): " + doc);
             } else {
-                editControllerData = true;
+                editControllerResult = true;
             }
         }
     );
