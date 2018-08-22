@@ -15,18 +15,15 @@ export default class ShowController {
             res.sendStatus(500);
             return;
         }
-
-        
-        // let farmId = req.body.farmId;
-        // if (typeof farmId === "undefined") {
-        //     res.json({
-        //         status: 500,
-        //         errorMessage: "เกิดข้อผิดพลาดในการเเสดงข้อมูลController ของฟาร์มนั้น"
-        //     });
-        //     return;
-        // }
-
-        await getControllerData(req.session.farmId);
+        let farmId = req.body.farmId;
+        if (typeof farmId === "undefined") {
+            res.json({
+                status: 500,
+                errorMessage: "เกิดข้อผิดพลาดในการเเสดงข้อมูลคอนโทรลเลอร์ทั้งหมด"
+            });
+            return;
+        }
+        await getControllerData(farmId);
         if (typeof ShowControllerData === "undefined") {
             res.json({
                 status: 500,
