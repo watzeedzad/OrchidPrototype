@@ -6,6 +6,7 @@ import Login from './pages/Login'
 import WaterControl from './pages/WaterControl'
 import FertilizerControl from './pages/FertilizerControl';
 import LightControl from './pages/LightControl';
+import ControllerManagement from './pages/ControllerManagement'
 
 const routes = [{
     path: '/',
@@ -18,6 +19,7 @@ const routes = [{
         { path: 'waterControl', component: WaterControl },
         { path: 'fertilizerControl', component:FertilizerControl},
         { path: 'lightControl', component:LightControl},
+        { path: 'controllerManagement', component:ControllerManagement},
     ]
 }]
 

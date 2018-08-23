@@ -66,6 +66,11 @@ function MenuDrawer(props) {
                     จัดการการให้แสง
                 </ListItem>
             </Link>
+            <Link to="/controllerManagement">
+                <ListItem button>
+                    จัดการการคอนโทรลเลอร์
+                </ListItem>
+            </Link>
         </MenuList>
     )
 }
