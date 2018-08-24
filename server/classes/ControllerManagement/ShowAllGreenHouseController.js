@@ -16,6 +16,8 @@ export default class ShowAllGreenHouseController {
             return;
         }
         let farmId = req.body.farmId;
+        let controllerType = req.body.controllerType;
+
         if (typeof farmId === "undefined") {
             res.json({
                 status: 500,
@@ -23,7 +25,7 @@ export default class ShowAllGreenHouseController {
             });
             return;
         }
-        await getGreenHouseControllerData(farmId);
+        await getGreenHouseControllerData(farmId,controllerType);
         if (typeof ShowControllerData === "undefined") {
             res.json({
                 status: 500,
@@ -40,7 +42,8 @@ export default class ShowAllGreenHouseController {
 
 async function getGreenHouseControllerData(farmId) {
     await knowController.find({
-        farmId: farmId
+        farmId: farmId,
+        controllerType:controllerType
     }, (err, result) => {
         if (err) {
             ShowControllerData = undefined;
