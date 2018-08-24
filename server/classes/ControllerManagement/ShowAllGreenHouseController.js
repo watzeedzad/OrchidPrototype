@@ -3,7 +3,7 @@ const knowController = mongoose.model('know_controller');
 
 let ShowControllerData;
 
-export default class ShowController {
+export default class ShowAllGreenHouseController {
 
     constructor(req, res) {
         this.operation(req, res);
@@ -23,7 +23,7 @@ export default class ShowController {
             });
             return;
         }
-        await getControllerData(farmId);
+        await getGreenHouseControllerData(farmId);
         if (typeof ShowControllerData === "undefined") {
             res.json({
                 status: 500,
@@ -36,7 +36,9 @@ export default class ShowController {
 
 }
 
-async function getControllerData(farmId) {
+
+
+async function getGreenHouseControllerData(farmId) {
     await knowController.find({
         farmId: farmId
     }, (err, result) => {
