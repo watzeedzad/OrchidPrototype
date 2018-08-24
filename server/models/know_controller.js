@@ -13,6 +13,7 @@ const know_controllerSchema = new Schema({
     greenHouseId: Number,
     farmId: Number,
     isHavePump: Boolean,
+    controllerType:String,
     pumpType: {
         moisture: Boolean,
         water: Boolean,

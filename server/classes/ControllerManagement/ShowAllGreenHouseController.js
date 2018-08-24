@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
 const knowController = mongoose.model('know_controller');
 
-let ShowControllerData;
+let showGreenHouseControllerData;
 
 export default class ShowAllGreenHouseController {
 
@@ -10,7 +10,7 @@ export default class ShowAllGreenHouseController {
     }
 
     async operation(req, res) {
-        console.log("[ShowControllerData] session id: " + req.session.id);
+        console.log("[showGreenHouseControllerData] session id: " + req.session.id);
         if (typeof req.session.farmData === "undefined" || typeof req.session.configFilePath === "undefined") {
             res.sendStatus(500);
             return;
@@ -21,38 +21,38 @@ export default class ShowAllGreenHouseController {
         if (typeof farmId === "undefined") {
             res.json({
                 status: 500,
-                errorMessage: "เกิดข้อผิดพลาดในการเเสดงข้อมูลคอนโทรลเลอร์ทั้งหมด"
+                errorMessage: "เกิดข้อผิดพลาดในการเเสดงข้อมูลGreenHouseControllerทั้งหมด"
             });
             return;
         }
         await getGreenHouseControllerData(farmId,controllerType);
-        if (typeof ShowControllerData === "undefined") {
+        if (typeof showGreenHouseControllerData === "undefined") {
             res.json({
                 status: 500,
-                errorMessage: "เกิดข้อผิดพลาดไม่มีข้อมูล Controller"
+                errorMessage: "เกิดข้อผิดพลาดไม่มีข้อมูลGreenHouse Controller"
             });
             return;
         }
-        res.json(ShowControllerData);
+        res.json(showGreenHouseControllerData);
     }
 
 }
 
 
 
-async function getGreenHouseControllerData(farmId) {
+async function getGreenHouseControllerData(farmId,controllerType) {
     await knowController.find({
         farmId: farmId,
         controllerType:controllerType
     }, (err, result) => {
         if (err) {
-            ShowControllerData = undefined;
-            console.log("[ShowControllerData] getControllerData (err):  " + err);
+            showGreenHouseControllerData = undefined;
+            console.log("[showGreenHouseControllerData] getControllerData (err):  " + err);
         } else if (!result) {
-            ShowControllerData = undefined;
-            console.log("[ShowControllerData getControllerData(!result): " + result);
+            showGreenHouseControllerData = undefined;
+            console.log("[showGreenHouseControllerData getControllerData(!result): " + result);
         } else {
-            ShowControllerData = result;
+            showGreenHouseControllerData = result;
         }
     });
 }
