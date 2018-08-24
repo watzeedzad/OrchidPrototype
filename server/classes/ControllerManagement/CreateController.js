@@ -15,7 +15,7 @@ export default class CreateController {
     let projectId = req.body.projectId;
     let greenHouseId = req.body.greenHouseId;
     let farmId = req.body.farmId;
-
+    let controllerType = req.body.controllerType;
     let isHavePump = req.body.isHavePump;
     let moisture;
     let water;
@@ -38,6 +38,7 @@ export default class CreateController {
       projectId,
       greenHouseId,
       farmId,
+      controllerType,
       moisture,
       water,
       fertilizer
@@ -97,6 +98,7 @@ async function findAndUpdateController(
   projectId,
   greenHouseId,
   farmId,
+  controllerType,
   moisture,
   water,
   fertilizer,
@@ -115,6 +117,7 @@ async function findAndUpdateController(
         projectId: projectId,
         greenHouseId: greenHouseId,
         farmId:farmId,
+        controllerType:controllerType,
         pumpType: {
           moisture: moisture,
           water: water,
