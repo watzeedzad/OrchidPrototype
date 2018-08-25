@@ -23,7 +23,7 @@ router.post("/createController", (req, res) => {
 
 
 //showAllGreenHouseController
-router.use("/showAllGreenHouseController",(req,res)=>{
+router.use("/showAllGreenHouseController",(req,res,next)=>{
 
     res.setHeader("Access-Control-Allow-Origin",origin_url);
     res.setHeader(
@@ -34,13 +34,13 @@ router.use("/showAllGreenHouseController",(req,res)=>{
     next();
 });
 
-router.get("//showAllGreenHouseController",(req,res)=>{
+router.post("/showAllGreenHouseController",(req,res)=>{
     new ShowAllGreenHouseController(req,res);
 })
 
 
 //showAllProjectController
-router.use("/showAllProjectController",(req,res)=>{
+router.use("/showAllProjectController",(req,res,next)=>{
 
     res.setHeader("Access-Control-Allow-Origin",origin_url);
     res.setHeader(
@@ -51,13 +51,13 @@ router.use("/showAllProjectController",(req,res)=>{
     next();
 });
 
-router.get("//showAllProjectController",(req,res)=>{
+router.post("/showAllProjectController",(req,res)=>{
     new ShowAllProjectController(req,res);
 })
 
 
 //DeleteController
-router.use("/deleteController",(req,res)=>{
+router.use("/deleteController",(req,res,next)=>{
 
     res.setHeader("Access-Control-Allow-Origin",origin_url);
     res.setHeader(
@@ -68,14 +68,14 @@ router.use("/deleteController",(req,res)=>{
     next();
 });
 
-router.delete("/deleteController",(req,res)=>{
+router.post("/deleteController",(req,res)=>{
     new DeleteController(req,res);
 });
 
 
 
 //EditController
-router.use("/editController",(req,res)=>{
+router.use("/editController",(req,res,next)=>{
 
     res.setHeader("Access-Control-Allow-Origin",origin_url);
     res.setHeader(
@@ -86,7 +86,7 @@ router.use("/editController",(req,res)=>{
     next();
 });
 
-router.put("/editController",(req,res)=>{
+router.post("/editController",(req,res)=>{
     new EditController(req,res);
 });
 module.exports = router;

@@ -22,6 +22,9 @@ class Temperature extends Component {
         if (temp.isLoading) {
             return <div>Loading...</div>
         }
+        if (data.errorMessage){
+            return <div className="alert alert-danger">{data.errorMessage}</div>
+        }
     
         return (
             <Container>

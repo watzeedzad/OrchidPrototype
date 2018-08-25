@@ -2,12 +2,15 @@ const fs = require("fs");
 const mongoose = require("mongoose");
 const greenHouseSensor = mongoose.model("greenHouse_Sensor");
 let ObjectId = require("mongodb").ObjectID;
- let greenHouseSensorResult;
- export default class ShowTemperatureHistory {
+
+let greenHouseSensorResult;
+
+export default class ShowTemperatureHistory {
   constructor(req, res) {
     this.process(req, res);
   }
-   async process(req, res) {
+
+  async process(req, res) {
     console.log("[ShowTemperatureHistory] session id: " + req.session.id);
     if (typeof req.session.farmData === "undefined" || typeof req.session.configFilePath === "undefined") {
       res.sendStatus(500);
@@ -86,7 +89,8 @@ let ObjectId = require("mongodb").ObjectID;
     res.json(temperatureHistory);
   }
 }
- async function getGreenHouseSensor(greenHouseId, req) {
+
+async function getGreenHouseSensor(greenHouseId, req) {
   let result = await greenHouseSensor.find({
     _id: {
       $gt: ObjectId.createFromTime(Date.now() / 1000 - 25 * 60 * 60)
@@ -100,4 +104,4 @@ let ObjectId = require("mongodb").ObjectID;
     greenHouseSensorResult = undefined;
     console.log("[ShowTemperatureHistory] getGreenHouseSensor, Query fail!");
   }
-} 
+}

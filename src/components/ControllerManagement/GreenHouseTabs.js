@@ -34,7 +34,7 @@ class GreenHouseTabs extends Component {
   };
 
   componentDidMount() {
-    this.props.dispatch(getGreenHouseController({ farmId: 1 }))
+    this.props.dispatch(getGreenHouseController({ farmId: 123456789 }))
   }
 
   handleChange = (event, value) => {
@@ -44,8 +44,6 @@ class GreenHouseTabs extends Component {
   render() {
     const { classes,gController } = this.props;
     const { value } = this.state;
-    let  array  = [0, 1, 2, 3]
-    let array2 = ["item1", "item2", "item3", "item4",]
 
     if (gController.isRejected) {
       return <div className="alert alert-danger">Error: {gController.data}</div>
@@ -66,15 +64,16 @@ class GreenHouseTabs extends Component {
             textColor="primary"
           >
             {gController.data.map((e,index) => {
+              let label = "โรงเรือนที่ "+index+1
               return (
-                <Tab label="โรงเรือนที่" index/>
+                <Tab label={label} index/>
               )
             })}
           </Tabs>
         </AppBar>
         {gController.data.map((e,index) => {
           return (
-             value === index && <TabContainer>{e}</TabContainer>
+             value === index && <TabContainer>{e.ip}</TabContainer>
           )
         })}
      
