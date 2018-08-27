@@ -7,6 +7,7 @@ import Tabs from "@material-ui/core/Tabs";
 import Tab from "@material-ui/core/Tab";
 import Typography from "@material-ui/core/Typography";
 import { getGreenHouseController } from '../../redux/actions/controllerActions'
+import GreenHouseControllerList from './GreenHouseControllerList';
 
 function TabContainer(props) {
   return (
@@ -51,7 +52,7 @@ class GreenHouseTabs extends Component {
     if (gController.isLoading) {
       return <div>Loading...</div>
     }
-
+    console.log(gController)
     return (
       <div className={classes.root}>
         <AppBar position="static" color="default">
@@ -63,17 +64,20 @@ class GreenHouseTabs extends Component {
             indicatorColor="primary"
             textColor="primary"
           >
-            {gController.data.map((e,index) => {
-              let label = "โรงเรือนที่ "+index+1
+            {gController.data && gController.data.map((e,index) => {
+              let label = "โรงเรือนที่ "+(parseInt(index)+1)
               return (
                 <Tab label={label} index/>
               )
             })}
           </Tabs>
         </AppBar>
-        {gController.data.map((e,index) => {
+        {gController.data && gController.data.map((e,index) => {
           return (
-             value === index && <TabContainer>{e.ip}</TabContainer>
+            value === index && 
+            <TabContainer>
+              <GreenHouseControllerList controllerList={gController.data}/><br/><br/><hr/>
+            </TabContainer>
           )
         })}
      
