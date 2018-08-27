@@ -14,7 +14,7 @@ export const saveFertilizerConfig = (values)=>{
         }).then(result=>{
             dispatch({type:'SAVE_FERTILIZER_SUCCESS' , payload: result.data});
         }).catch(err=>{
-            dispatch({type:'SACE_FERTILIZER_REJECTED',payload: err.message});
+            dispatch({type:'SAVE_FERTILIZER_REJECTED',payload: err.message});
         })
     }
 }

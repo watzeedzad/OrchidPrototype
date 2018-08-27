@@ -30,3 +30,19 @@ export const getGreenHouseController = ({farmId}) => {
         })
     }
 }
+
+export const deleteController = (values)=>{
+    return (dispatch)=>{
+        return axios({
+            method:'post',
+            url:`${BASE_URL}/controllerManagement/deleteController`,
+            data: values,
+            headers:{'Content-type': 'application/json'},
+            withCredentials: true
+        }).then(result=>{
+            dispatch({type:'DELETE_CONTROLLER_SUCCESS' , payload: result.data});
+        }).catch(err=>{
+            dispatch({type:'DELETE_CONTROLLER_REJECTED',payload: err.message});
+        })
+    }
+}

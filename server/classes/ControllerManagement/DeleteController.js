@@ -9,10 +9,8 @@ export default class CreateController {
     }
 
     async operation(req, res) {
-        
-        let ip = req.body.ip;
+
         let macAddress = req.body.macAddress;
-        let piMacAddress = req.body.piMacAddress;
 
         await findAndDeleteController(ip,macAddress,piMacAddress);
         if(deleteControllerResult){
@@ -25,9 +23,7 @@ export default class CreateController {
 
 async function findAndDeleteController(ip, macAddress, piMacAddress) {
     knowcontroller.findOneAndRemove({
-            ip: ip,
             macAddress: macAddress,
-            piMacAddress: piMacAddress
         },
         function (err, doc) {
             if (err) {

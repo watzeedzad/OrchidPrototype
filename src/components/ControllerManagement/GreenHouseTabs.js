@@ -8,6 +8,7 @@ import Tab from "@material-ui/core/Tab";
 import Typography from "@material-ui/core/Typography";
 import { getGreenHouseController } from '../../redux/actions/controllerActions'
 import GreenHouseControllerList from './GreenHouseControllerList';
+import { UncontrolledAlert } from 'reactstrap';
 
 function TabContainer(props) {
   return (
@@ -31,7 +32,8 @@ const styles = theme => ({
 
 class GreenHouseTabs extends Component {
   state = {
-    value: 0
+    value: 0,
+    mss: '',
   };
 
   componentDidMount() {
@@ -52,7 +54,10 @@ class GreenHouseTabs extends Component {
     if (gController.isLoading) {
       return <div>Loading...</div>
     }
-    console.log(gController)
+    if (gController.data.errorMessage){
+      return <div className="alert alert-danger">{gController.data.errorMessage}</div>
+    }
+
     return (
       <div className={classes.root}>
         <AppBar position="static" color="default">
@@ -76,13 +81,28 @@ class GreenHouseTabs extends Component {
           return (
             value === index && 
             <TabContainer>
-              <GreenHouseControllerList controllerList={gController.data}/><br/><br/><hr/>
+              <GreenHouseControllerList controllerList={gController.data} 
+                onDelete={this.delete}
+                mss={this.state.mss}/>
+              <br/><br/><hr/>
             </TabContainer>
           )
         })}
      
       </div>
     );
+  }
+
+  delete = () => {
+    this.setState({
+        mss: 
+            <div>
+                <UncontrolledAlert  color="success">
+                    ทำการลบคอนโทรลเลอร์สำเร็จ
+                </UncontrolledAlert >
+            </div>
+    })
+    this.props.dispatch(getGreenHouseController({ farmId: 123456789 }))
   }
 }
 

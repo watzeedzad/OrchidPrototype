@@ -155,9 +155,7 @@ class WateringTimeList extends Component {
             confirmLabel: 'ยืนยัน ลบทันที!!',
             onConfirm: () => {
                 var newArray = this.state.setTimeList.slice()
-                console.log(newArray)
                 newArray.splice(index,1)
-                console.log(newArray)
                 this.props.dispatch(saveWaterConfig({greenHouseId:789456123,timeRanges:newArray})).then(() => {
                     this.props.onDelete()
                 })

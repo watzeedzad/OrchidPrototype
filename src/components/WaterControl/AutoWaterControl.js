@@ -8,7 +8,6 @@ import { getWateringTime } from '../../redux/actions/waterActions'
 class AutoWaterControl extends Component {
     state = {
         mss: '',
-        visible: true
     }
 
     componentDidMount() {
