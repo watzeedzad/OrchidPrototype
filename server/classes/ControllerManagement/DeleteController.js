@@ -12,16 +12,16 @@ export default class CreateController {
 
         let macAddress = req.body.macAddress;
 
-        await findAndDeleteController(ip,macAddress,piMacAddress);
-        if(deleteControllerResult){
+        await findAndDeleteController(ip, macAddress, piMacAddress);
+        if (deleteControllerResult) {
             res.sendStatus(200);
-        }else{
+        } else {
             res.sendStatus(500);
         }
     }
 }
 
-async function findAndDeleteController(ip, macAddress, piMacAddress) {
+async function findAndDeleteController(macAddress) {
     knowcontroller.findOneAndRemove({
             macAddress: macAddress,
         },
@@ -29,10 +29,10 @@ async function findAndDeleteController(ip, macAddress, piMacAddress) {
             if (err) {
                 deleteControllerResult = false;
                 console.log("[deleteControllerResult] findAndDeleteController(err):  " + err);
-            }else if(!doc){
+            } else if (!doc) {
                 deleteControllerResult = false;
                 console.log("[deleteControllerResult] findAndDeleteController(!doc):  " + doc);
-            }else{
+            } else {
                 deleteControllerResult = true;
             }
         }
