@@ -17,7 +17,6 @@ export default class AddUser {
         let password = req.body.password;
 
         await addUser(userId, farmId, role, userName, password);
-
         if (addUserResult) {
             res.sendStatus(200);
         } else {

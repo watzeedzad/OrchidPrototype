@@ -15,7 +15,7 @@ export default class EditController {
         let projectId = req.body.projectId;
         let greenHouseId = req.body.greenHouseId;
         let farmId = req.body.farmId;
-
+        
         let isHavePump = req.body.isHavePump;
         let moisture;
         let water;
@@ -65,10 +65,10 @@ async function editControllerData(ip,macAddress, name, projectId, greenHouseId, 
         function (err, doc) {
             if (err) {
                 editControllerResult = false;
-                console.log("[EditController] findAndUpdateController (err): " + err);
+                console.log("[EditController] editControllerData (err): " + err);
             } else if (!doc) {
                 editControllerResult = false;
-                console.log("[EditController] findAndUpdateController (!doc): " + doc);
+                console.log("[EditController] editControllerData (!doc): " + doc);
             } else {
                 editControllerResult = true;
             }

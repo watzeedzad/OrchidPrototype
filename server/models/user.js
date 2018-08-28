@@ -8,6 +8,8 @@ const userSchema = new Schema({
   userId: Number,
   farmId: Number,
   role: String,
+  firstname: String,
+  lastname: String,
   username: String,
   password: String
 });
