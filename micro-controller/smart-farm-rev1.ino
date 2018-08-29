@@ -1,4 +1,3 @@
-#include <MoistureSensor.h>
 #include <dht.h>
 #include <ArduinoJson.h>
 #include <WiFi.h>
@@ -8,11 +7,10 @@
 #include <aREST.h>
 
 #define DHT22_PIN 26
-#define RE_IN_PIN1 17
-#define RE_IN_PIN2 16
-#define RE_IN_PIN3 27
-#define RE_IN_PIN4 14
-#define FERTILITY_PIN 36
+#define RE_IN_PIN1 25
+#define RE_IN_PIN2 17
+#define RE_IN_PIN3 16
+#define RE_IN_PIN4 27
 #define MOISTURE_PIN 39
 #define LISTEN_PORT 80
 
@@ -40,17 +38,24 @@ int inputLitre;
 int moisture = 0;
 int moisturePercent = 0;
 String sensorData;
-int fertility = 0;
+int fertility = 30;
 float humidity, temperature;
 
-byte sensorInterrupt = 25;
-byte sensorPin = 25;
-float calibrationFactor = 4.5;
-volatile byte pulseCount;
-float flowRate;
-unsigned int flowMilliLitres;
-unsigned long totalMilliLitres;
-unsigned long oldTime;
+byte waterFlowSensorInterrupt = 0;
+byte waterFlowSensorPin = 19;
+byte fertilizerFlowSensorInterrupt = 0;
+byte fertilizerFlowSensorPin = 18;
+float calibrationFactor = 7.5;
+volatile byte waterPulseCount;
+volatile byte fertilizerPulseCount;
+float waterFlowRate;
+float fertilizerFlowRate;
+unsigned int waterFlowMilliLitres;
+unsigned int fertilizerFlowMilliLitres;
+unsigned long waterFlowTotalMilliLitres;
+unsigned long fertilizerFlowTotalMilliLitres;
+unsigned long waterFlowOldTime;
+unsigned long fertilizerFlowOldTime;
 
 IPAddress ip(192, 168, 1, 12);
 IPAddress subnet(255, 255, 255, 0);
@@ -69,19 +74,24 @@ void setup(void)
         pinMode(RE_IN_PIN3, OUTPUT);
         pinMode(RE_IN_PIN4, OUTPUT);
 
-        pinMode(sensorPin, INPUT);
-        digitalWrite(sensorPin, HIGH);
+        pinMode(waterFlowSensorPin, INPUT);
+        digitalWrite(waterFlowSensorPin, HIGH);
 
         digitalWrite(RE_IN_PIN1, HIGH);
         digitalWrite(RE_IN_PIN2, HIGH);
         digitalWrite(RE_IN_PIN3, HIGH);
         digitalWrite(RE_IN_PIN4, HIGH);
 
-        pulseCount = 0;
-        flowRate = 0.0;
-        flowMilliLitres = 0;
-        totalMilliLitres = 0;
-        oldTime = 0;
+        waterPulseCount = 0;
+        waterFlowRate = 0.0;
+        waterFlowMilliLitres = 0;
+        waterFlowTotalMilliLitres = 0;
+        waterFlowOldTime = 0;
+        fertilizerPulseCount = 0;
+        fertilizerFlowRate = 0.0;
+        fertilizerFlowMilliLitres = 0;
+        fertilizerFlowTotalMilliLitres = 0;
+        fertilizerFlowOldTime = 0;
 
         rest.function("waterPump", waterPumpControl);
         rest.function("fertilizerPump", fertilizerPumpControl);
@@ -106,7 +116,8 @@ void setup(void)
         Serial.println(WiFi.localIP());
 
         server.begin();
-        attachInterrupt(sensorInterrupt, pulseCounter, FALLING);
+        attachInterrupt(waterFlowSensorInterrupt, waterPulseCounter, FALLING);
+        attachInterrupt(fertilizerFlowSensorInterrupt, fertilizerPulseCounter, FALLING);
 
         runner.init();
         runner.addTask(checkWaterLitreTask);
@@ -129,26 +140,41 @@ void loop(void)
 
         moisture = analogRead(MOISTURE_PIN);
 
-        if ((millis() - oldTime) > 1000)
+        if ((millis() - waterFlowOldTime) > 1000)
         {
-                detachInterrupt(sensorInterrupt);
-                flowRate = ((1000.0 / (millis() - oldTime)) * pulseCount) / calibrationFactor;
-                oldTime = millis();
-                flowMilliLitres = (flowRate / 60) * 1000;
-                totalMilliLitres += flowMilliLitres;
+                detachInterrupt(waterFlowSensorInterrupt);
+                waterFlowRate = ((1000.0 / (millis() - waterFlowOldTime)) * waterPulseCount) / calibrationFactor;
+                waterFlowOldTime = millis();
+                waterFlowMilliLitres = (waterFlowRate / 60) * 1000;
+                waterFlowTotalMilliLitres += waterFlowMilliLitres;
 
-                Serial.print("Output Liquid Quantity: ");
-                Serial.print(totalMilliLitres);
+                Serial.print("(water) Output Liquid Quantity: ");
+                Serial.print(waterFlowTotalMilliLitres);
                 Serial.println("mL");
                 Serial.print("\t"); // Print tab space
-                Serial.print(totalMilliLitres / 1000);
+                Serial.print(waterFlowTotalMilliLitres / 1000);
                 Serial.println("L");
 
-                pulseCount = 0;
-                attachInterrupt(sensorInterrupt, pulseCounter, FALLING);
+                waterPulseCount = 0;
+                attachInterrupt(waterFlowSensorInterrupt, waterPulseCounter, FALLING);
         }
 
-        fertility = read_fertility();
+        if ((millis() - fertilizerFlowOldTime) > 1000)
+        {
+                detachInterrupt(fertilizerFlowSensorInterrupt);
+                fertilizerFlowRate = ((1000.0 / (millis() - fertilizerFlowOldTime)) * waterPulseCount) / calibrationFactor;
+                fertilizerFlowOldTime = millis();
+                fertilizerFlowMilliLitres = (fertilizerFlowRate / 60) * 1000;
+                fertilizerFlowTotalMilliLitres += fertilizerFlowMilliLitres;
+
+                Serial.print("(fertilizer) Output Liquid Quantity: ");
+                Serial.print(waterFlowTotalMilliLitres);
+                Serial.println("mL");
+                Serial.print("\t"); // Print tab space
+                Serial.print(waterFlowTotalMilliLitres / 1000);
+                Serial.println("L");
+        }
+
         DHT.read22(DHT22_PIN);
         humidity = DHT.humidity, 1;
         temperature = DHT.temperature, 1;
@@ -169,9 +195,14 @@ void loop(void)
         runner.execute();
 }
 
-void pulseCounter()
+void waterPulseCounter()
 {
-        pulseCount++;
+        waterPulseCount++;
+}
+
+void fertilizerPulseCounter()
+{
+        fertilizerPulseCount++;
 }
 
 int convertToPercent(int value)
@@ -273,50 +304,9 @@ void sendData()
         moistureStats.clear();
 }
 
-int read_fertility()
-{
-        int i, fertility;
-        fertility = 0;
-        for (i = 0; i < 10; i++)
-        {
-                fertility = fertility + analogRead(FERTILITY_PIN);
-                delay(1);
-        }
-        fertility = fertility / 10;
-        if (fertility >= 480)
-        {
-                fertility = ((fertility - 480) / 10) + 93;
-        }
-        else if (fertility >= 360)
-        {
-                fertility = ((fertility - 360) / 7.5) + 77;
-        }
-        else if (fertility >= 275)
-        {
-                fertility = ((fertility - 275) / 5) + 59;
-        }
-        else if (fertility >= 200)
-        {
-                fertility = ((fertility - 200) / 6.25) + 47;
-        }
-        else if (fertility >= 125)
-        {
-                fertility = ((fertility - 125) / 5.3) + 31;
-        }
-        else if (fertility >= 65)
-        {
-                fertility = ((fertility - 65) / 4) + 16;
-        }
-        else if (fertility >= 0)
-        {
-                fertility = ((fertility - 0) / 3.75) + 0;
-        }
-        return (fertility);
-}
-
 void checkWaterLitre()
 {
-        if (totalMilliLitres > (inputLitre * 1000))
+        if (waterFlowTotalMilliLitres > (inputLitre * 1000))
         {
                 Serial.println("true");
                 digitalWrite(RE_IN_PIN1, 1);
@@ -356,7 +346,7 @@ int moisturePumpControl(String command)
 int manualWaterPump(String inputLitre)
 {
         inputLitre = inputLitre.toInt();
-        totalMilliLitres = 0;
+        waterFlowTotalMilliLitres = 0;
         digitalWrite(RE_IN_PIN1, 0);
         checkWaterLitreTask.enable();
         return 1;

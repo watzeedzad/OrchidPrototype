@@ -9,6 +9,9 @@ const growthRateSchema = new Schema({
     projectId: Number,
     actualRate: [{
         count: Number,
+        trunkDiameter: Number,
+        leafWidth: Number,
+        totalLeaf: Number,
         height: Number,
         description: String,
         timeStamp: Date,
