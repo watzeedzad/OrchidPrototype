@@ -6,6 +6,7 @@ const {
 } = mongoose;
 
 const growthRateSchema = new Schema({
+    farmId:Number,
     projectId: Number,
     actualRate: [{
         count: Number,
