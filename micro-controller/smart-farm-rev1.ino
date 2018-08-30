@@ -5,6 +5,8 @@
 #include <TaskScheduler.h>
 #include <Statistic.h>
 #include <aREST.h>
+#include <Wire.h>
+#include <BH1750.h>
 
 #define DHT22_PIN 26
 #define RE_IN_PIN1 25
@@ -12,6 +14,7 @@
 #define RE_IN_PIN3 16
 #define RE_IN_PIN4 27
 #define MOISTURE_PIN 39
+#define KNOB_PIN 36
 #define LISTEN_PORT 80
 
 const char *SSID = "Pi_dhcp";
@@ -22,10 +25,12 @@ Statistic fertilityStats;
 Statistic humidityStats;
 Statistic moistureStats;
 Statistic temperatureStats;
+Statistic ambientLightStats;
 DynamicJsonBuffer jsonBuffer;
 dht DHT;
 Scheduler runner;
 WiFiServer server(LISTEN_PORT);
+BH1750 lightMeter(0x23);
 
 void sendData();
 void checkWaterLitre();
@@ -34,16 +39,18 @@ Task sendDataTask(75000, TASK_FOREVER, &sendData);
 Task checkWaterLitreTask(500, TASK_FOREVER, &checkWaterLitre);
 Task checkFertilizerLitreTask(500, TASK_FOREVER, &checkFertilizerLitre);
 
+// String sensorData;
 int inputLitre;
 int moisture = 0;
 int moisturePercent = 0;
-String sensorData;
-int fertility = 30;
+int fertility = 0;
+int fertilityPercent = 0 uint16_t lux;
 float humidity, temperature;
+int fertilityKnobValue;
 
-byte waterFlowSensorInterrupt = 0;
+byte waterFlowSensorInterrupt = 19;
 byte waterFlowSensorPin = 19;
-byte fertilizerFlowSensorInterrupt = 0;
+byte fertilizerFlowSensorInterrupt = 18;
 byte fertilizerFlowSensorPin = 18;
 float calibrationFactor = 7.5;
 volatile byte waterPulseCount;
@@ -68,12 +75,13 @@ void setup(void)
         Serial.begin(115200);
 
         pinMode(MOISTURE_PIN, INPUT);
-        pinMode(FERTILITY_PIN, INPUT);
         pinMode(RE_IN_PIN1, OUTPUT);
         pinMode(RE_IN_PIN2, OUTPUT);
         pinMode(RE_IN_PIN3, OUTPUT);
         pinMode(RE_IN_PIN4, OUTPUT);
+        pinMode(KNOB_PIN, OUTPUT);
 
+        pinMode(fertilizerFlowSensorPin, INPUT);
         pinMode(waterFlowSensorPin, INPUT);
         digitalWrite(waterFlowSensorPin, HIGH);
 
@@ -98,7 +106,7 @@ void setup(void)
         rest.function("moisturePump", moisturePumpControl);
         rest.function("manualWater", manualWaterPump);
         rest.function("manualFertilizer", manualFertilizerPump);
-        rest.function("manualMoisture", manualMoisturePump);
+        // rest.function("manualMoisture", manualMoisturePump);
         rest.set_id("10000001");
         rest.set_name("esp32");
 
@@ -119,8 +127,12 @@ void setup(void)
         attachInterrupt(waterFlowSensorInterrupt, waterPulseCounter, FALLING);
         attachInterrupt(fertilizerFlowSensorInterrupt, fertilizerPulseCounter, FALLING);
 
+        Wire.begin(5, 23);
+        lightMeter.begin();
+
         runner.init();
         runner.addTask(checkWaterLitreTask);
+        runner.addTask(checkFertilizerLitreTask);
         // runner.addTask(sendDataTask);
         // sendDataTask.enable();
 
@@ -139,6 +151,7 @@ void loop(void)
         delay(1000);
 
         moisture = analogRead(MOISTURE_PIN);
+        fertility = analogRead(KNOB_PIN);
 
         if ((millis() - waterFlowOldTime) > 1000)
         {
@@ -162,35 +175,46 @@ void loop(void)
         if ((millis() - fertilizerFlowOldTime) > 1000)
         {
                 detachInterrupt(fertilizerFlowSensorInterrupt);
-                fertilizerFlowRate = ((1000.0 / (millis() - fertilizerFlowOldTime)) * waterPulseCount) / calibrationFactor;
+                fertilizerFlowRate = ((1000.0 / (millis() - fertilizerFlowOldTime)) * fertilizerPulseCount) / calibrationFactor;
                 fertilizerFlowOldTime = millis();
                 fertilizerFlowMilliLitres = (fertilizerFlowRate / 60) * 1000;
                 fertilizerFlowTotalMilliLitres += fertilizerFlowMilliLitres;
 
                 Serial.print("(fertilizer) Output Liquid Quantity: ");
-                Serial.print(waterFlowTotalMilliLitres);
+                Serial.print(fertilizerFlowTotalMilliLitres);
                 Serial.println("mL");
                 Serial.print("\t"); // Print tab space
-                Serial.print(waterFlowTotalMilliLitres / 1000);
+                Serial.print(fertilizerFlowTotalMilliLitres / 1000);
                 Serial.println("L");
+
+                fertilizerPulseCount = 0;
+                attachInterrupt(fertilizerFlowSensorInterrupt, fertilizerPulseCounter, FALLING);
         }
 
         DHT.read22(DHT22_PIN);
         humidity = DHT.humidity, 1;
         temperature = DHT.temperature, 1;
-        Serial.println(analogRead(FERTILITY_PIN));
-        Serial.println(moisture);
+        lux = lightMeter.readLightLevel(true);
+        Serial.printf("Moisture Raw : %d \n", moisture);
+        Serial.printf("Fertility Knob Raw : %d \n", fertility);
         moisturePercent = convertToPercent(moisture);
+        fertilityKnobPercent = convertFertilityToPercent(fertility);
 
         humidityStats.add(humidity);
         temperatureStats.add(temperature);
         moistureStats.add(moisturePercent);
-        fertilityStats.add(fertility);
+        fertilityStats.add(fertilityKnobPercent);
+        ambientLightStats.add(lux);
 
-        sensorData = String(makeJSON(temperature, humidity, fertility, moisturePercent));
+        // sensorData = String(makeJSON(temperature, humidity, fertility, moisturePercent));
 
-        Serial.println("-----------------JSON-----------------");
-        Serial.println(sensorData);
+        Serial.println("-----------------DATA-----------------");
+        Serial.printf("Temperature : %2f \n", temperature);
+        Serial.printf("Humidity : %2f \n", humidity);
+        Serial.printf("Moisture : %d \n", moisturePercent);
+        Serial.printf("Fertilizer : %d \n", fertilityKnobPercent);
+        Serial.printf("Light : %d \n", lux);
+        Serial.println("-----------------DATA-----------------");
 
         runner.execute();
 }
@@ -208,7 +232,7 @@ void fertilizerPulseCounter()
 int convertToPercent(int value)
 {
         int percentValue = 0;
-        percentValue = map(value, 3000, 1700, 0, 100);
+        percentValue = map(value, 3000, 1400, 0, 100);
         if (percentValue == -1)
         {
                 percentValue = 0;
@@ -224,40 +248,59 @@ int convertToPercent(int value)
         return percentValue;
 }
 
-String makeJSON(float temperature, float humidity, int fertility, int moisturePercent)
+int convertFertilityToPercent(int value)
 {
-        String jsonString = "{\"temperature\":33.60,\"humidity\":60.70,\"fertility\":29,\"moisture\":0}";
-        JsonObject &root = jsonBuffer.parseObject(jsonString);
-
-        root[String("temperature")] = temperature;
-        root[String("humidity")] = humidity;
-        root[String("fertility")] = fertility;
-        root[String("moisture")] = moisturePercent;
-
-        String jsonStringOut;
-        root.printTo(jsonStringOut);
-        jsonBuffer.clear();
-        return jsonStringOut;
+        int percentValue = 0;
+        percentValue = map(value, 0, 4096, 0, 100);
+        if (percentValue == -1)
+        {
+                percentValue = 0;
+        }
+        if (percentValue >= 100)
+        {
+                percentValue = 100;
+        }
+        if (percentValue <= 0)
+        {
+                percentValue = 0;
+        }
+        return percentValue;
 }
+
+// String makeJSON(float temperature, float humidity, int fertility, int moisturePercent)
+// {
+//         String jsonString = "{\"temperature\":33.60,\"humidity\":60.70,\"fertility\":29,\"moisture\":0}";
+//         JsonObject &root = jsonBuffer.parseObject(jsonString);
+
+//         root[String("temperature")] = temperature;
+//         root[String("humidity")] = humidity;
+//         root[String("fertility")] = fertility;
+//         root[String("moisture")] = moisturePercent;
+
+//         String jsonStringOut;
+//         root.printTo(jsonStringOut);
+//         jsonBuffer.clear();
+//         return jsonStringOut;
+// }
 
 void sendData()
 {
         Serial.println("Function \"sendData\" has been called.");
-        Serial.print("Avg. of temperature : ");
-        Serial.println(temperatureStats.average(), 2);
-        Serial.print("Avg. of humidity : ");
-        Serial.println(humidityStats.average(), 2);
-        Serial.print("Avg. of fertility : ");
-        Serial.println(fertilityStats.average(), 2);
-        Serial.print("Avg. of moisture : ");
-        Serial.println(moistureStats.average(), 2);
+        // Serial.print("Avg. of temperature : ");
+        // Serial.println(temperatureStats.average(), 2);
+        // Serial.print("Avg. of humidity : ");
+        // Serial.println(humidityStats.average(), 2);
+        // Serial.print("Avg. of fertility : ");
+        // Serial.println(fertilityStats.average(), 2);
+        // Serial.print("Avg. of moisture : ");
+        // Serial.println(moistureStats.average(), 2);
 
         StaticJsonBuffer<250> JSONbuffer1;
         JsonObject &JSONencoder = JSONbuffer1.createObject();
         JSONencoder["temperature"] = temperatureStats.average();
         JSONencoder["humidity"] = humidityStats.average();
         JSONencoder["soilMoisture"] = moistureStats.average();
-        JSONencoder["ambientLight"] = 548.68;
+        JSONencoder["ambientLight"] = ambientLightStats.average();
         JSONencoder["ip"] = "crossbaronx.thddns.net:6064";
         char dataSet1[250];
         JSONencoder.prettyPrintTo(dataSet1, sizeof(dataSet1));
@@ -320,6 +363,16 @@ void checkWaterLitre()
 
 void checkFertilizerLitre()
 {
+        if (fertilizerFlowMilliLitres > (inputLitre * 1000))
+        {
+                Serial.println("true");
+                digitalWrite(RE_IN_PIN2, 1);
+                checkFertilizerLitreTask.disable();
+        }
+        else
+        {
+                Serial.println("false");
+        }
 }
 
 int waterPumpControl(String command)
@@ -346,6 +399,7 @@ int moisturePumpControl(String command)
 int manualWaterPump(String inputLitre)
 {
         inputLitre = inputLitre.toInt();
+        waterFlowMilliLitres = 0;
         waterFlowTotalMilliLitres = 0;
         digitalWrite(RE_IN_PIN1, 0);
         checkWaterLitreTask.enable();
@@ -355,11 +409,15 @@ int manualWaterPump(String inputLitre)
 int manualFertilizerPump(String inputLitre)
 {
         int litre = inputLitre.toInt();
+        fertilizerFlowMilliLitres = 0;
+        fertilizerFlowTotalMilliLitres = 0;
+        digitalWrite(RE_IN_PIN2, 0);
+        checkFertilizerLitreTask.enable();
         return 1;
 }
 
-int manualMoisturePump(String inputLitre)
-{
-        int litre = inputLitre.toInt();
-        return 1;
-}
+// int manualMoisturePump(String inputLitre)
+// {
+//         int litre = inputLitre.toInt();
+//         return 1;
+// }
