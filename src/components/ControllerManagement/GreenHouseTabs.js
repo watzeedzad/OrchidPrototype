@@ -6,9 +6,11 @@ import AppBar from "@material-ui/core/AppBar";
 import Tabs from "@material-ui/core/Tabs";
 import Tab from "@material-ui/core/Tab";
 import Typography from "@material-ui/core/Typography";
-import { getGreenHouseController } from '../../redux/actions/controllerActions'
+import { getGreenHouseController,deleteController,editController } from '../../redux/actions/controllerActions'
 import GreenHouseControllerList from './GreenHouseControllerList';
-import { UncontrolledAlert } from 'reactstrap';
+import { UncontrolledAlert, Modal, ModalHeader } from 'reactstrap';
+import { confirmModalDialog } from '../../Utils/reactConfirmModalDialog'
+import ControllerForm from './ControllerForm'
 
 function TabContainer(props) {
   return (
@@ -34,6 +36,9 @@ class GreenHouseTabs extends Component {
   state = {
     value: 0,
     mss: '',
+    modal: false,
+    modalTitle: '',
+    controllerData: []
   };
 
   componentDidMount() {
@@ -43,11 +48,11 @@ class GreenHouseTabs extends Component {
   handleChange = (event, value) => {
     this.setState({ value });
   };
-
+  
   render() {
     const { classes,gController } = this.props;
     const { value } = this.state;
-
+    console.log(this.props.gController.data)
     if (gController.isRejected) {
       return <div className="alert alert-danger">Error: {gController.data}</div>
     }
@@ -60,6 +65,7 @@ class GreenHouseTabs extends Component {
 
     return (
       <div className={classes.root}>
+        {this.state.mss}
         <AppBar position="static" color="default">
           <Tabs
             value={value}
@@ -81,29 +87,79 @@ class GreenHouseTabs extends Component {
           return (
             value === index && 
             <TabContainer>
-              <GreenHouseControllerList controllerList={gController.data} 
-                onDelete={this.delete}
-                mss={this.state.mss}/>
+              <GreenHouseControllerList controllerList={gController.data}
+                buttonCreate={this.handleNew} 
+                buttonDelete={this.handleDelete}
+                buttonEdit={this.handleEdit}/>
               <br/><br/><hr/>
             </TabContainer>
           )
         })}
-     
+        <Modal isOpen={this.state.modal} toggle={this.toggle} 
+          className="modal-primary" autoFocus={false}>
+            <ModalHeader toggle={this.toggle}>{this.state.modalTitle}คอนโทรลเลอร์</ModalHeader>
+            <ControllerForm
+              data={this.state.controllerData}
+              onSubmit={this.handleSubmit}
+              onToggle={this.toggle} />
+        </Modal>
       </div>
     );
   }
 
-  delete = () => {
+  toggle = () => {
     this.setState({
-        mss: 
-            <div>
-                <UncontrolledAlert  color="success">
-                    ทำการลบคอนโทรลเลอร์สำเร็จ
-                </UncontrolledAlert >
-            </div>
+        modal: !this.state.modal
     })
-    this.props.dispatch(getGreenHouseController({ farmId: 123456789 }))
   }
+
+  handleNew = () => {
+    this.setState({ modalTitle: 'เพิ่ม' ,controllerData: [] })
+    this.toggle();
+  }
+
+  handleEdit = (data) => {
+    this.setState({ modalTitle: 'แก้ไข' ,controllerData: data})
+    this.toggle()
+  }
+
+  handleSubmit = (values) => {
+    this.props.dispatch(editController(values)).then(() => {
+        this.toggle()
+        this.setState({
+          mss: 
+              <div>
+                  <UncontrolledAlert  color="success">
+                      ทำการบันทึกข้อมูลคอนโทรลเลอร์สำเร็จ
+                  </UncontrolledAlert >
+              </div>
+        })
+        this.props.dispatch(getGreenHouseController({ farmId: 123456789 }))       
+    })
+  }
+
+  handleDelete = (macAddress) => {
+    confirmModalDialog({
+        show: true,
+        title: 'ยืนยันการลบ',
+        message: 'คุณต้องการลบคอนโทรลเลอร์นี้ใช่หรือไม่',
+        confirmLabel: 'ยืนยัน ลบทันที!!',
+        onConfirm: () => {
+            this.props.dispatch(deleteController({macAddress: macAddress})).then(() => {
+              this.setState({
+                mss: 
+                    <div>
+                        <UncontrolledAlert  color="success">
+                            ทำการลบคอนโทรลเลอร์สำเร็จ
+                        </UncontrolledAlert >
+                    </div>
+              })
+              this.props.dispatch(getGreenHouseController({ farmId: 123456789 }))
+            })
+        }
+    })
+  }
+
 }
 
 function mapStateToProps(state) {

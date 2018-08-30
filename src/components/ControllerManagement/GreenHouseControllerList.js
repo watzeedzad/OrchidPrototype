@@ -8,8 +8,6 @@ import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
 import Paper from '@material-ui/core/Paper';
 import { Button } from 'reactstrap';
-import { confirmModalDialog } from '../../Utils/reactConfirmModalDialog'
-import { deleteController } from '../../redux/actions/controllerActions'
 
 const CustomTableCell = withStyles(theme => ({
   head: {
@@ -51,12 +49,13 @@ class GreenHouseControllerList extends Component {
     }
 
     render() {
-        const { classes,controllerList } = this.props;
+        const { classes,controllerList,buttonDelete,buttonEdit,buttonCreate } = this.props;
 
         return (
             <div>
                 {this.state.mss}
                 <h5>รายชื่อคอนโทรลเลอร์ที่อยู่ในโรงเรือน</h5>
+                <Button color="primary" size="sm" onClick={() => buttonCreate()}>เพิ่ม</Button>
                 <Paper className={classes.root}>
                 <Table className={classes.table}>
                     <TableHead>
@@ -77,8 +76,8 @@ class GreenHouseControllerList extends Component {
                                 <CustomTableCell numeric>{e.ip}</CustomTableCell>
                                 <CustomTableCell numeric>{e.mac_address}</CustomTableCell>
                                 <CustomTableCell numeric>
-                                    <Button color="secondary" size="sm" >แก้ไข</Button>{"  "}
-                                    <Button color="danger" size="sm" onClick={() => this.buttonDelete(e.mac_address)}>ลบ</Button> 
+                                    <Button color="secondary" size="sm" onClick={() => buttonEdit(e)}>แก้ไข</Button>{"  "}
+                                    <Button color="danger" size="sm" onClick={() => buttonDelete(e.mac_address)}>ลบ</Button> 
                                 </CustomTableCell>
                             </TableRow>
                         );
@@ -90,19 +89,6 @@ class GreenHouseControllerList extends Component {
         );
     }
 
-    buttonDelete = (macAddress) => {
-        confirmModalDialog({
-            show: true,
-            title: 'ยืนยันการลบ',
-            message: 'คุณต้องการลบคอนโทรลเลอร์นี้ใช่หรือไม่',
-            confirmLabel: 'ยืนยัน ลบทันที!!',
-            onConfirm: () => {
-                this.props.dispatch(deleteController({macAddress: macAddress})).then(() => {
-                    this.props.onDelete()
-                })
-            }
-        })
-    }
 }
 
 

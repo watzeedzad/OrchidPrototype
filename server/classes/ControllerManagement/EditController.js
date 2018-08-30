@@ -9,29 +9,29 @@ export default class EditController {
     }
 
     async operation(req, res) {
-        let ip = req.body.ip;
+        // let ip = req.body.ip;
         let macAddress = req.body.mac_address;
         let name = req.body.name;
-        let projectId = req.body.projectId;
-        let greenHouseId = req.body.greenHouseId;
-        let farmId = req.body.farmId;
+        // let projectId = req.body.projectId;
+        // let greenHouseId = req.body.greenHouseId;
+        // let farmId = req.body.farmId;
         
-        let isHavePump = req.body.isHavePump;
+        let isHavePump = req.body.isHavePump=='0'?true:false;
         let moisture;
         let water;
         let fertilizer;
-
+        
         if (isHavePump === false) {
             moisture = false;
             water = false;
             fertilizer = false;
         } else {
-            moisture = req.body.moisture;
-            water = req.body.water;
-            fertilizer = req.body.fertilizer;
+            moisture = req.body.moisture=='0'||req.body.moisture==true?true:false;
+            water = req.body.water=='0'||req.body.water==true?true:false;
+            fertilizer = req.body.fertilizer=='0'||req.body.fertilizer==true?true:false;
         }
-
-        await editControllerData(ip,macAddress, name, projectId, greenHouseId, farmId, isHavePump, moisture, water, fertilizer);
+        
+        await editControllerData(name,isHavePump, moisture, water, fertilizer,macAddress);
 
         if(editControllerData){
             res.sendStatus(200);
@@ -41,25 +41,24 @@ export default class EditController {
     }
 }
 
-async function editControllerData(ip,macAddress, name, projectId, greenHouseId, farmId, isHavePump, moisture, water, fertilizer) {
+async function editControllerData(name,isHavePump, moisture, water, fertilizer,macAddress) {
     knowController.findOneAndUpdate({
-            ip: ip,
+            //ip: ip,
             macAddress: macAddress,
-            piMacAddress: piMacAddress
+            //piMacAddress: piMacAddress
         }, {
             $set: {
                 name: name,
-                projectId: projectId,
-                greenHouseId: greenHouseId,
-                farmId: farmId,
+                // projectId: projectId,
+                // greenHouseId: greenHouseId,
+                // farmId: farmId,
                 pumpType: {
                     moisture: moisture,
                     water: water,
-                    fertilizer,
-                    fertilizer
+                    fertilizer: fertilizer
                 },
                 isHavePump: isHavePump,
-                piMacAddress: piMacAddress
+                //piMacAddress: piMacAddress
             }
         },
         function (err, doc) {

@@ -46,3 +46,19 @@ export const deleteController = (values)=>{
         })
     }
 }
+
+export const editController = (values)=>{
+    return (dispatch)=>{
+        return axios({
+            method:'post',
+            url:`${BASE_URL}/controllerManagement/editController`,
+            data: values,
+            headers:{'Content-type': 'application/json'},
+            withCredentials: true
+        }).then(result=>{
+            dispatch({type:'EDIT_CONTROLLER_SUCCESS' , payload: result.data});
+        }).catch(err=>{
+            dispatch({type:'EDIT_CONTROLLER_REJECTED',payload: err.message});
+        })
+    }
+}

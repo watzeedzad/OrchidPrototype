@@ -3,6 +3,7 @@
 const initialState = {
     gController: { data: null, isLoading: true, isRejected: false },
     deleteController: { data: null, isLoading: true, isRejected: false },
+    editController: { data: null, isLoading: true, isRejected: false },
 
 }
 export default (state = initialState, action) => {
@@ -19,6 +20,11 @@ export default (state = initialState, action) => {
             return {...state, deleteController: {data: action.payload, isLoading:false ,isRejected:false}}
         case 'DELETE_CONTROLLER_REJECTED' :
             return {...state, deleteController: {data: action.payload, isLoading:false ,isRejected:true}}
+
+        case 'EDIT_CONTROLLER_SUCCESS' :
+            return {...state, editController: {data: action.payload, isLoading:false ,isRejected:false}}
+        case 'EDIT_CONTROLLER_REJECTED' :
+            return {...state, editController: {data: action.payload, isLoading:false ,isRejected:true}}
 
         default:
             return state
