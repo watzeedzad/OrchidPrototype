@@ -9,15 +9,37 @@ class ControllerForm extends Component {
     constructor() {
         super();
     
-        this.state = { checked: false };
+        this.state = { checked: false,water:false,fertilizer:false,moisture:false };
         this.handleChange = this.handleChange.bind(this);
-      }
-    
-      handleChange() {
+        this.handleWaterChange = this.handleWaterChange.bind(this);
+        this.handleFertilizerChange = this.handleFertilizerChange.bind(this);
+        this.handleMoistureChange = this.handleMoistureChange.bind(this);
+    }
+
+    handleChange() {
         this.setState({
           checked: !this.state.checked
         })
-      }
+    }
+
+    handleWaterChange() {
+        this.setState({
+            water: !this.state.water
+        })
+    }
+
+    handleFertilizerChange() {
+        this.setState({
+            fertilizer: !this.state.fertilizer
+        })
+    }
+
+    handleMoistureChange() {
+        this.setState({
+            moisture: !this.state.moisture
+        })
+    }
+
 
     componentDidMount() {
         //เรียกใช้ฟังก์ชันในการกำหนด value ให้กับ textbox และ control ต่างๆ
@@ -29,23 +51,27 @@ class ControllerForm extends Component {
     //ต้องใช้ initialize ถ้าเป็น redux-form v.6 ต้องประกาศใช้ initialize แต่ v.7 เรียกใช้ได้เลย
     handleInitialize() {
         let initData = {
-            "mac_address": "0",
+            //"mac_address": "0",
+            "farmId": this.props.data.farmId,
+            "greenHouseId": this.props.data.greenHouseId,
             "name": '',
             "isHavePump": '1',
-            "water": '1',
-            "moisture":'1',
-            "fertilizer":'1'
         };
 
         if (this.props.data._id) {
             let data = this.props.data
-            this.setState({checked: data.isHavePump})
-            data.isHavePump = data.isHavePump==true||data.isHavePump=='0'?'0':1
-            data.pumpType.water = data.pumpType.water==true||data.pumpType.water=='0'?'0':1
-            data.pumpType.moisture = data.pumpType.moisture==true||data.pumpType.moisture=='0'?'0':1
-            data.pumpType.fertilizer = data.pumpType.fertilizer==true||data.pumpType.fertilizer=='0'?'0':1
+            this.setState({checked: data.isHavePump,water:data.pumpType.water,fertilizer:data.pumpType.fertilizer,moisture:data.pumpType.moisture})
+            // data.isHavePump = data.isHavePump==true||data.isHavePump=='0'?'0':'1'
+            // data.pumpType.water = data.pumpType.water==true||data.pumpType.water=='0'?'0':'1'
+            // data.pumpType.moisture = data.pumpType.moisture==true||data.pumpType.moisture=='0'?'0':'1'
+            // data.pumpType.fertilizer = data.pumpType.fertilizer==true||data.pumpType.fertilizer=='0'?'0':'1'
             
-            initData = data
+            initData = {
+                "farmId": data.farmId,
+                "greenHouseId": data.greenHouseId,
+                "name": data.name,
+                "isHavePump": data.isHavePump,
+            }
         }
         this.props.initialize(initData);
     }
@@ -53,7 +79,7 @@ class ControllerForm extends Component {
     render() {
         //redux-form จะมี props ที่ชื่อ handleSubmit เพื่อใช้ submit ค่า
         const { handleSubmit } = this.props
-
+        
         const pumpType = this.state.checked
             ?  <div className="form-group row">
                         <label className="col-sm-3 col-form-label">ประเภทของปั๊ม</label>
@@ -66,6 +92,8 @@ class ControllerForm extends Component {
                                         component="input"
                                         type="checkbox"
                                         value='1'
+                                        checked={this.state.water}
+                                        onChange={this.handleWaterChange}
                                     />{' '}
                                     ปั๊มน้ำ
                                     </label>
@@ -78,6 +106,8 @@ class ControllerForm extends Component {
                                         component="input"
                                         type="checkbox"
                                         value='1'
+                                        checked={this.state.fertilizer}
+                                        onChange={this.handleFertilizerChange}
                                     />{' '}ปั๊มปุ๋ย
                                     </label>
                             </div>
@@ -89,6 +119,8 @@ class ControllerForm extends Component {
                                         component="input"
                                         type="checkbox"
                                         value='1'
+                                        checked={this.state.moisture}
+                                        onChange={this.handleMoistureChange}
                                     />{' '}ปั๊มความชื้น
                                     </label>
                             </div>
@@ -98,7 +130,7 @@ class ControllerForm extends Component {
 
         const mac_address = this.props.data._id==null
             ?   <div className="form-group row">
-                    <label className="col-sm-3 col-form-label">ประเภทคอนโทรลเลอร์</label>
+                    <label className="col-sm-3 col-form-label">Mac Address</label>
                     <div className="col-sm-9">
                         <div className="form-check form-check-inline">
                             <select name="mac_address">
@@ -146,6 +178,9 @@ class ControllerForm extends Component {
                             </div>
                         </div>
                     </div>
+                    <Field name="farmId" component={renderField} type="hidden" />
+                    <Field name="greenHouseId" component={renderField} type="hidden" />
+                    <Field name="projectId" component={renderField} type="hidden" />
                    {pumpType}
                 </ModalBody>
                 </form>

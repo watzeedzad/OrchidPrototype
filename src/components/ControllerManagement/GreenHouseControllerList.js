@@ -50,12 +50,12 @@ class GreenHouseControllerList extends Component {
 
     render() {
         const { classes,controllerList,buttonDelete,buttonEdit,buttonCreate } = this.props;
-
+        console.log(controllerList)
         return (
             <div>
                 {this.state.mss}
                 <h5>รายชื่อคอนโทรลเลอร์ที่อยู่ในโรงเรือน</h5>
-                <Button color="primary" size="sm" onClick={() => buttonCreate()}>เพิ่ม</Button>
+                <Button color="primary" size="sm" onClick={() => buttonCreate(this.props.greenHouseId)}>เพิ่ม</Button>
                 <Paper className={classes.root}>
                 <Table className={classes.table}>
                     <TableHead>
@@ -64,6 +64,9 @@ class GreenHouseControllerList extends Component {
                             <CustomTableCell numeric>GreenHouseId</CustomTableCell>
                             <CustomTableCell numeric>IP</CustomTableCell>
                             <CustomTableCell numeric>Mac Address</CustomTableCell>
+                            <CustomTableCell numeric>ปั๊มน้ำ</CustomTableCell>
+                            <CustomTableCell numeric>ปั๊มปุ๋ย</CustomTableCell>
+                            <CustomTableCell numeric>ปั๊มความชื้น</CustomTableCell>
                             <CustomTableCell numeric>จัดการคอนโทรลเลอร์</CustomTableCell>
                         </TableRow>
                     </TableHead>
@@ -75,6 +78,9 @@ class GreenHouseControllerList extends Component {
                                 <CustomTableCell numeric>{e.greenHouseId}</CustomTableCell>
                                 <CustomTableCell numeric>{e.ip}</CustomTableCell>
                                 <CustomTableCell numeric>{e.mac_address}</CustomTableCell>
+                                <CustomTableCell numeric>{e.pumpType.water?"มี":"ไม่มี"}</CustomTableCell>
+                                <CustomTableCell numeric>{e.pumpType.fertilizer?"มี":"ไม่มี"}</CustomTableCell>
+                                <CustomTableCell numeric>{e.pumpType.moisture?"มี":"ไม่มี"}</CustomTableCell>
                                 <CustomTableCell numeric>
                                     <Button color="secondary" size="sm" onClick={() => buttonEdit(e)}>แก้ไข</Button>{"  "}
                                     <Button color="danger" size="sm" onClick={() => buttonDelete(e.mac_address)}>ลบ</Button> 

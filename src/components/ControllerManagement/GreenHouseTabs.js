@@ -88,6 +88,7 @@ class GreenHouseTabs extends Component {
             value === index && 
             <TabContainer>
               <GreenHouseControllerList controllerList={gController.data}
+                greenHouseId={e.greenHouseId}
                 buttonCreate={this.handleNew} 
                 buttonDelete={this.handleDelete}
                 buttonEdit={this.handleEdit}/>
@@ -113,8 +114,8 @@ class GreenHouseTabs extends Component {
     })
   }
 
-  handleNew = () => {
-    this.setState({ modalTitle: 'เพิ่ม' ,controllerData: [] })
+  handleNew = (greenHouseId) => {
+    this.setState({ modalTitle: 'เพิ่ม' ,controllerData: {farmId:123456789 , greenHouseId: greenHouseId} })
     this.toggle();
   }
 

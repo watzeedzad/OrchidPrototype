@@ -30,7 +30,7 @@ export default class EditController {
             water = req.body.water=='0'||req.body.water==true?true:false;
             fertilizer = req.body.fertilizer=='0'||req.body.fertilizer==true?true:false;
         }
-        
+        console.log(moisture+" "+water+" "+fertilizer)
         await editControllerData(name,isHavePump, moisture, water, fertilizer,macAddress);
 
         if(editControllerData){
