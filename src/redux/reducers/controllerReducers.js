@@ -4,6 +4,7 @@ const initialState = {
     gController: { data: null, isLoading: true, isRejected: false },
     deleteController: { data: null, isLoading: true, isRejected: false },
     editController: { data: null, isLoading: true, isRejected: false },
+    dropdownController: { data: null, isLoading: true, isRejected: false },
 
 }
 export default (state = initialState, action) => {
@@ -25,6 +26,13 @@ export default (state = initialState, action) => {
             return {...state, editController: {data: action.payload, isLoading:false ,isRejected:false}}
         case 'EDIT_CONTROLLER_REJECTED' :
             return {...state, editController: {data: action.payload, isLoading:false ,isRejected:true}}
+
+        case 'LOAD_DROPDOWNCONTROLLER_PENDING':
+            return { ...state, dropdownController: { data: null, isLoading: true, isRejected: false } }
+        case 'LOAD_DROPDOWNCONTROLLER_SUCCESS':
+            return { ...state, dropdownController: { data: action.payload, isLoading: false, isRejected: false } }
+        case 'LOAD_DROPDOWNCONTROLLER_REJECTED':
+            return { ...state, dropdownController: { data: action.payload, isLoading: false, isRejected: true } }
 
         default:
             return state

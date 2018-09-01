@@ -1,6 +1,8 @@
 import React, { Component } from 'react'
 import { Button, ModalBody, ModalFooter } from 'reactstrap';
 import { Field, reduxForm } from 'redux-form';
+import { connect } from 'react-redux'
+import { getDropdownController } from '../../redux/actions/controllerActions'
 
 import renderField from '../../Utils/renderField'
 
@@ -43,7 +45,11 @@ class ControllerForm extends Component {
 
     componentDidMount() {
         //เรียกใช้ฟังก์ชันในการกำหนด value ให้กับ textbox และ control ต่างๆ
+        if(!this.props.data._id){
+            this.props.dispatch(getDropdownController({ farmId: 123456789 }))
+        }
         this.handleInitialize()
+        
     }
 
     //กำหนดค่า value ให้กับ textbox หรือ control ต่างๆ ในฟอร์ม
@@ -55,7 +61,6 @@ class ControllerForm extends Component {
             "farmId": this.props.data.farmId,
             "greenHouseId": this.props.data.greenHouseId,
             "name": '',
-            "isHavePump": '1',
         };
 
         if (this.props.data._id) {
@@ -78,7 +83,12 @@ class ControllerForm extends Component {
 
     render() {
         //redux-form จะมี props ที่ชื่อ handleSubmit เพื่อใช้ submit ค่า
-        const { handleSubmit } = this.props
+        const { handleSubmit,dropdownController } = this.props
+
+
+        if (dropdownController.isLoading) {
+            return <div>Loading...</div>
+        }
         
         const pumpType = this.state.checked
             ?  <div className="form-group row">
@@ -134,7 +144,12 @@ class ControllerForm extends Component {
                     <div className="col-sm-9">
                         <div className="form-check form-check-inline">
                             <select name="mac_address">
-                                <option value="12:48:AF:87:FD:58">12:48:AF:87:FD:58</option>
+                                {dropdownController.data
+                                ? <option value="">ไม่มีคอนโทรลเลอร์ในระบบ</option>
+                                : dropdownController.data.map((e)=>{
+                                <option value={e.mac_address}>{e.mac_address}</option>
+                                })}
+                                
                             </select>
                         </div>
                     </div>
@@ -217,6 +232,10 @@ const form = reduxForm({
     validate
 })
 
-//สังเกตุว่าไม่มีการใช้ connect เลยเพราะเราไม่ได้เป็นตัวจัดการ data โดยตรง
-//แต่ส่งสิ่งต่างผ่าน props ที่ได้จาก src/pages/User.js
-export default form(ControllerForm)
+function mapStateToProps(state) {
+    return {
+        dropdownController: state.controllerReducers.dropdownController,
+    }
+  }
+
+export default connect(mapStateToProps)(form(ControllerForm))
