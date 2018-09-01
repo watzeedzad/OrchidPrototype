@@ -46,8 +46,8 @@ export default class showAllProjectController {
             for (let j = 0; j < greenHouse.length; j++) {
                 if (projectControllerData2.projectId === greenHouse[j][0].projectId) {
                     console.log('1');
-                    break;
                     greenHouse[j].push(projectControllerData2);
+                    break;
                 } else if (j === greenHouse.length - 1) {
                     let project = [];
                     project.push(projectControllerData2);
