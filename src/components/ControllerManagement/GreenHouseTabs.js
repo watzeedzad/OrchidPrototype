@@ -52,7 +52,7 @@ class GreenHouseTabs extends Component {
   render() {
     const { classes,gController } = this.props;
     const { value } = this.state;
-    console.log(this.props.gController.data)
+    console.log("controller :"+this.props.gController.data)
     if (gController.isRejected) {
       return <div className="alert alert-danger">Error: {gController.data}</div>
     }
@@ -87,7 +87,7 @@ class GreenHouseTabs extends Component {
           return (
             value === index && 
             <TabContainer>
-              <GreenHouseControllerList controllerList={gController.data}
+              <GreenHouseControllerList controllerList={e}
                 greenHouseId={e.greenHouseId}
                 buttonCreate={this.handleNew} 
                 buttonDelete={this.handleDelete}

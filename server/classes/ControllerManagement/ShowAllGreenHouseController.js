@@ -34,7 +34,29 @@ export default class ShowAllGreenHouseController {
             });
             return;
         }
-        res.json(showGreenHouseControllerData);
+
+        showGreenHouseControllerData.sort(function(a, b){return a.greenHouseId - b.greenHouseId});
+
+        let farm = [];
+        let greenHouse = [];
+        greenHouse.push(showGreenHouseControllerData[0]);
+        farm.push(greenHouse);
+        for (let i = 1; i < showGreenHouseControllerData.lenghth; i++) {
+            let controllerData = showGreenHouseControllerData[i];
+            for (let j = 0; j < farm.length; j++) {
+                if (controllerData.greenHouseId === farm[j][0].greenHouseId) {
+                    farm[j].push(controllerData);
+                    break;
+                } else if (j === farm.length - 1) {
+                    let greenHouse = [];
+                    greenHouse.push(controllerData);
+                    farm.push(greenHouse);
+                    break;
+                }
+            }
+        }
+
+        res.json(farm);
     }
 
 }

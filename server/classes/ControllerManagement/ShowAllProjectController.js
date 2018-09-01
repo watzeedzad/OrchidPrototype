@@ -36,27 +36,26 @@ export default class showAllProjectController {
             return;
         }
 
-        showProjectControllerData.sort(compareByProjectId(showProjectControllerData.projectId, showProjectControllerData.projectId));
+        showProjectControllerData.sort(function(a, b){return a.projectId - b.projectId});
 
         let greenHouse = [];
         let project = [];
         project.push(showProjectControllerData[0]);
-        for (let i = 0; i < showProjectControllerData.lenghth; i++) {
-            let projectControllerData2 = showProjectControllerData[i];
+        greenHouse.pugh(project)
+        for (let i = 1; i < showProjectControllerData.lenghth; i++) {
+            let controllerData = showProjectControllerData[i];
             for (let j = 0; j < greenHouse.length; j++) {
-                if (projectControllerData2.projectId === greenHouse[j][0].projectId) {
-                    console.log('1');
-                    greenHouse[j].push(projectControllerData2);
+                if (controllerData.projectId === greenHouse[j][0].projectId) {
+                    greenHouse[j].push(controllerData);
                     break;
                 } else if (j === greenHouse.length - 1) {
                     let project = [];
-                    project.push(projectControllerData2);
+                    project.push(controllerData);
                     greenHouse.push(project);
                     break;
                 }
             }
         }
-        console.log(greenHouse);
 
         res.json(greenHouse);
     }
@@ -78,14 +77,4 @@ async function getProjectControllerData(farmId, controllerType) {
             showProjectControllerData = result;
         }
     });
-}
-
-function compareByProjectId(a, b) {
-    if (a < b) {
-        return -1;
-    } else if (a > b) {
-        return 1;
-    } else {
-        return 0;
-    }
 }
