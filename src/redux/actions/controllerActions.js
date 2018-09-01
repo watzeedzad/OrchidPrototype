@@ -34,7 +34,7 @@ export const getGreenHouseController = ({farmId}) => {
 export const deleteController = (values)=>{
     return (dispatch)=>{
         return axios({
-            method:'post',
+            method:'delete',
             url:`${BASE_URL}/controllerManagement/deleteController`,
             data: values,
             headers:{'Content-type': 'application/json'},
