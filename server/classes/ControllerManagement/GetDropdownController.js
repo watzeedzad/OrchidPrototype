@@ -42,9 +42,8 @@ export default class GetDropdownController {
 async function getNotAssignControllerData(farmId) {
     await knowController.find({
         farmId: farmId,
-        greenHouseId: {
-            $ne: null
-        }
+        greenHouseId: null
+        
     }, (err, result) => {
         if (err) {
             controllerNotAssignData = undefined;

@@ -3,6 +3,7 @@ import ShowAllGreenHouseController from "../classes/ControllerManagement/ShowAll
 import ShowAllProjectController from "../classes/ControllerManagement/ShowAllProjectController";
 import DeleteController from "../classes/ControllerManagement/DeleteController";
 import EditController from "../classes/ControllerManagement/EditController";
+import GetDropdownController from '../classes/ControllerManagement/GetDropdownController';
 
 const express = require("express");
 const router = express.Router();
@@ -89,4 +90,25 @@ router.use("/editController",(req,res,next)=>{
 router.post("/editController",(req,res)=>{
     new EditController(req,res);
 });
+
+
+//GetDropdownController
+router.use("/getDropdownController",(req,res,next)=>{
+
+    res.setHeader("Access-Control-Allow-Origin",origin_url);
+    res.setHeader(
+        "Access-Control-Allow-Headers",
+        "X-Requested-With,content-type"
+    );
+    res.set("Content-Type","application/json");
+    next();
+});
+
+router.post("/getDropdownController",(req,res)=>{
+    new GetDropdownController(req,res);
+});
+
+
+
+
 module.exports = router;
