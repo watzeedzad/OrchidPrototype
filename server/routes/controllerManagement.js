@@ -68,7 +68,7 @@ router.use("/deleteController",(req,res,next)=>{
     next();
 });
 
-router.delete("/deleteController",(req,res)=>{
+router.post("/deleteController",(req,res)=>{
     new DeleteController(req,res);
 });
 

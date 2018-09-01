@@ -17,7 +17,7 @@ export default class showAllProjectController {
         }
 
         let farmId = req.body.farmId;
-        let controllerType = req.body.controllerType;
+        let grenHouseId = req.body.grenHouseId;
 
         if (typeof farmId === "undefined") {
             res.json({
@@ -27,7 +27,7 @@ export default class showAllProjectController {
             return;
         }
 
-        await getProjectControllerData(farmId, controllerType);
+        await getProjectControllerData(farmId, grenHouseId);
         if (typeof showProjectControllerData === "undefined") {
             res.json({
                 status: 500,
@@ -62,10 +62,11 @@ export default class showAllProjectController {
 
 }
 
-async function getProjectControllerData(farmId, controllerType) {
+async function getProjectControllerData(farmId, grenHouseId) {
     await knowController.find({
         farmId: farmId,
-        controllerType: controllerType
+        grenHouseId: grenHouseId,
+        projectId: {$ne: null}
     }, (err, result) => {
         if (err) {
             projectControllerData = undefined;

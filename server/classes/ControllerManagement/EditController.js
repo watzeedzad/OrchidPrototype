@@ -12,9 +12,9 @@ export default class EditController {
         // let ip = req.body.ip;
         let macAddress = req.body.mac_address;
         let name = req.body.name;
-        // let projectId = req.body.projectId;
-        // let greenHouseId = req.body.greenHouseId;
-        // let farmId = req.body.farmId;
+        let projectId = req.body.projectId;
+        let greenHouseId = req.body.greenHouseId;
+        let farmId = req.body.farmId;
         
         let isHavePump = req.body.isHavePump=='0'?true:false;
         let moisture;
@@ -31,7 +31,7 @@ export default class EditController {
             fertilizer = req.body.fertilizer=='0'||req.body.fertilizer==true?true:false;
         }
         console.log(moisture+" "+water+" "+fertilizer)
-        await editControllerData(name,isHavePump, moisture, water, fertilizer,macAddress);
+        await editControllerData(farmId,greenHouseId,projectId,name,isHavePump, moisture, water, fertilizer,macAddress);
 
         if(editControllerData){
             res.sendStatus(200);
@@ -41,7 +41,7 @@ export default class EditController {
     }
 }
 
-async function editControllerData(name,isHavePump, moisture, water, fertilizer,macAddress) {
+async function editControllerData(farmId,greenHouseId,projectId,name,isHavePump, moisture, water, fertilizer,macAddress) {
     knowController.findOneAndUpdate({
             //ip: ip,
             macAddress: macAddress,
@@ -49,9 +49,9 @@ async function editControllerData(name,isHavePump, moisture, water, fertilizer,m
         }, {
             $set: {
                 name: name,
-                // projectId: projectId,
-                // greenHouseId: greenHouseId,
-                // farmId: farmId,
+                projectId: projectId,
+                greenHouseId: greenHouseId,
+                farmId: farmId,
                 pumpType: {
                     moisture: moisture,
                     water: water,
