@@ -42,7 +42,7 @@ export default class showAllProjectController {
         let project = [];
         project.push(showProjectControllerData[0]);
         greenHouse.pugh(project)
-        for (let i = 1; i < showProjectControllerData.lenghth; i++) {
+        for (let i = 1; i < showProjectControllerData.length; i++) {
             let controllerData = showProjectControllerData[i];
             for (let j = 0; j < greenHouse.length; j++) {
                 if (controllerData.projectId === greenHouse[j][0].projectId) {
@@ -56,7 +56,7 @@ export default class showAllProjectController {
                 }
             }
         }
-
+        
         res.json(greenHouse);
     }
 

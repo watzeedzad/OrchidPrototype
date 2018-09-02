@@ -33,14 +33,14 @@ export default class ShowAllGreenHouseController {
             });
             return;
         }
-
+       
         showGreenHouseControllerData.sort(function(a, b){return a.greenHouseId - b.greenHouseId});
-
         let farm = [];
         let greenHouse = [];
         greenHouse.push(showGreenHouseControllerData[0]);
         farm.push(greenHouse);
-        for (let i = 1; i < showGreenHouseControllerData.lenghth; i++) {
+ 
+        for (let i = 1; i < showGreenHouseControllerData.length; i++) {
             let controllerData = showGreenHouseControllerData[i];
             for (let j = 0; j < farm.length; j++) {
                 if (controllerData.greenHouseId === farm[j][0].greenHouseId) {
@@ -54,7 +54,6 @@ export default class ShowAllGreenHouseController {
                 }
             }
         }
-        console.log(farm)
         res.json(farm);
     }
 
