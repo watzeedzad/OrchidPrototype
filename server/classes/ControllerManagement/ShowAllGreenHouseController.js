@@ -17,7 +17,6 @@ export default class ShowAllGreenHouseController {
             return;
         }
         let farmId = req.body.farmId;
-        let controllerType = req.body.controllerType;
 
         if (typeof farmId === "undefined") {
             res.json({
@@ -26,7 +25,7 @@ export default class ShowAllGreenHouseController {
             });
             return;
         }
-        await getGreenHouseControllerData(farmId,controllerType);
+        await getGreenHouseControllerData(farmId);
         if (typeof showGreenHouseControllerData === "undefined") {
             res.json({
                 status: 500,
@@ -34,17 +33,39 @@ export default class ShowAllGreenHouseController {
             });
             return;
         }
-        res.json(showGreenHouseControllerData);
+
+        showGreenHouseControllerData.sort(function(a, b){return a.greenHouseId - b.greenHouseId});
+
+        let farm = [];
+        let greenHouse = [];
+        greenHouse.push(showGreenHouseControllerData[0]);
+        farm.push(greenHouse);
+        for (let i = 1; i < showGreenHouseControllerData.lenghth; i++) {
+            let controllerData = showGreenHouseControllerData[i];
+            for (let j = 0; j < farm.length; j++) {
+                if (controllerData.greenHouseId === farm[j][0].greenHouseId) {
+                    farm[j].push(controllerData);
+                    break;
+                } else if (j === farm.length - 1) {
+                    let greenHouse = [];
+                    greenHouse.push(controllerData);
+                    farm.push(greenHouse);
+                    break;
+                }
+            }
+        }
+
+        res.json(farm);
     }
 
 }
 
 
 
-async function getGreenHouseControllerData(farmId,controllerType) {
+async function getGreenHouseControllerData(farmId) {
     await knowController.find({
         farmId: farmId,
-        controllerType:controllerType
+        greenHouseId: {$ne: null}
     }, (err, result) => {
         if (err) {
             showGreenHouseControllerData = undefined;

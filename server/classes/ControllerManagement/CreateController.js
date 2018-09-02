@@ -12,15 +12,7 @@ export default class CreateController {
     let ip = req.body.ip;
     let macAddress = req.body.mac_address;
     let name = req.body.name;
-    let projectId = req.body.projectId;
-    let greenHouseId = req.body.greenHouseId;
-    let farmId = req.body.farmId;
-    let controllerType = req.body.controllerType;
-    let isHavePump = req.body.isHavePump;
-    let moisture;
-    let water;
-    let fertilizer;
-
+   
     if (isHavePump === false) {
       moisture = false;
       water = false;
@@ -94,22 +86,14 @@ export default class CreateController {
 async function findAndUpdateController(
   ip,
   macAddress,
-  name,
-  projectId,
-  greenHouseId,
-  farmId,
-  controllerType,
-  moisture,
-  water,
-  fertilizer,
-  isHavePump,
   piMacAddress
 ) {
   know_controller.findOneAndUpdate(
     {
       ip: ip,
       macAddress: macAddress,
-      piMacAddress: piMacAddress
+      piMacAddress: piMacAddress,
+      projectId:null
     },
     {
       $set: {

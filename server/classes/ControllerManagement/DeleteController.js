@@ -1,5 +1,5 @@
 const mongoose = require("mongoose");
-const knowcontroller = mongoose.model("know_controller");
+const knowController = mongoose.model("know_controller");
 
 let deleteControllerResult;
 
@@ -12,7 +12,7 @@ export default class CreateController {
 
         let macAddress = req.body.macAddress;
 
-        await findAndDeleteController(ip, macAddress, piMacAddress);
+        await findAndDeleteController(macAddress);
         if (deleteControllerResult) {
             res.sendStatus(200);
         } else {
@@ -22,7 +22,7 @@ export default class CreateController {
 }
 
 async function findAndDeleteController(macAddress) {
-    knowcontroller.findOneAndRemove({
+    knowController.findOneAndRemove({
             macAddress: macAddress,
         },
         function (err, doc) {

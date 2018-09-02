@@ -16,8 +16,8 @@ export default class showAllProjectController {
             return;
         }
 
-        let framId = req.body.farmId;
-        let controllerType = req.body.controllerType;
+        let farmId = req.body.farmId;
+        let grenHouseId = req.body.grenHouseId;
 
         if (typeof farmId === "undefined") {
             res.json({
@@ -27,7 +27,7 @@ export default class showAllProjectController {
             return;
         }
 
-        await getProjectControllerData(farmId, controllerType);
+        await getProjectControllerData(farmId, grenHouseId);
         if (typeof showProjectControllerData === "undefined") {
             res.json({
                 status: 500,
@@ -35,15 +35,38 @@ export default class showAllProjectController {
             });
             return;
         }
-        res.json(showProjectControllerData);
+
+        showProjectControllerData.sort(function(a, b){return a.projectId - b.projectId});
+
+        let greenHouse = [];
+        let project = [];
+        project.push(showProjectControllerData[0]);
+        greenHouse.pugh(project)
+        for (let i = 1; i < showProjectControllerData.lenghth; i++) {
+            let controllerData = showProjectControllerData[i];
+            for (let j = 0; j < greenHouse.length; j++) {
+                if (controllerData.projectId === greenHouse[j][0].projectId) {
+                    greenHouse[j].push(controllerData);
+                    break;
+                } else if (j === greenHouse.length - 1) {
+                    let project = [];
+                    project.push(controllerData);
+                    greenHouse.push(project);
+                    break;
+                }
+            }
+        }
+
+        res.json(greenHouse);
     }
 
 }
 
-async function getProjectControllerData(farmId, controllerType) {
+async function getProjectControllerData(farmId, grenHouseId) {
     await knowController.find({
         farmId: farmId,
-        controllerType: controllerType
+        grenHouseId: grenHouseId,
+        projectId: {$ne: null}
     }, (err, result) => {
         if (err) {
             projectControllerData = undefined;
