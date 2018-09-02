@@ -14,10 +14,10 @@
 #define RE_IN_PIN3 16
 #define RE_IN_PIN4 27
 #define MOISTURE_PIN 39
-#define KNOB_PIN 36
+#define KNOB_PIN 34
 #define LISTEN_PORT 80
 
-const char *SSID = "Pi_dhcp";
+const char *SSID = "aisfibre_2.4G";
 const char *SSID_PASSWORD = "molena01";
 
 aREST rest = aREST();
@@ -40,13 +40,14 @@ Task checkWaterLitreTask(500, TASK_FOREVER, &checkWaterLitre);
 Task checkFertilizerLitreTask(500, TASK_FOREVER, &checkFertilizerLitre);
 
 // String sensorData;
-int inputLitre;
+int waterInputLitre;
+int fertilizerInputLitre;
 int moisture = 0;
 int moisturePercent = 0;
 int fertility = 0;
-int fertilityPercent = 0 uint16_t lux;
+int fertilityPercent = 0;
+uint16_t lux;
 float humidity, temperature;
-int fertilityKnobValue;
 
 byte waterFlowSensorInterrupt = 19;
 byte waterFlowSensorPin = 19;
@@ -74,21 +75,20 @@ void setup(void)
 {
         Serial.begin(115200);
 
-        pinMode(MOISTURE_PIN, INPUT);
         pinMode(RE_IN_PIN1, OUTPUT);
         pinMode(RE_IN_PIN2, OUTPUT);
         pinMode(RE_IN_PIN3, OUTPUT);
         pinMode(RE_IN_PIN4, OUTPUT);
-        pinMode(KNOB_PIN, OUTPUT);
 
+        pinMode(MOISTURE_PIN, INPUT);
+        pinMode(KNOB_PIN, INPUT);
         pinMode(fertilizerFlowSensorPin, INPUT);
         pinMode(waterFlowSensorPin, INPUT);
-        digitalWrite(waterFlowSensorPin, HIGH);
 
-        digitalWrite(RE_IN_PIN1, HIGH);
-        digitalWrite(RE_IN_PIN2, HIGH);
-        digitalWrite(RE_IN_PIN3, HIGH);
-        digitalWrite(RE_IN_PIN4, HIGH);
+        digitalWrite(RE_IN_PIN1, 1);
+        digitalWrite(RE_IN_PIN2, 1);
+        digitalWrite(RE_IN_PIN3, 1);
+        digitalWrite(RE_IN_PIN4, 1);
 
         waterPulseCount = 0;
         waterFlowRate = 0.0;
@@ -198,12 +198,12 @@ void loop(void)
         Serial.printf("Moisture Raw : %d \n", moisture);
         Serial.printf("Fertility Knob Raw : %d \n", fertility);
         moisturePercent = convertToPercent(moisture);
-        fertilityKnobPercent = convertFertilityToPercent(fertility);
+        fertilityPercent = convertFertilityToPercent(fertility);
 
         humidityStats.add(humidity);
         temperatureStats.add(temperature);
         moistureStats.add(moisturePercent);
-        fertilityStats.add(fertilityKnobPercent);
+        fertilityStats.add(fertilityPercent);
         ambientLightStats.add(lux);
 
         // sensorData = String(makeJSON(temperature, humidity, fertility, moisturePercent));
@@ -212,7 +212,7 @@ void loop(void)
         Serial.printf("Temperature : %2f \n", temperature);
         Serial.printf("Humidity : %2f \n", humidity);
         Serial.printf("Moisture : %d \n", moisturePercent);
-        Serial.printf("Fertilizer : %d \n", fertilityKnobPercent);
+        Serial.printf("Fertilizer : %d \n", fertilityPercent);
         Serial.printf("Light : %d \n", lux);
         Serial.println("-----------------DATA-----------------");
 
@@ -349,7 +349,7 @@ void sendData()
 
 void checkWaterLitre()
 {
-        if (waterFlowTotalMilliLitres > (inputLitre * 1000))
+        if (waterFlowTotalMilliLitres > waterInputLitre)
         {
                 Serial.println("true");
                 digitalWrite(RE_IN_PIN1, 1);
@@ -363,7 +363,7 @@ void checkWaterLitre()
 
 void checkFertilizerLitre()
 {
-        if (fertilizerFlowMilliLitres > (inputLitre * 1000))
+        if (fertilizerFlowTotalMilliLitres > fertilizerInputLitre)
         {
                 Serial.println("true");
                 digitalWrite(RE_IN_PIN2, 1);
@@ -398,7 +398,8 @@ int moisturePumpControl(String command)
 
 int manualWaterPump(String inputLitre)
 {
-        inputLitre = inputLitre.toInt();
+        waterInputLitre = inputLitre.toInt();
+        waterInputLitre = waterInputLitre * 1000;
         waterFlowMilliLitres = 0;
         waterFlowTotalMilliLitres = 0;
         digitalWrite(RE_IN_PIN1, 0);
@@ -408,7 +409,8 @@ int manualWaterPump(String inputLitre)
 
 int manualFertilizerPump(String inputLitre)
 {
-        int litre = inputLitre.toInt();
+        fertilizerInputLitre = inputLitre.toInt();
+        fertilizerInputLitre = fertilizerInputLitre * 1000;
         fertilizerFlowMilliLitres = 0;
         fertilizerFlowTotalMilliLitres = 0;
         digitalWrite(RE_IN_PIN2, 0);
