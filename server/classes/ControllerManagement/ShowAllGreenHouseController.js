@@ -54,7 +54,7 @@ export default class ShowAllGreenHouseController {
                 }
             }
         }
-
+        console.log(farm)
         res.json(farm);
     }
 
@@ -65,7 +65,8 @@ export default class ShowAllGreenHouseController {
 async function getGreenHouseControllerData(farmId) {
     await knowController.find({
         farmId: farmId,
-        greenHouseId: {$ne: null}
+        greenHouseId: {$ne: null},
+        projectId: null
     }, (err, result) => {
         if (err) {
             showGreenHouseControllerData = undefined;

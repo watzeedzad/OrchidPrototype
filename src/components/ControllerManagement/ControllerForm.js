@@ -3,7 +3,8 @@ import { Button, ModalBody, ModalFooter } from 'reactstrap';
 import { Field, reduxForm } from 'redux-form';
 import { connect } from 'react-redux'
 import { getDropdownController } from '../../redux/actions/controllerActions'
-
+import DropdownList from 'react-widgets/lib/DropdownList'
+import 'react-widgets/dist/css/react-widgets.css'
 import renderField from '../../Utils/renderField'
 
 class ControllerForm extends Component {
@@ -11,7 +12,13 @@ class ControllerForm extends Component {
     constructor() {
         super();
     
-        this.state = { checked: false,water:false,fertilizer:false,moisture:false };
+        this.state = {
+            checked: false,
+            water:false,
+            fertilizer:false,
+            moisture:false,
+            selectedOption: "", 
+        };
         this.handleChange = this.handleChange.bind(this);
         this.handleWaterChange = this.handleWaterChange.bind(this);
         this.handleFertilizerChange = this.handleFertilizerChange.bind(this);
@@ -60,7 +67,13 @@ class ControllerForm extends Component {
             //"mac_address": "0",
             "farmId": this.props.data.farmId,
             "greenHouseId": this.props.data.greenHouseId,
+            "projectId": this.props.data.projectId,
             "name": '',
+            "isHavePump": false,
+            "water": false,
+            "fertilizer": false,
+            "moisture": false,
+            "mac_address": null
         };
 
         if (this.props.data._id) {
@@ -74,8 +87,13 @@ class ControllerForm extends Component {
             initData = {
                 "farmId": data.farmId,
                 "greenHouseId": data.greenHouseId,
+                "projectId": data.projectId,
                 "name": data.name,
                 "isHavePump": data.isHavePump,
+                "water": data.pumpType.water,
+                "fertilizer": data.pumpType.fertilizer,
+                "moisture": data.pumpType.moisture,
+                "mac_address": data.mac_address
             }
         }
         this.props.initialize(initData);
@@ -84,9 +102,9 @@ class ControllerForm extends Component {
     render() {
         //redux-form จะมี props ที่ชื่อ handleSubmit เพื่อใช้ submit ค่า
         const { handleSubmit,dropdownController } = this.props
+        console.log(dropdownController.data)
 
-
-        if (dropdownController.isLoading) {
+        if (!this.props.data._id && dropdownController.isLoading) {
             return <div>Loading...</div>
         }
         
@@ -138,20 +156,35 @@ class ControllerForm extends Component {
                     </div>
                 : null
 
+        let options = [];
+        if(dropdownController.data == null || dropdownController.data.errorMessage){
+            options = [{ value: '', mac: 'ไม่มีคอนโทรลเลอร์ในระบบ' }]
+        }else{
+            options.push({value: '', mac: 'กรุณาเลือกคอนโทรลเลอร์'})
+            for (let index = 0; index < dropdownController.data.length; index++) {
+                const element = {value:dropdownController.data[index].mac_address , mac:dropdownController.data[index].mac_address};
+                options.push(element)
+            }
+        }
+        
+        const renderDropdownList = ({ input, data, valueField, textField }) =>
+            <DropdownList {...input}
+            data={data}
+            valueField={valueField}
+            textField={textField}
+            onChange={input.onChange} />
+
         const mac_address = this.props.data._id==null
             ?   <div className="form-group row">
                     <label className="col-sm-3 col-form-label">Mac Address</label>
                     <div className="col-sm-9">
-                        <div className="form-check form-check-inline">
-                            <select name="mac_address">
-                                {dropdownController.data
-                                ? <option value="">ไม่มีคอนโทรลเลอร์ในระบบ</option>
-                                : dropdownController.data.map((e)=>{
-                                <option value={e.mac_address}>{e.mac_address}</option>
-                                })}
-                                
-                            </select>
-                        </div>
+                        <Field 
+                            name="mac_address"
+                            component={renderDropdownList}
+                            data={options}
+                            valueField="value"
+                            textField="mac"
+                        />
                     </div>
                 </div>
             :  <Field name="mac_address" component={renderField} type="text" label="Mac Address" readOnly/>    
@@ -222,6 +255,11 @@ function validate(values) {
     if (!values.name) {
         errors.name = 'จำเป็นต้องกรอกชื่อคอนโทรลเลอร์';
     }
+    // else if(values.mac_address == ""){
+    //     errors.mac_address = 'จำเป็นต้องเลือกคอนโทรลเลอร์';
+    // }else if(values.isHavePump == "0" && values.water == "1" && values.fertilizer == "1" && values.moisture =="1"){
+    //     errors.isHavePump = 'จำเป็นต้องเลือกประเภทของปั๊มที่มี'
+    // }
 
     return errors;
 }

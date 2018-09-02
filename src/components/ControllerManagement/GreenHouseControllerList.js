@@ -50,7 +50,6 @@ class GreenHouseControllerList extends Component {
 
     render() {
         const { classes,controllerList,buttonDelete,buttonEdit,buttonCreate } = this.props;
-        console.log(controllerList)
         return (
             <div>
                 {this.state.mss}
