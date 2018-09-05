@@ -17,7 +17,7 @@
 #define KNOB_PIN 34
 #define LISTEN_PORT 80
 
-const char *SSID = "aisfibre_2.4G";
+const char *SSID = "Pi_dhcp";
 const char *SSID_PASSWORD = "molena01";
 
 aREST rest = aREST();
@@ -65,11 +65,11 @@ unsigned long fertilizerFlowTotalMilliLitres;
 unsigned long waterFlowOldTime;
 unsigned long fertilizerFlowOldTime;
 
-IPAddress ip(192, 168, 1, 12);
-IPAddress subnet(255, 255, 255, 0);
-IPAddress gateway(192, 168, 1, 2);
-IPAddress primaryDns(8, 8, 8, 8);
-IPAddress secondaryDns(8, 8, 4, 4);
+// IPAddress ip(192, 168, 1, 12);
+// IPAddress subnet(255, 255, 255, 0);
+// IPAddress gateway(192, 168, 1, 2);
+// IPAddress primaryDns(8, 8, 8, 8);
+// IPAddress secondaryDns(8, 8, 4, 4);
 
 void setup(void)
 {
@@ -110,8 +110,8 @@ void setup(void)
         rest.set_id("10000001");
         rest.set_name("esp32");
 
-        WiFi.mode(WIFI_STA);
-        WiFi.config(ip, gateway, subnet, primaryDns, secondaryDns);
+        // WiFi.mode(WIFI_STA);
+        // WiFi.config(ip, gateway, subnet, primaryDns, secondaryDns);
         WiFi.begin(SSID, SSID_PASSWORD);
 
         while (WiFi.status() != WL_CONNECTED)
@@ -141,6 +141,11 @@ void setup(void)
 
 void loop(void)
 {
+        while (WiFi.status() != WL_CONNECTED)
+        {
+                delay(500);
+                return;
+        }
         Serial.println("enter loop");
         WiFiClient client = server.available();
         if (client && client.available())

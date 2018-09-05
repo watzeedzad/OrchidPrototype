@@ -10,7 +10,7 @@ const cors = require("cors");
 const ipfilter = require("express-ipfilter").IpFilter;
 require("dotenv").config();
 
-var ips = ["127.0.0.1", "::1", "192.168.1.12"];
+var ips = ["127.0.0.1", "::1", "192.168.1.12", "192.168.1.15"];
 temperatureCheckStatus = 0;
 soilMoistureCheckStatus = 0;
 fertilityCheckStatus = 0;
@@ -67,6 +67,7 @@ const fertilizerControl = require("./routes/fertilizerControl");
 const controllerManagement = require("./routes/controllerManagement");
 const monitoringAndAnalyze = require("./routes/monitoringAndAnalyze");
 const lightControl = require("./routes/lightControl");
+const dynamicControllerHandle = require("./routes/dynamicControllerHandle");
 
 const app = express();
 
@@ -115,6 +116,7 @@ app.use("/fertilizerControl", fertilizerControl);
 app.use("/controllerManagement", controllerManagement);
 app.use("/monitoringAndAnalyze", monitoringAndAnalyze);
 app.use("/lightControl", lightControl);
+app.use("/dynamicControllerHandle", dynamicControllerHandle);
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
