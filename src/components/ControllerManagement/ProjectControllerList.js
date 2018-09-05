@@ -42,13 +42,13 @@ class GreenHouseControllerList extends Component {
         return (
             <div>
                 <h5>รายชื่อคอนโทรลเลอร์ที่อยู่ในโรงเรือน</h5>
-                <Button color="primary" size="sm" onClick={() => buttonCreate(this.props.greenHouseId,null)}>เพิ่ม</Button>
+                <Button color="primary" size="sm" onClick={() => buttonCreate(this.props.greenHouseId,this.props.projectId)}>เพิ่ม</Button>
                 <Paper className={classes.root}>
                 <Table className={classes.table}>
                     <TableHead>
                         <TableRow>
                             <CustomTableCell>Controller Name</CustomTableCell>
-                            <CustomTableCell numeric>GreenHouseId</CustomTableCell>
+                            <CustomTableCell numeric>Project Id</CustomTableCell>
                             <CustomTableCell numeric>IP</CustomTableCell>
                             <CustomTableCell numeric>Mac Address</CustomTableCell>
                             <CustomTableCell numeric>ปั๊มน้ำ</CustomTableCell>
@@ -62,7 +62,7 @@ class GreenHouseControllerList extends Component {
                         return (
                             <TableRow className={classes.row} key={e.id}>
                                 <CustomTableCell component="th" scope="row">{e.name}</CustomTableCell>
-                                <CustomTableCell numeric>{e.greenHouseId}</CustomTableCell>
+                                <CustomTableCell numeric>{e.projectId}</CustomTableCell>
                                 <CustomTableCell numeric>{e.ip}</CustomTableCell>
                                 <CustomTableCell numeric>{e.mac_address}</CustomTableCell>
                                 <CustomTableCell numeric>{e.pumpType.water?"มี":"ไม่มี"}</CustomTableCell>
