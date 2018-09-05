@@ -10,13 +10,18 @@ export default class EditController {
 
     async operation(req, res) {
         // let ip = req.body.ip;
-        let macAddress = req.body.mac_address;
+        let macAddress
+        if(req.body.mac_address.value){
+            macAddress = req.body.mac_address.value
+        }else{
+            macAddress = req.body.mac_address
+        }
         let name = req.body.name;
         let projectId = req.body.projectId;
         let greenHouseId = req.body.greenHouseId;
         let farmId = req.body.farmId;
         
-        let isHavePump = req.body.isHavePump=='0'?true:false;
+        let isHavePump = req.body.isHavePump=='0'||req.body.isHavePump==true?true:false;
         let moisture;
         let water;
         let fertilizer;
@@ -26,11 +31,13 @@ export default class EditController {
             water = false;
             fertilizer = false;
         } else {
-            moisture = req.body.moisture=='0'||req.body.moisture==true?true:false;
-            water = req.body.water=='0'||req.body.water==true?true:false;
-            fertilizer = req.body.fertilizer=='0'||req.body.fertilizer==true?true:false;
+            moisture = req.body.moisture==='0'||req.body.moisture===true?true:false;
+            water = req.body.water==='0'||req.body.water===true?true:false;
+            fertilizer = req.body.fertilizer==='0'||req.body.fertilizer===true?true:false;
         }
-        console.log(moisture+" "+water+" "+fertilizer)
+        console.log("isHavePump:"+isHavePump)      
+        console.log(req.body.water+" "+req.body.fertilizer+" "+req.body.moisture)
+        console.log(water+" "+fertilizer+" "+moisture)
         await editControllerData(farmId,greenHouseId,projectId,name,isHavePump, moisture, water, fertilizer,macAddress);
 
         if(editControllerData){
@@ -44,7 +51,7 @@ export default class EditController {
 async function editControllerData(farmId,greenHouseId,projectId,name,isHavePump, moisture, water, fertilizer,macAddress) {
     knowController.findOneAndUpdate({
             //ip: ip,
-            macAddress: macAddress,
+            mac_address: macAddress,
             //piMacAddress: piMacAddress
         }, {
             $set: {

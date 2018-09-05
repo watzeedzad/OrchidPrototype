@@ -28,7 +28,7 @@ export default class GetDropdownController {
 
         await getNotAssignControllerData(farmId);
 
-        if (typeof showProjectControllerData === "undefined") {
+        if (typeof controllerNotAssignData === "undefined") {
             res.json({
                 status: 500,
                 errorMessage: "เกิดข้อผิดพลาดไม่มีข้อมูล Controller"

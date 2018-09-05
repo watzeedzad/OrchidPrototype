@@ -88,7 +88,7 @@ class GreenHouseTabs extends Component {
             value === index && 
             <TabContainer>
               <GreenHouseControllerList controllerList={e}
-                greenHouseId={e.greenHouseId}
+                greenHouseId={e[0].greenHouseId}
                 buttonCreate={this.handleNew} 
                 buttonDelete={this.handleDelete}
                 buttonEdit={this.handleEdit}/>
