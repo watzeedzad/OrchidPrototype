@@ -18,19 +18,28 @@ export default class Handler {
             res.sendStatus(500);
             return;
         }
-        await getFarmData(piMacAddress);
+        let newFormatPiMacAddress;
+        console.log("[Handler] ipPoolData : " + ipPoolData);
+        console.log("[Handler] piMacAddress : " + piMacAddress);
+        let splitChar = piMacAddress[2];
+        newFormatPiMacAddress = (piMacAddress.split(splitChar)).toString();
+        newFormatPiMacAddress = newFormatPiMacAddress.toLowerCase();
+        console.log("[Handler] newFormatPiMacAddress : " + newFormatPiMacAddress);
+        await getFarmData(newFormatPiMacAddress);
         if (typeof farmDataResult === "undefined") {
             res.sendStatus(500);
             return;
         }
         for (let index = 0; index < ipPoolData.length; index++) {
-            let indexData = String(ipPoolData[index]);
+            console.log("[Handler] ipPoolData.length : " + ipPoolData.length);
+            let indexData = ipPoolData[index];
+            console.log("[Handler] indexData : " + indexData);
             indexData = indexData.split(" ");
             let ip = indexData[1];
             let macAddress = indexData[2];
-            await findExistController(macAddress, piMacAddress, farmDataResult.farmId);
+            await findExistController(macAddress, newFormatPiMacAddress, farmDataResult.farmId);
             if (typeof knowControllerDataResult == "undefined") {
-                insertKnowController(ip, piMacAddress, macAddress, farmDataResult.farmId);
+                insertKnowController(ip, newFormatPiMacAddress, macAddress, farmDataResult.farmId);
             } else {
                 if (knowControllerDataResult.ip == ip) {
                     return;
@@ -64,7 +73,7 @@ async function insertKnowController(ip, macAddress, piMacAddress, farmId) {
 
 async function findExistController(macAddress, piMacAddress, farmId) {
     await knowController.findOne({
-        macAddress: macAddress,
+        mac_address: macAddress,
         piMacAddress: piMacAddress,
         // farmId: farmId
     }, (err, result) => {
@@ -98,10 +107,14 @@ async function getFarmData(piMacAddress) {
     });
 }
 
-async function updateExistController(id, ip, oldData) {
-    oldData.ip = ip;
-    knowController.findByIdAndUpdate(id, oldData, {
-        new: true
+async function updateExistController(macAddress, piMacAddress, ip) {
+    knowController.findByIdAndUpdate({
+        mac_address: macAddress,
+        piMacAddress: piMacAddress
+    }, {
+        $set: {
+            ip: ip
+        }
     }, function (err, result) {
         if (err) {
             updateExistControllerResult = undefined;
