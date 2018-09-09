@@ -108,7 +108,7 @@ async function getFarmData(piMacAddress) {
 }
 
 async function updateExistController(macAddress, piMacAddress, ip) {
-    knowController.findByIdAndUpdate({
+    knowController.findOneAndUpdate({
         mac_address: macAddress,
         piMacAddress: piMacAddress
     }, {
