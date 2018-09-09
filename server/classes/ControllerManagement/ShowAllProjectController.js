@@ -17,21 +17,21 @@ export default class showAllProjectController {
         }
 
         let farmId = req.body.farmId;
-        let grenHouseId = req.body.grenHouseId;
+        let greenHouseId = req.body.greenHouseId;
 
         if (typeof farmId === "undefined") {
             res.json({
                 status: 500,
-                errorMessage: "เกิดข้อผิดพลาดในการเเสดงข้อมูลProject Controllerทั้งหมด"
+                errorMessage: "เกิดข้อผิดพลาดในการเเสดงข้อมูล Project Controller ทั้งหมด"
             });
             return;
         }
 
-        await getProjectControllerData(farmId, grenHouseId);
+        await getProjectControllerData(farmId, greenHouseId);
         if (typeof showProjectControllerData === "undefined") {
             res.json({
                 status: 500,
-                errorMessage: "เกิดข้อผิดพลาดไม่มีข้อมูลProject Controller"
+                errorMessage: "เกิดข้อผิดพลาดไม่มีข้อมูล Project Controller"
             });
             return;
         }
@@ -62,10 +62,10 @@ export default class showAllProjectController {
 
 }
 
-async function getProjectControllerData(farmId, grenHouseId) {
+async function getProjectControllerData(farmId, greenHouseId) {
     await knowController.find({
         farmId: farmId,
-        grenHouseId: grenHouseId,
+        greenHouseId: greenHouseId,
         projectId: {$ne: null}
     }, (err, result) => {
         if (err) {

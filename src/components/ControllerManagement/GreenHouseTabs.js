@@ -11,6 +11,7 @@ import GreenHouseControllerList from './GreenHouseControllerList';
 import { UncontrolledAlert, Modal, ModalHeader } from 'reactstrap';
 import { confirmModalDialog } from '../../Utils/reactConfirmModalDialog'
 import ControllerForm from './ControllerForm'
+import ProjectTabs from './ProjectTabs';
 
 function TabContainer(props) {
   return (
@@ -52,7 +53,7 @@ class GreenHouseTabs extends Component {
   render() {
     const { classes,gController } = this.props;
     const { value } = this.state;
-    console.log("controller :"+this.props.gController.data)
+    
     if (gController.isRejected) {
       return <div className="alert alert-danger">Error: {gController.data}</div>
     }
@@ -93,6 +94,11 @@ class GreenHouseTabs extends Component {
                 buttonDelete={this.handleDelete}
                 buttonEdit={this.handleEdit}/>
               <br/><br/><hr/>
+              <ProjectTabs farmId = {123456789}
+                greenHouseId={e[0].greenHouseId}
+                buttonCreate={this.handleNew} 
+                buttonDelete={this.handleDelete}
+                buttonEdit={this.handleEdit}/>
             </TabContainer>
           )
         })}
@@ -114,8 +120,8 @@ class GreenHouseTabs extends Component {
     })
   }
 
-  handleNew = (greenHouseId) => {
-    this.setState({ modalTitle: 'เพิ่ม' ,controllerData: {farmId:123456789 , greenHouseId: greenHouseId} })
+  handleNew = (greenHouseId,projectId) => {
+    this.setState({ modalTitle: 'เพิ่ม' ,controllerData: {farmId:123456789 , greenHouseId: greenHouseId, projectId: projectId} })
     this.toggle();
   }
 
