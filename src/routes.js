@@ -7,6 +7,7 @@ import WaterControl from './pages/WaterControl'
 import FertilizerControl from './pages/FertilizerControl';
 import LightControl from './pages/LightControl';
 import ControllerManagement from './pages/ControllerManagement'
+import UserManagement from './pages/UserManagement'
 
 const routes = [{
     path: '/',
@@ -20,6 +21,7 @@ const routes = [{
         { path: 'fertilizerControl', component:FertilizerControl},
         { path: 'lightControl', component:LightControl},
         { path: 'controllerManagement', component:ControllerManagement},
+        { path: 'userManagement', component:UserManagement},
     ]
 }]
 

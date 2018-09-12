@@ -6,9 +6,10 @@ import { reducer as formReducer } from 'redux-form'
 import weatherReducers from './weatherReducers'
 import planterReducers from './planterReducers'
 import waterReducers from './waterReducers'
-import fertilizerReducers from './fertilizerReducers';
+import fertilizerReducers from './fertilizerReducers'
 import lightReducers from './lightReducers'
 import controllerReducers from './controllerReducers'
+import userReducers from './UserReducers'
 
 
 const rootReducers = combineReducers({
@@ -18,6 +19,7 @@ const rootReducers = combineReducers({
     waterReducers,
     fertilizerReducers,
     lightReducers,
-    controllerReducers
+    controllerReducers,
+    userReducers
 })
 export default rootReducers

@@ -68,6 +68,7 @@ const controllerManagement = require("./routes/controllerManagement");
 const monitoringAndAnalyze = require("./routes/monitoringAndAnalyze");
 const lightControl = require("./routes/lightControl");
 const dynamicControllerHandle = require("./routes/dynamicControllerHandle");
+const user = require("./routes/user");
 
 const app = express();
 
@@ -117,6 +118,7 @@ app.use("/controllerManagement", controllerManagement);
 app.use("/monitoringAndAnalyze", monitoringAndAnalyze);
 app.use("/lightControl", lightControl);
 app.use("/dynamicControllerHandle", dynamicControllerHandle);
+app.use("/user", user);
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {

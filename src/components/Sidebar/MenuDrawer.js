@@ -39,6 +39,12 @@ function MenuDrawer(props) {
         // </div>
 
         <MenuList>
+            <Link to="/userManagement">
+               <ListItem button> 
+                    จัดการผู้ใช้ 
+               </ListItem>
+            </Link>
+
             <Link to="/weatherControl">
                <ListItem button> 
                     สภาพอากาศ  
