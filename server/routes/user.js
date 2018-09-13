@@ -60,6 +60,8 @@ router.use("/showUser", (req, res, next) => {
     next();
 });
 
-router.post('showUser',(req,res)=>{
+router.post('/showUser',(req,res)=>{
     new ShowUser(req,res);
 })
+
+module.exports = router;

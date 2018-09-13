@@ -57,7 +57,6 @@ require("./models/light_duration");
 
 //load routes
 const sensorRoutes = require("./routes/sensorRoutes");
-const index = require("./routes/index");
 const greenHouseRoutes = require("./routes/greenHouseRoutes");
 const temperatureControl = require("./routes/temperatureControl");
 const planterAnalyze = require("./routes/planterAnalyze");
@@ -71,10 +70,6 @@ const dynamicControllerHandle = require("./routes/dynamicControllerHandle");
 const user = require("./routes/user");
 
 const app = express();
-
-// view engine setup
-app.set("views", path.join(__dirname, "views"));
-app.set("view engine", "pug");
 
 // uncomment after placing your favicon in /public
 //app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')));
@@ -106,7 +101,6 @@ app.use(ipfilter(ips, {
 }));
 
 //use Routes
-app.use("/", index);
 app.use("/sensorRoutes", sensorRoutes);
 app.use("/greenHouse", greenHouseRoutes);
 app.use("/temperatureControl", temperatureControl);
@@ -135,7 +129,7 @@ app.use(function (err, req, res, next) {
 
   // render the error page
   res.status(err.status || 500);
-  res.render("error");
+  res.send("404: File Not Found");
 });
 
 module.exports = app;
