@@ -13,6 +13,8 @@ export default class AddUser {
         let userId = req.body.userId;
         let farmId = req.body.farmId;
         let role = req.body.role;
+        let firstName = req.body.firstName;
+        let lastName = req.body.lastName;
         let userName = req.body.userName;
         let password = req.body.password;
 
@@ -31,6 +33,8 @@ async function addUser(userId, farmId, role, userName, password) {
         userId: userId,
         farmId: farmId,
         role: role,
+        firstName: firstName,
+        lastName:lastName,
         userName: userName,
         password: password
 

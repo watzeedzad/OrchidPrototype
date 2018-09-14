@@ -28,7 +28,8 @@ export default class showAllProjectController {
         }
 
         await getProjectControllerData(farmId, greenHouseId);
-        if (typeof showProjectControllerData === "undefined") {
+
+        if (showProjectControllerData.length == 0) {
             res.json({
                 status: 500,
                 errorMessage: "เกิดข้อผิดพลาดไม่มีข้อมูล Project Controller"
@@ -41,7 +42,7 @@ export default class showAllProjectController {
         let greenHouse = [];
         let project = [];
         project.push(showProjectControllerData[0]);
-        greenHouse.pugh(project)
+        greenHouse.push(project)
         for (let i = 1; i < showProjectControllerData.length; i++) {
             let controllerData = showProjectControllerData[i];
             for (let j = 0; j < greenHouse.length; j++) {

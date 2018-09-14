@@ -69,7 +69,8 @@ class UserForm extends Component {
                             </div>
                         </div>
                     </div>
-                    <Field name="name" component={renderField} type="text" label="ชื่อ-สกุล" autoFocus />
+                    <Field name="firstname" component={renderField} type="text" label="ชื่อ" autoFocus />
+                    <Field name="lastname" component={renderField} type="text" label="สกุล" autoFocus />
                     <Field name="username" component={renderField} type="text" label="Username" />
                     <Field name="password" component={renderField} type="password" label="Password" />
                 </ModalBody>

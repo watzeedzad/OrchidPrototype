@@ -26,7 +26,7 @@ export default class ShowAllGreenHouseController {
             return;
         }
         await getGreenHouseControllerData(farmId);
-        if (typeof showGreenHouseControllerData === "undefined") {
+        if (showGreenHouseControllerData.length == 0) {
             res.json({
                 status: 500,
                 errorMessage: "เกิดข้อผิดพลาดไม่มีข้อมูลGreenHouse Controller"
