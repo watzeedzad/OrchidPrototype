@@ -10,9 +10,9 @@ export default class DeleteUser {
     }
 
     async operation(req, res) {
-        let userId = req.body.userId;
-
-        await findAndDeleteUser(userId);
+        let id = req.body.id;
+        console.log(id)
+        await findAndDeleteUser(id);
 
         if (deleteUserResult) {
             res.sendStatus(200);
@@ -22,9 +22,9 @@ export default class DeleteUser {
     }
 }
 
-async function findAndDeleteUser(userId) {
+async function findAndDeleteUser(id) {
     user.findOneAndRemove({
-        userId: userId
+        _id: id
     }, (err, doc) => {
         if (err) {
             deleteUserResult = false;

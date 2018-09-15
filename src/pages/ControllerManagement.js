@@ -22,7 +22,7 @@ root: {
   });
   
 
-function LightControl (props) {   
+function ControllerManagement (props) {   
     const { classes } = props;
         return (
             <div className={classes.root}>
@@ -39,4 +39,4 @@ function LightControl (props) {
     
 }
 
-export default  withStyles(styles, { withTheme: true })(LightControl)
+export default  withStyles(styles, { withTheme: true })(ControllerManagement)

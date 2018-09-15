@@ -21,7 +21,7 @@ const CustomTableCell = withStyles(theme => ({
   
 const styles = theme => ({
     root: {
-      width: '100%',
+      width: '80%',
       marginTop: theme.spacing.unit * 3,
       overflowX: 'auto',
     },
@@ -40,7 +40,7 @@ class UserTable extends Component {
     render() {
         //Destructuring ค่า props ที่ส่งมาจาก  src/pages/User.js  
         const { classes, data, buttonNew, buttonEdit, buttonDelete } = this.props
-
+        console.log(data)
         return (
             <Paper className={classes.root}>
                 <Table className={classes.table}>
@@ -57,7 +57,9 @@ class UserTable extends Component {
                 </TableHead>
                 <TableBody>
                     {/* loop ข้อมูลที่ได้รับมา */}
-                    {data && data.map(e => {
+                    {data.errorMessage 
+                    ?<div className="alert alert-danger">{data.errorMessage}</div> 
+                    :data && data.map(e => {
                         return (
                             <TableRow className={classes.row} key={e.userId}>
                                 <CustomTableCell className="text-center">
@@ -67,9 +69,9 @@ class UserTable extends Component {
                                 <CustomTableCell>{e.username}</CustomTableCell>
                                 <CustomTableCell className="text-center">
                                     <Button color="secondary" size="sm"
-                                        onClick={() => buttonEdit(e.userId)}>แก้ไข</Button>{' '}
+                                        onClick={() => buttonEdit(e)}>แก้ไข</Button>{' '}
                                     <Button color="danger" size="sm"
-                                        onClick={() => buttonDelete(e.userId)}>ลบ</Button>
+                                        onClick={() => buttonDelete(e._id)}>ลบ</Button>
                                 </CustomTableCell>
                             </TableRow>
                         )

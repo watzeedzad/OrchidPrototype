@@ -4,6 +4,28 @@ import { Field, reduxForm } from 'redux-form';
 import renderField from '../../Utils/renderField'
 
 class UserForm extends Component {
+
+    constructor() {
+        super();
+    
+        this.state = {
+            role: 'เจ้าของฟาร์ม',
+        }
+        this.handleChange = this.handleChange.bind(this);
+    }
+
+    handleChange() {
+        if(this.state.role === 'เจ้าของฟาร์ม'){
+            this.setState({
+                role: 'พนักงาน'
+            })
+        }else{
+            this.setState({
+                role: 'เจ้าของฟาร์ม'
+            })
+        }
+    }
+
     componentDidMount() {
         //เรียกใช้ฟังก์ชันในการกำหนด value ให้กับ textbox และ control ต่างๆ
         this.handleInitialize()
@@ -14,8 +36,10 @@ class UserForm extends Component {
     //ต้องใช้ initialize ถ้าเป็น redux-form v.6 ต้องประกาศใช้ initialize แต่ v.7 เรียกใช้ได้เลย
     handleInitialize() {
         let initData = {
-            "user_type": "0",
-            "name": '',
+            "farmId": this.props.data.farmId,
+            "firstname": '',
+            "role": '',
+            "lastname": '',
             "username": '',
             "password": ''
         };
@@ -24,9 +48,9 @@ class UserForm extends Component {
         //ถ้าไม่มีแสดงว่าเป็นการสร้างรายการใหม่
         //ถ้ามีแสดงว่ามีการ get ข้อมูลผู้ใช้งานจึงเป็นการปรับปรุง
         if (this.props.data._id) {
+            this.setState({role:this.props.data.role})
             initData = this.props.data
             //user_type ที่รับมาเป็น init แต่value ต้องแปลงเป็น string ก่อน
-            initData.user_type = this.props.data.user_type.toString()
         }
         this.props.initialize(initData);
     }
@@ -48,29 +72,33 @@ class UserForm extends Component {
                                 <label className="form-check-label">
                                     <Field
                                         className="form-check-input"
-                                        name="user_type"
+                                        name="role"
                                         component="input"
                                         type="radio"
-                                        value='0'
+                                        value='เจ้าของฟาร์ม'
+                                        checked={this.state.role === 'เจ้าของฟาร์ม'}
+                                        onChange={this.handleChange}
                                     />{' '}
-                                    ทั่วไป
+                                    เจ้าของฟาร์ม
                                     </label>
                             </div>
                             <div className="form-check form-check-inline">
                                 <label className="form-check-label">
                                     <Field
                                         className="form-check-input"
-                                        name="user_type"
+                                        name="role"
                                         component="input"
                                         type="radio"
-                                        value="1"
-                                    />{' '}ผู้ดูแลระบบ
+                                        value="พนักงาน"
+                                        checked={this.state.role === 'พนักงาน'}
+                                        onChange={this.handleChange}
+                                    />{' '}พนักงาน
                                     </label>
                             </div>
                         </div>
                     </div>
                     <Field name="firstname" component={renderField} type="text" label="ชื่อ" autoFocus />
-                    <Field name="lastname" component={renderField} type="text" label="สกุล" autoFocus />
+                    <Field name="lastname" component={renderField} type="text" label="สกุล" />
                     <Field name="username" component={renderField} type="text" label="Username" />
                     <Field name="password" component={renderField} type="password" label="Password" />
                 </ModalBody>

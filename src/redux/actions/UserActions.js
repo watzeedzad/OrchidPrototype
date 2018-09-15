@@ -34,51 +34,79 @@ export const loadUsers = ({farmId}) => {
     }
 }
 
-//ฟังก์ชันดึงข้อมูลผู้ใช้ตาม id ที่ส่ง
-export const getUser = (id) => {
+export const searchUsers = ({farmId,term}) => {
+
+    let values = {
+        farmId: farmId,
+        term: term
+    }
+
     return (dispatch) => {
-        dispatch({ type: 'LOAD_USER_PENDING' })
-        return axios.get(`${BASE_URL}/user/${id}`, {
-            //ต้องส่ง heder ชื่อ authorization โดยส่ง token เขาไป
-            //เพื่อบอกให้ server รู้ว่าเราได้ signin ถูกต้องแล้ว
-            headers: { authorization: localStorage.getItem('token') }
+        //ก่อนดึงข้อมูลสั่ง dispatch ให้ reducer รู้ว่าก่อนเพื่อจะแสดง loading
+        dispatch({ type: 'LOAD_USERS_PENDING' })
+        return axios({
+            method: 'post',
+            url: `${BASE_URL}/user/searchUser`,
+            data: values,
+            headers: { 'Content-Type': 'application/json' },
+            withCredentials: true
+            //headers: { authorization: localStorage.getItem('token') }
         }).then(results => {
             //เมื่อข้อมูลส่งกลับมาก็สั่ง dispatch ให้ reducer รู้พร้อมส่ง payload
-            //axios จะส่งข้อมูลกลับมากับ object ชื่อ data
-            dispatch({ type: 'LOAD_USER_SUCCESS', payload: results.data })
+            //เนื่องจากเราใช้ axios แทน fetch ดังนั้นข้อมูลที่ส่งมาจะอยู่ใน object ชื่อ data
+            //ที่มี Array อยู่ข้างใน ดังนั้นนำไป data.map ได้เลยครับ
+            dispatch({ type: 'LOAD_USERS_SUCCESS', payload: results.data })
         }).catch(err => {
             //กรณี error
-            dispatch({ type: 'LOAD_USER_REJECTED', payload: err.message })
+            dispatch({ type: 'LOAD_USERS_REJECTED', payload: err.message })
         })
     }
 }
 
-//ฟังก์ชันบันทึกข้อมูลผู้ใช้ โดยเราจะเช็คว่าเป็นการเพิ่มข้อมูลใหม่ หรือปรับปรุงข้อมูล
-export const saveUser = (values) => {
-    //ถ้ามี values._id แสดงว่าเป็นการบันทึกการปรับปรุงข้อมูลจึงต้องส่ง method put
-    //put จะไป match กับ route ฝั่ง server คือ app.put('/users/:id', requireAuth, users.update)
-    //แต่ถ้าไม่ใช่ให้ส่ง method post เพื่อเพิ่มข้อมูลใหม่
-    //post จะไป match กับ route ฝั่ง server คือ app.post('/users', requireAuth, users.create)
-    let _id = ''
-    let _method = 'post'
-    if (values._id) {
-        _id = values._id
-        _method = 'put'
-    }
+//ฟังก์ชันบันทึกข้อมูลผู้ใช้ 
+export const addUser = (values) => {
 
     return (dispatch) => {
         //รูปแบบการใช้ axios อีกรูปแบบในการจะบุ method ที่ต้องการ
         //ต้องส่ง heder ชื่อ authorization โดยส่ง token เขาไปด้วยครับ
         return axios({
-            method: _method,
-            url: `${BASE_URL}/users/${_id}`,
+            method:'post',
+            url:`${BASE_URL}/user/addUser`,
             data: values,
-            headers: { authorization: localStorage.getItem('token') }
+            headers:{'Content-type': 'application/json'},
+            withCredentials: true
         }).then(results => {
             //เมื่อข้อมูลส่งกลับมาต้องเช็คสถานะก่อนว่า username ซ้ำหรือไม่
             //โดยserver จะส่ง object ที่ชื่อว่า status และ message กลับมา
-            if (results.data.status) {
-                dispatch({ type: 'SAVE_USER_REJECTED', payload: results.data.message })
+            if (results.data.errorMessage) {
+                dispatch({ type: 'SAVE_USER_REJECTED', payload: results.data.errorMessage })
+            } else {
+                dispatch({ type: 'SAVE_USER_SUCCESS' })
+            }
+        }).catch(err => {
+            //กรณี error
+            dispatch({ type: 'SAVE_USER_REJECTED', payload: err.message })
+        })
+    }
+}
+
+//ฟังก์ชั่นแก้ไขข้อมูลผู้ใช้
+export const editUser = (values) => {
+
+    return (dispatch) => {
+        //รูปแบบการใช้ axios อีกรูปแบบในการจะบุ method ที่ต้องการ
+        //ต้องส่ง heder ชื่อ authorization โดยส่ง token เขาไปด้วยครับ
+        return axios({
+            method:'post',
+            url:`${BASE_URL}/user/editUser`,
+            data: values,
+            headers:{'Content-type': 'application/json'},
+            withCredentials: true
+        }).then(results => {
+            //เมื่อข้อมูลส่งกลับมาต้องเช็คสถานะก่อนว่า username ซ้ำหรือไม่
+            //โดยserver จะส่ง object ที่ชื่อว่า status และ message กลับมา
+            if (results.data.errorMessage) {
+                dispatch({ type: 'SAVE_USER_REJECTED', payload: results.data.errorMessage })
             } else {
                 dispatch({ type: 'SAVE_USER_SUCCESS' })
             }
@@ -90,11 +118,14 @@ export const saveUser = (values) => {
 }
 
 //ฟังก์ชันลบข้อมูลผู้ใช้ตาม id ที่ส่งเข้ามา
-export const deleteUser = (id) => {
+export const deleteUser = (value) => {
     return (dispatch) => {
-        return axios.delete(`${BASE_URL}/users/${id}`, {
-            //ต้องส่ง heder ชื่อ authorization โดยส่ง token เขาไปด้วยครับ
-            headers: { authorization: localStorage.getItem('token') }
+        return axios({
+            method:'post',
+            url:`${BASE_URL}/user/deleteUser`,
+            data: value,
+            headers:{'Content-type': 'application/json'},
+            withCredentials: true
         }).then(results => {
             //ลบข้อมูลสำเร็จ
             dispatch({ type: 'DELETE_USER_SUCCESS' })

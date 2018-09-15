@@ -10,10 +10,13 @@ export default class EditUser{
     }
 
     async operation(req,res){
-        let firstName = req.body.firstName;
-        let lastName = req.body.lastName;
+        let id = req.body._id;
+        let role = req.body.role
+        let firstname = req.body.firstname;
+        let lastname = req.body.lastname;
+        let username = req.body.username;
 
-        await editUserData(firstName,lastName);
+        await editUserData(id,firstname,lastname,username,role);
 
         if(editUserResult){
             res.sendStatus(200);
@@ -23,13 +26,15 @@ export default class EditUser{
     }
 } 
 
-async function editUserData(userId){
+async function editUserData(id,firstname,lastname,username,role){
     user.findOneAndUpdate({
-        userId:userId
+        _id:id
     },{
         $set:{
-            firstName:firstName,
-            lastName:lastName
+            firstname:firstname,
+            lastname:lastname,
+            username:username,
+            role:role
         }
     },(err,doc)=>{
         if(err){

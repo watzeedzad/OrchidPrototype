@@ -13,12 +13,12 @@ export default class AddUser {
         let userId = req.body.userId;
         let farmId = req.body.farmId;
         let role = req.body.role;
-        let firstName = req.body.firstName;
-        let lastName = req.body.lastName;
-        let userName = req.body.userName;
+        let firstname = req.body.firstname;
+        let lastname = req.body.lastname;
+        let username = req.body.username;
         let password = req.body.password;
 
-        await addUser(userId, farmId, role, userName, password);
+        await addUser(userId, farmId, firstname, lastname, role, username, password);
         if (addUserResult) {
             res.sendStatus(200);
         } else {
@@ -27,28 +27,28 @@ export default class AddUser {
     }
 }
 
-async function addUser(userId, farmId, role, userName, password) {
+async function addUser(userId, farmId, firstname, lastname, role, username, password) {
 
     let userData = new user({
         userId: userId,
         farmId: farmId,
         role: role,
-        firstName: firstName,
-        lastName:lastName,
-        userName: userName,
+        firstname: firstname,
+        lastname:lastname,
+        username: username,
         password: password
 
     });
 
     console.log(userData);
 
-    userData.save(function (err, userData) {
+    userData.save(function (err, doc) {
         if (err) {
             addUserResult = false;
             console.log('[AddUser] addUser (err):  ' + err);
-        } else if (!userData) {
+        } else if (!doc) {
             addUserResult = false;
-            console.log('[AddUser] addUser (!doc):  ' + userData);
+            console.log('[AddUser] addUser (!doc):  ' + doc);
         } else {
             addUserResult = true;
         }

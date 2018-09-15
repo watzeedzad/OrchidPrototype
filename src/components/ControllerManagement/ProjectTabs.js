@@ -20,9 +20,6 @@ class ProjectTabs extends Component {
         if (pController.isLoading) {
             return <div>Loading...</div>
         }
-        if (pController.data.errorMessage){
-            return <div className="alert alert-danger">{pController.data.errorMessage}</div>
-        }
 
         return (
             <Container>

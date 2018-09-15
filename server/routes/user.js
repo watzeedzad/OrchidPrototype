@@ -2,6 +2,7 @@ import AddUser from '../classes/UserManagement/AddUser';
 import DeleteUser from '../classes/UserManagement/DeleteUser';
 import EditUser from '../classes/UserManagement/EditUser';
 import ShowUser from '../classes/UserManagement/ShowUser';
+import SearchUser from '../classes/UserManagement/SearchUser';
 
 
 const express = require('express');
@@ -62,6 +63,20 @@ router.use("/showUser", (req, res, next) => {
 
 router.post('/showUser',(req,res)=>{
     new ShowUser(req,res);
+})
+
+router.use("/searchUser", (req, res, next) => {
+    res.setHeader('Access-Control-Allow-Origin', origin_url);
+    res.setHeader(
+        'Access-Control-Allow-Headder',
+        'X-Requested-With,content-type'
+    );
+    res.set("Content_type", "application/json");
+    next();
+});
+
+router.post('/searchUser',(req,res)=>{
+    new SearchUser(req,res);
 })
 
 module.exports = router;

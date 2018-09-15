@@ -58,7 +58,9 @@ class GreenHouseControllerList extends Component {
                         </TableRow>
                     </TableHead>
                     <TableBody>
-                        {controllerList && controllerList.map(e => {
+                        {controllerList.errorMessage
+                        ? <div className="alert alert-danger">{controllerList.errorMessage}</div>
+                        : controllerList && controllerList.map(e => {
                         return (
                             <TableRow className={classes.row} key={e.id}>
                                 <CustomTableCell component="th" scope="row">{e.name}</CustomTableCell>
@@ -73,8 +75,7 @@ class GreenHouseControllerList extends Component {
                                     <Button color="danger" size="sm" onClick={() => buttonDelete(e.mac_address)}>ลบ</Button> 
                                 </CustomTableCell>
                             </TableRow>
-                        );
-                    })}
+                        )})}
                     </TableBody>
                 </Table>
                 </Paper>
