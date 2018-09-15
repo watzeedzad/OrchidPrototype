@@ -59,9 +59,11 @@ export default class FertilityCheck {
             console.log("[FertilityCheck] enter insert relay command phase");
             if (resultCompareFertility) {
                 new InsertRelayCommand(controllerData.ip, "fertilizer", true, farmData.piMacAddress);
+                console.log("[FertilityCheck] farmData.piMacAddress: " + farmData.piMacAddress);
                 // onOffFertilizerPump(controllerData.ip, true);
             } else {
                 new InsertRelayCommand(controllerData.ip, "fertilizer", false, farmData.piMacAddress);
+                console.log("[FertilityCheck] farmData.piMacAddress: " + farmData.piMacAddress);
                 // onOffFertilizerPump(controllerData.ip, false);
             }
             req.session.fertilityCheckStatus = 200;

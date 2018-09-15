@@ -6,9 +6,8 @@ const farm = mongoose.model("farm");
 const know_controller = mongoose.model("know_controller");
 const lightDuration = mongoose.model("light_duration");
 
-let farmData;
 let configFile;
-let controllerData;
+let controllerDataResult;
 let minLightIntensity;
 let maxLightIntensity;
 let lightDurationResult;
@@ -43,8 +42,8 @@ export default class LightCheck {
     await getConfigFile(farmId);
     console.log("[LightCheck] greenHouseId_Class, " + greenHouseId);
     console.log("[LightCheck] farmId_Class, " + farmId);
-    await getControllerData(greenHouseId, farmData.farmId);
-    if (typeof controllerData === "undefined") {
+    await getControllerData(greenHouseId, farmId);
+    if (typeof controllerDataResult === "undefined") {
       req.session.lightCheckStatus = 200;
       return;
     }
@@ -52,7 +51,8 @@ export default class LightCheck {
     if (nowLightCheckDate.getHours() < 7 && nowLightCheckDate.getHours() > 18) {
       return;
     } else {
-      new InsertRelayCommand(controllerData.ip, "light", false, farmData.piMacAddress);
+      new InsertRelayCommand(controllerDataResult.ip, "light", false, piMacAddress);
+      // console.log("[LightCheck] farmDataResult.piMacAddress: " + farmDataResult.piMacAddress);
     }
     let greenHouseIndexLightIntensity = await seekGreenHouseIdIndex(
       configFile.lightIntensityConfigs,
@@ -77,20 +77,20 @@ export default class LightCheck {
     } else {
       if (!resultCompareLightIntensity) {
         new InsertRelayCommand(
-          controllerData.ip,
+          controllerDataResult.ip,
           "light",
           true,
-          farmData.piMacAddress
+          piMacAddress
         );
       } else {
         new InsertRelayCommand(
-          controllerData.ip,
+          controllerDataResult.ip,
           "light",
           false,
-          farmData.piMacAddress
+          piMacAddress
         );
       }
-      await getLastestLightDurationData(farmData.farmId, greenHouseId);
+      await getLastestLightDurationData(farmResultId, greenHouseId);
       let currentDuration;
       if (lightDurationResult.lastestResult) {
         let previousDate = new Date(lightDurationResult.timeStamp);
@@ -126,12 +126,15 @@ export default class LightCheck {
       }
     }
     if (nowLightCheckDate.getHours() > 7 && nowLightCheckDate.getHours() < 18 && !resultCompareLightIntensity && (configFile.lightVolumeConfigs[greenHouseIndexLightIntensity] > currentDuration)) {
-      new InsertRelayCommand(controllerData.ip, "light", true, farmData.piMacAddress);
+      new InsertRelayCommand(controllerDataResult.ip, "light", true, piMacAddress);
+      // console.log("[LightCheck] farmDataResult.piMacAddress: " + farmDataResult.piMacAddress);
     }
   }
 }
 
 async function getControllerData(greenHouseId, farmId) {
+  console.log("[LightCheck] getControllerData, greenHouseId: " + greenHouseId);
+  console.log("[LightCheck] getControllerData, farmid: " + farmId);
   await know_controller.findOne({
       isHaveLight: true,
       greenHouseId: greenHouseId,
@@ -139,32 +142,33 @@ async function getControllerData(greenHouseId, farmId) {
     },
     function (err, result) {
       if (err) {
-        controllerData = undefined;
+        controllerDataResult = undefined;
         console.log("[LightCheck] getControllerData (err): " + err);
       } else if (!result) {
-        controllerData = undefined;
+        controllerDataResult = undefined;
         console.log("[LightCheck] getControllerData (!result): " + result);
       } else {
-        controllerData = result;
+        controllerDataResult = result;
       }
     }
   );
 }
 
 async function getConfigFile(farmIdIn) {
-  let farmResult = await farm.findOne({
+  let farmData = await farm.findOne({
       farmId: farmIdIn
     },
     function (err, result) {
       if (err) {
-        console.log("[LightCheck] getConfigFile, fail");
+        console.log("[LightCheck] getConfigFile (err): " + err);
+      } else if (!result) {
+        console.log("[LightCheck] getConfigFile (!result): " + result);
       } else {
-        console.log("[LightCheck] getConfigFile, pass");
-        farmData = result;
+        console.log("[LightCheck] getConfigFile (result): " + result);
       }
     }
   );
-  let configFilePath = farmResult.configFilePath;
+  let configFilePath = farmData.configFilePath;
   let config = JSON.parse(fs.readFileSync(String(configFilePath), "utf8"));
   configFile = config;
 }

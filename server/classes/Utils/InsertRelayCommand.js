@@ -13,7 +13,7 @@ export default class InsertRelayCommand {
             pumpType: pumpType,
             ip: ip,
             command: command,
-            macAddress: macAddress
+            piMacAddress: macAddress
         }
         new relayQueue(relayInsertData).save(function (err) {
             if (!err) {

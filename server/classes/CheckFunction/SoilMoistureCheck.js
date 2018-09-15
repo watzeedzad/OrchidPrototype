@@ -5,7 +5,6 @@ const fs = require("fs");
 const farm = mongoose.model("farm");
 const know_controller = mongoose.model("know_controller");
 
-let farmData;
 let configFile;
 let controllerData;
 let minSoilMoisture;
@@ -61,10 +60,12 @@ export default class SoilMoistureCheck {
         } else {
             console.log("[SoilMoistureCheck] enter insert relay command phase");
             if (resultCompareSoilMoisture) {
-                new InsertRelayCommand(controllerData.ip, "moisture", true, farmData.piMacAddress);
+                new InsertRelayCommand(controllerData.ip, "moisture", true, piMacAddress);
+                console.log("[SoilMoistureCheck] farmDataResult.piMacAddress: " + piMacAddress);
                 // onOffWaterPump(controllerData.ip, true);
             } else {
-                new InsertRelayCommand(controllerData.ip, "moisture", false, farmData.piMacAddress);
+                new InsertRelayCommand(controllerData.ip, "moisture", false, piMacAddress);
+                console.log("[SoilMoistureCheck] farmDataResult.piMacAddress: " + piMacAddress);
                 // onOffWaterPump(controllerData.ip, false);
             }
             req.session.soilMoistureCheckStatus = 200
@@ -93,17 +94,20 @@ async function getControllerData(greenHouseId, piMacAddress) {
 }
 
 async function getConfigFile(farmIdIn) {
-    let farmResult = await farm.findOne({
-        farmId: farmIdIn
-    }, function (err, result) {
-        if (err) {
-            console.log("[SoilMoistureCheck] getConfigFile, fail");
-        } else {
-            console.log("[SoilMoistureCheck] getConfigFile, pass");
-            farmData = result;
+    let farmData = await farm.findOne({
+            farmId: farmIdIn
+        },
+        function (err, result) {
+            if (err) {
+                console.log("[LightCheck] getConfigFile (err): " + err);
+            } else if (!result) {
+                console.log("[LightCheck] getConfigFile (!result): " + result);
+            } else {
+                console.log("[LightCheck] getConfigFile (result): " + result);
+            }
         }
-    });
-    let configFilePath = farmResult.configFilePath;
+    );
+    let configFilePath = farmData.configFilePath;
     let config = JSON.parse(fs.readFileSync(String(configFilePath), "utf8"));
     configFile = config;
 }

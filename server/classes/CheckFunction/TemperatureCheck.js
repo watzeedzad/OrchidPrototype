@@ -5,7 +5,6 @@ const fs = require("fs");
 const farm = mongoose.model("farm");
 const know_controller = mongoose.model("know_controller");
 
-let farmData;
 let configFile;
 let controllerData;
 let minTemperature;
@@ -40,7 +39,7 @@ export default class TemperatureCheck {
         await getConfigFile(farmId);
         console.log("[TemperatureCheck] greenHouseId_Class, " + greenHouseId);
         console.log("[TemperatureCheck] farmId_Class, " + farmId);
-        await getControllerData(greenHouseId, farmData.farmId);
+        await getControllerData(greenHouseId, farmId);
         if (typeof controllerData === "undefined") {
             req.session.temperatureCheckStatus = 200;
             return;
@@ -74,15 +73,18 @@ export default class TemperatureCheck {
         } else {
             console.log("[TemperatureCheck] enter insert relay command phase");
             if (!resultCompareTemp) {
-                new InsertRelayCommand(controllerData.ip, "water", true, farmData.piMacAddress);
+                new InsertRelayCommand(controllerData.ip, "water", true, piMacAddress);
+                console.log("[TemperatureCheck] farmDataResult.piMacAddress: " + piMacAddress);
                 // onOffMoisturePump(controllerData.ip, true);
             }
             if (!resultCompareHumid) {
-                new InsertRelayCommand(controllerData.ip, "water", true, farmData.piMacAddress);
+                new InsertRelayCommand(controllerData.ip, "water", true, piMacAddress);
+                console.log("[TemperatureCheck] farmDataResult.piMacAddress: " + piMacAddress);
                 // onOffMoisturePump(controllerData.ip, true);
             }
             if (resultCompareTemp && resultCompareHumid) {
-                new InsertRelayCommand(controllerData.ip, "water", false, farmData.piMacAddress);
+                new InsertRelayCommand(controllerData.ip, "water", false, piMacAddress);
+                console.log("[TemperatureCheck] farmDataResult.piMacAddress: " + piMacAddress);
                 // onOffMoisturePump(controllerData.ip, false);
             }
             req.session.temperatureCheckStatus = 200
@@ -111,17 +113,20 @@ async function getControllerData(greenHouseId, farmId) {
 }
 
 async function getConfigFile(farmIdIn) {
-    let farmResult = await farm.findOne({
-        farmId: farmIdIn
-    }, function (err, result) {
-        if (err) {
-            console.log("[TemperatureCheck] getConfigFile, fail");
-        } else {
-            console.log("[TemperatureCheck] getConfigFile, pass");
-            farmData = result;
+    let farmData = await farm.findOne({
+            farmId: farmIdIn
+        },
+        function (err, result) {
+            if (err) {
+                console.log("[LightCheck] getConfigFile (err): " + err);
+            } else if (!result) {
+                console.log("[LightCheck] getConfigFile (!result): " + result);
+            } else {
+                console.log("[LightCheck] getConfigFile (result): " + result);
+            }
         }
-    });
-    let configFilePath = farmResult.configFilePath;
+    );
+    let configFilePath = farmData.configFilePath;
     let config = JSON.parse(fs.readFileSync(String(configFilePath), "utf8"));
     configFile = config;
 }

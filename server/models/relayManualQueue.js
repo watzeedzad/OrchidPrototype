@@ -9,7 +9,7 @@ const relayManualQueueSchema = new Schema({
     pumpType: String,
     ip: String,
     inputLitre: String,
-    macAddress: String
+    piMacAddress: String
 });
 
 relayManualQueueSchema.plugin(autoIncrement, {

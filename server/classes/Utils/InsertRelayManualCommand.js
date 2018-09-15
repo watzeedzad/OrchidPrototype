@@ -13,7 +13,7 @@ export default class InsertRelayManualCommand {
             pumpType: pumpType,
             ip: ip,
             litre: litre,
-            macAddress: macAddress
+            piMacAddress: macAddress
         }
         relayManualQueue.insert(relayInsertData);
     }
