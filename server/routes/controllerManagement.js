@@ -1,5 +1,7 @@
 import CreateController from "../classes/ControllerManagement/CreateController";
+import ShowAllGreenHouse from "../classes/ControllerManagement/ShowAllGreenHouse";
 import ShowAllGreenHouseController from "../classes/ControllerManagement/ShowAllGreenHouseController";
+import ShowAllProject from "../classes/ControllerManagement/ShowAllProject";
 import ShowAllProjectController from "../classes/ControllerManagement/ShowAllProjectController";
 import DeleteController from "../classes/ControllerManagement/DeleteController";
 import EditController from "../classes/ControllerManagement/EditController";
@@ -22,6 +24,21 @@ router.post("/createController", (req, res) => {
     new CreateController(req, res);
 });
 
+//showAllGreenHouse
+router.use("/showAllGreenHouse",(req,res,next)=>{
+
+    res.setHeader("Access-Control-Allow-Origin",origin_url);
+    res.setHeader(
+        "Access-Control-Allow-Headers",
+        "X-Requested-With,content-type"
+    );
+    res.set("Content-Type","application/json");
+    next();
+});
+
+router.post("/showAllGreenHouse",(req,res)=>{
+    new ShowAllGreenHouse(req,res);
+})
 
 //showAllGreenHouseController
 router.use("/showAllGreenHouseController",(req,res,next)=>{
@@ -37,6 +54,22 @@ router.use("/showAllGreenHouseController",(req,res,next)=>{
 
 router.post("/showAllGreenHouseController",(req,res)=>{
     new ShowAllGreenHouseController(req,res);
+})
+
+//showAllProject
+router.use("/showAllProject",(req,res,next)=>{
+
+    res.setHeader("Access-Control-Allow-Origin",origin_url);
+    res.setHeader(
+        "Access-Control-Allow-Headers",
+        "X-Requested-With,content-type"
+    );
+    res.set("Content-Type","application/json");
+    next();
+});
+
+router.post("/showAllProject",(req,res)=>{
+    new ShowAllProject(req,res);
 })
 
 

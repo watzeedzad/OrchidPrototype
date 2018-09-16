@@ -13,6 +13,6 @@ const greenHouseSchema = new Schema({
 });
 
 greenHouseSchema.plugin(autoIncrement, {
-    inc_field: "greenhouseId"
+    inc_field: "greenHouseId"
 });
 mongoose.model("greenHouse", greenHouseSchema, "greenhouse");

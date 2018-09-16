@@ -1,4 +1,6 @@
 import React, { Component } from 'react';
+import { getProjectController } from '../../redux/actions/controllerActions'
+import { connect } from 'react-redux'
 import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/core/styles';
 import Table from '@material-ui/core/Table';
@@ -37,8 +39,24 @@ const styles = theme => ({
 
 class GreenHouseControllerList extends Component {
 
+    componentDidMount() {
+        this.props.dispatch(getProjectController({
+            farmId: this.props.farmId, 
+            greenHouseId: this.props.greenHouseId, 
+            projectId: this.props.projectId 
+        }))
+    }
+
     render() {
-        const { classes,controllerList,buttonDelete,buttonEdit,buttonCreate } = this.props;
+        const { classes,pController,buttonDelete,buttonEdit,buttonCreate } = this.props;
+
+        if (pController.isRejected) {
+            return <div className="alert alert-danger">Error: {pController.data}</div>
+        }
+        if (pController.isLoading) {
+            return <div>Loading...</div>
+        }
+
         return (
             <div>
                 <h5>รายชื่อคอนโทรลเลอร์ที่อยู่ในโรงเรือน</h5>
@@ -58,9 +76,9 @@ class GreenHouseControllerList extends Component {
                         </TableRow>
                     </TableHead>
                     <TableBody>
-                        {controllerList.errorMessage
-                        ? <div className="alert alert-danger">{controllerList.errorMessage}</div>
-                        :controllerList && controllerList.map(e => {
+                        {pController.data.errorMessage
+                        ? <div className="alert alert-danger">{pController.data.errorMessage}</div>
+                        :pController.data && pController.data.map(e => {
                         return (
                             <TableRow className={classes.row} key={e.id}>
                                 <CustomTableCell component="th" scope="row">{e.name}</CustomTableCell>
@@ -85,10 +103,14 @@ class GreenHouseControllerList extends Component {
 
 }
 
-
+function mapStateToProps(state) {
+    return {
+        pController: state.controllerReducers.pController,
+    }
+}
 
 GreenHouseControllerList.propTypes = {
   classes: PropTypes.object.isRequired,
 };
 
-export default withStyles(styles)(GreenHouseControllerList);
+export default connect(mapStateToProps)(withStyles(styles)(GreenHouseControllerList));

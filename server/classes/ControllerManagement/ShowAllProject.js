@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
-const knowController = mongoose.model('know_controller');
+const project = mongoose.model('project');
 
-let showGreenHouseControllerData;
+let showProjectData;
 
 export default class ShowAllGreenHouseController {
 
@@ -10,7 +10,7 @@ export default class ShowAllGreenHouseController {
     }
 
     async process(req, res) {
-        console.log("[showGreenHouseControllerData] session id: " + req.session.id);
+        console.log("[showGreenHouse] session id: " + req.session.id);
         if (typeof req.session.farmData === "undefined" || typeof req.session.configFilePath === "undefined") {
             console.log(req.session.farmData+" / "+req.session.configFilePath)
             res.sendStatus(500);
@@ -22,42 +22,41 @@ export default class ShowAllGreenHouseController {
         if (typeof farmId === "undefined") {
             res.json({
                 status: 500,
-                errorMessage: "เกิดข้อผิดพลาดในการเเสดงข้อมูลGreenHouseControllerทั้งหมด"
+                errorMessage: "เกิดข้อผิดพลาดในการเเสดงข้อมูล Project ทั้งหมด"
             });
             return;
         }
-        await getGreenHouseControllerData(farmId,greenHouseId);
-        if (showGreenHouseControllerData.length == 0) {
+        await getProjectData(farmId,greenHouseId);
+        if (showProjectData.length == 0) {
             res.json({
                 status: 500,
-                errorMessage: "เกิดข้อผิดพลาดไม่มีข้อมูลGreenHouse Controller"
+                errorMessage: "เกิดข้อผิดพลาดไม่มีข้อมูล Project"
             });
             return;
         }
        
-        showGreenHouseControllerData.sort(function(a, b){return a.greenHouseId - b.greenHouseId});
-
-        res.json(showGreenHouseControllerData);
+        showProjectData.sort(function(a, b){return a.greenHouseId - b.greenHouseId});
+        
+        res.json(showProjectData);
     }
 
 }
 
 
 
-async function getGreenHouseControllerData(farmId,greenHouseId) {
-    await knowController.find({
+async function getProjectData(farmId,greenHouseId) {
+    await project.find({
         farmId: farmId,
-        greenHouseId: greenHouseId,
-        projectId: null
+        greenHouseId: greenHouseId
     }, (err, result) => {
         if (err) {
-            showGreenHouseControllerData = undefined;
+            showProjectData = undefined;
             console.log("[showGreenHouseControllerData] getControllerData (err):  " + err);
         } else if (!result) {
-            showGreenHouseControllerData = undefined;
+            showProjectData = undefined;
             console.log("[showGreenHouseControllerData getControllerData(!result): " + result);
         } else {
-            showGreenHouseControllerData = result;
+            showProjectData = result;
         }
     });
 }

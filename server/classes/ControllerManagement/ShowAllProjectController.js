@@ -18,6 +18,7 @@ export default class showAllProjectController {
 
         let farmId = req.body.farmId;
         let greenHouseId = req.body.greenHouseId;
+        let projectId = req.body.projectId;
 
         if (typeof farmId === "undefined") {
             res.json({
@@ -27,7 +28,7 @@ export default class showAllProjectController {
             return;
         }
 
-        await getProjectControllerData(farmId, greenHouseId);
+        await getProjectControllerData(farmId, greenHouseId, projectId);
 
         if (showProjectControllerData.length == 0) {
             res.json({
@@ -38,36 +39,17 @@ export default class showAllProjectController {
         }
 
         showProjectControllerData.sort(function(a, b){return a.projectId - b.projectId});
-
-        let greenHouse = [];
-        let project = [];
-        project.push(showProjectControllerData[0]);
-        greenHouse.push(project)
-        for (let i = 1; i < showProjectControllerData.length; i++) {
-            let controllerData = showProjectControllerData[i];
-            for (let j = 0; j < greenHouse.length; j++) {
-                if (controllerData.projectId === greenHouse[j][0].projectId) {
-                    greenHouse[j].push(controllerData);
-                    break;
-                } else if (j === greenHouse.length - 1) {
-                    let project = [];
-                    project.push(controllerData);
-                    greenHouse.push(project);
-                    break;
-                }
-            }
-        }
         
-        res.json(greenHouse);
+        res.json(showProjectControllerData);
     }
 
 }
 
-async function getProjectControllerData(farmId, greenHouseId) {
+async function getProjectControllerData(farmId, greenHouseId, projectId) {
     await knowController.find({
         farmId: farmId,
         greenHouseId: greenHouseId,
-        projectId: {$ne: null}
+        projectId: projectId
     }, (err, result) => {
         if (err) {
             projectControllerData = undefined;

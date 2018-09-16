@@ -1,12 +1,12 @@
 import React, { Component } from 'react';
 import PropTypes from "prop-types";
-import { connect } from 'react-redux'
+import { connect } from 'react-redux';
 import { withStyles } from "@material-ui/core/styles";
 import AppBar from "@material-ui/core/AppBar";
 import Tabs from "@material-ui/core/Tabs";
 import Tab from "@material-ui/core/Tab";
 import Typography from "@material-ui/core/Typography";
-import { getGreenHouseController,deleteController,editController } from '../../redux/actions/controllerActions'
+import { getGreenHouse,deleteController,editController } from '../../redux/actions/controllerActions'
 import GreenHouseControllerList from './GreenHouseControllerList';
 import { UncontrolledAlert, Modal, ModalHeader } from 'reactstrap';
 import { confirmModalDialog } from '../../Utils/reactConfirmModalDialog'
@@ -43,7 +43,7 @@ class GreenHouseTabs extends Component {
   };
 
   componentDidMount() {
-    this.props.dispatch(getGreenHouseController({ farmId: 123456789 }))
+    this.props.dispatch(getGreenHouse({ farmId: 123456789 }))
   }
 
   handleChange = (event, value) => {
@@ -51,17 +51,17 @@ class GreenHouseTabs extends Component {
   };
   
   render() {
-    const { classes,gController } = this.props;
+    const { classes,greenHouses } = this.props;
     const { value } = this.state;
     
-    if (gController.isRejected) {
-      return <div className="alert alert-danger">Error: {gController.data}</div>
+    if (greenHouses.isRejected) {
+      return <div className="alert alert-danger">Error: {greenHouses.data}</div>
     }
-    if (gController.isLoading) {
+    if (greenHouses.isLoading) {
       return <div>Loading...</div>
     }
-    if (gController.data.errorMessage){
-      return <div className="alert alert-danger">{gController.data.errorMessage}</div>
+    if (greenHouses.data.errorMessage){
+      return <div className="alert alert-danger">{greenHouses.data.errorMessage}</div>
     }
 
     return (
@@ -76,7 +76,7 @@ class GreenHouseTabs extends Component {
             indicatorColor="primary"
             textColor="primary"
           >
-            {gController.data && gController.data.map((e,index) => {
+            {greenHouses.data && greenHouses.data.map((e,index) => {
               let label = "โรงเรือนที่ "+(parseInt(index)+1)
               return (
                 <Tab label={label} index/>
@@ -84,11 +84,11 @@ class GreenHouseTabs extends Component {
             })}
           </Tabs>
         </AppBar>
-        {gController.data && gController.data.map((e,index) => {
+        {greenHouses.data && greenHouses.data.map((e,index) => {
           return (
             value === index && 
             <TabContainer>
-              <GreenHouseControllerList controllerList={e}
+              <GreenHouseControllerList farmId = {123456789}
                 greenHouseId={e[0].greenHouseId}
                 buttonCreate={this.handleNew} 
                 buttonDelete={this.handleDelete}
@@ -141,7 +141,7 @@ class GreenHouseTabs extends Component {
                   </UncontrolledAlert >
               </div>
         })
-        this.props.dispatch(getGreenHouseController({ farmId: 123456789 }))       
+        this.props.dispatch(getGreenHouse({ farmId: 123456789 }))       
     })
   }
 
@@ -161,7 +161,7 @@ class GreenHouseTabs extends Component {
                         </UncontrolledAlert >
                     </div>
               })
-              this.props.dispatch(getGreenHouseController({ farmId: 123456789 }))
+              this.props.dispatch(getGreenHouse({ farmId: 123456789 }))
             })
         }
     })
@@ -171,7 +171,7 @@ class GreenHouseTabs extends Component {
 
 function mapStateToProps(state) {
   return {
-      gController: state.controllerReducers.gController,
+    greenHouses: state.controllerReducers.greenHouses,
   }
 }
 

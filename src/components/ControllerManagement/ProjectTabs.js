@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { getProjectController } from '../../redux/actions/controllerActions'
+import { getProject } from '../../redux/actions/controllerActions'
 import { connect } from 'react-redux'
 import { Container, Row, Col } from 'reactstrap';
 import ProjectControllerList from './ProjectControllerList'
@@ -8,16 +8,18 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 class ProjectTabs extends Component {
 
     componentDidMount() {
-        this.props.dispatch(getProjectController({farmId: this.props.farmId, greenHouseId: this.props.greenHouseId }))
+        this.props.dispatch(getProject({
+            farmId: this.props.farmId, 
+            greenHouseId: this.props.greenHouseId }))
     }
 
     render() {
-        const { pController } = this.props
+        const { projects } = this.props
 
-        if (pController.isRejected) {
-            return <div className="alert alert-danger">Error: {pController.data}</div>
+        if (projects.isRejected) {
+            return <div className="alert alert-danger">Error: {projects.data}</div>
         }
-        if (pController.isLoading) {
+        if (projects.isLoading) {
             return <div>Loading...</div>
         }
 
@@ -25,11 +27,11 @@ class ProjectTabs extends Component {
             <Container>
                 <div>
                     <Row>
-                        {pController.data && pController.data.map(e => {
+                        {projects.data && projects.data.map(e => {
                             return (
                                 <Col xs='6' sm='6' md='6' lg='6' xl='6'>
-                                    <ProjectControllerList controllerList={e}
-                                        greenHouseId={e[0].greenHouseId}
+                                    <ProjectControllerList farmId={this.props.farmId}
+                                        greenHouseId={this.props.greenHouseId}
                                         projectId={e[0].projectId}
                                         buttonCreate={this.props.buttonCreate} 
                                         buttonDelete={this.props.buttonDelete}
@@ -47,7 +49,7 @@ class ProjectTabs extends Component {
 
 function mapStateToProps(state) {
     return {
-        pController: state.controllerReducers.pController,
+        projects: state.controllerReducers.projects,
     }
 }
 

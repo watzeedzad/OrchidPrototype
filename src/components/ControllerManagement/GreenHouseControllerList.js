@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
+import { connect } from 'react-redux';
 import { withStyles } from '@material-ui/core/styles';
 import Table from '@material-ui/core/Table';
 import TableBody from '@material-ui/core/TableBody';
@@ -8,6 +9,8 @@ import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
 import Paper from '@material-ui/core/Paper';
 import { Button } from 'reactstrap';
+import { getGreenHouseController } from '../../redux/actions/controllerActions'
+
 
 const CustomTableCell = withStyles(theme => ({
   head: {
@@ -37,8 +40,23 @@ const styles = theme => ({
 
 class GreenHouseControllerList extends Component {
 
+    componentDidMount() {
+        this.props.dispatch(getGreenHouseController({ 
+            farmId: this.props.farmId, 
+            greenHouseId: this.props.greenHouseId 
+        }))
+    }
+
     render() {
-        const { classes,controllerList,buttonDelete,buttonEdit,buttonCreate } = this.props;
+        const { classes,gController,buttonDelete,buttonEdit,buttonCreate } = this.props;
+
+        if (gController.isRejected) {
+            return <div className="alert alert-danger">Error: {gController.data}</div>
+        }
+        if (gController.isLoading) {
+            return <div>Loading...</div>
+        }
+        
         return (
             <div>
                 <h5>รายชื่อคอนโทรลเลอร์ที่อยู่ในโรงเรือน</h5>
@@ -58,9 +76,9 @@ class GreenHouseControllerList extends Component {
                         </TableRow>
                     </TableHead>
                     <TableBody>
-                        {controllerList.errorMessage
-                        ? <div className="alert alert-danger">{controllerList.errorMessage}</div>
-                        : controllerList && controllerList.map(e => {
+                        {gController.data.errorMessage
+                        ? <div className="alert alert-danger">{gController.data.errorMessage}</div>
+                        : gController.data && gController.data.map(e => {
                         return (
                             <TableRow className={classes.row} key={e.id}>
                                 <CustomTableCell component="th" scope="row">{e.name}</CustomTableCell>
@@ -85,10 +103,14 @@ class GreenHouseControllerList extends Component {
 
 }
 
-
+function mapStateToProps(state) {
+    return {
+        gController: state.controllerReducers.gController,
+    }
+}
 
 GreenHouseControllerList.propTypes = {
   classes: PropTypes.object.isRequired,
 };
 
-export default withStyles(styles)(GreenHouseControllerList);
+export default connect(mapStateToProps)(withStyles(styles)(GreenHouseControllerList));

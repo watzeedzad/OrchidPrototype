@@ -40,7 +40,7 @@ class UserTable extends Component {
     render() {
         //Destructuring ค่า props ที่ส่งมาจาก  src/pages/User.js  
         const { classes, data, buttonNew, buttonEdit, buttonDelete } = this.props
-        console.log(data)
+        
         return (
             <Paper className={classes.root}>
                 <Table className={classes.table}>

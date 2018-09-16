@@ -2,7 +2,9 @@
 //ซึ่งถ้าเราไม่ก�ำหนด state เริ่มต้นก็จะไม่มี object ชื่อ isRejected ให้เรียกใช้งาน
 const initialState = {
     gController: { data: null, isLoading: true, isRejected: false },
+    greenHouses: { data: null, isLoading: true, isRejected: false },
     pController: { data: null, isLoading: true, isRejected: false },
+    projects: { data: null, isLoading: true, isRejected: false },
     deleteController: { data: null, isLoading: true, isRejected: false },
     editController: { data: null, isLoading: true, isRejected: false },
     dropdownController: { data: null, isLoading: true, isRejected: false },
@@ -18,12 +20,26 @@ export default (state = initialState, action) => {
         case 'LOAD_GCONTROLLER_REJECTED':
             return { ...state, gController: { data: action.payload, isLoading: false, isRejected: true } }
 
+        case 'LOAD_GREENHOUSES_PENDING':
+            return { ...state, greenHouses: { data: null, isLoading: true, isRejected: false } }
+        case 'LOAD_GREENHOUSES_SUCCESS':
+            return { ...state, greenHouses: { data: action.payload, isLoading: false, isRejected: false } }
+        case 'LOAD_GREENHOUSES_REJECTED':
+            return { ...state, greenHouses: { data: action.payload, isLoading: false, isRejected: true } }    
+
         case 'LOAD_PCONTROLLER_PENDING':
             return { ...state, pController: { data: null, isLoading: true, isRejected: false } }
         case 'LOAD_PCONTROLLER_SUCCESS':
             return { ...state, pController: { data: action.payload, isLoading: false, isRejected: false } }
         case 'LOAD_PCONTROLLER_REJECTED':
             return { ...state, pController: { data: action.payload, isLoading: false, isRejected: true } }
+
+        case 'LOAD_PROJECTS_PENDING':
+            return { ...state, projects: { data: null, isLoading: true, isRejected: false } }
+        case 'LOAD_PROJECTS_SUCCESS':
+            return { ...state, projects: { data: action.payload, isLoading: false, isRejected: false } }
+        case 'LOAD_PROJECTS_REJECTED':
+            return { ...state, projects: { data: action.payload, isLoading: false, isRejected: true } }
 
         case 'DELETE_CONTROLLER_SUCCESS' :
             return {...state, deleteController: {data: action.payload, isLoading:false ,isRejected:false}}

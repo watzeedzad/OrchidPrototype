@@ -4,6 +4,33 @@ import config from '../../configure'
 //get ค่า url จากไฟล์ config
 const BASE_URL = config.BASE_URL
 
+export const getGreenHouse = ({farmId}) => {
+
+    let values = {
+        farmId: farmId
+    }
+    return (dispatch) => {
+        //รูปแบบการใช้ axios อีกรูปแบบในการจะบุ method ที่ต้องการ
+        //ต้องส่ง heder ชื่อ authorization โดยส่ง token เขาไปด้วยครับ
+        dispatch({ type: 'LOAD_GREENHOUSES_PENDING' })
+        return axios({
+            method: 'post',
+            url: `${BASE_URL}/controllerManagement/showAllGreenHouse`,
+            data: values,
+            headers: { 'Content-Type': 'application/json' },
+            withCredentials: true
+            //headers: { authorization: localStorage.getItem('token') }
+        }).then(result => {
+            //เมื่อข้อมูลส่งกลับมาต้องเช็คสถานะก่อนว่า code ซ�้ำหรือไม่
+            //โดยserver จะส่ง object ที่ชื่อว่า status และ message กลับมา
+            dispatch({ type: 'LOAD_GREENHOUSES_SUCCESS', payload: result.data })           
+        }).catch(err => {
+            //กรณี error         
+            dispatch({ type: 'LOAD_GREENHOUSES_REJECTED', payload: err.message })
+        })
+    }
+}
+
 export const getGreenHouseController = ({farmId}) => {
 
     let values = {
@@ -27,6 +54,34 @@ export const getGreenHouseController = ({farmId}) => {
         }).catch(err => {
             //กรณี error         
             dispatch({ type: 'LOAD_GCONTROLLER_REJECTED', payload: err.message })
+        })
+    }
+}
+
+export const getProject = ({farmId,greenHouseId}) => {
+
+    let values = {
+        farmId: farmId,
+        greenHouseId: greenHouseId
+    }
+    return (dispatch) => {
+        //รูปแบบการใช้ axios อีกรูปแบบในการจะบุ method ที่ต้องการ
+        //ต้องส่ง heder ชื่อ authorization โดยส่ง token เขาไปด้วยครับ
+        dispatch({ type: 'LOAD_PROJECTS_PENDING' })
+        return axios({
+            method: 'post',
+            url: `${BASE_URL}/controllerManagement/showAllProject`,
+            data: values,
+            headers: { 'Content-Type': 'application/json' },
+            withCredentials: true
+            //headers: { authorization: localStorage.getItem('token') }
+        }).then(result => {
+            //เมื่อข้อมูลส่งกลับมาต้องเช็คสถานะก่อนว่า code ซ�้ำหรือไม่
+            //โดยserver จะส่ง object ที่ชื่อว่า status และ message กลับมา
+            dispatch({ type: 'LOAD_PROJECTS_SUCCESS', payload: result.data })           
+        }).catch(err => {
+            //กรณี error         
+            dispatch({ type: 'LOAD_PROJECTS_REJECTED', payload: err.message })
         })
     }
 }

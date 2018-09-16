@@ -1,11 +1,11 @@
 const mongoose = require("mongoose");
+const autoIncrement = require("mongoose-sequence")(mongoose);
 
 const {
   Schema
 } = mongoose;
 
 const userSchema = new Schema({
-  userId: Number,
   farmId: Number,
   role: String,
   firstname: String,
@@ -14,4 +14,7 @@ const userSchema = new Schema({
   password: String
 });
 
+userSchema.plugin(autoIncrement, {
+  inc_field: "userId"
+});
 mongoose.model("user", userSchema, "user");
