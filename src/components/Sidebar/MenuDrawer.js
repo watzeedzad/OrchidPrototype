@@ -77,6 +77,11 @@ function MenuDrawer(props) {
                     จัดการการคอนโทรลเลอร์
                 </ListItem>
             </Link>
+            <Link to="/monitoring">
+                <ListItem button>
+                    ติดตามการเจริญเติบโต
+                </ListItem>
+            </Link>
         </MenuList>
     )
 }

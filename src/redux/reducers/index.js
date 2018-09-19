@@ -10,6 +10,7 @@ import fertilizerReducers from './fertilizerReducers'
 import lightReducers from './lightReducers'
 import controllerReducers from './controllerReducers'
 import userReducers from './UserReducers'
+import monitoringReducers from './monitoringReducers'
 
 
 const rootReducers = combineReducers({
@@ -20,6 +21,7 @@ const rootReducers = combineReducers({
     fertilizerReducers,
     lightReducers,
     controllerReducers,
-    userReducers
+    userReducers,
+    monitoringReducers
 })
 export default rootReducers

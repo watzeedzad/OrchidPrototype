@@ -38,7 +38,7 @@ class UserForm extends Component {
         let initData = {
             "farmId": this.props.data.farmId,
             "firstname": '',
-            "role": '',
+            "role": 'เจ้าของฟาร์ม',
             "lastname": '',
             "username": '',
             "password": ''

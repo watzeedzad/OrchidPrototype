@@ -7,17 +7,16 @@ const {
 
 const growthRateSchema = new Schema({
     farmId:Number,
+    greenHouseId: Number,
     projectId: Number,
-    actualRate: [{
-        count: Number,
-        trunkDiameter: Number,
-        leafWidth: Number,
-        totalLeaf: Number,
-        height: Number,
-        description: String,
-        timeStamp: Date,
-        picturePath: String
-    }]
+    count: Number,
+    trunkDiameter: Number,
+    leafWidth: Number,
+    totalLeaf: Number,
+    height: Number,
+    description: String,
+    timeStamp: Date,
+    picturePath: String
 });
 
 growthRateSchema.plugin(autoIncrement, {
