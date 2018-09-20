@@ -2,19 +2,35 @@
 //ซึ่งถ้าเราไม่กำหนด state  เริ่มต้นก็จะไม่มี object ชื่อ isRejected ให้เรียกใช้งาน
 const initialState = {
     growthRate: { data: null, isLoading: true, isRejected: false },
-    csvGrowthRate: { data: null, isLoading: true, isRejected: false },
+    farmCSV: { data: null, isLoading: true, isRejected: false },
+    greenHouseCSV: { data: null, isLoading: true, isRejected: false },
+    projectCSV: { data: null, isLoading: true, isRejected: false },
     growthRateSave: { data: null, isLoading: true, isRejected: false },
 }
 
 export default (state = initialState, action) => {
     switch (action.type) {
         //เก็บ state การดึงข้อมูลผู้ใช้ทั้งหมด
-        case 'LOAD_CSVGROWTHRATE_PENDING':
-            return { ...state, csvGrowthRate: { data: null, isLoading: true, isRejected: false } }
-        case 'LOAD_CSVGROWTHRATE_SUCCESS':
-            return { ...state, csvGrowthRate: { data: action.payload, isLoading: false, isRejected: false } }
-        case 'LOAD_CSVGROWTHRATE_REJECTED':
-            return { ...state, csvGrowthRate: { data: action.payload, isLoading: false, isRejected: true } }
+        case 'LOAD_FARMCSV_PENDING':
+            return { ...state, farmCSV: { data: null, isLoading: true, isRejected: false } }
+        case 'LOAD_FARMCSV_SUCCESS':
+            return { ...state, farmCSV: { data: action.payload, isLoading: false, isRejected: false } }
+        case 'LOAD_FARMCSV_REJECTED':
+            return { ...state, farmCSV: { data: action.payload, isLoading: false, isRejected: true } }
+
+        case 'LOAD_GREENHOUSECSV_PENDING':
+            return { ...state, greenHouseCSV: { data: null, isLoading: true, isRejected: false } }
+        case 'LOAD_GREENHOUSECSV_SUCCESS':
+            return { ...state, greenHouseCSV: { data: action.payload, isLoading: false, isRejected: false } }
+        case 'LOAD_GREENHOUSECSV_REJECTED':
+            return { ...state, greenHouseCSV: { data: action.payload, isLoading: false, isRejected: true } }
+
+        case 'LOAD_PROJECTCSV_PENDING':
+            return { ...state, projectCSV: { data: null, isLoading: true, isRejected: false } }
+        case 'LOAD_PROJECTCSV_SUCCESS':
+            return { ...state, projectCSV: { data: action.payload, isLoading: false, isRejected: false } }
+        case 'LOAD_PROJECTCSV_REJECTED':
+            return { ...state, projectCSV: { data: action.payload, isLoading: false, isRejected: true } }
 
         //เก็บ state การดึงข้อมูลผู้ใช้ตาม id ที่ส่งไป
         case 'LOAD_GROWTHRATE_PENDING':

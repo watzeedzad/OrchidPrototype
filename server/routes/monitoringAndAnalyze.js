@@ -3,6 +3,7 @@ import ShowSpecificGrowthRateGraph from "../classes/MonitoringAndAnalyze/ShowSpe
 import ShowWateringHistory from "../classes/MonitoringAndAnalyze/ShowWateringHistory";
 import ShowFertilizerHistory from "../classes/MonitoringAndAnalyze/ShowFertilizerHistory";
 import AddGrowthRate from "../classes/MonitoringAndAnalyze/AddGrowthRate";
+import LoadGrowthRateCSV from "../classes/MonitoringAndAnalyze/LoadGrowthRateCSV";
 
 
 const express = require("express");
@@ -76,6 +77,20 @@ router.use("/addGrowthRate", (req, res, next) => {
 
 router.post("/addGrowthRate", (req, res) => {
     new AddGrowthRate(req, res);
+});
+
+router.use("/loadGrowthRateCSV", (req, res, next) => {
+    res.setHeader("Access-Control-Allow-Origin", origin_url);
+    res.setHeader(
+        "Access-Control-Allow-Headers",
+        "X-Requested-With,content-type"
+    );
+    res.set("Content-Type", "application/json");
+    next();
+});
+
+router.post("/loadGrowthRateCSV", (req, res) => {
+    new LoadGrowthRateCSV(req, res);
 });
 
 module.exports = router;
