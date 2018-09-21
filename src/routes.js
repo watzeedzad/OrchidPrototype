@@ -9,11 +9,12 @@ import LightControl from './pages/LightControl';
 import ControllerManagement from './pages/ControllerManagement'
 import UserManagement from './pages/UserManagement'
 import Monitoring from './pages/Monitoring'
+import SignIn from './pages/SignIn';
 
 const routes = [{
     path: '/',
     component: App,
-    indexRoute: { component: Login },
+    indexRoute: { component: SignIn },
     childRoutes: [
         { path: 'weatherControl', component: WeatherControl },
         { path: 'planterAnalyze', component: PlanterAnalyze },

@@ -5,6 +5,9 @@ import { login } from '../redux/actions/loginActions';
 import renderField from '../Utils/renderField';
 import { Button ,FormGroup} from 'reactstrap';
 import { connect } from 'react-redux';
+import MaterialRenderTextField from '../Utils/MaterialRenderTextField';
+
+
 
 
 class Login extends Component {
@@ -17,8 +20,8 @@ class Login extends Component {
                     <form className='form-inline'>
                         <FormGroup className='mb-2 mr-sm-2 mb-sm-0'>
                         {this.renderAlert()}
-                        <td><Field name="username" component={renderField} type="text" label="Username" /></td>
-                        <td><Field name="password" component={renderField} type="password" label="Password" /></td>
+                        <td><Field name="username" component={MaterialRenderTextField} type="text" label="Username" /></td>
+                        <td><Field name="password" component={MaterialRenderTextField} type="password" label="Password" /></td>
                         <td><Button color="primary" onClick={handleSubmit(this.onSubmit)}>บันทึก</Button></td>
                         </FormGroup>
                         </form>             
