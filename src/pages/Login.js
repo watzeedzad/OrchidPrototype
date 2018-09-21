@@ -14,18 +14,14 @@ class Login extends Component {
 
         return (
             <div>
-                <table>
-                    <tr>
-                        <form className='form-inline'>
-                            <FormGroup className='mb-2 mr-sm-2 mb-sm-0'>
-                            {this.renderAlert()}
-                            <td><Field name="username" component={renderField} type="text" label="Username" /></td>
-                            <td><Field name="password" component={renderField} type="password" label="Password" /></td>
-                            <td><Button color="primary" onClick={handleSubmit(this.onSubmit)}>บันทึก</Button></td>
-                            </FormGroup>
-                        </form>
-                    </tr>
-                </table>               
+                    <form className='form-inline'>
+                        <FormGroup className='mb-2 mr-sm-2 mb-sm-0'>
+                        {this.renderAlert()}
+                        <td><Field name="username" component={renderField} type="text" label="Username" /></td>
+                        <td><Field name="password" component={renderField} type="password" label="Password" /></td>
+                        <td><Button color="primary" onClick={handleSubmit(this.onSubmit)}>บันทึก</Button></td>
+                        </FormGroup>
+                        </form>             
             </div>
         )
     }
