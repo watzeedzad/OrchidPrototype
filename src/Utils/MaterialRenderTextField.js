@@ -6,7 +6,8 @@ const MaterialRenderTextField = ({input,label,meta:{touched,error},...custom}) =
     <TextField
         label={label}
         floatingLabelText={label}
-        errorText={touched && error}
+        error={Boolean(touched && error)}
+        helperText={touched ? error : ''}
         {...input}
         {...custom}
     />
