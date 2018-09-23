@@ -10,8 +10,8 @@ class LightTab extends Component {
                 <div>
                     <Row>
                         <Col xs='12' sm='12' md='12' lg='12' xl='12'>
-                            <LightIntensity />
-                        </Col>
+                            <LightIntensity /><br/><hr/>
+                        </Col>                  
                         <Col xs='12' sm='12' md='12' lg='12' xl='12'>
                             <LightVolume />
                         </Col>

@@ -5,6 +5,34 @@ import LightVolumeGauge from './LightVolumeGauge'
 import SettingLightVolume from './SettingLightVolume'
 import { Container, Row, Col } from 'reactstrap';
 import 'bootstrap/dist/css/bootstrap.min.css';
+import CssBaseline from '@material-ui/core/CssBaseline';
+import Paper from '@material-ui/core/Paper';
+import withStyles from '@material-ui/core/styles/withStyles';
+
+const styles = theme => ({
+    layout: {
+      width: 'auto',
+      display: 'block', // Fix IE11 issue.
+      marginLeft: theme.spacing.unit * 3,
+      marginRight: theme.spacing.unit * 3,
+      [theme.breakpoints.up(1200 + theme.spacing.unit * 3 * 2)]: {
+        width: 1200,
+        marginLeft: 'auto',
+        marginRight: 'auto',
+      },
+    },
+    paper: {
+      marginTop: theme.spacing.unit * 4,
+      display: 'flex',
+      flexDirection: 'column',
+      alignItems: 'center',
+      padding: `${theme.spacing.unit * 2}px ${theme.spacing.unit * 3}px ${theme.spacing.unit * 3}px`,
+    },
+    headName:{
+      margin: theme.spacing.unit,
+    }
+  
+});
 
 class LightVolume extends Component {
 
@@ -13,7 +41,7 @@ class LightVolume extends Component {
     }
 
     render() {
-        const { volume } = this.props
+        const { classes,volume } = this.props
         const { data } = volume
 
         if (volume.isRejected) {
@@ -26,8 +54,11 @@ class LightVolume extends Component {
         var currentProgress = Math.floor((data.currentLightVolume/data.maxLightVolume)*100)
 
         return (
-            <Container>
-                <div>
+            <React.Fragment>
+            <CssBaseline />
+                <main className={classes.layout}>
+                    <Paper className={classes.paper}>
+                    <Container>
                     <Row>
                         <Col xs='6' sm='6' md='6' lg='6' xl='6'>
                             ปริมาณแสงที่ได้รับ {data.currentLightVolume} ชม./{data.maxLightVolume} ชม.
@@ -42,8 +73,10 @@ class LightVolume extends Component {
                             />
                         </Col>
                     </Row>
-                </div>
-            </Container>
+                    </Container>
+                    </Paper>
+                </main>
+            </React.Fragment>
         )
     }
 
@@ -58,4 +91,4 @@ function mapStateToProps(state) {
     }
 }
 
-export default connect(mapStateToProps)(LightVolume)
+export default connect(mapStateToProps)(withStyles(styles)(LightVolume))

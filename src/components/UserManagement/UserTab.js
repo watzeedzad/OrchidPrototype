@@ -39,7 +39,7 @@ class UserTab extends Component {
                 {this.state.mss}
                 <h4>ผู้ใช้งาน</h4>
                 <div className="form-group row">
-                    <div className="col-sm-6">
+                    <div className="col-sm-4">
                         {/* ส่ง props onSearchTermChange ให้ Component SearchBar เพื่อ filgter
                         โดยฝั่ง SearchBar จะนำไปใช้กับ event onChange */}
                         <SearchBar

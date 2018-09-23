@@ -1,9 +1,43 @@
 import React, { Component } from 'react';
 import { Field, reduxForm } from 'redux-form';
 import { saveLightIntensity } from '../../redux/actions/lightActions'
-import renderField from '../../Utils/renderField'
-import { Button, FormGroup, Form } from 'reactstrap';
+import Button from '@material-ui/core/Button';
+import CssBaseline from '@material-ui/core/CssBaseline';
+import FormControl from '@material-ui/core/FormControl';
+import Typography from '@material-ui/core/Typography';
+import withStyles from '@material-ui/core/styles/withStyles';
+import MaterialRenderTextField from '../../Utils/MaterialRenderTextField';
 
+const styles = theme => ({
+    layout: {
+      width: 'auto',
+      display: 'block', // Fix IE11 issue.
+      marginTop: theme.spacing.unit * 8,
+      marginLeft: theme.spacing.unit * 3,
+      marginRight: theme.spacing.unit * 3,
+      [theme.breakpoints.up(250 + theme.spacing.unit * 3 * 2)]: {
+        width: 250,
+        marginLeft: 'auto',
+        marginRight: 'auto',
+      },
+    },
+    avatar: {
+      margin: theme.spacing.unit,
+      backgroundColor: theme.palette.secondary.main,
+    },
+    form: {
+      width: '100%', // Fix IE11 issue.
+      marginTop: theme.spacing.unit,
+    },
+    submit: {
+      marginTop: theme.spacing.unit * 3,
+    },
+  
+    headName:{
+      margin: theme.spacing.unit,
+    }
+  
+});
 
 class SettingLightIntensity extends Component {
 
@@ -22,19 +56,33 @@ class SettingLightIntensity extends Component {
     }
 
     render() {
-        const { handleSubmit } = this.props
+        const { classes,handleSubmit } = this.props
 
         return (
-            <div>
-                <form>
-                    <FormGroup >
-                        <Field name="greenHouseId" component={renderField} type="hidden" />
-                        <Field name="minLightIntensity" component={renderField} type="number" label="ความเข้มแสงต่ำสุด" />
-                        <Field name="maxLightIntensity" component={renderField} type="number" label="ความเข้มแสงสูงสุด" />
-                        <Button color="primary" onClick={handleSubmit(this.onSubmit)}>บันทึก</Button>
-                    </FormGroup>
+            <React.Fragment>
+            <CssBaseline />
+            <main className={classes.layout}>
+                <Typography variant="headline">ตั้งค่าความเข้มแสง</Typography>
+                <form className={classes.form}>
+                  <FormControl margin="normal" required fullWidth>
+                    <Field name="minLightIntensity"  component={MaterialRenderTextField} type='number' label="ความเข้มแสงต่ำสุด" />
+                  </FormControl>
+                  <FormControl margin="normal" required fullWidth>
+                  <Field name="maxLightIntensity" component={MaterialRenderTextField} type="number" label="ความเข้มแสงสูงสุด" />
+                  </FormControl>
+                  <Button
+                    type="submit"
+                    fullWidth
+                    variant="raised"
+                    color="primary"
+                    className={classes.submit}
+                    onClick={handleSubmit(this.onSubmit)}
+                  >
+                    บันทึก
+                  </Button>
                 </form>
-            </div>
+            </main>
+          </React.Fragment>
         )
     }
 
@@ -74,4 +122,4 @@ const form = reduxForm({
     validate
 })
 
-export default form(SettingLightIntensity);
+export default withStyles(styles)(form(SettingLightIntensity));

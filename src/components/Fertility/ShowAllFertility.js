@@ -3,10 +3,38 @@ import { getAllFertility, getFertility } from '../../redux/actions/planterAction
 import { connect } from 'react-redux'
 import { Container, Row, Col } from 'reactstrap';
 import Speedometer from '../../Utils/Speedometer'
-import { Button } from 'reactstrap';
+import Button from '@material-ui/core/Button';
 import { browserHistory } from 'react-router'
 import { debounce } from 'lodash'
 import 'bootstrap/dist/css/bootstrap.min.css';
+import CssBaseline from '@material-ui/core/CssBaseline';
+import Paper from '@material-ui/core/Paper';
+import withStyles from '@material-ui/core/styles/withStyles';
+
+const styles = theme => ({
+    layout: {
+      width: 'auto',
+      display: 'block', // Fix IE11 issue.
+      marginLeft: theme.spacing.unit * 3,
+      marginRight: theme.spacing.unit * 3,
+      [theme.breakpoints.up(1200 + theme.spacing.unit * 3 * 2)]: {
+        width: 1200,
+        marginLeft: 'auto',
+        marginRight: 'auto',
+      },
+    },
+    paper: {
+      marginTop: theme.spacing.unit * 4,
+      display: 'flex',
+      flexDirection: 'column',
+      alignItems: 'center',
+      padding: `${theme.spacing.unit * 2}px ${theme.spacing.unit * 3}px ${theme.spacing.unit * 3}px`,
+    },
+    headName:{
+      margin: theme.spacing.unit,
+    },
+  
+});
 
 class ShowAllFertility extends Component {
 
@@ -15,7 +43,7 @@ class ShowAllFertility extends Component {
     }
 
     render() {
-        const { fertilitys } = this.props
+        const { classes,fertilitys } = this.props
         const { data } = fertilitys
 
         if (fertilitys.isRejected) {
@@ -26,8 +54,11 @@ class ShowAllFertility extends Component {
         }
 
         return (
-            <Container>
-                <div>
+            <React.Fragment>
+            <CssBaseline />
+                <main className={classes.layout}>
+                    <Paper className={classes.paper}>
+                    <Container>                
                     <Row>
                         {data.allFertility && data.allFertility.map(e => {
                             let projectId = e.projectId
@@ -44,16 +75,24 @@ class ShowAllFertility extends Component {
                                         minColor={"#E8B79E"}
                                         midColor={"#D98559"}
                                         maxColor={"#BE5C2A"} />
-                                    <Button color="primary" onClick={debounce(() => { this.props.dispatch(getFertility({ projectId })).then(()=>{
-                                        browserHistory.push('/fertilityControl')
-                                        }) },500)}>ตั้งค่า</Button>
+                                    <Button color="primary"
+                                        variant="raised"
+                                        fullWidth
+                                        onClick={debounce(() => 
+                                            { this.props.dispatch(getFertility({ projectId })).then(()=>{
+                                            browserHistory.push('/fertilityControl')
+                                            }) },500)}>
+                                        ตั้งค่า
+                                    </Button>
                                     <br /><hr />
                                 </Col>
                             )
                         })}
                     </Row>
-                </div>
-            </Container>
+                    </Container>
+                    </Paper>
+                </main>
+            </React.Fragment>
         )
     }
 
@@ -65,4 +104,4 @@ function mapStateToProps(state) {
     }
 }
 
-export default connect(mapStateToProps)(ShowAllFertility)
+export default connect(mapStateToProps)(withStyles(styles)(ShowAllFertility));

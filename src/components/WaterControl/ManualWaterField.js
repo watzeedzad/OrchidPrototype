@@ -1,9 +1,43 @@
 import React, { Component } from 'react';
 import { Field, reduxForm } from 'redux-form';
 import { manaulWatering } from '../../redux/actions/waterActions'
-import renderField from '../../Utils/renderField'
-import { Button, FormGroup, Form } from 'reactstrap';
+import Button from '@material-ui/core/Button';
+import CssBaseline from '@material-ui/core/CssBaseline';
+import FormControl from '@material-ui/core/FormControl';
+import Typography from '@material-ui/core/Typography';
+import withStyles from '@material-ui/core/styles/withStyles';
+import MaterialRenderTextField from '../../Utils/MaterialRenderTextField';
 
+const styles = theme => ({
+    layout: {
+      width: 'auto',
+      display: 'block', // Fix IE11 issue.
+      marginTop: theme.spacing.unit * 8,
+      marginLeft: theme.spacing.unit * 3,
+      marginRight: theme.spacing.unit * 3,
+      [theme.breakpoints.up(400 + theme.spacing.unit * 3 * 2)]: {
+        width: 300,
+        marginLeft: 'auto',
+        marginRight: 'auto',
+      },
+    },
+    avatar: {
+      margin: theme.spacing.unit,
+      backgroundColor: theme.palette.secondary.main,
+    },
+    form: {
+      width: '100%', // Fix IE11 issue.
+      marginTop: theme.spacing.unit,
+    },
+    submit: {
+      marginTop: theme.spacing.unit * 3,
+    },
+  
+    headName:{
+      margin: theme.spacing.unit,
+    }
+  
+});
 
 class ManualWaterField extends Component {
 
@@ -21,18 +55,30 @@ class ManualWaterField extends Component {
     }
 
     render() {
-        const { handleSubmit } = this.props
+        const { classes,handleSubmit } = this.props
 
         return (
-            <div>
-                <form>
-                    <FormGroup >
-                        <Field name="litre" component={renderField} type="number" label="ปริมาณน้ำที่จะให้" />
-                        <Button color="primary" onClick={handleSubmit(this.onSubmit)}>ให้น้ำทันที</Button>
-                        <Field name="greenHouseId" component={renderField} type="hidden" />
-                    </FormGroup>
+            <React.Fragment>
+            <CssBaseline />
+            <main className={classes.layout}>
+                <Typography variant="headline">กรอกปริมาณน้ำที่ต้องการให้</Typography>
+                <form className={classes.form}>
+                  <FormControl margin="normal" required fullWidth>
+                    <Field name="litre"  component={MaterialRenderTextField} type='number' label="ปริมาณน้ำที่จะให้(ลิตร)" />
+                  </FormControl>
+                  <Button
+                    type="submit"
+                    fullWidth
+                    variant="raised"
+                    color="primary"
+                    className={classes.submit}
+                    onClick={handleSubmit(this.onSubmit)}
+                  >
+                    ให้น้ำทันที
+                  </Button>
                 </form>
-            </div>
+            </main>
+          </React.Fragment>
         )
     }
 
@@ -65,4 +111,4 @@ const form = reduxForm({
     validate
 })
 
-export default form(ManualWaterField);
+export default withStyles(styles)(form(ManualWaterField));
