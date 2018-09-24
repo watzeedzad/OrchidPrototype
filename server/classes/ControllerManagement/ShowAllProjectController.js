@@ -1,7 +1,7 @@
 const mongoose = require("mongoose");
 const knowController = mongoose.model('know_controller');
 
-let showProjectControllerData;
+let showProjectControllerData = undefined;
 
 export default class showAllProjectController {
 
@@ -19,34 +19,37 @@ export default class showAllProjectController {
         let farmId = req.session.farmId;
         let greenHouseId = req.body.greenHouseId;
         let projectId = req.body.projectId;
-        console.log(farmId,greenHouseId,projectId)
-        if (typeof farmId === "undefined") {
+        console.log(farmId, greenHouseId, projectId)
+        if (typeof farmId === "undefined" || typeof greenHouseId === "undefined" || typeof projectId === "undefined") {
             res.json({
                 status: 500,
                 errorMessage: "เกิดข้อผิดพลาดในการเเสดงข้อมูล Project Controller ทั้งหมด"
             });
             return;
         }
-
         await getProjectControllerData(farmId, greenHouseId, projectId);
-        console.log("pj controller"+showProjectControllerData)
-        if (typeof showProjectControllerData ===  "undefined") {
-            res.json({
-                status: 500,
-                errorMessage: "เกิดข้อผิดพลาดในการเเสดงข้อมูล Project Controller ทั้งหมด"
-            });
-            return;
-        }else if (showProjectControllerData.length == 0) {
-            res.json({
-                status: 500,
-                errorMessage: "เกิดข้อผิดพลาดไม่มีข้อมูล Project Controller"
-            });
-            return;
-        }
+        console.log("pj controller" + showProjectControllerData)
+        setTimeout(() => {
+            if (typeof showProjectControllerData === "undefined") {
+                res.json({
+                    status: 500,
+                    errorMessage: "เกิดข้อผิดพลาดในการเเสดงข้อมูล Project Controller ทั้งหมด"
+                });
+                return;
+            } else if (showProjectControllerData.length == 0) {
+                res.json({
+                    status: 500,
+                    errorMessage: "เกิดข้อผิดพลาดไม่มีข้อมูล Project Controller"
+                });
+                return;
+            }
 
-        showProjectControllerData.sort(function(a, b){return a.projectId - b.projectId});
-        
-        res.json(showProjectControllerData);
+            showProjectControllerData.sort(function (a, b) {
+                return a.projectId - b.projectId
+            });
+
+            res.json(showProjectControllerData);
+        }, 200)
     }
 
 }
