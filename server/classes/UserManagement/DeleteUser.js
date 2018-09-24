@@ -11,7 +11,7 @@ export default class DeleteUser {
 
     async operation(req, res) {
         let id = req.body.id;
-        console.log(id)
+
         await findAndDeleteUser(id);
 
         if (deleteUserResult) {

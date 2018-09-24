@@ -22,6 +22,9 @@ class ProjectTabs extends Component {
         if (projects.isLoading) {
             return <div>Loading...</div>
         }
+        if (projects.data.errorMessage){
+            return <div className="alert alert-danger">{projects.data.errorMessage}</div>
+        }
 
         return (
             <Container>
@@ -32,7 +35,7 @@ class ProjectTabs extends Component {
                                 <Col xs='6' sm='6' md='6' lg='6' xl='6'>
                                     <ProjectControllerList farmId={this.props.farmId}
                                         greenHouseId={this.props.greenHouseId}
-                                        projectId={e[0].projectId}
+                                        projectId={e.projectId}
                                         buttonCreate={this.props.buttonCreate} 
                                         buttonDelete={this.props.buttonDelete}
                                         buttonEdit={this.props.buttonEdit}/>

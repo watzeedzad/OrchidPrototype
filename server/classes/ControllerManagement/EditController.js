@@ -19,9 +19,9 @@ export default class EditController {
         let name = req.body.name;
         let projectId = req.body.projectId;
         let greenHouseId = req.body.greenHouseId;
-        let farmId = req.body.farmId;
+        let farmId = req.session.farmId;
         
-        let isHavePump = req.body.isHavePump=='0'||req.body.isHavePump==true?true:false;
+        let isHavePump = req.body.isHavePump === '0'||req.body.isHavePump===true?true:false;
         let moisture;
         let water;
         let fertilizer;
@@ -35,9 +35,7 @@ export default class EditController {
             water = req.body.water==='0'||req.body.water===true?true:false;
             fertilizer = req.body.fertilizer==='0'||req.body.fertilizer===true?true:false;
         }
-        console.log("isHavePump:"+isHavePump)      
-        console.log(req.body.water+" "+req.body.fertilizer+" "+req.body.moisture)
-        console.log(water+" "+fertilizer+" "+moisture)
+
         await editControllerData(farmId,greenHouseId,projectId,name,isHavePump, moisture, water, fertilizer,macAddress);
 
         if(editControllerData){

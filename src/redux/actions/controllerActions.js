@@ -4,11 +4,8 @@ import config from '../../configure'
 //get ค่า url จากไฟล์ config
 const BASE_URL = config.BASE_URL
 
-export const getGreenHouse = ({farmId}) => {
+export const getGreenHouse = () => {
 
-    let values = {
-        farmId: farmId
-    }
     return (dispatch) => {
         //รูปแบบการใช้ axios อีกรูปแบบในการจะบุ method ที่ต้องการ
         //ต้องส่ง heder ชื่อ authorization โดยส่ง token เขาไปด้วยครับ
@@ -16,7 +13,6 @@ export const getGreenHouse = ({farmId}) => {
         return axios({
             method: 'post',
             url: `${BASE_URL}/controllerManagement/showAllGreenHouse`,
-            data: values,
             headers: { 'Content-Type': 'application/json' },
             withCredentials: true
             //headers: { authorization: localStorage.getItem('token') }
@@ -31,10 +27,10 @@ export const getGreenHouse = ({farmId}) => {
     }
 }
 
-export const getGreenHouseController = ({farmId}) => {
+export const getGreenHouseController = ({greenHouseId}) => {
 
     let values = {
-        farmId: farmId
+        greenHouseId: greenHouseId
     }
     return (dispatch) => {
         //รูปแบบการใช้ axios อีกรูปแบบในการจะบุ method ที่ต้องการ
@@ -58,10 +54,9 @@ export const getGreenHouseController = ({farmId}) => {
     }
 }
 
-export const getProject = ({farmId,greenHouseId}) => {
+export const getProject = ({greenHouseId}) => {
 
     let values = {
-        farmId: farmId,
         greenHouseId: greenHouseId
     }
     return (dispatch) => {
@@ -86,10 +81,9 @@ export const getProject = ({farmId,greenHouseId}) => {
     }
 }
 
-export const getProjectController = ({farmId,greenHouseId}) => {
+export const getProjectController = ({greenHouseId}) => {
 
     let values = {
-        farmId: farmId,
         greenHouseId: greenHouseId
     }
     return (dispatch) => {
@@ -146,11 +140,8 @@ export const editController = (values)=>{
     }
 }
 
-export const getDropdownController = ({farmId}) => {
+export const getDropdownController = () => {
 
-    let values = {
-        farmId: farmId
-    }
     return (dispatch) => {
         //รูปแบบการใช้ axios อีกรูปแบบในการจะบุ method ที่ต้องการ
         //ต้องส่ง heder ชื่อ authorization โดยส่ง token เขาไปด้วยครับ
@@ -158,7 +149,6 @@ export const getDropdownController = ({farmId}) => {
         return axios({
             method: 'post',
             url: `${BASE_URL}/controllerManagement/getDropdownController`,
-            data: values,
             headers: { 'Content-Type': 'application/json' },
             withCredentials: true
             //headers: { authorization: localStorage.getItem('token') }

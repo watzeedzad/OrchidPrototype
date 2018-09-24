@@ -12,6 +12,7 @@ export default class CreateController {
     async operation(req, res) {
 
         let macAddress = req.body.macAddress;
+        console.log(macAddress)
         if (typeof macAddress === "undefined") {
             res.json({
                 status: 500,

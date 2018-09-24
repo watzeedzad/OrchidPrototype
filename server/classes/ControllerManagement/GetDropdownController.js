@@ -16,7 +16,7 @@ export default class GetDropdownController {
             res.sendStatus(500);
             return;
         }
-        let farmId = req.body.farmId;
+        let farmId = req.session.farmId;
 
         if (typeof farmId === "undefined") {
             res.json({

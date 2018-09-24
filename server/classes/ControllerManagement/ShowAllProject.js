@@ -16,7 +16,7 @@ export default class ShowAllGreenHouseController {
             res.sendStatus(500);
             return;
         }
-        let farmId = req.body.farmId;
+        let farmId = req.session.farmId;
         let greenHouseId = req.body.greenHouseId;
 
         if (typeof farmId === "undefined") {
@@ -27,7 +27,14 @@ export default class ShowAllGreenHouseController {
             return;
         }
         await getProjectData(farmId,greenHouseId);
-        if (showProjectData.length == 0) {
+
+        if (typeof showProjectData ===  "undefined") {
+            res.json({
+                status: 500,
+                errorMessage: "เกิดข้อผิดพลาดในการเเสดงข้อมูล Project ทั้งหมด"
+            });
+            return;
+        }else if (showProjectData.length == 0) {
             res.json({
                 status: 500,
                 errorMessage: "เกิดข้อผิดพลาดไม่มีข้อมูล Project"

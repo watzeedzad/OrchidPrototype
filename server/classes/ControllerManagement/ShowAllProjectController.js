@@ -16,7 +16,7 @@ export default class showAllProjectController {
             return;
         }
 
-        let farmId = req.body.farmId;
+        let farmId = req.session.farmId;
         let greenHouseId = req.body.greenHouseId;
         let projectId = req.body.projectId;
 
@@ -29,8 +29,14 @@ export default class showAllProjectController {
         }
 
         await getProjectControllerData(farmId, greenHouseId, projectId);
-
-        if (showProjectControllerData.length == 0) {
+        console.log("pj controller"+showProjectControllerData)
+        if (typeof showProjectControllerData ===  "undefined") {
+            res.json({
+                status: 500,
+                errorMessage: "เกิดข้อผิดพลาดในการเเสดงข้อมูล Project Controller ทั้งหมด"
+            });
+            return;
+        }else if (showProjectControllerData.length == 0) {
             res.json({
                 status: 500,
                 errorMessage: "เกิดข้อผิดพลาดไม่มีข้อมูล Project Controller"

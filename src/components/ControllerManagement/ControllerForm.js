@@ -102,7 +102,6 @@ class ControllerForm extends Component {
     render() {
         //redux-form จะมี props ที่ชื่อ handleSubmit เพื่อใช้ submit ค่า
         const { handleSubmit,dropdownController } = this.props
-        console.log(dropdownController.data)
 
         if (!this.props.data._id && dropdownController.isLoading) {
             return <div>Loading...</div>
