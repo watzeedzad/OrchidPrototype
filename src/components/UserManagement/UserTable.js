@@ -21,7 +21,7 @@ const CustomTableCell = withStyles(theme => ({
   
 const styles = theme => ({
     root: {
-      width: '80%',
+      width: '100%',
       marginTop: theme.spacing.unit * 3,
       overflowX: 'auto',
     },
@@ -62,12 +62,12 @@ class UserTable extends Component {
                     :data && data.map(e => {
                         return (
                             <TableRow className={classes.row} key={e.userId}>
-                                <CustomTableCell className="text-center">
+                                <CustomTableCell>
                                     {e.role}
                                 </CustomTableCell>
                                 <CustomTableCell>{e.firstname}{' '}{e.lastname}</CustomTableCell>
                                 <CustomTableCell>{e.username}</CustomTableCell>
-                                <CustomTableCell className="text-center">
+                                <CustomTableCell >
                                     <Button color="secondary" size="sm"
                                         onClick={() => buttonEdit(e)}>แก้ไข</Button>{' '}
                                     <Button color="danger" size="sm"

@@ -28,7 +28,7 @@ class ProjectTabs extends Component {
         return (
             <Container>
                 <div>
-                <h5>รายชื่อคอนโทรลเลอร์ที่อยู่ในโรงเรือน</h5>
+                <h5>รายชื่อคอนโทรลเลอร์ที่อยู่ในเเต่ละโปรเจ็ค</h5>
                     <Row>
                         {projects.data && projects.data.map(e => {
                             return (
