@@ -41,7 +41,6 @@ class GreenHouseControllerList extends Component {
 
     componentDidMount() {
         this.props.dispatch(getProjectController({
-            farmId: this.props.farmId, 
             greenHouseId: this.props.greenHouseId, 
             projectId: this.props.projectId 
         }))
@@ -59,8 +58,6 @@ class GreenHouseControllerList extends Component {
 
         return (
             <div>
-                <h5>รายชื่อคอนโทรลเลอร์ที่อยู่ในโรงเรือน</h5>
-                <Button color="primary" size="sm" onClick={() => buttonCreate(this.props.greenHouseId,this.props.projectId)}>เพิ่ม</Button>
                 <Paper className={classes.root}>
                 <Table className={classes.table}>
                     <TableHead>
@@ -72,7 +69,10 @@ class GreenHouseControllerList extends Component {
                             <CustomTableCell numeric>ปั๊มน้ำ</CustomTableCell>
                             <CustomTableCell numeric>ปั๊มปุ๋ย</CustomTableCell>
                             <CustomTableCell numeric>ปั๊มความชื้น</CustomTableCell>
-                            <CustomTableCell numeric>จัดการคอนโทรลเลอร์</CustomTableCell>
+                            <CustomTableCell numeric>
+                            <Button color="success" size="sm"
+                                    onClick={() => buttonCreate(this.props.greenHouseId,this.props.projectId)}>เพิ่มข้อมูล</Button>
+                            </CustomTableCell>
                         </TableRow>
                     </TableHead>
                     <TableBody>

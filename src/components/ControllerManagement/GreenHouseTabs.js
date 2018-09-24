@@ -43,7 +43,7 @@ class GreenHouseTabs extends Component {
   };
 
   componentDidMount() {
-    this.props.dispatch(getGreenHouse({ farmId: 123456789 }))
+    this.props.dispatch(getGreenHouse())
   }
 
   handleChange = (event, value) => {
@@ -88,13 +88,13 @@ class GreenHouseTabs extends Component {
           return (
             value === index && 
             <TabContainer>
-              <GreenHouseControllerList farmId = {123456789}
+              <GreenHouseControllerList 
                 greenHouseId={e.greenHouseId}
                 buttonCreate={this.handleNew} 
                 buttonDelete={this.handleDelete}
                 buttonEdit={this.handleEdit}/>
               <br/><br/><hr/>
-              <ProjectTabs farmId = {123456789}
+              <ProjectTabs 
                 greenHouseId={e.greenHouseId}
                 buttonCreate={this.handleNew} 
                 buttonDelete={this.handleDelete}
@@ -121,7 +121,7 @@ class GreenHouseTabs extends Component {
   }
 
   handleNew = (greenHouseId,projectId) => {
-    this.setState({ modalTitle: 'เพิ่ม' ,controllerData: {farmId:123456789 , greenHouseId: greenHouseId, projectId: projectId} })
+    this.setState({ modalTitle: 'เพิ่ม' ,controllerData: {greenHouseId: greenHouseId, projectId: projectId} })
     this.toggle();
   }
 
@@ -141,7 +141,7 @@ class GreenHouseTabs extends Component {
                   </UncontrolledAlert >
               </div>
         })
-        this.props.dispatch(getGreenHouse({ farmId: 123456789 }))       
+        this.props.dispatch(getGreenHouse())       
     })
   }
 
@@ -161,7 +161,7 @@ class GreenHouseTabs extends Component {
                         </UncontrolledAlert >
                     </div>
               })
-              this.props.dispatch(getGreenHouse({ farmId: 123456789 }))
+              this.props.dispatch(getGreenHouse())
             })
         }
     })

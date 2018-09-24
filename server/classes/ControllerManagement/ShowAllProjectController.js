@@ -19,7 +19,7 @@ export default class showAllProjectController {
         let farmId = req.session.farmId;
         let greenHouseId = req.body.greenHouseId;
         let projectId = req.body.projectId;
-
+        console.log(farmId,greenHouseId,projectId)
         if (typeof farmId === "undefined") {
             res.json({
                 status: 500,

@@ -81,10 +81,11 @@ export const getProject = ({greenHouseId}) => {
     }
 }
 
-export const getProjectController = ({greenHouseId}) => {
+export const getProjectController = ({greenHouseId,projectId}) => {
 
     let values = {
-        greenHouseId: greenHouseId
+        greenHouseId: greenHouseId,
+        projectId: projectId
     }
     return (dispatch) => {
         //รูปแบบการใช้ axios อีกรูปแบบในการจะบุ method ที่ต้องการ

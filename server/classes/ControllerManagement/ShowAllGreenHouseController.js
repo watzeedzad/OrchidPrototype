@@ -28,8 +28,6 @@ export default class ShowAllGreenHouseController {
         }
         await getGreenHouseControllerData(farmId,greenHouseId);
 
-        console.log(farmId,greenHouseId)
-
         if (typeof showGreenHouseControllerData ===  "undefined") {
             res.json({
                 status: 500,

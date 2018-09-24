@@ -9,7 +9,6 @@ class ProjectTabs extends Component {
 
     componentDidMount() {
         this.props.dispatch(getProject({
-            farmId: this.props.farmId, 
             greenHouseId: this.props.greenHouseId }))
     }
 
@@ -29,16 +28,18 @@ class ProjectTabs extends Component {
         return (
             <Container>
                 <div>
+                <h5>รายชื่อคอนโทรลเลอร์ที่อยู่ในโรงเรือน</h5>
                     <Row>
                         {projects.data && projects.data.map(e => {
                             return (
-                                <Col xs='6' sm='6' md='6' lg='6' xl='6'>
-                                    <ProjectControllerList farmId={this.props.farmId}
+                                <Col xs='12' sm='12' md='12' lg='12' xl='12'>
+                                    <ProjectControllerList 
                                         greenHouseId={this.props.greenHouseId}
                                         projectId={e.projectId}
                                         buttonCreate={this.props.buttonCreate} 
                                         buttonDelete={this.props.buttonDelete}
                                         buttonEdit={this.props.buttonEdit}/>
+                                    <br/><hr/>
                                 </Col>
                             )
                         })}

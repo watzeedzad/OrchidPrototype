@@ -16,18 +16,10 @@ export default class ShowAllGreenHouseController {
             res.sendStatus(500);
             return;
         }
-        let farmId = req.session.farmId;
         let greenHouseId = req.body.greenHouseId;
-
-        if (typeof farmId === "undefined") {
-            res.json({
-                status: 500,
-                errorMessage: "เกิดข้อผิดพลาดในการเเสดงข้อมูล Project ทั้งหมด"
-            });
-            return;
-        }
-        await getProjectData(farmId,greenHouseId);
-
+        console.log(greenHouseId)
+        await getProjectData(greenHouseId);
+        console.log(showProjectData)
         if (typeof showProjectData ===  "undefined") {
             res.json({
                 status: 500,
@@ -42,7 +34,7 @@ export default class ShowAllGreenHouseController {
             return;
         }
        
-        showProjectData.sort(function(a, b){return a.greenHouseId - b.greenHouseId});
+        showProjectData.sort(function(a, b){return a.projectId - b.projectId});
         
         res.json(showProjectData);
     }
@@ -51,17 +43,16 @@ export default class ShowAllGreenHouseController {
 
 
 
-async function getProjectData(farmId,greenHouseId) {
+async function getProjectData(greenHouseId) {
     await project.find({
-        farmId: farmId,
         greenHouseId: greenHouseId
     }, (err, result) => {
         if (err) {
             showProjectData = undefined;
-            console.log("[showGreenHouseControllerData] getControllerData (err):  " + err);
+            console.log("[showProjectData] getProjectData (err):  " + err);
         } else if (!result) {
             showProjectData = undefined;
-            console.log("[showGreenHouseControllerData getControllerData(!result): " + result);
+            console.log("[showProjectData getProjectData (!result): " + result);
         } else {
             showProjectData = result;
         }
