@@ -37,7 +37,33 @@ const styles = theme => ({
 
 class ManualFertilizerControl extends Component {
 
+    
+    constructor() {
+        super();
+    
+        this.state = {
+            intervalId : null,
+        };
+    }
+
     componentDidMount() {
+        this.fetchData()
+        var intervalId = setInterval( this.fetchData, 150000);
+        this.setState({intervalId: intervalId});
+    }
+
+    shouldComponentUpdate(nextProps, nextState) {
+        if(nextProps.fertility.data != null) {
+            return this.props.fertility.data != nextProps.fertility.data
+        }
+    }
+
+    componentWillUnmount() {
+        // use intervalId from the state to clear the interval
+        clearInterval(this.state.intervalId);
+    }
+    
+    fetchData = () => {
         this.props.dispatch(getFertility({ projectId: 1 }))
     }
 

@@ -8,7 +8,32 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 
 class Temperature extends Component {
 
+    constructor() {
+        super();
+    
+        this.state = {
+            intervalId : null,
+        };
+    }
+
     componentDidMount() {
+        this.fetchData()
+        var intervalId = setInterval( this.fetchData, 150000);
+        this.setState({intervalId: intervalId});
+    }
+
+    shouldComponentUpdate(nextProps, nextState) {
+        if(nextProps.temp.data != null) {
+            return this.props.temp.data != nextProps.temp.data
+        }
+    }
+
+    componentWillUnmount() {
+        // use intervalId from the state to clear the interval
+        clearInterval(this.state.intervalId);
+    }
+    
+    fetchData = () => {
         this.props.dispatch(getTemp({ greenHouseId: 789456123 }))
     }
 

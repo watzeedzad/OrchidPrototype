@@ -37,8 +37,33 @@ const styles = theme => ({
 });
 
 class ShowAllFertility extends Component {
+ 
+    constructor() {
+        super();
+    
+        this.state = {
+            intervalId : null,
+        };
+    }
 
     componentDidMount() {
+        this.fetchData()
+        var intervalId = setInterval( this.fetchData, 150000);
+        this.setState({intervalId: intervalId});
+    }
+
+    shouldComponentUpdate(nextProps, nextState) {
+        if(nextProps.fertilitys.data != null) {
+            return this.props.fertilitys.data != nextProps.fertilitys.data
+        }
+    }
+
+    componentWillUnmount() {
+        // use intervalId from the state to clear the interval
+        clearInterval(this.state.intervalId);
+    }
+    
+    fetchData = () => {
         this.props.dispatch(getAllFertility({ greenHouseId: 789456123 }))
     }
 

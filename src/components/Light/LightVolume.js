@@ -36,7 +36,32 @@ const styles = theme => ({
 
 class LightVolume extends Component {
 
+    constructor() {
+        super();
+    
+        this.state = {
+            intervalId : null,
+        };
+    }
+
     componentDidMount() {
+        this.fetchData()
+        var intervalId = setInterval( this.fetchData, 150000);
+        this.setState({intervalId: intervalId});
+    }
+
+    shouldComponentUpdate(nextProps, nextState) {
+        if(nextProps.volume.data != null) {
+            return this.props.volume.data != nextProps.volume.data
+        }
+    }
+
+    componentWillUnmount() {
+        // use intervalId from the state to clear the interval
+        clearInterval(this.state.intervalId);
+    }
+    
+    fetchData = () => {
         this.props.dispatch(getLightVolume({ greenHouseId: 789456123 }))
     }
 

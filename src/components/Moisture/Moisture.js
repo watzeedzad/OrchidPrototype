@@ -8,7 +8,32 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 
 class Moisture extends Component {
 
+    constructor() {
+        super();
+    
+        this.state = {
+            intervalId : null,
+        };
+    }
+
     componentDidMount() {
+        this.fetchData()
+        var intervalId = setInterval( this.fetchData, 150000);
+        this.setState({intervalId: intervalId});
+    }
+
+    shouldComponentUpdate(nextProps, nextState) {
+        if(nextProps.moisture.data != null) {
+            return this.props.moisture.data != nextProps.moisture.data
+        }
+    }
+
+    componentWillUnmount() {
+        // use intervalId from the state to clear the interval
+        clearInterval(this.state.intervalId);
+    }
+    
+    fetchData = () => {
         this.props.dispatch(getMoisture({ greenHouseId: 789456123 }))
     }
 

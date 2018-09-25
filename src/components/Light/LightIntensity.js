@@ -36,7 +36,32 @@ const styles = theme => ({
 
 class LightIntensity extends Component {
 
+    constructor() {
+        super();
+    
+        this.state = {
+            intervalId : null,
+        };
+    }
+
     componentDidMount() {
+        this.fetchData()
+        var intervalId = setInterval( this.fetchData, 150000);
+        this.setState({intervalId: intervalId});
+    }
+
+    shouldComponentUpdate(nextProps, nextState) {
+        if(nextProps.intensity.data != null) {
+            return this.props.intensity.data != nextProps.intensity.data
+        }
+    }
+
+    componentWillUnmount() {
+        // use intervalId from the state to clear the interval
+        clearInterval(this.state.intervalId);
+    }
+    
+    fetchData = () => {
         this.props.dispatch(getLightIntensity({ greenHouseId: 789456123 }))
     }
 

@@ -5,8 +5,33 @@ import LineGraph from '../../Utils/LineGraph'
 import 'bootstrap/dist/css/bootstrap.min.css';
 
 class HumidityGraph extends Component {
+      
+    constructor() {
+        super();
+    
+        this.state = {
+            intervalId : null,
+        };
+    }
 
     componentDidMount() {
+        this.fetchData()
+        var intervalId = setInterval( this.fetchData, 150000);
+        this.setState({intervalId: intervalId});
+    }
+
+    shouldComponentUpdate(nextProps, nextState) {
+        if(nextProps.humidityHistory.data != null) {
+            return this.props.humidityHistory.data != nextProps.humidityHistory.data
+        }
+    }
+
+    componentWillUnmount() {
+        // use intervalId from the state to clear the interval
+        clearInterval(this.state.intervalId);
+    }
+    
+    fetchData = () => {
         this.props.dispatch(getHumidityHistory({ greenHouseId: 789456123 }))
     }
 

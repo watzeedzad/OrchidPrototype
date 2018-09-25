@@ -62,7 +62,7 @@ class SettingTemperature extends Component {
             <React.Fragment>
             <CssBaseline />
             <main className={classes.layout}>
-                <Typography variant="headline">ตั้งค่าอุณหภูมิที่เหมาะสม</Typography>
+                <Typography variant="title">ตั้งค่าอุณหภูมิที่เหมาะสม</Typography>
                 <form className={classes.form}>
                   <FormControl margin="normal" required fullWidth>
                     <Field name="minTemperature"  component={MaterialRenderTextField} type='number' label="อุณหภูมิต่ำสุด" />

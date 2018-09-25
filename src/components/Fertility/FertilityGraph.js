@@ -6,7 +6,32 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 
 class FertilityGraph extends Component {
 
+    constructor() {
+        super();
+    
+        this.state = {
+            intervalId : null,
+        };
+    }
+
     componentDidMount() {
+        this.fetchData()
+        var intervalId = setInterval( this.fetchData, 150000);
+        this.setState({intervalId: intervalId});
+    }
+
+    shouldComponentUpdate(nextProps, nextState) {
+        if(nextProps.fertilityHistory.data != null) {
+            return this.props.fertilityHistory.data != nextProps.fertilityHistory.data
+        }
+    }
+
+    componentWillUnmount() {
+        // use intervalId from the state to clear the interval
+        clearInterval(this.state.intervalId);
+    }
+    
+    fetchData = () => {
         this.props.dispatch(getFertilityHistory({projectId: this.props.projectId}))
     }
 

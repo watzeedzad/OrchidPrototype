@@ -6,7 +6,32 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 
 class MoistureGraph extends Component {
 
+    constructor() {
+        super();
+    
+        this.state = {
+            intervalId : null,
+        };
+    }
+
     componentDidMount() {
+        this.fetchData()
+        var intervalId = setInterval( this.fetchData, 150000);
+        this.setState({intervalId: intervalId});
+    }
+
+    shouldComponentUpdate(nextProps, nextState) {
+        if(nextProps.moistureHistory.data != null) {
+            return this.props.moistureHistory.data != nextProps.moistureHistory.data
+        }
+    }
+
+    componentWillUnmount() {
+        // use intervalId from the state to clear the interval
+        clearInterval(this.state.intervalId);
+    }
+    
+    fetchData = () => {
         this.props.dispatch(getMoistureHistory({ greenHouseId: 789456123 }))
     }
 
