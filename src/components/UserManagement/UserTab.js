@@ -33,7 +33,7 @@ class UserTab extends Component {
         }
         console.log(users)
         //debounce เป็นการหน่วงการส่งตัวอักษรเป็นฟังก์ชันของ lodash ทำเพื่อเรียกใช้การ filter ข้อมูล
-        const userSearch = debounce(term => { this.handleSearch(term) }, 700);
+        const userSearch = debounce(term => { this.handleSearch(term) }, 400);
         return (
             <div>
                 {this.state.mss}

@@ -2,7 +2,7 @@ const mongoose = require('mongoose');
 const user = mongoose.model('user');
 
 
-let userDataResult;
+let userDataResult = undefined;
 
 export default class SearchUser {
 
@@ -22,7 +22,6 @@ export default class SearchUser {
         let farmId = req.body.farmId;
         let term = req.body.term;
 
-        console.log(farmId+"/"+term)
         if (typeof farmId === "undefined") {
             res.json({
                 status: 500,
@@ -32,16 +31,18 @@ export default class SearchUser {
         }
 
         await getUserData(farmId,term);
-        console.log(userDataResult)
-        if (typeof userDataResult == "undefined") {
-            res.json({
-                status: 500,
-                errorMessage: "เกิดข้อผิดพลาดไม่มีข้อมูลUser"
-            });
-            return;
-        }
-        
-        res.json(userDataResult);
+        setTimeout(() => {
+            console.log(userDataResult)
+            if (typeof userDataResult == "undefined") {
+                res.json({
+                    status: 500,
+                    errorMessage: "เกิดข้อผิดพลาดไม่มีข้อมูลUser"
+                });
+                return;
+            }
+            
+            res.json(userDataResult);
+        }, 200)
     }
 }
 

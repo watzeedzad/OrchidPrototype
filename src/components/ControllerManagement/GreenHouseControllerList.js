@@ -57,19 +57,18 @@ class GreenHouseControllerList extends Component {
         }
         
         return (
-            <div>
                 <Paper className={classes.root}>
                 <Table className={classes.table}>
                     <TableHead>
                         <TableRow>
                             <CustomTableCell>Controller Name</CustomTableCell>
-                            <CustomTableCell numeric>GreenHouseId</CustomTableCell>
-                            <CustomTableCell numeric>IP</CustomTableCell>
-                            <CustomTableCell numeric>Mac Address</CustomTableCell>
-                            <CustomTableCell numeric>ปั๊มน้ำ</CustomTableCell>
-                            <CustomTableCell numeric>ปั๊มปุ๋ย</CustomTableCell>
-                            <CustomTableCell numeric>ปั๊มความชื้น</CustomTableCell>
-                            <CustomTableCell numeric>
+                            <CustomTableCell >GreenHouseId</CustomTableCell>
+                            <CustomTableCell >IP</CustomTableCell>
+                            <CustomTableCell >Mac Address</CustomTableCell>
+                            <CustomTableCell >ปั๊มน้ำ</CustomTableCell>
+                            <CustomTableCell >ปั๊มปุ๋ย</CustomTableCell>
+                            <CustomTableCell >ปั๊มความชื้น</CustomTableCell>
+                            <CustomTableCell >
                                 <Button color="success" size="sm"
                                     onClick={() => buttonCreate(this.props.greenHouseId,null)}>เพิ่มข้อมูล</Button>
                             </CustomTableCell>
@@ -82,13 +81,13 @@ class GreenHouseControllerList extends Component {
                         return (
                             <TableRow className={classes.row} key={e.id}>
                                 <CustomTableCell component="th" scope="row">{e.name}</CustomTableCell>
-                                <CustomTableCell numeric>{e.greenHouseId}</CustomTableCell>
-                                <CustomTableCell numeric>{e.ip}</CustomTableCell>
-                                <CustomTableCell numeric>{e.mac_address}</CustomTableCell>
-                                <CustomTableCell numeric>{e.pumpType.water?"มี":"ไม่มี"}</CustomTableCell>
-                                <CustomTableCell numeric>{e.pumpType.fertilizer?"มี":"ไม่มี"}</CustomTableCell>
-                                <CustomTableCell numeric>{e.pumpType.moisture?"มี":"ไม่มี"}</CustomTableCell>
-                                <CustomTableCell numeric>
+                                <CustomTableCell >{e.greenHouseId}</CustomTableCell>
+                                <CustomTableCell >{e.ip}</CustomTableCell>
+                                <CustomTableCell >{e.mac_address}</CustomTableCell>
+                                <CustomTableCell >{e.pumpType.water?"มี":"ไม่มี"}</CustomTableCell>
+                                <CustomTableCell >{e.pumpType.fertilizer?"มี":"ไม่มี"}</CustomTableCell>
+                                <CustomTableCell >{e.pumpType.moisture?"มี":"ไม่มี"}</CustomTableCell>
+                                <CustomTableCell >
                                     <Button color="secondary" size="sm" onClick={() => buttonEdit(e)}>แก้ไข</Button>{"  "}
                                     <Button color="danger" size="sm" onClick={() => buttonDelete(e.mac_address)}>ลบ</Button> 
                                 </CustomTableCell>
@@ -97,7 +96,6 @@ class GreenHouseControllerList extends Component {
                     </TableBody>
                 </Table>
                 </Paper>
-            </div>
         );
     }
 

@@ -2,7 +2,7 @@ const mongoose = require('mongoose');
 const user = mongoose.model('user');
 
 
-let userDataResult;
+let userDataResult = undefined;
 
 export default class ShowUser {
 
@@ -30,14 +30,16 @@ export default class ShowUser {
 
         await getUserData(farmId);
 
-        if (typeof userDataResult == "undefined") {
-            res.json({
-                status: 500,
-                errorMessage: "เกิดข้อผิดพลาดไม่มีข้อมูลUser"
-            });
-            return;
-        }
-        res.json(userDataResult);
+        setTimeout(() => {
+            if (typeof userDataResult == "undefined") {
+                res.json({
+                    status: 500,
+                    errorMessage: "เกิดข้อผิดพลาดไม่มีข้อมูลUser"
+                });
+                return;
+            }
+            res.json(userDataResult);
+        },200)
     }
 }
 

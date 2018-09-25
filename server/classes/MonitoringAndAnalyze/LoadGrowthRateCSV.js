@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
 const growth_rate = mongoose.model('growth_rate');
 
-let growthRateData;
+let growthRateData = undefined;
 
 
 export default class LoadGrowthRateCSV {
@@ -22,14 +22,16 @@ export default class LoadGrowthRateCSV {
         let projectId = req.body.projectId?req.body.projectId:{$ne:null};
         console.log(farmId,greenHouseId,projectId)
         await getGrowthRateData(farmId,greenHouseId,projectId);
-        if(typeof growthRateData ==='undefined' ){
-            res.json({
-                status:500,
-                errorMessage:"เกิดข้อผิดพลาดในการดึงข้อมูลกรุณาลองใหม่อีกครั้ง"
-            });
-        }
-        console.log(growthRateData)
-        res.json(growthRateData);
+        setTimeout(() => {
+            if(typeof growthRateData ==='undefined' ){
+                res.json({
+                    status:500,
+                    errorMessage:"เกิดข้อผิดพลาดในการดึงข้อมูลกรุณาลองใหม่อีกครั้ง"
+                });
+            }
+            console.log(growthRateData)
+            res.json(growthRateData);
+        }, 200)
     }
 }
 
