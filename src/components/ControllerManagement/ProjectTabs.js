@@ -30,9 +30,10 @@ class ProjectTabs extends Component {
                 <div>
                 <h5>รายชื่อคอนโทรลเลอร์ที่อยู่ในเเต่ละโปรเจ็ค</h5>
                     <Row>
-                        {projects.data && projects.data.map(e => {
+                        {projects.data && projects.data.map(e => { 
                             return (
                                 <Col xs='12' sm='12' md='12' lg='12' xl='12'>
+                                    projectId : {e.projectId}
                                     <ProjectControllerList 
                                         greenHouseId={this.props.greenHouseId}
                                         projectId={e.projectId}
