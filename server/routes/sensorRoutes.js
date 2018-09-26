@@ -7,7 +7,7 @@ import ProjectSensor from "../classes/SaveData/ProjectSensor";
 import TemperatureCheck from "../classes/CheckFunction/TemperatureCheck";
 import SoilMoistureCheck from "../classes/CheckFunction/SoilMoistureCheck";
 import FertilityCheck from "../classes/CheckFunction/FertilityCheck";
-import LightCheck from "../classes/CheckFunction/LightCheck";
+// import LightCheck from "../classes/CheckFunction/LightCheck";
 
 let status = 0;
 
@@ -15,18 +15,18 @@ let status = 0;
 router.post("/greenHouseSensor", (req, res) => {
   req.session.temperatureCheckStatus = 0;
   req.session.soilMoistureCheckStatus = 0;
-  req.session.lightCheckStatus = 0;
-  new GreenHouseSensor(req, res);
-  new TemperatureCheck(req, res);
-  new SoilMoistureCheck(req, res);
-  new LightCheck(req, res);
+  // req.session.lightCheckStatus = 0;
+  new GreenHouseSensor(req);
+  new TemperatureCheck(req);
+  new SoilMoistureCheck(req);
+  // new LightCheck(req, res);
   setTimeout(() => {
-    if (req.session.temperatureCheckStatus == 200 && req.session.soilMoistureCheckStatus == 200 && req.session.lightCheckStatus == 200) {
+    if (req.session.temperatureCheckStatus == 200 && req.session.soilMoistureCheckStatus == 200) {
       res.sendStatus(200);
     } else {
       checkStatus(req, res, "greenHouse");
     }
-  }, 3500);
+  }, 4500);
   // new GreenHouseSensor(req, res);
   // new TemperatureCheck(req, res);
   // new SoilMoistureCheck(req, res);
@@ -52,7 +52,7 @@ router.post("/projectSensor", (req, res) => {
 });
 
 function checkStatus(req, res, checkType) {
-  console.log("start check status");
+  console.log("start check status " + checkType);
   let messageArray = [];
   if (checkType == "greenHouse") {
     if (req.session.temperatureCheckStatus == 500) {
@@ -61,10 +61,10 @@ function checkStatus(req, res, checkType) {
     if (req.session.soilMoistureCheckStatus == 500) {
       messageArray.push('เกิดข้อผิดพลาดในการตรวจสอบความชิ้นในเครื่องปลูก');
     }
-    if (req.session.lightCheckStatus == 500) {
-      messageArray.push('เกิดข้อผิดพลาดในการตรวจสอบความเข้มแสง');
-    }
-    if (req.session.temperatureCheckStatus == 500 || req.session.soilMoistureCheckStatus == 500 || req.session.lightCheckStatus) {
+    // if (req.session.lightCheckStatus == 500) {
+    //   messageArray.push('เกิดข้อผิดพลาดในการตรวจสอบความเข้มแสง');
+    // }
+    if (req.session.temperatureCheckStatus == 500 || req.session.soilMoistureCheckStatus == 500) {
       res.json({
         status: 500,
         errorMessage: messageArray

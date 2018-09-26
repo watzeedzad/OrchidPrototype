@@ -30,12 +30,12 @@ DynamicJsonBuffer jsonBuffer;
 dht DHT;
 Scheduler runner;
 WiFiServer server(LISTEN_PORT);
-BH1750 lightMeter(0x23);
+BH1750 lightMeter;
 
 void sendData();
 void checkWaterLitre();
 void checkFertilizerLitre();
-Task sendDataTask(75000, TASK_FOREVER, &sendData);
+Task sendDataTask(30000, TASK_FOREVER, &sendData);
 Task checkWaterLitreTask(500, TASK_FOREVER, &checkWaterLitre);
 Task checkFertilizerLitreTask(500, TASK_FOREVER, &checkFertilizerLitre);
 
@@ -128,13 +128,13 @@ void setup(void)
         attachInterrupt(fertilizerFlowSensorInterrupt, fertilizerPulseCounter, FALLING);
 
         Wire.begin(5, 23);
-        lightMeter.begin();
+        lightMeter.begin(BH1750::ONE_TIME_HIGH_RES_MODE);
 
         runner.init();
         runner.addTask(checkWaterLitreTask);
         runner.addTask(checkFertilizerLitreTask);
-        // runner.addTask(sendDataTask);
-        // sendDataTask.enable();
+        runner.addTask(sendDataTask);
+        sendDataTask.enable();
 
         delay(100);
 }
@@ -152,8 +152,6 @@ void loop(void)
         {
                 rest.handle(client);
         }
-
-        delay(1000);
 
         moisture = analogRead(MOISTURE_PIN);
         fertility = analogRead(KNOB_PIN);
@@ -205,6 +203,10 @@ void loop(void)
         moisturePercent = convertToPercent(moisture);
         fertilityPercent = convertFertilityToPercent(fertility);
 
+        if (temperature < 0 || humidity < 0)
+        {
+                return;
+        }
         humidityStats.add(humidity);
         temperatureStats.add(temperature);
         moistureStats.add(moisturePercent);
@@ -222,6 +224,7 @@ void loop(void)
         Serial.println("-----------------DATA-----------------");
 
         runner.execute();
+        delay(2000);
 }
 
 void waterPulseCounter()
@@ -291,14 +294,14 @@ int convertFertilityToPercent(int value)
 void sendData()
 {
         Serial.println("Function \"sendData\" has been called.");
-        // Serial.print("Avg. of temperature : ");
-        // Serial.println(temperatureStats.average(), 2);
-        // Serial.print("Avg. of humidity : ");
-        // Serial.println(humidityStats.average(), 2);
-        // Serial.print("Avg. of fertility : ");
-        // Serial.println(fertilityStats.average(), 2);
-        // Serial.print("Avg. of moisture : ");
-        // Serial.println(moistureStats.average(), 2);
+        Serial.print("Avg. of temperature : ");
+        Serial.println(temperatureStats.average(), 2);
+        Serial.print("Avg. of humidity : ");
+        Serial.println(humidityStats.average(), 2);
+        Serial.print("Avg. of fertility : ");
+        Serial.println(fertilityStats.average(), 2);
+        Serial.print("Avg. of moisture : ");
+        Serial.println(moistureStats.average(), 2);
 
         StaticJsonBuffer<250> JSONbuffer1;
         JsonObject &JSONencoder = JSONbuffer1.createObject();
@@ -306,7 +309,8 @@ void sendData()
         JSONencoder["humidity"] = humidityStats.average();
         JSONencoder["soilMoisture"] = moistureStats.average();
         JSONencoder["ambientLight"] = ambientLightStats.average();
-        JSONencoder["ip"] = "crossbaronx.thddns.net:6064";
+        JSONencoder["ip"] = WiFi.localIP().toString();
+        JSONencoder["type"] = "greenHouse";
         char dataSet1[250];
         JSONencoder.prettyPrintTo(dataSet1, sizeof(dataSet1));
         Serial.println(dataSet1);
@@ -314,7 +318,7 @@ void sendData()
         HTTPClient http;
         http.setTimeout(10000);
         // http.begin("https://hello-api.careerity.me/sensorRoutes/greenHouseSensor", "EC:BB:33:AB:B4:F4:5B:A0:76:F3:F1:5B:FE:EC:BD:16:17:5C:22:47");
-        http.begin("http://192.168.1.151:3001/sensorRoutes/greenHouseSensor");
+        http.begin("http://192.168.1.15:3001/handleController/");
         http.addHeader("Content-Type", "application/json");
         int httpCode = http.POST(dataSet1);
         String payload = http.getString();
@@ -327,15 +331,16 @@ void sendData()
 
         StaticJsonBuffer<250> JSONbuffer2;
         JsonObject &JSONencoder2 = JSONbuffer2.createObject();
-        JSONencoder2["soilFertilizer"] = fertilityStats.average();
-        JSONencoder2["ip"] = "crossbaronx.thddns.net:6064";
+        JSONencoder2["soilFertility"] = fertilityStats.average();
+        JSONencoder2["ip"] = WiFi.localIP().toString();
+        JSONencoder2["type"] = "project";
         char dataSet2[250];
         JSONencoder2.prettyPrintTo(dataSet2, sizeof(dataSet2));
         Serial.println(dataSet2);
 
         http.setTimeout(10000);
         // http.begin("https://hello-api.careerity.me/sensorRoutes/projectSensor", "EC:BB:33:AB:B4:F4:5B:A0:76:F3:F1:5B:FE:EC:BD:16:17:5C:22:47");
-        http.begin("http://192.168.1.151:3001/sensorRoutes/projectSensor");
+        http.begin("http://192.168.1.15:3001/handleController/");
         http.addHeader("Content-Type", "application/json");
         httpCode = http.POST(dataSet2);
         payload = http.getString();

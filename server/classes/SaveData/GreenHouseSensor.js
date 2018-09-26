@@ -9,45 +9,23 @@ let controllerData;
 let farmData;
 
 export default class GreenHouseSensor {
-  constructor(req, res) {
-    this.process(req, res);
+  constructor(req) {
+    this.process(req);
   }
 
-  async process(req, res) {
-    let ip = req.body.ip;
-    let piMacAddress = req.body.piMacAddress;
-    console.log("[GreenHouseSensor] ip: " + req.body.ip);
-    console.log("[GreenHouseSensor] piMacAddress: " + req.body.piMacAddress);
-    await getControllerData(ip, piMacAddress);
-    await getFarmData(piMacAddress);
-    let greenHouseId = controllerData.greenHouseId;
+  async process(req) {
+    let greenHouseId = req.body.greenHouseId;
+    let farmId = req.body.farmId;
     let temp = req.body.temperature;
     let humid = req.body.humidity;
     let soilMoisture = req.body.soilMoisture;
     let ambientLight = req.body.ambientLight;
     setTimeout(() => {
-      saveSensorData(greenHouseId, farmData.farmId, temp, humid, soilMoisture, ambientLight)
+      saveSensorData(greenHouseId, farmId, temp, humid, soilMoisture, ambientLight)
     }, 500);
   }
 }
 
-async function getControllerData(ip, piMacAddress) {
-  console.log("[GreenHouseSensor] getControllerData: " + ip + ", " + piMacAddress);
-  await know_controller.findOne({
-      ip: ip,
-      piMacAddress: piMacAddress
-    },
-    function (err, result) {
-      if (err) {
-        console.log("[GreenHouseSensor] getControllerData, Query fail!");
-      } else if (!result) {
-        console.log("[GreenHouseSensor] getControllerData (!result): " + result);
-      } else {
-        controllerData = result;
-      }
-    }
-  );
-}
 
 async function getFarmData(piMacAddress) {
   console.log("[GreenHouseSEnsor] getFarmData: " + piMacAddress);

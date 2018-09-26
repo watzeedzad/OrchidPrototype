@@ -6,7 +6,7 @@ const {
 } = mongoose;
 
 const project_SensorSchema = new Schema({
-  soilFertilizer: Number,
+  soilFertility: Number,
   timeStamp: Date,
   projectId: Number,
   greenHouseId: Number,

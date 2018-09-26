@@ -7,59 +7,28 @@ let controllerData;
 let farmData;
 
 export default class ProjectSensor {
-  constructor(req, res) {
-    this.process(req, res);
+  constructor(req) {
+    this.process(req);
   }
 
-  async process(req, res) {
-    let ip = req.body.ip;
-    let piMacAddress = req.body.piMacAddress;
-    console.log("[ProjectSensor] ip: " + req.body.ip);
-    console.log("[ProjectSensor] piMacAddress: " + req.body.piMacAddress);
-    await getControllerData(ip, piMacAddress);
-    await getFarmData(piMacAddress);
-    let greenHouseId = controllerData.greenHouseId;
-    let soilFertilizer = req.body.soilFertilizer;
-    let projectId = controllerData.projectId;
+  async process(req) {
+    let greenHouseId = req.body.greenHouseId;
+    let soilFertility = req.body.soilFertility;
+    let projectId = req.body.projectId;
+    let farmId = req.body.farmId;
+    console.log("[ProjectSensor] greenHouseId: " + greenHouseId);
+    console.log("[ProjectSensor] projectId: " + projectId);
+    console.log("[ProjectSensor] farmId: " + farmId);
+    console.log("[ProjectSensor] soilFertility: " + soilFertility);
     setTimeout(() => {
-      saveSensorData(soilFertilizer, projectId, greenHouseId, farmData.farmId);
+      saveSensorData(soilFertility, projectId, greenHouseId, farmId);
     }, 500);
   }
 }
 
-async function getControllerData(ip, piMacAddress) {
-  console.log("[ProjectSensor] getControllerData: " + ip + ", " + piMacAddress);
-  await know_controller.findOne({
-      ip: ip,
-      piMacAddress: piMacAddress
-    },
-    function (err, result) {
-      if (err) {
-        console.log("[ProjectSensor] getControllerData, Query fail!");
-      } else if (!result) {
-        console.log("[ProjectSensor] getControllerData (!result): " + result);
-      } else {
-        controllerData = result;
-      }
-    }
-  );
-}
-
-async function getFarmData(piMacAddress) {
-  await farm.findOne({
-    piMacAddress: piMacAddress
-  }, function (err, result) {
-    if (err) {
-      console.log("[ProjectSensor] getFarmData, Query failed");
-    } else {
-      farmData = result;
-    }
-  });
-}
-
-async function saveSensorData(soilFertilizer, projectId, greenHouseId, farmId) {
+async function saveSensorData(soilFertility, projectId, greenHouseId, farmId) {
   const newProjectData = {
-    soilFertilizer: soilFertilizer,
+    soilFertility: soilFertility,
     timeStamp: Date.now(),
     projectId: projectId,
     greenHouseId: greenHouseId,

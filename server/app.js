@@ -10,7 +10,7 @@ const cors = require("cors");
 const ipfilter = require("express-ipfilter").IpFilter;
 require("dotenv").config();
 
-var ips = ["127.0.0.1", "::1", "192.168.1.12", "192.168.1.15"];
+var ips = ["127.0.0.1", "::1", "192.168.1.12", "192.168.1.15", "192.168.1.107"];
 temperatureCheckStatus = 0;
 soilMoistureCheckStatus = 0;
 fertilityCheckStatus = 0;

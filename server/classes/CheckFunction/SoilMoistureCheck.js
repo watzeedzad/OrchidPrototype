@@ -6,52 +6,69 @@ const farm = mongoose.model("farm");
 const know_controller = mongoose.model("know_controller");
 
 let configFile;
-let controllerData;
+let controllerDataResult;
 let minSoilMoisture;
 let maxSoilMoisture;
 
 export default class SoilMoistureCheck {
-    constructor(req, res) {
-        this.check(req, res);
+    constructor(req) {
+        this.check(req);
     }
 
-    async check(req, res) {
-        let ipIn = req.body.ip;
+    async check(req) {
+        let greenHouseId = req.body.greenHouseId;
+        let farmId = req.body.farmId;
+        let soilMoisture = req.body.soilMoisture;
         let piMacAddress = req.body.piMacAddress;
-        if (typeof ipIn === "undefined" || typeof piMacAddress === "undefined") {
+        if (typeof greenHouseId === "undefined" || typeof farmId === "undefined" || typeof soilMoisture === "undefined" || typeof piMacAddress === "undefined") {
             req.session.soilMoistureCheckStatus = 500;
             return;
         }
-        let controllerResult = await know_controller.findOne({
-            ip: ipIn,
-            piMacAddress: piMacAddress
-        }, function (err) {
-            if (err) {
-                console.log("[SoilMoistureCheck] Query fail!, know_controller");
-            } else {
-                console.log("[SoilMoistureCheck] Query success, know_controller");
-            }
-        });
-        let greenHouseId = controllerResult.greenHouseId;
-        let farmId = controllerResult.farmId;
         await getConfigFile(farmId);
-        console.log("[SoilMoistureCheck] greenHouseId_Class, " + greenHouseId);
-        console.log("[SoilMoistureCheck] farmId_Class, " + farmId);
-        await getControllerData(greenHouseId, piMacAddress);
-        if (typeof controllerData === "undefined") {
+        await getControllerData(greenHouseId, farmId);
+        if (typeof controllerDataResult === "undefined") {
             req.session.soilMoistureCheckStatus = 200;
             return;
         }
-        let greenHouseIdIndex = await seekGreenHouseIdIndex(configFile.soilMoistureConfigs, greenHouseId);
-        console.log("[SoilMoistureCheck] greenHouseIdIndex: " + greenHouseIdIndex);
-        if (greenHouseIdIndex == -1) {
+        let greenHouseIdIndexSoilMoisture = await seekGreenHouseIdIndex(configFile.soilMoistureConfigs, greenHouseId);
+        let greenHouseIdTimeIndex = await seekGreenHouseIdIndex(configFile.watering, greenHouseId);
+        console.log("[SoilMoistureCheck] greenHouseIdIndexSoilMoisture: " + greenHouseIdIndexSoilMoisture);
+        console.log("[SoilMoistureCheck] greenHouseIdTimeIndex: " + greenHouseIdTimeIndex);
+        if (greenHouseIdIndexSoilMoisture == -1 || greenHouseIdTimeIndex == -1) {
             req.session.soilMoistureCheckStatus = 500;
+            return;
+        }
+        let checkTimeResult = false;
+        let currentDate = new Date();
+        for (let index = 0; index < configFile.watering[greenHouseIdTimeIndex].timeRanges.length; index++) {
+            console.log("[SoilMoistureCheck] enter loop: " + index);
+            let tempDate = new Date(configFile.watering[greenHouseIdTimeIndex].timeRanges[index]);
+            if (tempDate.getHours() == currentDate.getHours() && tempDate.getMinutes() == currentDate.getMinutes()) {
+                console.log("CASE 1");
+                checkTimeResult = true;
+            } else if (tempDate.getHours() == currentDate.getHours() && tempDate.getMinutes() < currentDate.getMinutes()) {
+                console.log("CASE 2");
+                checkTimeResult = true;
+            } else {
+                console.log("CASE 3")
+                if ((currentDate.getHours() == tempDate.getHours()) || (currentDate.getHours() - tempDate.getHours() <= 2 && currentDate.getHours() - tempDate.getHours() >= 0)) {
+                    checkTimeResult = true;
+                } else {
+                    checkTimeResult = false;
+                }
+            }
+            console.log("[SoilMoistureCheck] end loop: " + index)
+        }
+        console.log("[SoilMoistureCheck] checkTimeResult: " + checkTimeResult);
+        if (!checkTimeResult) {
+            req.session.soilMoistureCheckStatus = 200;
+            new InsertRelayCommand(controllerDataResult.ip, "water", false, piMacAddress);
             return;
         }
         let resultCompareSoilMoisture = await compareSoilMositure(
             configFile,
-            req.body.soilMoisture,
-            greenHouseIdIndex
+            soilMoisture,
+            greenHouseIdIndexSoilMoisture
         );
         console.log("[SoilMoistureCheck] compareSoilMoisture, " + resultCompareSoilMoisture);
         if (typeof resultCompareSoilMoisture === "undefined") {
@@ -60,13 +77,13 @@ export default class SoilMoistureCheck {
         } else {
             console.log("[SoilMoistureCheck] enter insert relay command phase");
             if (resultCompareSoilMoisture) {
-                new InsertRelayCommand(controllerData.ip, "moisture", true, piMacAddress);
+                new InsertRelayCommand(controllerDataResult.ip, "water", true, piMacAddress);
                 console.log("[SoilMoistureCheck] farmDataResult.piMacAddress: " + piMacAddress);
-                // onOffWaterPump(controllerData.ip, true);
+                // onOffWaterPump(controllerDataResult.ip, true);
             } else {
-                new InsertRelayCommand(controllerData.ip, "moisture", false, piMacAddress);
+                new InsertRelayCommand(controllerDataResult.ip, "water", false, piMacAddress);
                 console.log("[SoilMoistureCheck] farmDataResult.piMacAddress: " + piMacAddress);
-                // onOffWaterPump(controllerData.ip, false);
+                // onOffWaterPump(controllerDataResult.ip, false);
             }
             req.session.soilMoistureCheckStatus = 200
             return;
@@ -74,21 +91,21 @@ export default class SoilMoistureCheck {
     }
 }
 
-async function getControllerData(greenHouseId, piMacAddress) {
+async function getControllerData(greenHouseId, farmId) {
     await know_controller.findOne({
         isHavePump: true,
         "pumpType.water": true,
         greenHouseId: greenHouseId,
-        piMacAddress: piMacAddress
+        farmId: farmId
     }, function (err, result) {
         if (err) {
-            controllerData = undefined;
+            controllerDataResult = undefined;
             console.log("[SoilMoistureCheck] getControllerData (err): " + err);
         } else if (!result) {
-            controllerData = undefined;
+            controllerDataResult = undefined;
             console.log("[SoilMoistureCheck] getControllerData (!result): " + result);
         } else {
-            controllerData = result;
+            controllerDataResult = result;
         }
     });
 }
@@ -138,9 +155,9 @@ async function getConfigFile(farmIdIn) {
 //     }
 // }
 
-function compareSoilMositure(configFile, currentSoilMoisture, greenHouseIdIndex) {
-    minSoilMoisture = configFile.soilMoistureConfigs[greenHouseIdIndex].minSoilMoisture;
-    maxSoilMoisture = configFile.soilMoistureConfigs[greenHouseIdIndex].maxSoilMoisture;
+function compareSoilMositure(configFile, currentSoilMoisture, greenHouseIdIndexSoilMoisture) {
+    minSoilMoisture = configFile.soilMoistureConfigs[greenHouseIdIndexSoilMoisture].minSoilMoisture;
+    maxSoilMoisture = configFile.soilMoistureConfigs[greenHouseIdIndexSoilMoisture].maxSoilMoisture;
     console.log("[SoilMoistureCheck] MIN-SM: " + minSoilMoisture);
     console.log("[SoilMoistureCheck] MAX-SM: " + maxSoilMoisture);
     console.log("[SoilMoistureCheck] CURRENT-SM: " + currentSoilMoisture);

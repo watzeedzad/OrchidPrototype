@@ -14,34 +14,20 @@ let lightDurationResult;
 let updateLightDurationResult;
 
 export default class LightCheck {
-  constructor(req, res) {
-    this.operation(req, res);
+  constructor(req) {
+    this.operation(req);
   }
 
-  async operation(req, res) {
-    let ip = req.body.ip;
+  async operation(req) {
+    let greenHouseId = req.body.greenHouseId;
+    let farmId = req.body.farmId;
+    let ambientLight = req.body.ambientLight;
     let piMacAddress = req.body.piMacAddress;
-    if (typeof ip === "undefined" || typeof piMacAddress === "undefined") {
+    if (typeof greenHouseId === "undefined" || typeof farmId === "undefined" || typeof ambientLight === "undefined" || typeof piMacAddress === "undefined") {
       req.session.lightCheckStatus = 500;
       return;
     }
-    let controllerResult = await know_controller.findOne({
-        ip: ip,
-        piMacAddress: piMacAddress
-      },
-      function (err) {
-        if (err) {
-          console.log("[LightCheck] Query fail!, know_controller");
-        } else {
-          console.log("[LightCheck] Query success, know_controller");
-        }
-      }
-    );
-    let greenHouseId = controllerResult.greenHouseId;
-    let farmId = controllerResult.farmId;
     await getConfigFile(farmId);
-    console.log("[LightCheck] greenHouseId_Class, " + greenHouseId);
-    console.log("[LightCheck] farmId_Class, " + farmId);
     await getControllerData(greenHouseId, farmId);
     if (typeof controllerDataResult === "undefined") {
       req.session.lightCheckStatus = 200;
@@ -63,12 +49,12 @@ export default class LightCheck {
       greenHouseIndexLightIntensity
     );
     if (greenHouseIndexLightIntensity == -1) {
-      req.session.lightCheckStatus = 200;
+      req.session.lightCheckStatus = 500;
       return;
     }
     let resultCompareLightIntensity = await compareLightIntensity(
       configFile,
-      req.body.ambientLight,
+      ambientLight,
       greenHouseIndexLightIntensity
     );
     if (typeof resultCompareLightIntensity === "undefined") {
