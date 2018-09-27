@@ -68,6 +68,7 @@ class GreenHouseControllerList extends Component {
                             <CustomTableCell >ปั๊มน้ำ</CustomTableCell>
                             <CustomTableCell >ปั๊มปุ๋ย</CustomTableCell>
                             <CustomTableCell >ปั๊มความชื้น</CustomTableCell>
+                            <CustomTableCell >หลอดไฟ</CustomTableCell>
                             <CustomTableCell >
                                 <Button color="success" size="sm"
                                     onClick={() => buttonCreate(this.props.greenHouseId,null)}>เพิ่มข้อมูล</Button>
@@ -84,9 +85,10 @@ class GreenHouseControllerList extends Component {
                                 <CustomTableCell >{e.greenHouseId}</CustomTableCell>
                                 <CustomTableCell >{e.ip}</CustomTableCell>
                                 <CustomTableCell >{e.mac_address}</CustomTableCell>
-                                <CustomTableCell >{e.pumpType.water?"มี":"ไม่มี"}</CustomTableCell>
-                                <CustomTableCell >{e.pumpType.fertilizer?"มี":"ไม่มี"}</CustomTableCell>
-                                <CustomTableCell >{e.pumpType.moisture?"มี":"ไม่มี"}</CustomTableCell>
+                                <CustomTableCell >{e.relayType.water?"มี":"ไม่มี"}</CustomTableCell>
+                                <CustomTableCell >{e.relayType.fertilizer?"มี":"ไม่มี"}</CustomTableCell>
+                                <CustomTableCell >{e.relayType.moisture?"มี":"ไม่มี"}</CustomTableCell>
+                                <CustomTableCell >{e.relayType.light?"มี":"ไม่มี"}</CustomTableCell>
                                 <CustomTableCell >
                                     <Button color="secondary" size="sm" onClick={() => buttonEdit(e)}>แก้ไข</Button>{"  "}
                                     <Button color="danger" size="sm" onClick={() => buttonDelete(e.mac_address)}>ลบ</Button> 

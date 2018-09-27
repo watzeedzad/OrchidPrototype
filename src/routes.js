@@ -2,7 +2,6 @@ import App from './pages/App'
 import WeatherControl from './pages/WeatherControl'
 import PlanterAnalyze from './pages/PlanterAnalyze'
 import FertilityControl from './pages/FertilityControl'
-import Login from './pages/Login'
 import WaterControl from './pages/WaterControl'
 import FertilizerControl from './pages/FertilizerControl';
 import LightControl from './pages/LightControl';

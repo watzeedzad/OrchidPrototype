@@ -21,22 +21,25 @@ export default class EditController {
         let greenHouseId = req.body.greenHouseId;
         let farmId = req.session.farmId;
         
-        let isHavePump = req.body.isHavePump === '0'||req.body.isHavePump===true?true:false;
+        let isHaveRelay = req.body.isHaveRelay === '0'||req.body.isHaveRelay===true?true:false;
         let moisture;
         let water;
         let fertilizer;
+        let light;
         
-        if (isHavePump === false) {
+        if (isHaveRelay === false) {
             moisture = false;
             water = false;
             fertilizer = false;
+            light = false;
         } else {
             moisture = req.body.moisture==='0'||req.body.moisture===true?true:false;
             water = req.body.water==='0'||req.body.water===true?true:false;
             fertilizer = req.body.fertilizer==='0'||req.body.fertilizer===true?true:false;
+            light = req.body.light==='0'||req.body.light===true?true:false;
         }
 
-        await editControllerData(farmId,greenHouseId,projectId,name,isHavePump, moisture, water, fertilizer,macAddress);
+        await editControllerData(farmId,greenHouseId,projectId,name,isHaveRelay, moisture, water, fertilizer,light,macAddress);
 
         if(editControllerData){
             res.sendStatus(200);
@@ -46,7 +49,7 @@ export default class EditController {
     }
 }
 
-async function editControllerData(farmId,greenHouseId,projectId,name,isHavePump, moisture, water, fertilizer,macAddress) {
+async function editControllerData(farmId,greenHouseId,projectId,name,isHaveRelay, moisture, water, fertilizer,macAddress) {
     knowController.findOneAndUpdate({
             //ip: ip,
             mac_address: macAddress,
@@ -60,9 +63,10 @@ async function editControllerData(farmId,greenHouseId,projectId,name,isHavePump,
                 pumpType: {
                     moisture: moisture,
                     water: water,
-                    fertilizer: fertilizer
+                    fertilizer: fertilizer,
+                    light: light
                 },
-                isHavePump: isHavePump,
+                isHaveRelay: isHaveRelay,
                 //piMacAddress: piMacAddress
             }
         },

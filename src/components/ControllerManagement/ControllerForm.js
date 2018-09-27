@@ -17,12 +17,14 @@ class ControllerForm extends Component {
             water:false,
             fertilizer:false,
             moisture:false,
+            light:false,
             selectedOption: "", 
         };
         this.handleChange = this.handleChange.bind(this);
         this.handleWaterChange = this.handleWaterChange.bind(this);
         this.handleFertilizerChange = this.handleFertilizerChange.bind(this);
         this.handleMoistureChange = this.handleMoistureChange.bind(this);
+        this.handleLightChange = this.handleLightChange.bind(this);
     }
 
     handleChange() {
@@ -49,6 +51,12 @@ class ControllerForm extends Component {
         })
     }
 
+    handleLightChange() {
+        this.setState({
+            light: !this.state.light
+        })
+    }
+
 
     componentDidMount() {
         //เรียกใช้ฟังก์ชันในการกำหนด value ให้กับ textbox และ control ต่างๆ
@@ -69,30 +77,32 @@ class ControllerForm extends Component {
             "greenHouseId": this.props.data.greenHouseId,
             "projectId": this.props.data.projectId,
             "name": '',
-            "isHavePump": false,
+            "isHaveRelay": false,
             "water": false,
             "fertilizer": false,
             "moisture": false,
+            "light": false,
             "mac_address": null
         };
 
         if (this.props.data._id) {
             let data = this.props.data
-            this.setState({checked: data.isHavePump,water:data.pumpType.water,fertilizer:data.pumpType.fertilizer,moisture:data.pumpType.moisture})
-            // data.isHavePump = data.isHavePump==true||data.isHavePump=='0'?'0':'1'
-            // data.pumpType.water = data.pumpType.water==true||data.pumpType.water=='0'?'0':'1'
-            // data.pumpType.moisture = data.pumpType.moisture==true||data.pumpType.moisture=='0'?'0':'1'
-            // data.pumpType.fertilizer = data.pumpType.fertilizer==true||data.pumpType.fertilizer=='0'?'0':'1'
+            this.setState({checked: data.isHaveRelay,water:data.relayType.water,fertilizer:data.relayType.fertilizer,moisture:data.relayType.moisture,light:data.relayType.light})
+            // data.isHaveRelay = data.isHaveRelay==true||data.isHaveRelay=='0'?'0':'1'
+            // data.relayType.water = data.relayType.water==true||data.relayType.water=='0'?'0':'1'
+            // data.relayType.moisture = data.relayType.moisture==true||data.relayType.moisture=='0'?'0':'1'
+            // data.relayType.fertilizer = data.relayType.fertilizer==true||data.relayType.fertilizer=='0'?'0':'1'
             
             initData = {
                 "farmId": data.farmId,
                 "greenHouseId": data.greenHouseId,
                 "projectId": data.projectId,
                 "name": data.name,
-                "isHavePump": data.isHavePump,
-                "water": data.pumpType.water,
-                "fertilizer": data.pumpType.fertilizer,
-                "moisture": data.pumpType.moisture,
+                "isHaveRelay": data.isHaveRelay,
+                "water": data.relayType.water,
+                "fertilizer": data.relayType.fertilizer,
+                "moisture": data.relayType.moisture,
+                "light": data.relayType.light,
                 "mac_address": data.mac_address
             }
         }
@@ -107,9 +117,9 @@ class ControllerForm extends Component {
             return <div>Loading...</div>
         }
         
-        const pumpType = this.state.checked
+        const relayType = this.state.checked
             ?  <div className="form-group row">
-                        <label className="col-sm-3 col-form-label">ประเภทของปั๊ม</label>
+                        <label className="col-sm-3 col-form-label">ประเภทของรีเลย์</label>
                         <div className="col-sm-9">
                             <div className="form-check form-check-inline">
                                 <label className="form-check-label">
@@ -149,6 +159,19 @@ class ControllerForm extends Component {
                                         checked={this.state.moisture}
                                         onChange={this.handleMoistureChange}
                                     />{' '}ปั๊มความชื้น
+                                    </label>
+                            </div>
+                            <div className="form-check form-check-inline">
+                                <label className="form-check-label">
+                                    <Field
+                                        className="form-check-input"
+                                        name="light"
+                                        component="input"
+                                        type="checkbox"
+                                        value='1'
+                                        checked={this.state.light}
+                                        onChange={this.handleLightChange}
+                                    />{' '}หลอดไฟ
                                     </label>
                             </div>
                         </div>
@@ -200,27 +223,27 @@ class ControllerForm extends Component {
                                 <label className="form-check-label">
                                     <Field
                                         className="form-check-input"
-                                        name="isHavePump"
+                                        name="isHaveRelay"
                                         component="input"
                                         type="radio"
                                         value="0"
                                         checked={this.state.checked}
                                         onChange={this.handleChange}
                                     />{' '}
-                                    มีปั๊ม
+                                    มีรีเลย์
                                     </label>
                             </div>
                             <div className="form-check form-check-inline">
                                 <label className="form-check-label">
                                     <Field
                                         className="form-check-input"
-                                        name="isHavePump"
+                                        name="isHaveRelay"
                                         component="input"
                                         type="radio"
                                         value="1"
                                         checked={ !this.state.checked } 
                                         onChange={ this.handleChange }
-                                    />{' '}ไม่มีปั๊ม
+                                    />{' '}ไม่มีรีเลย์
                                     </label>
                             </div>
                         </div>
@@ -228,7 +251,7 @@ class ControllerForm extends Component {
                     <Field name="farmId" component={renderField} type="hidden" />
                     <Field name="greenHouseId" component={renderField} type="hidden" />
                     <Field name="projectId" component={renderField} type="hidden" />
-                   {pumpType}
+                   {relayType}
                 </ModalBody>
                 </form>
                 <ModalFooter>
@@ -256,8 +279,8 @@ function validate(values) {
     }
     // else if(values.mac_address == ""){
     //     errors.mac_address = 'จำเป็นต้องเลือกคอนโทรลเลอร์';
-    // }else if(values.isHavePump == "0" && values.water == "1" && values.fertilizer == "1" && values.moisture =="1"){
-    //     errors.isHavePump = 'จำเป็นต้องเลือกประเภทของปั๊มที่มี'
+    // }else if(values.isHaveRelay == "0" && values.water == "1" && values.fertilizer == "1" && values.moisture =="1"){
+    //     errors.isHaveRelay = 'จำเป็นต้องเลือกประเภทของปั๊มที่มี'
     // }
 
     return errors;

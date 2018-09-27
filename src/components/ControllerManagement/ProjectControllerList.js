@@ -69,6 +69,7 @@ class GreenHouseControllerList extends Component {
                             <CustomTableCell numeric>ปั๊มน้ำ</CustomTableCell>
                             <CustomTableCell numeric>ปั๊มปุ๋ย</CustomTableCell>
                             <CustomTableCell numeric>ปั๊มความชื้น</CustomTableCell>
+                            <CustomTableCell numeric>หลอดไฟ</CustomTableCell>
                             <CustomTableCell numeric>
                             <Button color="success" size="sm"
                                     onClick={() => buttonCreate(this.props.greenHouseId,this.props.projectId)}>เพิ่มข้อมูล</Button>
@@ -85,9 +86,10 @@ class GreenHouseControllerList extends Component {
                                 <CustomTableCell numeric>{e.projectId}</CustomTableCell>
                                 <CustomTableCell numeric>{e.ip}</CustomTableCell>
                                 <CustomTableCell numeric>{e.mac_address}</CustomTableCell>
-                                <CustomTableCell numeric>{e.pumpType.water?"มี":"ไม่มี"}</CustomTableCell>
-                                <CustomTableCell numeric>{e.pumpType.fertilizer?"มี":"ไม่มี"}</CustomTableCell>
-                                <CustomTableCell numeric>{e.pumpType.moisture?"มี":"ไม่มี"}</CustomTableCell>
+                                <CustomTableCell numeric>{e.relayType.water?"มี":"ไม่มี"}</CustomTableCell>
+                                <CustomTableCell numeric>{e.relayType.fertilizer?"มี":"ไม่มี"}</CustomTableCell>
+                                <CustomTableCell numeric>{e.relayType.moisture?"มี":"ไม่มี"}</CustomTableCell>
+                                <CustomTableCell numeric>{e.relayType.light?"มี":"ไม่มี"}</CustomTableCell>
                                 <CustomTableCell numeric>
                                     <Button color="secondary" size="sm" onClick={() => buttonEdit(e)}>แก้ไข</Button>{"  "}
                                     <Button color="danger" size="sm" onClick={() => buttonDelete(e.mac_address)}>ลบ</Button> 

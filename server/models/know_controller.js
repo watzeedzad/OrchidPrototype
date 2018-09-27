@@ -12,12 +12,13 @@ const know_controllerSchema = new Schema({
     projectId: Number,
     greenHouseId: Number,
     farmId: Number,
-    isHavePump: Boolean,
+    isHaveRelay: Boolean,
     controllerType:String,
-    pumpType: {
+    relayType: {
         moisture: Boolean,
         water: Boolean,
-        fertilizer: Boolean
+        fertilizer: Boolean,
+        light: Boolean
     },
     piMacAddress: String
 });
