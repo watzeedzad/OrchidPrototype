@@ -122,7 +122,8 @@ async function getControllerData(greenHouseId, farmId) {
   console.log("[LightCheck] getControllerData, greenHouseId: " + greenHouseId);
   console.log("[LightCheck] getControllerData, farmid: " + farmId);
   await know_controller.findOne({
-      isHaveLight: true,
+      isHaveRelay: true,
+      "relayType.light": true,
       greenHouseId: greenHouseId,
       farmId: farmId
     },

@@ -118,8 +118,8 @@ async function getControllerData(projectId, farmId) {
     "[FertilityCheck] getControllerData: " + projectId + ", " + farmId
   );
   await know_controller.findOne({
-      isHavePump: true,
-      "pumpType.fertilizer": true,
+      isHaveRelay: true,
+      "relayType.fertilizer": true,
       projectId: projectId,
       farmId: farmId
     },

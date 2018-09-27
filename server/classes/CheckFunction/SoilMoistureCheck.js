@@ -93,8 +93,8 @@ export default class SoilMoistureCheck {
 
 async function getControllerData(greenHouseId, farmId) {
     await know_controller.findOne({
-        isHavePump: true,
-        "pumpType.water": true,
+        isHaveRelay: true,
+        "relayType.water": true,
         greenHouseId: greenHouseId,
         farmId: farmId
     }, function (err, result) {

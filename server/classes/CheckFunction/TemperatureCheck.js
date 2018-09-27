@@ -84,8 +84,8 @@ export default class TemperatureCheck {
 
 async function getControllerData(greenHouseId, farmId) {
     await know_controller.findOne({
-        isHavePump: true,
-        "pumpType.moisture": true,
+        isHaveRelay: true,
+        "relayType.moisture": true,
         greenHouseId: greenHouseId,
         farmId: farmId
     }, function (err, result) {
