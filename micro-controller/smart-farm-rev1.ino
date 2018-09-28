@@ -318,7 +318,7 @@ void sendData()
         HTTPClient http;
         http.setTimeout(10000);
         // http.begin("https://hello-api.careerity.me/sensorRoutes/greenHouseSensor", "EC:BB:33:AB:B4:F4:5B:A0:76:F3:F1:5B:FE:EC:BD:16:17:5C:22:47");
-        http.begin("http://192.168.1.15:3001/handleController/");
+        http.begin("http://" + WiFi.gatewayIP().toString() + ":3001" + "/handleController/");
         http.addHeader("Content-Type", "application/json");
         int httpCode = http.POST(dataSet1);
         String payload = http.getString();
@@ -340,7 +340,7 @@ void sendData()
 
         http.setTimeout(10000);
         // http.begin("https://hello-api.careerity.me/sensorRoutes/projectSensor", "EC:BB:33:AB:B4:F4:5B:A0:76:F3:F1:5B:FE:EC:BD:16:17:5C:22:47");
-        http.begin("http://192.168.1.15:3001/handleController/");
+        http.begin("http://" + WiFi.gatewayIP().toString() + ":3001" + "/handleController/");
         http.addHeader("Content-Type", "application/json");
         httpCode = http.POST(dataSet2);
         payload = http.getString();
