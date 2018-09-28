@@ -46,9 +46,9 @@ class CSVModal extends Component {
         return (
             <div>
                 <ModalBody>
-                    <CSVLink data={farmCSV.data} headers={headers}> ดาวน์โหลดไฟล์ csv ของทั้งฟาร์ม </CSVLink><br />
-                    <CSVLink data={greenHouseCSV.data} headers={headers}> ดาวน์โหลดไฟล์ csv ของโรงเรือน </CSVLink><br />
-                    <CSVLink data={projectCSV.data} headers={headers}> ดาวน์โหลดไฟล์ csv ของโปรเจ็ค </CSVLink><br />
+                    <CSVLink data={farmCSV.data} headers={headers}> export ข้อมูลของทั้งฟาร์ม </CSVLink><br /><br /><hr />
+                    <CSVLink data={greenHouseCSV.data} headers={headers}> export ข้อมูลของทั้งโรงเรือน </CSVLink><br /><br /><hr />
+                    <CSVLink data={projectCSV.data} headers={headers}> export ข้อมูลของทั้งโปรเจ็ค </CSVLink><br /><br /><hr />
                 </ModalBody>
             </div>
         )

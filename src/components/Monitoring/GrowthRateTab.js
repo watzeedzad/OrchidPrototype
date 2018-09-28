@@ -27,7 +27,7 @@ class GrowthRateTab extends Component {
         return (
             <div>
                 {this.state.mss}
-                <Button color="success" size="sm" onClick={this.csvToggle}>ดาวน์โหลดไฟล์ CSV</Button>{' '}
+                <Button color="success" size="sm" onClick={this.csvToggle}>export ข้อมูล</Button>{' '}
                 <Button color="success" size="sm" onClick={this.handleNew}>เพิ่มข้อมูล</Button><br/><hr/>
 
                 <GrowthRateGraphTab growthRate={growthRate}/>
