@@ -55,20 +55,25 @@ export default class FertilityCheck {
       console.log("[FertilityCheck] enter loop: " + index);
       let tempDate = new Date(configFile.fertilizer[projectIdTimeIndex].timeRanges[index]);
       if (tempDate.getHours() == currentDate.getHours() && tempDate.getMinutes() == currentDate.getMinutes()) {
+        console.log("[FertilityCheck] checkTime enter CASE 1");
         checkTimeResult = true;
       } else if (tempDate.getHours() == currentDate.getHours() && tempDate.getMinutes() < currentDate.getMinutes()) {
+        console.log("[FertilityCheck] checkTime enter CASE 2");
         checkTimeResult = true;
       } else {
-        if ((currentDate.getHours() == tempDate.getHours()) || (currentDate.getHours() - tempDate.getHours() <= 2 && currentDate.getHours() - tempDate.getHours() >= 0)) {
+        
+        console.log("[FertilityCheck] checkTime enter CASE 3");if ((currentDate.getHours() == tempDate.getHours()) || (currentDate.getHours() - tempDate.getHours() <= 2 && currentDate.getHours() - tempDate.getHours() >= 0)) {
           checkTimeResult = true;
         } else {
           checkTimeResult = false;
         }
       }
+      console.log("[Fertility] end loop: " + index);
     }
     console.log("[FertilityCheck] checkTimeResult: " + checkTimeResult);
     if (!checkTimeResult) {
       req.session.fertilityCheckStatus = 200;
+      new InsertRelayCommand(controllerDataResult.ip, "fertilizer", false, piMacAddress);
       return;
     }
     let resultCompareFertility = await compareFertility(
@@ -81,6 +86,7 @@ export default class FertilityCheck {
     );
     if (typeof resultCompareFertility === "undefined") {
       req.session.fertilityCheckStatus = 500;
+      
       return;
     } else {
       console.log("[FertilityCheck] enter insert relay command phase");

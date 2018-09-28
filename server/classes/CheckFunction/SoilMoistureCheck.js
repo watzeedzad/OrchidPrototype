@@ -44,20 +44,20 @@ export default class SoilMoistureCheck {
             console.log("[SoilMoistureCheck] enter loop: " + index);
             let tempDate = new Date(configFile.watering[greenHouseIdTimeIndex].timeRanges[index]);
             if (tempDate.getHours() == currentDate.getHours() && tempDate.getMinutes() == currentDate.getMinutes()) {
-                console.log("CASE 1");
+                console.log("[SoilMoistureCheck] checkTime enter CASE 1");
                 checkTimeResult = true;
             } else if (tempDate.getHours() == currentDate.getHours() && tempDate.getMinutes() < currentDate.getMinutes()) {
-                console.log("CASE 2");
+                console.log("[SoilMoistureCheck] checkTime enter CASE 2");
                 checkTimeResult = true;
             } else {
-                console.log("CASE 3")
+                console.log("[SoilMoistureCheck] checkTime enter CASE 3")
                 if ((currentDate.getHours() == tempDate.getHours()) || (currentDate.getHours() - tempDate.getHours() <= 2 && currentDate.getHours() - tempDate.getHours() >= 0)) {
                     checkTimeResult = true;
                 } else {
                     checkTimeResult = false;
                 }
             }
-            console.log("[SoilMoistureCheck] end loop: " + index)
+            console.log("[SoilMoistureCheck] end loop: " + index);
         }
         console.log("[SoilMoistureCheck] checkTimeResult: " + checkTimeResult);
         if (!checkTimeResult) {
