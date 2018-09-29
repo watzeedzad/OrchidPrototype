@@ -41,7 +41,8 @@ class UserForm extends Component {
             "role": 'เจ้าของฟาร์ม',
             "lastname": '',
             "username": '',
-            "password": ''
+            "password": '',
+            "repassword": '',
         };
 
         //ตรวจสอบก่อนว่ามี data._id หรือไม่
@@ -50,6 +51,7 @@ class UserForm extends Component {
         if (this.props.data._id) {
             this.setState({role:this.props.data.role})
             initData = this.props.data
+            initData.password = ''
             //user_type ที่รับมาเป็น init แต่value ต้องแปลงเป็น string ก่อน
         }
         this.props.initialize(initData);
@@ -99,8 +101,12 @@ class UserForm extends Component {
                     </div>
                     <Field name="firstname" component={renderField} type="text" label="ชื่อ" autoFocus />
                     <Field name="lastname" component={renderField} type="text" label="สกุล" />
-                    <Field name="username" component={renderField} type="text" label="Username" />
-                    <Field name="password" component={renderField} type="password" label="Password" />
+                    {this.props.data._id
+                    ? <Field name="username" component={renderField} type="text" label="ไอดีผู้ใช้"  readOnly />
+                    : <Field name="username" component={renderField} type="text" label="ไอดีผู้ใช้" />
+                    }
+                    <Field name="password" component={renderField} type="password" label="รหัสผ่าน" />
+                    <Field name="repassword" component={renderField} type="password" label="ยืนยันรหัสผ่าน" />
                 </ModalBody>
 
                 <ModalFooter>
@@ -125,15 +131,26 @@ class UserForm extends Component {
 //validate ข้อมูลก่อน submit
 function validate(values) {
     const errors = {};
-    if (!values.name) {
-        errors.name = 'จำเป็นต้องกรอกชื่อ-สกุล';
+    if (!values.firstname) {
+        errors.firstname = 'จำเป็นต้องกรอกชื่อ';
     }
-
+    if (!values.lastname) {
+        errors.lastname = 'จำเป็นต้องกรอกนามสกุล';
+    }
     if (!values.username) {
-        errors.username = 'จำเป็นต้องกรอก Username !';
+        errors.username = 'จำเป็นต้องกรอกไอดีผู้ใช้';
     } else if (values.username.length < 3) {
         errors.username = 'Username ต้องมากกว่า 3 ตัวอักษร !';
     }
+    if (!values.password) {
+        errors.password = 'จำเป็นต้องกรอกรหัสผ่าน';
+    }
+    if (!values.repassword) {
+        errors.repassword = 'จำเป็นต้องกรอกยืนยันรหัสผ่าน';
+    }else if (values.repassword != values.password) {
+        errors.repassword = 'รหัสผ่านและยืนยันรหัสผ่านไม่ตรงกัน';
+    }
+    
 
     return errors;
 }
