@@ -51,7 +51,7 @@ export default class ShowFertility {
         configFile.fertilityConfigs[projectIdIndex].minFertility;
       let maxConfigFertility =
         configFile.fertilityConfigs[projectIdIndex].maxFertility;
-      let cuurentFertility = projectSensorData.soilFertilizer;
+      let cuurentFertility = projectSensorData.soilFertility;
       var showFertility = {
         projectId: projectId,
         minConfigFertility: minConfigFertility,

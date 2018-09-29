@@ -64,7 +64,7 @@ export default class ShowAllFertility {
           projectId: projectSensorDataSplice[index].projectId,
           minFertility: configFile.fertilityConfigs[projectConfigIndex].minFertility,
           maxFertility: configFile.fertilityConfigs[projectConfigIndex].maxFertility,
-          currentFertility: projectSensorDataSplice[index].soilFertilizer
+          currentFertility: projectSensorDataSplice[index].soilFertility
         };
         showAllFertility.allFertility.push(temp);
       }

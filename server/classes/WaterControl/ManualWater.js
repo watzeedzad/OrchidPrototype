@@ -20,6 +20,8 @@ export default class ManualWatering {
         }
         let greenHouseId = req.body.greenHouseId;
         let inputLitre = req.body.litre;
+        console.log("[ManualWater] greenHouseId: " + greenHouseId);
+        console.log("[ManualWater] inputLitre: " + inputLitre);
         if (typeof greenHouseId === "undefined" || typeof inputLitre === "undefined") {
             res.json({
                 status: 500,
@@ -27,30 +29,20 @@ export default class ManualWatering {
             });
             return;
         }
-        console.log("[ManualWater] greenHouseId, " + greenHouseId);
-        console.log("[ManualWater] inputLitre, " + inputLitre);
         await getControllerData(greenHouseId);
         if (typeof controllerData === "undefined") {
             res.sendStatus(200);
             return;
         }
-        new InsertRelayManualCommand(controllerData.ip, "water", )
-        let status = manualOnWaterPump(controllerData.ip, inputLitre);
-        if (status) {
-            res.sendStatus(200);
-        } else {
-            res.json({
-                status: 500,
-                errorMessage: "เกิดข้อผิดพลาดในการสั่งรดนํ้าแบบแมนนวล"
-            })
-        }
+        new InsertRelayManualCommand(controllerData.ip, "water", req.session.farmData.piMacAddress, inputLitre);
+        res.sendStatus(200);
     }
 }
 
 async function getControllerData(greenHouseId) {
-    let controllerResult = await know_controller.findOne({
-        isHavePump: true,
-        "pumpType.water": true,
+    await know_controller.findOne({
+        isHaveRelay: true,
+        "relayType.water": true,
         greenHouseId: greenHouseId
     }, function (err, result) {
         if (err) {
@@ -61,19 +53,3 @@ async function getControllerData(greenHouseId) {
         }
     });
 }
-
-// async function getFarmData
-
-// function manualOnWaterPump(ip, litre) {
-//     console.log("Send: /manualWater?params=" + litre);
-//     request.get("http://" + String(ip) + "/manualWater?params=" + litre, {
-//             timeout: 20000
-//         })
-//         .on("error", function (err) {
-//             return false;
-//             console.log(err.code === "ETIMEDOUT");
-//             console.log(err.connect == true);
-//             console.log(err);
-//         });
-//     return true;
-// }

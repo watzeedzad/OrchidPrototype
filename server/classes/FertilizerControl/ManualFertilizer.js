@@ -16,32 +16,33 @@ export default class ManualFertilizer {
             res.sendStatus(500);
             return;
         }
-        let greenHouseId = req.body.greenHouseId;
+        let projectId = req.body.projectId;
         let inputLitre = req.body.litre;
-        if (typeof greenHouseId === "undefined" || typeof inputLitre === "undefined") {
+        if (typeof projectId === "undefined" || typeof inputLitre === "undefined") {
             res.json({
                 status: 500,
                 errorMessage: "เกิดข้อผิดพลาดในการสั่งให้ปุ๋ยแบบแมนนวล"
             });
             return;
         }
-        console.log("[ManualFertilizer] greenHouseId, " + greenHouseId);
+        console.log("[ManualFertilizer] projectId, " + projectId);
         console.log("[ManualFertilizer] inputLitre, " + inputLitre);
-        await getControllerData(greenHouseId);
+        await getControllerData(projectId);
         if (typeof controllerData === "undefined") {
             res.sendStatus(200);
             return;
         }
-        new InsertRelayManualCommand(controllerData.ip, "fertilizer", farmData.piMacAddress, inputLitre);
-        re.sendStatus(200);
+        console.log("[ManualFertilitzer] enter insert manual relay phase")
+        new InsertRelayManualCommand(controllerData.ip, "fertilizer", req.session.farmData.piMacAddress, inputLitre);
+        res.sendStatus(200);
     }
 }
 
-async function getControllerData(greenHouseId) {
+async function getControllerData(projectId) {
     await know_controller.findOne({
-        isHavePump: true,
-        "pumpType.fertilizer": true,
-        greenHouseId: greenHouseId
+        isHaveRelay: true,
+        "relayType.fertilizer": true,
+        projectId: projectId
     }, function (err, result) {
         if (err) {
             controllerData = undefined;
@@ -51,17 +52,3 @@ async function getControllerData(greenHouseId) {
         }
     });
 }
-
-// function manualOnFertilizerPump(ip, litre) {
-//     console.log("Send: /manualFertilizer?params=" + litre);
-//     request.get("http://" + String(ip) + "/manualFertilizer?params=" + litre, {
-//             timeout: 20000
-//         })
-//         .on("error", function (err) {
-//             return false;
-//             console.log(err.code === "ETIMEDOUT");
-//             console.log(err.connect == true);
-//             console.log(err);
-//         });
-//     return true;
-// }

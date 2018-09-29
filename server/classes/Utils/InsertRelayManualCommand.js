@@ -4,17 +4,26 @@ let ObjectID = require("mongodb").ObjectID;
 
 export default class InsertRelayManualCommand {
     constructor(ip, pumpType, macAddress, litre) {
-        this.process(ip, pumpType, macAddress, litre);
+        this.operation(ip, pumpType, macAddress, litre);
     }
 
-    async procces(ip, pumpType, macAddress, litre) {
+    async operation(ip, pumpType, macAddress, litre) {
         let relayInsertData = {
             _id: new ObjectID(),
             pumpType: pumpType,
             ip: ip,
-            litre: litre,
+            inputLitre: litre,
             piMacAddress: macAddress
         }
-        relayManualQueue.insert(relayInsertData);
+        console.log("[InsertRelayManualCommand] " + ip, pumpType, macAddress, litre);
+        new relayManualQueue(relayInsertData).save(function (err) {
+            console.log(err);
+            if (!err) {
+                console.log("[InsertRelayManualCommand] created command!");
+            } else {
+                //TODO: return page with errors
+                return console.log(err);
+            }
+        });
     }
 }

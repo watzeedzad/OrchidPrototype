@@ -11,14 +11,15 @@ export default class Handler {
     }
 
     async operation(req, res) {
-        let ipPoolData = req.body.ipPoolData;
+        let ipPoolData;
+        let ipPooldataTemp = req.body.ipPoolData;
         let piMacAddress = req.body.piMacAddress;
-        if (typeof ipPoolData === "undefined" || typeof piMacAddress === "undefined") {
+        if (typeof ipPooldataTemp === "undefined" || typeof piMacAddress === "undefined") {
             res.sendStatus(500);
             return;
         }
         let newFormatPiMacAddress;
-        console.log("[Handler] ipPoolData : " + ipPoolData);
+        console.log("[Handler] ipPoolData : " + ipPooldataTemp);
         console.log("[Handler] piMacAddress : " + piMacAddress);
         let splitChar = piMacAddress[2];
         newFormatPiMacAddress = (piMacAddress.split(splitChar)).toString();
@@ -29,6 +30,12 @@ export default class Handler {
             res.sendStatus(500);
             return;
         }
+        if (typeof ipPooldataTemp === "string") {
+            ipPoolData = [];
+            ipPoolData.push(ipPooldataTemp);
+        } else {
+            ipPoolData = ipPooldataTemp;
+        }
         for (let index = 0; index < ipPoolData.length; index++) {
             console.log("[Handler] ipPoolData.length : " + ipPoolData.length);
             let indexData = ipPoolData[index];
@@ -37,13 +44,19 @@ export default class Handler {
             let ip = indexData[2];
             let macAddress = indexData[1];
             await findExistController(macAddress, newFormatPiMacAddress, farmDataResult.farmId);
-            if (typeof knowControllerDataResult == "undefined") {
-                insertKnowController(ip, macAddress, newFormatPiMacAddress, farmDataResult.farmId);
-            } else {
-                if (knowControllerDataResult.ip != ip) {
-                    updateExistController(knowControllerDataResult._id, ip, knowControllerDataResult);
+            setTimeout(() => {
+                if (typeof knowControllerDataResult == "undefined") {
+                    console.log("[Handler] begin insert new controller " + ip, macAddress)
+                    insertKnowController(ip, macAddress, newFormatPiMacAddress, farmDataResult.farmId);
+                } else {
+                    if (knowControllerDataResult.ip != ip) {
+                        console.log("[Handler] begin update controller ip " + ip, macAddress, knowControllerDataResult.ip);
+                        updateExistController(knowControllerDataResult._id, ip, knowControllerDataResult);
+                    } else {
+                        console.log("[Handler] ip won't cahnge")
+                    }
                 }
-            }
+            }, 200);
         }
         res.sendStatus(200);
     }

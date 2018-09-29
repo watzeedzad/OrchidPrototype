@@ -36,8 +36,8 @@ void sendData();
 void checkWaterLitre();
 void checkFertilizerLitre();
 Task sendDataTask(30000, TASK_FOREVER, &sendData);
-Task checkWaterLitreTask(500, TASK_FOREVER, &checkWaterLitre);
-Task checkFertilizerLitreTask(500, TASK_FOREVER, &checkFertilizerLitre);
+Task checkWaterLitreTask(100, TASK_FOREVER, &checkWaterLitre);
+Task checkFertilizerLitreTask(100, TASK_FOREVER, &checkFertilizerLitre);
 
 // String sensorData;
 int waterInputLitre;
@@ -49,10 +49,10 @@ int fertilityPercent = 0;
 uint16_t lux;
 float humidity, temperature;
 
-byte waterFlowSensorInterrupt = 19;
-byte waterFlowSensorPin = 19;
-byte fertilizerFlowSensorInterrupt = 18;
-byte fertilizerFlowSensorPin = 18;
+byte waterFlowSensorInterrupt = 18;
+byte waterFlowSensorPin = 18;
+byte fertilizerFlowSensorInterrupt = 19;
+byte fertilizerFlowSensorPin = 19;
 float calibrationFactor = 7.5;
 volatile byte waterPulseCount;
 volatile byte fertilizerPulseCount;
@@ -135,6 +135,8 @@ void setup(void)
         runner.addTask(checkFertilizerLitreTask);
         runner.addTask(sendDataTask);
         sendDataTask.enable();
+        checkFertilizerLitreTask.disable();
+        checkWaterLitreTask.disable();
 
         delay(100);
 }
@@ -294,14 +296,14 @@ int convertFertilityToPercent(int value)
 void sendData()
 {
         Serial.println("Function \"sendData\" has been called.");
-        Serial.print("Avg. of temperature : ");
-        Serial.println(temperatureStats.average(), 2);
-        Serial.print("Avg. of humidity : ");
-        Serial.println(humidityStats.average(), 2);
-        Serial.print("Avg. of fertility : ");
-        Serial.println(fertilityStats.average(), 2);
-        Serial.print("Avg. of moisture : ");
-        Serial.println(moistureStats.average(), 2);
+        // Serial.print("Avg. of temperature : ");
+        // Serial.println(temperatureStats.average(), 2);
+        // Serial.print("Avg. of humidity : ");
+        // Serial.println(humidityStats.average(), 2);
+        // Serial.print("Avg. of fertility : ");
+        // Serial.println(fertilityStats.average(), 2);
+        // Serial.print("Avg. of moisture : ");
+        // Serial.println(moistureStats.average(), 2);
 
         StaticJsonBuffer<250> JSONbuffer1;
         JsonObject &JSONencoder = JSONbuffer1.createObject();
@@ -313,7 +315,7 @@ void sendData()
         JSONencoder["type"] = "greenHouse";
         char dataSet1[250];
         JSONencoder.prettyPrintTo(dataSet1, sizeof(dataSet1));
-        Serial.println(dataSet1);
+        // Serial.println(dataSet1);
 
         HTTPClient http;
         http.setTimeout(10000);
@@ -336,7 +338,7 @@ void sendData()
         JSONencoder2["type"] = "project";
         char dataSet2[250];
         JSONencoder2.prettyPrintTo(dataSet2, sizeof(dataSet2));
-        Serial.println(dataSet2);
+        // Serial.println(dataSet2);
 
         http.setTimeout(10000);
         // http.begin("https://hello-api.careerity.me/sensorRoutes/projectSensor", "EC:BB:33:AB:B4:F4:5B:A0:76:F3:F1:5B:FE:EC:BD:16:17:5C:22:47");
@@ -359,6 +361,7 @@ void sendData()
 
 void checkWaterLitre()
 {
+        Serial.printf("enter checkWaterLitre %d total %d input \n", waterFlowTotalMilliLitres, waterInputLitre);
         if (waterFlowTotalMilliLitres > waterInputLitre)
         {
                 Serial.println("true");
@@ -367,12 +370,14 @@ void checkWaterLitre()
         }
         else
         {
-                Serial.println("false");
+                Serial.println("checkWaterLitre false");
+                digitalWrite(RE_IN_PIN1, 0);
         }
 }
 
 void checkFertilizerLitre()
 {
+        Serial.printf("enter checkFertilizerLitre %d total %d input \n", fertilizerFlowTotalMilliLitres, fertilizerInputLitre);
         if (fertilizerFlowTotalMilliLitres > fertilizerInputLitre)
         {
                 Serial.println("true");
@@ -381,7 +386,8 @@ void checkFertilizerLitre()
         }
         else
         {
-                Serial.println("false");
+                Serial.println("checkFertilizerLitre false");
+                digitalWrite(RE_IN_PIN2, 0);
         }
 }
 
@@ -412,7 +418,6 @@ int manualWaterPump(String inputLitre)
         waterInputLitre = waterInputLitre * 1000;
         waterFlowMilliLitres = 0;
         waterFlowTotalMilliLitres = 0;
-        digitalWrite(RE_IN_PIN1, 0);
         checkWaterLitreTask.enable();
         return 1;
 }
@@ -423,7 +428,6 @@ int manualFertilizerPump(String inputLitre)
         fertilizerInputLitre = fertilizerInputLitre * 1000;
         fertilizerFlowMilliLitres = 0;
         fertilizerFlowTotalMilliLitres = 0;
-        digitalWrite(RE_IN_PIN2, 0);
         checkFertilizerLitreTask.enable();
         return 1;
 }

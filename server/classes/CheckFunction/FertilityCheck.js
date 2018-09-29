@@ -61,7 +61,6 @@ export default class FertilityCheck {
         console.log("[FertilityCheck] checkTime enter CASE 2");
         checkTimeResult = true;
       } else {
-        
         console.log("[FertilityCheck] checkTime enter CASE 3");if ((currentDate.getHours() == tempDate.getHours()) || (currentDate.getHours() - tempDate.getHours() <= 2 && currentDate.getHours() - tempDate.getHours() >= 0)) {
           checkTimeResult = true;
         } else {

@@ -74,13 +74,13 @@ export default class ShowFertilityHistory {
     }
     var fertilityHistory = {
       fertilityHistory: [{
-        currentFertility: projectSensorDataSplice[0].soilFertilizer,
+        currentFertility: projectSensorDataSplice[0].soilFertility,
         timeStamp: projectSensorDataSplice[0].timeStamp
       }]
     };
     for (let index = 1; index < projectSensorDataSplice.length; index++) {
       var temp = {
-        currentFertility: projectSensorDataSplice[index].soilFertilizer,
+        currentFertility: projectSensorDataSplice[index].soilFertility,
         timeStamp: projectSensorDataSplice[index].timeStamp
       };
       fertilityHistory.fertilityHistory.push(temp);
