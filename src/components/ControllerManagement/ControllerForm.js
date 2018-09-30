@@ -5,7 +5,32 @@ import { connect } from 'react-redux'
 import { getDropdownController } from '../../redux/actions/controllerActions'
 import DropdownList from 'react-widgets/lib/DropdownList'
 import 'react-widgets/dist/css/react-widgets.css'
-import renderField from '../../Utils/renderField'
+import FormControl from '@material-ui/core/FormControl';
+import withStyles from '@material-ui/core/styles/withStyles';
+import MaterialRenderTextField from '../../Utils/MaterialRenderTextField';
+
+const styles = theme => ({
+    layout: {
+      width: 'auto',
+      display: 'block', // Fix IE11 issue.
+      marginTop: theme.spacing.unit * 8,
+      marginLeft: theme.spacing.unit * 3,
+      marginRight: theme.spacing.unit * 3,
+      [theme.breakpoints.up(250 + theme.spacing.unit * 3 * 2)]: {
+        width: 250,
+        marginLeft: 'auto',
+        marginRight: 'auto',
+      },
+    },
+    form: {
+      width: '100%', // Fix IE11 issue.
+      marginTop: theme.spacing.unit,
+    },
+    submit: {
+      marginTop: theme.spacing.unit * 3,
+    },
+  
+});
 
 class ControllerForm extends Component {
 
@@ -111,7 +136,7 @@ class ControllerForm extends Component {
 
     render() {
         //redux-form จะมี props ที่ชื่อ handleSubmit เพื่อใช้ submit ค่า
-        const { handleSubmit,dropdownController } = this.props
+        const { classes, handleSubmit, dropdownController } = this.props
 
         if (!this.props.data._id && dropdownController.isLoading) {
             return <div>Loading...</div>
@@ -119,8 +144,8 @@ class ControllerForm extends Component {
         
         const relayType = this.state.checked
             ?  <div className="form-group row">
-                        <label className="col-sm-3 col-form-label">ประเภทของรีเลย์</label>
-                        <div className="col-sm-9">
+                        <label className="col-sm-4 col-form-label">ประเภทของรีเลย์</label>
+                        <div className="col-sm-8">
                             <div className="form-check form-check-inline">
                                 <label className="form-check-label">
                                     <Field
@@ -198,8 +223,8 @@ class ControllerForm extends Component {
 
         const mac_address = this.props.data._id==null
             ?   <div className="form-group row">
-                    <label className="col-sm-3 col-form-label">Mac Address</label>
-                    <div className="col-sm-9">
+                    <label className="col-sm-12 col-form-label">Mac Address</label>
+                    <div className="col-sm-12">
                         <Field 
                             name="mac_address"
                             component={renderDropdownList}
@@ -209,16 +234,22 @@ class ControllerForm extends Component {
                         />
                     </div>
                 </div>
-            :  <Field name="mac_address" component={renderField} type="text" label="Mac Address" readOnly/>    
+            :   <div>
+                    <FormControl margin="normal" required fullWidth>
+                    <Field name="mac_address" component={MaterialRenderTextField} type="text" label="Mac Address" disabled/>
+                    </FormControl> 
+                </div> 
         return (
             <div>
-                <form>
+                <form className={classes.form}>
                 <ModalBody>
                     {mac_address}
-                    <Field name="name" component={renderField} type="text" label="ชื่อ" autoFocus />
+                    <FormControl margin="normal" required fullWidth>
+                        <Field name="name" component={MaterialRenderTextField} type="text" label="ชื่อ" autoFocus />
+                    </FormControl>
                     <div className="form-group row">
-                        <label className="col-sm-3 col-form-label">ประเภทคอนโทรลเลอร์</label>
-                        <div className="col-sm-9">
+                        <label className="col-sm-4 col-form-label">ประเภทคอนโทรลเลอร์</label>
+                        <div className="col-sm-8">
                             <div className="form-check form-check-inline">
                                 <label className="form-check-label">
                                     <Field
@@ -248,16 +279,14 @@ class ControllerForm extends Component {
                             </div>
                         </div>
                     </div>
-                    <Field name="farmId" component={renderField} type="hidden" />
-                    <Field name="greenHouseId" component={renderField} type="hidden" />
-                    <Field name="projectId" component={renderField} type="hidden" />
                    {relayType}
                 </ModalBody>
-                </form>
+                
                 <ModalFooter>
                     <Button color="primary" onClick={handleSubmit(this.onSubmit)}>บันทึก</Button>{' '}
                     <Button color="secondary" onClick={this.toggle}>ยกเลิก</Button>
                 </ModalFooter>
+                </form>
             </div>
         )
     }
@@ -298,4 +327,4 @@ function mapStateToProps(state) {
     }
   }
 
-export default connect(mapStateToProps)(form(ControllerForm))
+export default withStyles(styles)(connect(mapStateToProps)(form(ControllerForm)))

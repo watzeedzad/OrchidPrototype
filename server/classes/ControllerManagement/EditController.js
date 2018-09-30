@@ -49,7 +49,7 @@ export default class EditController {
     }
 }
 
-async function editControllerData(farmId,greenHouseId,projectId,name,isHaveRelay, moisture, water, fertilizer,macAddress) {
+async function editControllerData(farmId,greenHouseId,projectId,name,isHaveRelay, moisture, water,fertilizer, light ,macAddress) {
     knowController.findOneAndUpdate({
             //ip: ip,
             mac_address: macAddress,
@@ -60,7 +60,7 @@ async function editControllerData(farmId,greenHouseId,projectId,name,isHaveRelay
                 projectId: projectId,
                 greenHouseId: greenHouseId,
                 farmId: farmId,
-                pumpType: {
+                relayType: {
                     moisture: moisture,
                     water: water,
                     fertilizer: fertilizer,

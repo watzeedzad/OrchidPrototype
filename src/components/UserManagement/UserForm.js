@@ -1,7 +1,32 @@
 import React, { Component } from 'react'
 import { Button, ModalBody, ModalFooter } from 'reactstrap';
 import { Field, reduxForm } from 'redux-form';
-import renderField from '../../Utils/renderField'
+import FormControl from '@material-ui/core/FormControl';
+import withStyles from '@material-ui/core/styles/withStyles';
+import MaterialRenderTextField from '../../Utils/MaterialRenderTextField';
+
+const styles = theme => ({
+    layout: {
+      width: 'auto',
+      display: 'block', // Fix IE11 issue.
+      marginTop: theme.spacing.unit * 8,
+      marginLeft: theme.spacing.unit * 3,
+      marginRight: theme.spacing.unit * 3,
+      [theme.breakpoints.up(250 + theme.spacing.unit * 3 * 2)]: {
+        width: 250,
+        marginLeft: 'auto',
+        marginRight: 'auto',
+      },
+    },
+    form: {
+      width: '100%', // Fix IE11 issue.
+      marginTop: theme.spacing.unit,
+    },
+    submit: {
+      marginTop: theme.spacing.unit * 3,
+    },
+
+});
 
 class UserForm extends Component {
 
@@ -57,9 +82,21 @@ class UserForm extends Component {
         this.props.initialize(initData);
     }
 
+
     render() {
         //redux-form จะมี props ที่ชื่อ handleSubmit เพื่อใช้ submit ค่า
-        const { handleSubmit, userSave } = this.props
+        const { classes, handleSubmit, userSave } = this.props
+        const passwordField = this.props.data._id 
+            ? null
+            : <div>
+                <FormControl margin="normal" required fullWidth>
+                    <Field name="password" component={MaterialRenderTextField} type="password" label="รหัสผ่าน" />
+                </FormControl>
+                <FormControl margin="normal" required fullWidth>
+                    <Field name="repassword" component={MaterialRenderTextField} type="password" label="ยืนยันรหัสผ่าน" />
+                </FormControl>
+              </div>
+
         return (
             <div>
                 <ModalBody>
@@ -67,46 +104,55 @@ class UserForm extends Component {
                     {userSave.isRejected && <div className="alert alert-danger">{userSave.data}</div>}
 
                     {/* รูปแบบการแสดงผลจัดตาม Bootstrap 4 */}
-                    <div className="form-group row">
-                        <label className="col-sm-3 col-form-label">ประเภทผู้ใช้</label>
-                        <div className="col-sm-9">
-                            <div className="form-check form-check-inline">
-                                <label className="form-check-label">
-                                    <Field
-                                        className="form-check-input"
-                                        name="role"
-                                        component="input"
-                                        type="radio"
-                                        value='เจ้าของฟาร์ม'
-                                        checked={this.state.role === 'เจ้าของฟาร์ม'}
-                                        onChange={this.handleChange}
-                                    />{' '}
-                                    เจ้าของฟาร์ม
-                                    </label>
-                            </div>
-                            <div className="form-check form-check-inline">
-                                <label className="form-check-label">
-                                    <Field
-                                        className="form-check-input"
-                                        name="role"
-                                        component="input"
-                                        type="radio"
-                                        value="พนักงาน"
-                                        checked={this.state.role === 'พนักงาน'}
-                                        onChange={this.handleChange}
-                                    />{' '}พนักงาน
-                                    </label>
+                    <form className={classes.form}>
+                        <div className="form-group row">
+                            <label className="col-sm-3 col-form-label">ประเภทผู้ใช้</label>
+                            <div className="col-sm-9">
+                                <div className="form-check form-check-inline">
+                                    <label className="form-check-label">
+                                        <Field
+                                            className="form-check-input"
+                                            name="role"
+                                            component="input"
+                                            type="radio"
+                                            value='เจ้าของฟาร์ม'
+                                            checked={this.state.role === 'เจ้าของฟาร์ม'}
+                                            onChange={this.handleChange}
+                                        />{' '}
+                                        เจ้าของฟาร์ม
+                                        </label>
+                                </div>
+                                <div className="form-check form-check-inline">
+                                    <label className="form-check-label">
+                                        <Field
+                                            className="form-check-input"
+                                            name="role"
+                                            component="input"
+                                            type="radio"
+                                            value="พนักงาน"
+                                            checked={this.state.role === 'พนักงาน'}
+                                            onChange={this.handleChange}
+                                        />{' '}พนักงาน
+                                        </label>
+                                </div>
                             </div>
                         </div>
-                    </div>
-                    <Field name="firstname" component={renderField} type="text" label="ชื่อ" autoFocus />
-                    <Field name="lastname" component={renderField} type="text" label="สกุล" />
-                    {this.props.data._id
-                    ? <Field name="username" component={renderField} type="text" label="ไอดีผู้ใช้"  readOnly />
-                    : <Field name="username" component={renderField} type="text" label="ไอดีผู้ใช้" />
-                    }
-                    <Field name="password" component={renderField} type="password" label="รหัสผ่าน" />
-                    <Field name="repassword" component={renderField} type="password" label="ยืนยันรหัสผ่าน" />
+                        <div className="col-sm-9">
+                            <FormControl margin="normal" required fullWidth>
+                            <Field name="firstname" component={MaterialRenderTextField} type="text" label="ชื่อ" />
+                            </FormControl>
+                            <FormControl margin="normal" required fullWidth>
+                            <Field name="lastname" component={MaterialRenderTextField} type="text" label="นามสกุล" />
+                            </FormControl>
+                            <FormControl margin="normal" required fullWidth>
+                            {this.props.data._id
+                                ? <Field name="username" component={MaterialRenderTextField} type="text" label="ไอดีผู้ใช้"  disabled/>
+                                : <Field name="username" component={MaterialRenderTextField} type="text" label="ไอดีผู้ใช้" />
+                            }
+                            </FormControl>
+                            {passwordField}
+                        </div>
+                    </form>
                 </ModalBody>
 
                 <ModalFooter>
@@ -163,4 +209,4 @@ const form = reduxForm({
 
 //สังเกตุว่าไม่มีการใช้ connect เลยเพราะเราไม่ได้เป็นตัวจัดการ data โดยตรง
 //แต่ส่งสิ่งต่างผ่าน props ที่ได้จาก src/pages/User.js
-export default form(UserForm)
+export default withStyles(styles)(form(UserForm))

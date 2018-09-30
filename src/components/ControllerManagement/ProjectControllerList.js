@@ -58,7 +58,6 @@ class GreenHouseControllerList extends Component {
 
         return (
             <div>
-                <Paper className={classes.root}>
                 <Table className={classes.table}>
                     <TableHead>
                         <TableRow>
@@ -98,7 +97,6 @@ class GreenHouseControllerList extends Component {
                         )})}
                     </TableBody>
                 </Table>
-                </Paper>
             </div>
         );
     }
