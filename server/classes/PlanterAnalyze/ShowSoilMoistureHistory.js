@@ -23,7 +23,7 @@ export default class ShowSoilMoistureHistory {
       })
     }
     console.log("[ShowSoilMoistureHistory] greenHouseId: " + greenHouseId);
-    await getGreenHouseSensor(greenHouseId);
+    await getGreenHouseSensor(greenHouseId, req);
     if (typeof greenHouseSensorResult === "undefined") {
       console.log("[ShowSoilMoistureHistory] greenHouseSensorResult undefined");
       res.json({
@@ -66,7 +66,7 @@ export default class ShowSoilMoistureHistory {
       if (greenHouseSensorDataFlitered.length == 0) {
         res.json({
           status: 500,
-          message: 'เกิดข้อผิดพลาดไม่มีประวัติอยู่ในระบบ'
+          errorMessage: 'เกิดข้อผิดพลาดไม่มีประวัติอยู่ในระบบ'
         });
         return;
       }
@@ -90,7 +90,7 @@ export default class ShowSoilMoistureHistory {
   }
 }
 
-async function getGreenHouseSensor(greenHouseId, farmId) {
+async function getGreenHouseSensor(greenHouseId, req) {
   // let result = await greenHouseSensor.find({
   //   _id: {
   //     $gt: ObjectId.createFromTime(Date.now() / 1000 - 25 * 60 * 60)
@@ -104,22 +104,17 @@ async function getGreenHouseSensor(greenHouseId, farmId) {
   //   greenHouseSensorResult = undefined;
   //   console.log("[ShowSoilMoistureHistory] getGreenHouseSensor, Query fail!");
   // }
-  await greenHouseSensor.findOne({
+  let result = await greenHouseSensor.find({
     _id: {
       $gt: ObjectId.createFromTime(Date.now() / 1000 - 25 * 60 * 60)
     },
     greenHouseId: greenHouseId,
-    farmId: farmId
-  }, {}, {}, (err, result) => {
-    if (err) {
-      greenHouseSensorResult = undefined
-      console.log("[ShowSoilMoistureHistory] getGreenhouseSensor (err): " + err);
-    } else if (!result) {
-      greenHouseSensorResult = undefined
-      console.log("[ShowSoilMoistureHistory] getGreenhouseSensor (!result): " + result);
-    } else {
-      greenHouseSensorResult = result;
-      console.log("[ShowSoilMoistureHistory] getGreenhouseSensor (result): " + result);
-    }
-  })
+    farmId: req.session.farmId
+  });
+  if (result) {
+    greenHouseSensorResult = result;
+  } else {
+    greenHouseSensorResult = undefined;
+    console.log("[ShowSoilMoistureHistory] getGreenHouseSensor, Query fail!");
+  }
 }
