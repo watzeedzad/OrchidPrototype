@@ -17,14 +17,16 @@ class Moisture extends Component {
     }
 
     componentDidMount() {
-        this.fetchData()
-        var intervalId = setInterval( this.fetchData, 150000);
+        this.fetchData(0)
+        var intervalId = setInterval( this.fetchData, 15000);
         this.setState({intervalId: intervalId});
     }
 
     shouldComponentUpdate(nextProps, nextState) {
-        if(nextProps.moisture.data != null) {
-            return this.props.moisture.data != nextProps.moisture.data
+        if(this.props.moisture.data !== null && nextProps.moisture.data !== null){
+            return this.props.moisture.data.currentSoilMoisture !== nextProps.moisture.data.currentSoilMoisture
+        }else{
+            return true
         }
     }
 
@@ -33,8 +35,8 @@ class Moisture extends Component {
         clearInterval(this.state.intervalId);
     }
     
-    fetchData = () => {
-        this.props.dispatch(getMoisture({ greenHouseId: 789456123 }))
+    fetchData = (count) => {
+        this.props.dispatch(getMoisture({ greenHouseId: 789456123, count:count }))
     }
 
     render() {

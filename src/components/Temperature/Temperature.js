@@ -17,14 +17,17 @@ class Temperature extends Component {
     }
 
     componentDidMount() {
-        this.fetchData()
-        var intervalId = setInterval( this.fetchData, 150000);
+        this.fetchData(0)
+        var intervalId = setInterval( this.fetchData , 15000);
         this.setState({intervalId: intervalId});
     }
 
     shouldComponentUpdate(nextProps, nextState) {
-        if(nextProps.temp.data != null) {
-            return this.props.temp.data != nextProps.temp.data
+        if(this.props.temp.data !== null && nextProps.temp.data !== null){
+            console.log(this.props.temp,nextProps.temp)
+            return this.props.temp.data.currentTemperature !== nextProps.temp.data.currentTemperature
+        }else{
+            return true
         }
     }
 
@@ -33,8 +36,8 @@ class Temperature extends Component {
         clearInterval(this.state.intervalId);
     }
     
-    fetchData = () => {
-        this.props.dispatch(getTemp({ greenHouseId: 789456123 }))
+    fetchData = (count) => {
+        this.props.dispatch(getTemp({ greenHouseId: 789456123 , count: count}))
     }
 
     render() {
@@ -76,7 +79,7 @@ class Temperature extends Component {
     }
 
     toggle = () => {
-        this.props.dispatch(getTemp({ greenHouseId: 789456123 }))
+        this.fetchData(0)
     }
 }
 

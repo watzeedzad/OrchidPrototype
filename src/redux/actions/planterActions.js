@@ -27,7 +27,7 @@ export const saveMoistureConfig = (values) => {
     }
 }
 
-export const getMoisture = ({greenHouseId}) => {
+export const getMoisture = ({greenHouseId,count}) => {
 
     let values = {
         greenHouseId: greenHouseId
@@ -35,7 +35,10 @@ export const getMoisture = ({greenHouseId}) => {
     return (dispatch) => {
         //รูปแบบการใช้ axios อีกรูปแบบในการจะบุ method ที่ต้องการ
         //ต้องส่ง heder ชื่อ authorization โดยส่ง token เขาไปด้วยครับ
-        dispatch({ type: 'LOAD_MOISTURE_PENDING' })
+        if(count === 0){
+            dispatch({ type: 'LOAD_MOISTURE_PENDING' })
+        }
+
         return axios({
             method: 'post',
             url: `${BASE_URL}/planterAnalyze/showSoilMoisture`,
@@ -104,7 +107,7 @@ export const saveFertilityConfig = (values) => {
     }
 }
 
-export const getFertility = ({projectId}) => {
+export const getFertility = ({projectId,count}) => {
 
     let values = {
         projectId: projectId
@@ -113,7 +116,9 @@ export const getFertility = ({projectId}) => {
     return (dispatch) => {
         //รูปแบบการใช้ axios อีกรูปแบบในการจะบุ method ที่ต้องการ
         //ต้องส่ง heder ชื่อ authorization โดยส่ง token เขาไปด้วยครับ
-        dispatch({ type: 'LOAD_FERTILITY_PENDING' })
+        if(count === 0){
+            dispatch({ type: 'LOAD_FERTILITY_PENDING' })
+        }
         return axios({
             method: 'post',
             url: `${BASE_URL}/planterAnalyze/showFertility`,
@@ -160,7 +165,7 @@ export const getFertilityHistory = ({projectId}) => {
     }
 }
 
-export const getAllFertility = ({greenHouseId}) => {
+export const getAllFertility = ({greenHouseId,count}) => {
 
     let values = {
         greenHouseId: greenHouseId
@@ -169,7 +174,10 @@ export const getAllFertility = ({greenHouseId}) => {
     return (dispatch) => {
         //รูปแบบการใช้ axios อีกรูปแบบในการจะบุ method ที่ต้องการ
         //ต้องส่ง heder ชื่อ authorization โดยส่ง token เขาไปด้วยครับ
-        dispatch({ type: 'LOAD_ALLFERTILITY_PENDING' })
+        if(count === 0){
+            dispatch({ type: 'LOAD_ALLFERTILITY_PENDING' })
+        }
+
         return axios({
             method: 'post',
             url: `${BASE_URL}/planterAnalyze/showAllFertility`,

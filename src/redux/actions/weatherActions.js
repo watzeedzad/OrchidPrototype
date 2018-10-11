@@ -27,15 +27,19 @@ export const saveTempConfig = (values) => {
     }
 }
 
-export const getTemp = ({greenHouseId}) => {
+export const getTemp = ({greenHouseId,count}) => {
 
     let values = {
         greenHouseId: greenHouseId
     }
+    
     return (dispatch) => {
         //รูปแบบการใช้ axios อีกรูปแบบในการจะบุ method ที่ต้องการ
         //ต้องส่ง heder ชื่อ authorization โดยส่ง token เขาไปด้วยครับ
-        dispatch({ type: 'LOAD_TEMP_PENDING' })
+        if(count==0){
+            dispatch({ type: 'LOAD_TEMP_PENDING' })
+        }
+
         return axios({
             method: 'post',
             url: `${BASE_URL}/temperatureControl/showTemperature`,
@@ -104,7 +108,7 @@ export const saveHumidityConfig = (values) => {
     }
 }
 
-export const getHumidity = ({greenHouseId}) => {
+export const getHumidity = ({greenHouseId,count}) => {
 
     let values = {
         greenHouseId: greenHouseId
@@ -113,7 +117,10 @@ export const getHumidity = ({greenHouseId}) => {
     return (dispatch) => {
         //รูปแบบการใช้ axios อีกรูปแบบในการจะบุ method ที่ต้องการ
         //ต้องส่ง heder ชื่อ authorization โดยส่ง token เขาไปด้วยครับ
-        dispatch({ type: 'LOAD_HUMIDITY_PENDING' })
+        if(count === 0){
+            dispatch({ type: 'LOAD_HUMIDITY_PENDING' })
+        }
+        
         return axios({
             method: 'post',
             url: `${BASE_URL}/temperatureControl/showHumidity`,

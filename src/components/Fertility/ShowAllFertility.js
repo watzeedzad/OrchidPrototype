@@ -47,15 +47,9 @@ class ShowAllFertility extends Component {
     }
 
     componentDidMount() {
-        this.fetchData()
-        var intervalId = setInterval( this.fetchData, 150000);
+        this.fetchData(0)
+        var intervalId = setInterval( this.fetchData, 15000);
         this.setState({intervalId: intervalId});
-    }
-
-    shouldComponentUpdate(nextProps, nextState) {
-        if(nextProps.fertilitys.data != null) {
-            return this.props.fertilitys.data != nextProps.fertilitys.data
-        }
     }
 
     componentWillUnmount() {
@@ -63,8 +57,8 @@ class ShowAllFertility extends Component {
         clearInterval(this.state.intervalId);
     }
     
-    fetchData = () => {
-        this.props.dispatch(getAllFertility({ greenHouseId: 789456123 }))
+    fetchData = (count) => {
+        this.props.dispatch(getAllFertility({ greenHouseId: 789456123 ,count:count}))
     }
 
     render() {
@@ -104,7 +98,7 @@ class ShowAllFertility extends Component {
                                         variant="raised"
                                         fullWidth
                                         onClick={debounce(() => 
-                                            { this.props.dispatch(getFertility({ projectId })).then(()=>{
+                                            { this.props.dispatch(getFertility({ projectId:projectId,count:0 })).then(()=>{
                                             browserHistory.push('/fertilityControl')
                                             }) },500)}>
                                         ตั้งค่า

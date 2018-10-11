@@ -47,14 +47,16 @@ class ManualFertilizerControl extends Component {
     }
 
     componentDidMount() {
-        this.fetchData()
-        var intervalId = setInterval( this.fetchData, 150000);
+        this.fetchData(0)
+        var intervalId = setInterval( this.fetchData, 15000);
         this.setState({intervalId: intervalId});
     }
 
     shouldComponentUpdate(nextProps, nextState) {
-        if(nextProps.fertility.data != null) {
-            return this.props.fertility.data != nextProps.fertility.data
+        if(this.props.fertility.data !== null && nextProps.fertility.data !== null){
+            return this.props.fertility.data.currentFertility !== nextProps.fertility.data.currentFertility
+        }else{
+            return true
         }
     }
 
@@ -63,8 +65,8 @@ class ManualFertilizerControl extends Component {
         clearInterval(this.state.intervalId);
     }
     
-    fetchData = () => {
-        this.props.dispatch(getFertility({ projectId: 1 }))
+    fetchData = (count) => {
+        this.props.dispatch(getFertility({ projectId: 1 , count:count}))
     }
 
     render() {
@@ -107,7 +109,7 @@ class ManualFertilizerControl extends Component {
     }
 
     toggle = () => {
-        this.props.dispatch(getFertility({ projectId: 1 }))
+        this.fetchData(0)
     }
 }
 

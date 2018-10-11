@@ -17,15 +17,18 @@ class Humidity extends Component {
     }
 
     componentDidMount() {
-        this.fetchData()
-        var intervalId = setInterval( this.fetchData, 150000);
+        this.fetchData(0)
+        var intervalId = setInterval( this.fetchData, 15000);
         this.setState({intervalId: intervalId});
     }
 
     shouldComponentUpdate(nextProps, nextState) {
-        if(nextProps.humidity.data != null) {
-            return this.props.humidity.data != nextProps.humidity.data
+        if(this.props.humidity.data !== null && nextProps.humidity.data !== null){
+            return this.props.humidity.data.currentHumidity !== nextProps.humidity.data.currentHumidity
+        }else{
+            return true
         }
+
     }
 
     componentWillUnmount() {
@@ -33,8 +36,8 @@ class Humidity extends Component {
         clearInterval(this.state.intervalId);
      }
     
-    fetchData = () => {
-        this.props.dispatch(getHumidity({ greenHouseId: 789456123 }))
+    fetchData = (count) => {
+        this.props.dispatch(getHumidity({ greenHouseId: 789456123, count:count }))
     }
 
     render() {
@@ -72,7 +75,7 @@ class Humidity extends Component {
     }
 
     toggle = () => {
-        this.props.dispatch(getHumidity({ greenHouseId: 789456123 }))
+        this.fetchData(0)
     }
 }
 
