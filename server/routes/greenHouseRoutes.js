@@ -64,3 +64,4 @@ router.get('/showGreenHouse', (req,res)=>{
     new ShowGreenHouse(req,res);
 });
 
+module.exports = router;
