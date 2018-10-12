@@ -81,7 +81,7 @@ class Speedometer extends Component {
                         }]}
                     >
                         <Series
-                            name="speed"
+                            id="speed"
                             data={[this.props.currentValue]}
                             type="gauge"
                         />
@@ -91,7 +91,5 @@ class Speedometer extends Component {
         )
     }
 }
-
-//const Gauge = ({ data }) => <GraphRender data={data} />;
 
 export default withHighcharts(Speedometer, Highcharts);
