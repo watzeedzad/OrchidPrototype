@@ -1,1 +1,47 @@
-{"temperatureConfigs":[{"greenHouseId":789456123,"minTemperature":11,"maxTemperature":35}],"humidityConfigs":[{"greenHouseId":789456123,"minHumidity":80,"maxHumidity":99}],"soilMoistureConfigs":[{"greenHouseId":789456123,"minSoilMoisture":60,"maxSoilMoisture":85}],"fertilityConfigs":[{"projectId":2,"minFertility":25,"maxFertility":40},{"projectId":1,"minFertility":49,"maxFertility":70},{"projectId":3,"minFertility":30,"maxFertility":70}],"lightIntensityConfigs":[],"lightVolumeConfigs":[],"watering":[{"greenHouseId":789456123,"timeRanges":[48120000]}],"fertilizer":[{"projectId":1,"timeRanges":[21600000]}]}
+{
+    "temperatureConfigs": [{
+        "greenHouseId": 789456123,
+        "minTemperature": 11,
+        "maxTemperature": 35
+    }],
+    "humidityConfigs": [{
+        "greenHouseId": 789456123,
+        "minHumidity": 80,
+        "maxHumidity": 99
+    }],
+    "soilMoistureConfigs": [{
+        "greenHouseId": 789456123,
+        "minSoilMoisture": 60,
+        "maxSoilMoisture": 85
+    }],
+    "fertilityConfigs": [{
+        "projectId": 2,
+        "minFertility": 25,
+        "maxFertility": 40
+    }, {
+        "projectId": 1,
+        "minFertility": 49,
+        "maxFertility": 70
+    }, {
+        "projectId": 3,
+        "minFertility": 30,
+        "maxFertility": 70
+    }],
+    "lightIntensityConfigs": [{
+        "greenHouseId": 789456123,
+        "minLightIntensity": 80,
+        "maxLightIntensity": 99
+    }],
+    "lightVolumeConfigs": [{
+        "greenHouseid": 789456123,
+        "timeRanges": [1800000]
+    }],
+    "watering": [{
+        "greenHouseId": 789456123,
+        "timeRanges": [48120000]
+    }],
+    "fertilizer": [{
+        "projectId": 1,
+        "timeRanges": [1800000]
+    }]
+}

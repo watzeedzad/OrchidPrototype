@@ -15,13 +15,13 @@ let status = 0;
 router.post("/greenHouseSensor", (req, res) => {
   req.session.temperatureCheckStatus = 0;
   req.session.soilMoistureCheckStatus = 0;
-  // req.session.lightCheckStatus = 0;
+  req.session.lightCheckStatus = 0;
   new GreenHouseSensor(req);
   new TemperatureCheck(req);
   new SoilMoistureCheck(req);
-  // new LightCheck(req, res);
+  new LightCheck(req, res);
   setTimeout(() => {
-    if (req.session.temperatureCheckStatus == 200 && req.session.soilMoistureCheckStatus == 200) {
+    if (req.session.temperatureCheckStatus == 200 && req.session.soilMoistureCheckStatus == 200 && req.session.lightCheckStatus == 200) {
       res.sendStatus(200);
     } else {
       checkStatus(req, res, "greenHouse");
@@ -61,10 +61,10 @@ function checkStatus(req, res, checkType) {
     if (req.session.soilMoistureCheckStatus == 500) {
       messageArray.push('เกิดข้อผิดพลาดในการตรวจสอบความชิ้นในเครื่องปลูก');
     }
-    // if (req.session.lightCheckStatus == 500) {
-    //   messageArray.push('เกิดข้อผิดพลาดในการตรวจสอบความเข้มแสง');
-    // }
-    if (req.session.temperatureCheckStatus == 500 || req.session.soilMoistureCheckStatus == 500) {
+    if (req.session.lightCheckStatus == 500) {
+      messageArray.push('เกิดข้อผิดพลาดในการตรวจสอบความเข้มแสง');
+    }
+    if (req.session.temperatureCheckStatus == 500 || req.session.soilMoistureCheckStatus == 500 || req.session.lightCheckStatus == 500) {
       res.json({
         status: 500,
         errorMessage: messageArray

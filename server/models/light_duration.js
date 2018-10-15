@@ -7,7 +7,6 @@ const lightDurationSchema = new Schema({
   farmId: Number,
   greenHouseId: Number,
   duration: Number,
-  lastestResult: Boolean,
   timeStamp: Date
 });
 
