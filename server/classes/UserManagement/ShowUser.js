@@ -6,11 +6,11 @@ let userDataResult = undefined;
 
 export default class ShowUser {
 
-    constructor(req, res) {
-        this.operation(req, res);
+    constructor(req) {
+        operation(req);
     }
-
-    async operation(req, res) {
+}
+    async function operation(req, res) {
 
         console.log("[userDataResult] session id: " + req.session.id);
         if (typeof req.session.farmData === "undefined" || typeof req.session.configFilePath === "undefined") {
@@ -28,9 +28,8 @@ export default class ShowUser {
             return;
         }
 
-        await getUserData(farmId);
+        userDataResult = await getUserData(farmId);
 
-        setTimeout(() => {
             if (typeof userDataResult == "undefined") {
                 res.json({
                     status: 500,
@@ -39,12 +38,12 @@ export default class ShowUser {
                 return;
             }
             res.json(userDataResult);
-        },200)
+        
     }
-}
+
 
 async function getUserData(farmId) {
-    await user.find({
+    let result = await user.find({
         farmId: farmId,
     }, (err, result) => {
         if (err) {
@@ -56,5 +55,6 @@ async function getUserData(farmId) {
         } else {
             userDataResult = result;
         }
-    })
+    });
+    return result;
 }

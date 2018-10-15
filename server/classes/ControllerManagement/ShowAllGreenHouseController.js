@@ -6,58 +6,58 @@ let showGreenHouseControllerData = undefined;
 export default class ShowAllGreenHouseController {
 
     constructor(req, res) {
-        this.process(req, res);
+        process(req, res);
+    }
+}
+
+async function process(req) {
+    console.log("[showGreenHouseControllerData] session id: " + req.session.id);
+    if (typeof req.session.farmData === "undefined" || typeof req.session.configFilePath === "undefined") {
+        console.log(req.session.farmData + " / " + req.session.configFilePath)
+        res.sendStatus(500);
+        return;
+    }
+    let farmId = req.session.farmId;
+    let greenHouseId = req.body.greenHouseId;
+
+    if (typeof farmId === "undefined") {
+        res.json({
+            status: 500,
+            errorMessage: "เกิดข้อผิดพลาดในการเเสดงข้อมูลGreenHouseControllerทั้งหมด"
+        });
+        return;
     }
 
-    async process(req, res) {
-        console.log("[showGreenHouseControllerData] session id: " + req.session.id);
-        if (typeof req.session.farmData === "undefined" || typeof req.session.configFilePath === "undefined") {
-            console.log(req.session.farmData + " / " + req.session.configFilePath)
-            res.sendStatus(500);
-            return;
-        }
-        let farmId = req.session.farmId;
-        let greenHouseId = req.body.greenHouseId;
+    showGreenHouseControllerData = await getGreenHouseControllerData(farmId, greenHouseId);
 
-        if (typeof farmId === "undefined") {
-            res.json({
-                status: 500,
-                errorMessage: "เกิดข้อผิดพลาดในการเเสดงข้อมูลGreenHouseControllerทั้งหมด"
-            });
-            return;
-        }
+    if (typeof showGreenHouseControllerData === "undefined") {
+        res.json({
+            status: 500,
+            errorMessage: "เกิดข้อผิดพลาดในการเเสดงข้อมูลGreenHouseControllerทั้งหมด"
+        });
+        return;
 
-        await getGreenHouseControllerData(farmId, greenHouseId);
-
-        setTimeout(() => {
-            if (typeof showGreenHouseControllerData === "undefined") {
-                res.json({
-                    status: 500,
-                    errorMessage: "เกิดข้อผิดพลาดในการเเสดงข้อมูลGreenHouseControllerทั้งหมด"
-                });
-                return;
-            } else if (showGreenHouseControllerData.length == 0) {
-                res.json({
-                    status: 500,
-                    errorMessage: "เกิดข้อผิดพลาดไม่มีข้อมูลGreenHouse Controller"
-                });
-                return;
-            }
-
-            showGreenHouseControllerData.sort(function (a, b) {
-                return a.greenHouseId - b.greenHouseId
-            });
-
-            res.json(showGreenHouseControllerData);
-        }, 200);
+    } else if (showGreenHouseControllerData.length == 0) {
+        res.json({
+            status: 500,
+            errorMessage: "เกิดข้อผิดพลาดไม่มีข้อมูลGreenHouse Controller"
+        });
+        return;
     }
 
+    showGreenHouseControllerData.sort(function (a, b) {
+        return a.greenHouseId - b.greenHouseId
+    });
+
+    res.json(showGreenHouseControllerData);
 }
 
 
 
+
+
 async function getGreenHouseControllerData(farmId, greenHouseId) {
-    await knowController.find({
+    let result = await knowController.findOne({
         farmId: farmId,
         greenHouseId: greenHouseId,
         projectId: null
@@ -72,4 +72,6 @@ async function getGreenHouseControllerData(farmId, greenHouseId) {
             showGreenHouseControllerData = result;
         }
     });
+
+    return result;
 }
