@@ -2,7 +2,7 @@ const mongoose = require('mongoose');
 const user = mongoose.model('user');
 
 
-let userDataResult = undefined;
+let userDataResult;
 
 export default class SearchUser {
 
@@ -12,10 +12,10 @@ export default class SearchUser {
 
     async operation(req, res) {
 
-        console.log("[userDataResult] session id: " + req.session.id);
+        console.log("[SearchUser] session id: " + req.session.id);
         if (typeof req.session.farmData === "undefined" || typeof req.session.configFilePath === "undefined") {
             console.log(req.session.farmData + " / " + req.session.configFilePath)
-            res.sendStatus(500);
+            res.sendStatus(401);
             return;
         }
 
@@ -30,10 +30,9 @@ export default class SearchUser {
             return;
         }
 
-        await getUserData(farmId,term);
-        setTimeout(() => {
+        userDataResult = await getUserData(farmId,term);
             console.log(userDataResult)
-            if (typeof userDataResult == "undefined") {
+            if (userDataResult == null) {
                 res.json({
                     status: 500,
                     errorMessage: "เกิดข้อผิดพลาดไม่มีข้อมูลUser"
@@ -42,12 +41,11 @@ export default class SearchUser {
             }
             
             res.json(userDataResult);
-        }, 200)
     }
 }
 
 async function getUserData(farmId,term) {
-    await user.find({
+    let result = await user.find({
         farmId: farmId,
         $or: [{ firstname: {'$regex':term} },
             { lastname: {'$regex':term} },
@@ -55,13 +53,14 @@ async function getUserData(farmId,term) {
 
     }, (err, result) => {
         if (err) {
-            userDataResult = undefined;
+            userDataResult = null;
             console.log('[userDataResult] getUserData(err): ' + err);
         } else if (!result) {
-            userDataResult = undefined;
+            userDataResult = null;
             console.log('[userDataResult] getUserData(!result): ' + result);
         } else {
             userDataResult = result;
         }
-    })
+    });
+    return result;
 }

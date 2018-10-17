@@ -13,7 +13,7 @@ export default class ShowActualRate {
     async operation(req, res) {
         console.log('[ShowActualRate] session id: '+req.session.id);
         if(typeof req.session.farmData === 'undefined' || typeof req.session.configFilePath ==='undefined'){
-            res.sendStatus(500);
+            res.sendStatus(401);
             return;
         }
 
@@ -26,8 +26,8 @@ export default class ShowActualRate {
             return;
         }
         
-        await getGrowthRateData(req.session.farmId,projectId);
-        if(typeof growthRateData ==='undefined' ){
+        growthRateData = await getGrowthRateData(req.session.farmId,projectId);
+        if(growthRateData == null){
             res.json({
                 status:500,
                 errorMessage:"เกิดข้อผิดพลาดไม่มีประวัติเเสดงการเจริญเติบโต"
@@ -39,7 +39,7 @@ export default class ShowActualRate {
 
 
 async function getGrowthRateData(farmId,projectId) {
-    await growth_rate.find({
+    let result = await growth_rate.find({
         projectId: projectId
     }, null, {
         sort: {
@@ -47,14 +47,15 @@ async function getGrowthRateData(farmId,projectId) {
         }
     }, (err, result) => {
         if (err) {
-            growthRateData = undefined;
+            growthRateData = null;
             console.log('[ShowActualRate] getGrowthRateData (err): ' + err);
         } else if (!result) {
-            growthRateData = undefined;
+            growthRateData = null;
             console.log('[ShowActualRate] getGrowthRateData (!result):' + result);
         }else{
             growthRateData = result;
         }
-    })
+    });
+    return result;
 
 }

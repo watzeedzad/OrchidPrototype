@@ -9,6 +9,11 @@ export default class CreateController {
     }
 
     async operation(req, res) {
+        console.log("[DeleteController] session id: " + req.session.id);
+        if (typeof req.session.farmData === "undefined" || typeof req.session.configFilePath === "undefined") {
+            res.sendStatus(401);
+            return;
+        }
 
         let macAddress = req.body.macAddress;
         

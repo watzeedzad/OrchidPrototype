@@ -15,7 +15,7 @@ export default class ManualWatering {
     async process(req, res) {
         console.log("[ManualWater] session id: " + req.session.id);
         if (typeof req.session.farmData === "undefined" || typeof req.session.configFilePath === "undefined") {
-            res.sendStatus(500);
+            res.sendStatus(401);
             return;
         }
         let greenHouseId = req.body.greenHouseId;
@@ -29,8 +29,8 @@ export default class ManualWatering {
             });
             return;
         }
-        await getControllerData(greenHouseId);
-        if (typeof controllerData === "undefined") {
+        controllerData = await getControllerData(greenHouseId);
+        if (controllerData == null) {
             res.sendStatus(200);
             return;
         }
@@ -40,7 +40,7 @@ export default class ManualWatering {
 }
 
 async function getControllerData(greenHouseId) {
-    await know_controller.findOne({
+    let result = await know_controller.findOne({
         isHaveRelay: true,
         "relayType.water": true,
         greenHouseId: greenHouseId
@@ -52,4 +52,5 @@ async function getControllerData(greenHouseId) {
             controllerData = result;
         }
     });
+    return result;
 }

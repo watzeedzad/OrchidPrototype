@@ -25,8 +25,8 @@ export default class SoilMoistureCheck {
             return;
         }
         await getConfigFile(farmId);
-        await getControllerData(greenHouseId, farmId);
-        if (typeof controllerDataResult === "undefined") {
+        controllerDataResult = await getControllerData(greenHouseId, farmId);
+        if (controllerDataResult == null) {
             req.session.soilMoistureCheckStatus = 200;
             return;
         }
@@ -92,22 +92,23 @@ export default class SoilMoistureCheck {
 }
 
 async function getControllerData(greenHouseId, farmId) {
-    await know_controller.findOne({
+    let result = await know_controller.findOne({
         isHaveRelay: true,
         "relayType.water": true,
         greenHouseId: greenHouseId,
         farmId: farmId
     }, function (err, result) {
         if (err) {
-            controllerDataResult = undefined;
+            controllerDataResult = null;
             console.log("[SoilMoistureCheck] getControllerData (err): " + err);
         } else if (!result) {
-            controllerDataResult = undefined;
+            controllerDataResult = null;
             console.log("[SoilMoistureCheck] getControllerData (!result): " + result);
         } else {
             controllerDataResult = result;
         }
     });
+    return result;
 }
 
 async function getConfigFile(farmIdIn) {

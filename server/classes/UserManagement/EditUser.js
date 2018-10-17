@@ -10,6 +10,12 @@ export default class EditUser{
     }
 
     async operation(req,res){
+        console.log("[EditUser] session id: " + req.session.id);
+        if (typeof req.session.farmData === "undefined" || typeof req.session.configFilePath === "undefined") {
+            res.sendStatus(401);
+            return;
+        }
+
         let id = req.body._id;
         let role = req.body.role
         let firstname = req.body.firstname;

@@ -13,7 +13,7 @@ export default class ManualFertilizer {
     async process(req, res) {
         console.log("[ManualFertilizer] session id: " + req.session.id);
         if (typeof req.session.farmData === "undefined" || typeof req.session.configFilePath === "undefined") {
-            res.sendStatus(500);
+            res.sendStatus(401);
             return;
         }
         let projectId = req.body.projectId;
@@ -27,8 +27,8 @@ export default class ManualFertilizer {
         }
         console.log("[ManualFertilizer] projectId, " + projectId);
         console.log("[ManualFertilizer] inputLitre, " + inputLitre);
-        await getControllerData(projectId);
-        if (typeof controllerData === "undefined") {
+        controllerData = await getControllerData(projectId);
+        if (controllerData == null) {
             res.sendStatus(200);
             return;
         }
@@ -39,7 +39,7 @@ export default class ManualFertilizer {
 }
 
 async function getControllerData(projectId) {
-    await know_controller.findOne({
+    let result = await know_controller.findOne({
         isHaveRelay: true,
         "relayType.fertilizer": true,
         projectId: projectId
@@ -51,4 +51,5 @@ async function getControllerData(projectId) {
             controllerData = result;
         }
     });
+    return result;
 }

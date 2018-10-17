@@ -28,8 +28,8 @@ export default class TemperatureCheck {
             return;
         }
         await getConfigFile(farmId);
-        await getControllerData(greenHouseId, farmId);
-        if (typeof controllerDataResult === "undefined") {
+        controllerDataResult = await getControllerData(greenHouseId, farmId);
+        if (controllerDataResult == null) {
             req.session.temperatureCheckStatus = 200;
             return;
         }
@@ -83,22 +83,23 @@ export default class TemperatureCheck {
 }
 
 async function getControllerData(greenHouseId, farmId) {
-    await know_controller.findOne({
+    let result = await know_controller.findOne({
         isHaveRelay: true,
         "relayType.moisture": true,
         greenHouseId: greenHouseId,
         farmId: farmId
     }, function (err, result) {
         if (err) {
-            controllerDataResult = undefined;
+            controllerDataResult = null;
             console.log("[TemperatureCheck] getControllerData (err): " + err);
         } else if (!result) {
-            controllerDataResult = undefined;
+            controllerDataResult = null;
             console.log("[TemperatureCheck] getControllerData (!result): " + result);
         } else {
             controllerDataResult = result;
         }
     });
+    return result;
 }
 
 async function getConfigFile(farmIdIn) {
@@ -107,11 +108,11 @@ async function getConfigFile(farmIdIn) {
         },
         function (err, result) {
             if (err) {
-                console.log("[LightCheck] getConfigFile (err): " + err);
+                console.log("[TemperatureCheck] getConfigFile (err): " + err);
             } else if (!result) {
-                console.log("[LightCheck] getConfigFile (!result): " + result);
+                console.log("[TemperatureCheck] getConfigFile (!result): " + result);
             } else {
-                console.log("[LightCheck] getConfigFile (result): " + result);
+                console.log("[TemperatureCheck] getConfigFile (result): " + result);
             }
         }
     );
@@ -119,32 +120,6 @@ async function getConfigFile(farmIdIn) {
     let config = JSON.parse(fs.readFileSync(String(configFilePath), "utf8"));
     configFile = config;
 }
-
-// function onOffMoisturePump(ip, state) {
-//     if (state) {
-//         console.log("Send: /moisturePump?params=0 (on)");
-//         request
-//             .get("http://" + String(ip) + "/moisturePump?params=0", {
-//                 timeout: 20000
-//             })
-//             .on("error", function (err) {
-//                 console.log(err.code === "ETIMEDOUT");
-//                 console.log(err.connect === true);
-//                 console.log(err);
-//             });
-//     } else {
-//         console.log("Send: /moisturePump?params=1 (off)");
-//         request
-//             .get("http://" + String(ip) + "/moisturePump?params=1", {
-//                 timeout: 20000
-//             })
-//             .on("error", function (err) {
-//                 console.log(err.code === "ETIMEDOUT");
-//                 console.log(err.connect === true);
-//                 console.log(err);
-//             });
-//     }
-// }
 
 function compareTemperature(configFile, currentTemp, greenHouseIdIndexTemperature) {
     minTemperature = configFile.temperatureConfigs[greenHouseIdIndexTemperature].minTemperature;

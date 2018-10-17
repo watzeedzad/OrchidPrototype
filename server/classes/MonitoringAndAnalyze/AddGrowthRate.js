@@ -10,6 +10,12 @@ export default class AddGrowthRate {
     }
 
     async operation(req, res) {
+        console.log("[AddGrowthRate] session id: " + req.session.id);
+        if (typeof req.session.farmData === "undefined" || typeof req.session.configFilePath === "undefined") {
+            res.sendStatus(401);
+            return;
+        }
+
         let farmId = req.session.farmId;
         let greenHouseId = req.body.greenHouseId;
         let projectId = req.body.projectId;

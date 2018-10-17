@@ -2,7 +2,7 @@ const mongoose = require('mongoose');
 const user = mongoose.model('user');
 
 
-let userDataResult = undefined;
+let userDataResult;
 
 export default class ShowUser {
 
@@ -12,10 +12,10 @@ export default class ShowUser {
 }
     async function operation(req, res) {
 
-        console.log("[userDataResult] session id: " + req.session.id);
+        console.log("[ShowUser] session id: " + req.session.id);
         if (typeof req.session.farmData === "undefined" || typeof req.session.configFilePath === "undefined") {
             console.log(req.session.farmData + " / " + req.session.configFilePath)
-            res.sendStatus(500);
+            res.sendStatus(401);
             return;
         }
 
@@ -30,7 +30,7 @@ export default class ShowUser {
 
         userDataResult = await getUserData(farmId);
 
-            if (typeof userDataResult == "undefined") {
+            if (userDataResult == null) {
                 res.json({
                     status: 500,
                     errorMessage: "เกิดข้อผิดพลาดไม่มีข้อมูลUser"
@@ -47,10 +47,10 @@ async function getUserData(farmId) {
         farmId: farmId,
     }, (err, result) => {
         if (err) {
-            userDataResult = undefined;
+            userDataResult = null;
             console.log('[userDataResult] getUserData(err): ' + err);
         } else if (!result) {
-            userDataResult = undefined;
+            userDataResult = null;
             console.log('[userDataResult] getUserData(!result): ' + result);
         } else {
             userDataResult = result;

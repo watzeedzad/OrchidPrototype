@@ -13,7 +13,7 @@ export default class ShowAllFertility {
   async process(req, res) {
     console.log("[ShowAllFertility] session id: " + req.session.id);
     if (typeof req.session.farmData === "undefined" || typeof req.session.configFilePath === "undefined") {
-      res.sendStatus(500);
+      res.sendStatus(401);
       return;
     }
     configFile = req.session.configFile;
@@ -27,8 +27,8 @@ export default class ShowAllFertility {
     let greenHouseId = parseInt(req.body.greenHouseId);
     console.log("[ShowAllFertility] greenHouseId: " + greenHouseId);
     // await getConfigFile(req);
-    await getProjectSensor(greenHouseId, req.session.farmId);
-    if (typeof projectSensorData === "undefined") {
+    projectSensorData = await getProjectSensor(greenHouseId, req.session.farmId);
+    if (projectSensorData == null) {
       console.log("[ShowAllFertility] projectSensorResult undefined");
       res.json({
         status: 500,
@@ -94,9 +94,10 @@ async function getProjectSensor(greenHouseId, farmId) {
   if (result) {
     projectSensorData = result;
   } else {
-    projectSensorData = undefined;
+    projectSensorData = null;
     console.log("[ShowAllFertility] getProjectSensor: Query fail!");
   }
+  return result;
 }
 
 function seekProjectIdIndex(dataArray, projectId) {

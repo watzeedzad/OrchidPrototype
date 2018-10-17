@@ -7,7 +7,7 @@ import ProjectSensor from "../classes/SaveData/ProjectSensor";
 import TemperatureCheck from "../classes/CheckFunction/TemperatureCheck";
 import SoilMoistureCheck from "../classes/CheckFunction/SoilMoistureCheck";
 import FertilityCheck from "../classes/CheckFunction/FertilityCheck";
-// import LightCheck from "../classes/CheckFunction/LightCheck";
+import LightCheck from "../classes/CheckFunction/LightCheck";
 
 let status = 0;
 

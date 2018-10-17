@@ -11,10 +11,10 @@ export default class ShowAllGreenHouseController {
 }
 
 async function process(req) {
-    console.log("[showGreenHouseControllerData] session id: " + req.session.id);
+    console.log("[ShowAllGreenHouseController] session id: " + req.session.id);
     if (typeof req.session.farmData === "undefined" || typeof req.session.configFilePath === "undefined") {
         console.log(req.session.farmData + " / " + req.session.configFilePath)
-        res.sendStatus(500);
+        res.sendStatus(401);
         return;
     }
     let farmId = req.session.farmId;
@@ -30,7 +30,7 @@ async function process(req) {
 
     showGreenHouseControllerData = await getGreenHouseControllerData(farmId, greenHouseId);
 
-    if (typeof showGreenHouseControllerData === "undefined") {
+    if (showGreenHouseControllerData == null) {
         res.json({
             status: 500,
             errorMessage: "เกิดข้อผิดพลาดในการเเสดงข้อมูลGreenHouseControllerทั้งหมด"
@@ -63,11 +63,11 @@ async function getGreenHouseControllerData(farmId, greenHouseId) {
         projectId: null
     }, (err, result) => {
         if (err) {
-            showGreenHouseControllerData = undefined;
-            console.log("[showGreenHouseControllerData] getControllerData (err):  " + err);
+            showGreenHouseControllerData = null;
+            console.log("[ShowAllGreenHouseController] getControllerData (err):  " + err);
         } else if (!result) {
-            showGreenHouseControllerData = undefined;
-            console.log("[showGreenHouseControllerData getControllerData(!result): " + result);
+            showGreenHouseControllerData = null;
+            console.log("[ShowAllGreenHouseController] getControllerData(!result): " + result);
         } else {
             showGreenHouseControllerData = result;
         }

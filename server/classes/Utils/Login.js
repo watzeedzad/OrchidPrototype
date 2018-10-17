@@ -10,32 +10,30 @@ let configFile;
 
 export default class Login {
     constructor(req, res) {
-        this.operation(req, res);
+        operation(req, res);
     }
+}
 
-    async operation(req, res) {
-        let username = req.body.username;
-        let password = req.body.password;
-        console.log("[Login] username: " + username);
-        console.log("[Login] password: " + password);
-        await getUserData(username, password);
-        if (typeof userDataResult === "undefined") {
-            res.sendStatus(500);
-        }
-        // console.log("[Login] farmId: " + userDataResult.farmId);
-        await getFarmData(userDataResult.farmId);
-        await getConfigFile(farmDataResult.configFilePath);
-        // console.log("[Login] farmDataResult: " + farmDataResult);
-        req.session.farmData = farmDataResult;
-        req.session.configFile = configFile;
-        req.session.configFilePath = farmDataResult.configFilePath;
-        req.session.farmId = farmDataResult.farmId;
-        // console.log("[Login] req.session.farmData: " + req.session.farmData);
-        // console.log("[Login] req.session.configFilePath: " + req.session.configFilePath);
-        res.sendStatus(200);
-        console.log("[Login] session id: " + req.session.id);
-        console.log("[Login] cookie: " + req.cookies);
+async function operation(req, res) {
+    let username = req.body.username;
+    let password = req.body.password;
+    userDataResult = await getUserData(username, password);
+    if (userDataResult == null) {
+        res.sendStatus(401);
     }
+    // console.log("[Login] farmId: " + userDataResult.farmId);
+    farmDataResult = await getFarmData(userDataResult.farmId);
+    await getConfigFile(farmDataResult.configFilePath);
+    // console.log("[Login] farmDataResult: " + farmDataResult);
+    req.session.farmData = farmDataResult;
+    req.session.configFile = configFile;
+    req.session.configFilePath = farmDataResult.configFilePath;
+    req.session.farmId = farmDataResult.farmId;
+    // console.log("[Login] req.session.farmData: " + req.session.farmData);
+    // console.log("[Login] req.session.configFilePath: " + req.session.configFilePath);
+    res.sendStatus(200);
+    console.log("[Login] session id: " + req.session.id);
+    console.log("[Login] cookie: " + req.cookies);
 }
 
 async function getUserData(username, password) {
@@ -45,11 +43,10 @@ async function getUserData(username, password) {
     });
     if (result) {
         console.log("[Login] getUserData, Query Pass!");
-        userDataResult = result;
     } else {
         console.log("Login] getUserData, Query Failed!");
-        userDataResult = undefined;
     }
+    return result;
 }
 
 async function getFarmData(farmId) {
@@ -58,11 +55,10 @@ async function getFarmData(farmId) {
     });
     if (result) {
         console.log("[Login] getFarmData, Query Pass!");
-        farmDataResult = result;
     } else {
         console.log("[Login] getFarmData, Query Failed!");
-        farmDataResult = undefined;
     }
+    return result;
 }
 
 function getConfigFile(configPath) {

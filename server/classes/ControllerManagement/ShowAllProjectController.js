@@ -10,9 +10,9 @@ export default class showAllProjectController {
     }
 }
 async function operation(req, res) {
-    console.log("[showGreenHouseControllerData] session id: " + req.session.id);
+    console.log("[ShowAllProjectController] session id: " + req.session.id);
     if (typeof req.session.farmData === "undefined" || typeof req.session.configFilePath === "undefined") {
-        res.sendStatus(500);
+        res.sendStatus(401);
         return;
     }
 
@@ -29,7 +29,7 @@ async function operation(req, res) {
     }
     showProjectControllerData = await getProjectControllerData(farmId, greenHouseId, projectId);
     console.log("pj controller" + showProjectControllerData)
-    if (typeof showProjectControllerData === "undefined") {
+    if (showProjectControllerData == null) {
         res.json({
             status: 500,
             errorMessage: "เกิดข้อผิดพลาดในการเเสดงข้อมูล Project Controller ทั้งหมด"
@@ -60,10 +60,10 @@ async function getProjectControllerData(farmId, greenHouseId, projectId) {
         projectId: projectId
     }, (err, result) => {
         if (err) {
-            projectControllerData = undefined;
+            projectControllerData = null;
             console.log("[showProjectControllerData] getProjectControllerData(err): " + err);
         } else if (!result) {
-            projectControllerData = undefined;
+            projectControllerData = null;
             console.log("[showProjectControllerData] getProjectControllerData(!result): " + result);
         } else {
             showProjectControllerData = result;

@@ -12,7 +12,7 @@ export default class ShowLightIntensity {
     async operation(req, res) {
         console.log("[ShowLightIntensity] session id: " + req.session.id);
         if (typeof req.session.farmData === "undefined" || typeof req.session.configFilePath === "undefined") {
-            res.sendStatus(500);
+            res.sendStatus(401);
             return;
         }
         configFile = req.session.configFile;
@@ -24,8 +24,8 @@ export default class ShowLightIntensity {
             });
             return;
         }
-        await getGreenHouseSesor(greenHouseId, req.session.farmId);
-        if (typeof greenHouseSensorData === "undefined") {
+        greenHouseSensorData = await getGreenHouseSesor(greenHouseId, req.session.farmId);
+        if (greenHouseSensorData == null) {
             res.json({
                 status: 500,
                 errorMessage: "เกิดข้อผิดพลาดไม่มีข้อมูลจากเซนเซอร์ของโรงเรือน"
@@ -80,7 +80,7 @@ async function getGreenHouseSesor(greenHouseId, farmId) {
     //     greenHouseSensorData = undefined;
     //     console.log("Query fail!");
     // }
-    await greenHouseSensor.findOne({
+    let result = await greenHouseSensor.findOne({
         greenHouseId: greenHouseId,
         farmId: farmId
     }, null, {
@@ -89,15 +89,16 @@ async function getGreenHouseSesor(greenHouseId, farmId) {
         }
     }, (err, result) => {
         if (err) {
-            greenHouseSensorData = undefined
+            greenHouseSensorData = null;
             console.log("[ShowLightIntensity] getGreenhouseSensor (err): " + err);
         } else if (!result) {
-            greenHouseSensorData = undefined;
+            greenHouseSensorData = null;
             console.log("[ShowLightIntensity] getGreenhouseSensor (!result): " + result);
         } else {
             greenHouseSensorData = result;
         }
     });
+    return result;
 }
 
 function seekGreenHouseIdIndex(dataArray, greenHouseId) {

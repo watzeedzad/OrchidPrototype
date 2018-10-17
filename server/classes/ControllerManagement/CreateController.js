@@ -9,6 +9,12 @@ export default class CreateController {
   }
 
   async operation(req, res) {
+    console.log("[CreateController] session id: " + req.session.id);
+    if (typeof req.session.farmData === "undefined" || typeof req.session.configFilePath === "undefined") {
+        res.sendStatus(401);
+        return;
+    }
+
     let ip = req.body.ip;
     let macAddress = req.body.mac_address;
     let name = req.body.name;

@@ -12,7 +12,7 @@ export default class ShowFertilityHistory {
   async process(req, res) {
     console.log("[ShowFertilityHistory] session id: " + req.session.id);
     if (typeof req.session.farmData === "undefined" || typeof req.session.configFilePath === "undefined") {
-      res.sendStatus(500);
+      res.sendStatus(401);
       return;
     }
     let projectId = req.body.projectId;
@@ -24,8 +24,8 @@ export default class ShowFertilityHistory {
       return;
     }
     console.log("[ShowFertilityHistory] projectId: " + projectId);
-    await getProjectSensor(projectId, req.session.farmId);
-    if (typeof projectSensorResult === "undefined") {
+    projectSensorResult = await getProjectSensor(projectId, req.session.farmId);
+    if (projectSensorResult == null) {
       console.log("[ShowFertilityHistory] projectSensorResult undefined");
       res.json({
         status: 500,
@@ -100,7 +100,8 @@ async function getProjectSensor(projectId, farmId) {
   if (result) {
     projectSensorResult = result;
   } else {
-    projectSensorResult = undefined;
+    projectSensorResult = null;
     console.log("[ShowFertilityHistory] getProjectSensor: Query fail!");
   }
+  return result;
 }

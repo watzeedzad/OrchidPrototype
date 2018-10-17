@@ -11,7 +11,7 @@ export default class ConfigSoilMoisture {
   async process(req, res) {
     console.log("[ConfigSoilMoisture] session id: " + req.session.id);
     if (typeof req.session.farmData === "undefined" || typeof req.session.configFilePath === "undefined") {
-      res.sendStatus(500);
+      res.sendStatus(401);
       return;
     }
     configFile = req.session.configFile;

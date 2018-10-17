@@ -10,6 +10,12 @@ export default class AddGreenHouse{
     }
 
     async operation(req,res){
+        console.log("[FertilizerConfig] session id: " + req.session.id);
+        if (typeof req.session.farmData === "undefined" || typeof req.session.configFilePath === "undefined") {
+            res.sendStatus(401);
+            return;
+        }
+
         let greenHouseId = req.body.greenHouseId;
         let farmId = req.body.farmId;
         let name = req.body.name;

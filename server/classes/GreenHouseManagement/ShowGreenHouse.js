@@ -15,7 +15,7 @@ async function operation(req, res) {
     console.log('[userDataResult] session id: ' + req.session.id);
     if (typeof req.session.farmData === "undefined" || typeof req.session.configFilePath === "undefined") {
         console.log(req.session.farmData + " / " + req.session.configFilePath)
-        res.sendStatus(500);
+        res.sendStatus(401);
         return;
     }
 
@@ -30,7 +30,7 @@ async function operation(req, res) {
 
     greenHouseDataResult = await getGreenHouseData(farmId);
 
-    if (typeof greenHouseDataResult == "undefined") {
+    if (greenHouseDataResult == null) {
         res.json({
             status: 500,
             errorMessage: "เกิดข้อผิดพลาดไม่มีข้อมูลGreenHouse"
@@ -50,10 +50,10 @@ async function getGreenHouseData(farmId) {
         farmId: farmId,
     }, (err, result) => {
         if (err) {
-            greenHouseDataResult = undefined;
+            greenHouseDataResult = null;
             console.log('[greenHouseDataResult] getGreenHouseData(err): ' + err);
         } else if (!result) {
-            greenHouseDataResult = undefined;
+            greenHouseDataResult = null;
             console.log('[greenHouseDataResult] getGreenHouseData(!result): ' + result);
         } else {
             greenHouseDataResult = result;

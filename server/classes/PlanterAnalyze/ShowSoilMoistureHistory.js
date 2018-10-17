@@ -12,7 +12,7 @@ export default class ShowSoilMoistureHistory {
   async process(req, res) {
     console.log("[ShowSoilMoistureHistory] session id: " + req.session.id);
     if (typeof req.session.farmData === "undefined" || typeof req.session.configFilePath === "undefined") {
-      res.sendStatus(500);
+      res.sendStatus(401);
       return;
     }
     let greenHouseId = req.body.greenHouseId;
@@ -23,8 +23,8 @@ export default class ShowSoilMoistureHistory {
       })
     }
     console.log("[ShowSoilMoistureHistory] greenHouseId: " + greenHouseId);
-    await getGreenHouseSensor(greenHouseId, req);
-    if (typeof greenHouseSensorResult === "undefined") {
+    greenHouseSensorResult = await getGreenHouseSensor(greenHouseId, req);
+    if (greenHouseSensorResult == null) {
       console.log("[ShowSoilMoistureHistory] greenHouseSensorResult undefined");
       res.json({
         status: 500,
@@ -114,7 +114,8 @@ async function getGreenHouseSensor(greenHouseId, req) {
   if (result) {
     greenHouseSensorResult = result;
   } else {
-    greenHouseSensorResult = undefined;
+    greenHouseSensorResult = null;
     console.log("[ShowSoilMoistureHistory] getGreenHouseSensor, Query fail!");
   }
+  return result;
 }

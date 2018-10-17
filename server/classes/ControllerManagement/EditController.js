@@ -9,6 +9,12 @@ export default class EditController {
     }
 
     async operation(req, res) {
+        console.log("[EditController] session id: " + req.session.id);
+        if (typeof req.session.farmData === "undefined" || typeof req.session.configFilePath === "undefined") {
+            res.sendStatus(401);
+            return;
+        }
+
         // let ip = req.body.ip;
         let macAddress
         if(req.body.mac_address.value){

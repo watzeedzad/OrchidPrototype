@@ -10,6 +10,11 @@ export default class EditGreenHouse{
     }
 
     async operation(req,res){
+        console.log("[FertilizerConfig] session id: " + req.session.id);
+        if (typeof req.session.farmData === "undefined" || typeof req.session.configFilePath === "undefined") {
+            res.sendStatus(401);
+            return;
+        }
 
         let id = req.body.id;
         let name = req.body.name;

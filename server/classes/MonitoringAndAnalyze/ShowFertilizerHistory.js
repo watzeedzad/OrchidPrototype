@@ -11,7 +11,7 @@ export default class ShowFertilizerHistory {
     async operation(req, res) {
         console.log("[ShowFertilizerHistory] session id: " + req.session.id);
         if (typeof req.session.farmData === "undefined" || typeof req.session.configFilePath === "undefined") {
-            res.sendStatus(500);
+            res.sendStatus(401);
             return;
         }
         let greenHouseId = req.body.greenHouseId;
@@ -22,8 +22,8 @@ export default class ShowFertilizerHistory {
             });
             return;
         }
-        await getFertilizerHistoryData(req.session.farmId, greenHouseId);
-        if (typeof fertilizerHistoryResultData === "undefined") {
+        fertilizerHistoryResultData = await getFertilizerHistoryData(req.session.farmId, greenHouseId);
+        if (fertilizerHistoryResultData == null) {
             res.json({
                 status: 500,
                 errorMessage: "เกิดข้อผิดพลาดไม่มีข้อมูลประวัติการให้น้ำ"
@@ -35,7 +35,7 @@ export default class ShowFertilizerHistory {
 }
 
 async function getFertilizerHistoryData(farmId, greenHouseId) {
-    await fertilizerHistory.find({
+    let result = await fertilizerHistory.find({
         farmId: farmId,
         greenHouseId: greenHouseId
     }, null, {
@@ -44,13 +44,14 @@ async function getFertilizerHistoryData(farmId, greenHouseId) {
         }
     }, (err, result) => {
         if (err) {
-            fertilizerHistoryResultData = undefined;
+            fertilizerHistoryResultData = null;
             console.log("[ShowFertilizerHistory] getWateringHistoryData (err): " + err);
         } else if (!result) {
-            fertilizerHistoryResultData = undefined;
+            fertilizerHistoryResultData = null;
             console.log("[ShowFertilizerHistory] getWAteringHistoryData (!result): " + result);
         } else {
             fertilizerHistoryResultData = result;
         }
     });
+    return result;
 }

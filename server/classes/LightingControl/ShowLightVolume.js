@@ -12,7 +12,7 @@ export default class ShowLightVolumeConfig {
     async operation(req, res) {
         console.log("[ShowLightVolume] session id: " + req.session.id);
         if (typeof req.session.farmData === "undefined" || typeof req.session.configFilePath === "undefined") {
-            res.sendStatus(500);
+            res.sendStatus(401);
             return;
         }
         configFile = req.session.configFile;
@@ -24,8 +24,8 @@ export default class ShowLightVolumeConfig {
             })
             return;
         }
-        await getLightDurationData(greenHouseId, req.session.farmId);
-        if (typeof lightDurationData === "undefined") {
+        lightDurationData = await getLightDurationData(greenHouseId, req.session.farmId);
+        if (lightDurationData == null) {
             res.json({
                 status: 500,
                 errorMessage: "เกิดข้อผิดพลาดไม่มีข้อมูลจากเซนเซอร์ของโรงเรือน"
@@ -87,10 +87,10 @@ async function getLightDurationData(greenHouseId, farmId) {
         }
     }, (err, result) => {
         if (err) {
-            lightDurationData = undefined
+            lightDurationData = null
             console.log("[ShowLightIntensity] getLightDurationData (err): " + err);
         } else if (!result) {
-            lightDurationData = undefined;
+            lightDurationData = null;
             console.log("[ShowLightIntensity] getLightDurationData (!result): " + result);
         } else {
             lightDurationData = result;

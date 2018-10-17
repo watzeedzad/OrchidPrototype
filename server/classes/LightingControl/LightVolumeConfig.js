@@ -11,7 +11,7 @@ export default class LightVolumeConfig {
     async operation(req, res) {
         console.log("[LightVolumeConfig] session id: " + req.session.id);
         if (typeof req.session.farmData === "undefined" || typeof req.session.configFilePath === "undefined") {
-            res.sendStatus(500);
+            res.sendStatus(401);
             return;
         }
         configFile = req.session.configFile;

@@ -12,7 +12,7 @@ export default class ShowGrowthRateGraph {
     async operation(req, res) {
         console.log("[ShowGrowthRateGraph] session id: " + req.session.id);
         if (typeof req.session.farmData === "undefined" || typeof req.session.configFilePath === "undefined") {
-            res.sendStatus(500);
+            res.sendStatus(401);
             return;
         }
         configFile = req.session.configFile;
@@ -31,8 +31,8 @@ export default class ShowGrowthRateGraph {
             });
             return;
         }
-        await getGrowthRateData(projectId, req.session.farmId);
-        if (typeof growthRateResult === "undefined") {
+        growthRateResult = await getGrowthRateData(projectId, req.session.farmId);
+        if (growthRateResult == null) {
             res.json({
                 status: 50,
                 errorMessage: "เกิดข้อผิดพลาดไม่มีข้อมูลการเจริญเติบโต"
@@ -54,7 +54,7 @@ export default class ShowGrowthRateGraph {
 }
 
 async function getGrowthRateData(projectId, farmId) {
-    await growthRate.find({
+    let result = await growthRate.find({
         projectId: projectId,
         farmId: farmId
     }, null, {
@@ -63,15 +63,16 @@ async function getGrowthRateData(projectId, farmId) {
         }
     }, (err, result) => {
         if (err) {
-            growthRateResult = undefined;
+            growthRateResult = null;
             console.log("[ShowGrowthRateGraph] getGrowthRateData (err): " + err);
         } else if (!result) {
-            growthRateResult = undefined;
+            growthRateResult = null;
             console.log("[ShowGrowthRateGraph] getGrowthRateData (!result): " + result);
         } else {
             growthRateResult = result;
         }
     });
+    return result;
 }
 
 function seekProjectIdIndex(dataArray, projectId) {

@@ -10,6 +10,12 @@ export default class DeleteUser {
     }
 
     async operation(req, res) {
+        console.log("[DeleteUser] session id: " + req.session.id);
+        if (typeof req.session.farmData === "undefined" || typeof req.session.configFilePath === "undefined") {
+            res.sendStatus(401);
+            return;
+        }
+
         let id = req.body.id;
 
         await findAndDeleteUser(id);

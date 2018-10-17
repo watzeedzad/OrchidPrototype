@@ -11,7 +11,7 @@ export default class ShowWateringHistory {
     async operation(req, res) {
         console.log("[ShowWateringHistory] session id: " + req.session.id);
         if (typeof req.session.farmData === "undefined" || typeof req.session.configFilePath === "undefined") {
-            res.sendStatus(500);
+            res.sendStatus(401);
             return;
         }
         let greenHouseId = req.body.greenHouseId;
@@ -22,8 +22,8 @@ export default class ShowWateringHistory {
             });
             return;
         }
-        await getWateringHistoryData(req.session.farmId, greenHouseId);
-        if (typeof waterHistoryResultData === "undefined") {
+        waterHistoryResultData = await getWateringHistoryData(req.session.farmId, greenHouseId);
+        if (waterHistoryResultData == null) {
             res.json({
                 status: 500,
                 errorMessage: "เกิดข้อผิดพลาดไม่มีข้อมูลประวัติการให้น้ำ"
@@ -35,7 +35,7 @@ export default class ShowWateringHistory {
 }
 
 async function getWateringHistoryData(farmId, greenHouseId) {
-    await waterHistory.find({
+    let result = await waterHistory.find({
         farmId: farmId,
         greenHouseId: greenHouseId
     }, null, {
@@ -44,13 +44,14 @@ async function getWateringHistoryData(farmId, greenHouseId) {
         }
     }, (err, result) => {
         if (err) {
-            waterHistoryResultData = undefined;
+            waterHistoryResultData = null;
             console.log("[ShowWateringHistory] getWateringHistoryData (err): " + err);
         } else if (!result) {
-            waterHistoryResultData = undefined;
+            waterHistoryResultData = null;
             console.log("[ShowWateringHistory] getWAteringHistoryData (!result): " + result);
         } else {
             waterHistoryResultData = result;
         }
     });
+    return result;
 }

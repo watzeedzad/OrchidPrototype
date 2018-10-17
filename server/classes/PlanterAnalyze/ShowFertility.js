@@ -13,7 +13,7 @@ export default class ShowFertility {
   async process(req, res) {
     console.log("[ShowFertility] session id: " + req.session.id);
     if (typeof req.session.farmData === "undefined" || typeof req.session.configFilePath === "undefined") {
-      res.sendStatus(500);
+      res.sendStatus(401);
       return;
     }
     configFile = req.session.configFile;
@@ -26,12 +26,12 @@ export default class ShowFertility {
       return;
     }
     console.log("[ShowFertility] projectId: " + projectId);
-    await getProjectSensor(projectId, req.session.farmId);
+    projectSensorData = await getProjectSensor(projectId, req.session.farmId);
     let projectIdIndex = await seekProjectIdIndex(
       configFile.fertilityConfigs,
       projectId
     );
-    if (typeof projectSensorData === "undefined") {
+    if (projectSensorData == null) {
       res.json({
         status: 500,
         message: "เกิดข้อผิดพลาดไม่มีข้อมูลจากเซนเซอร์ของโปรเจค"
@@ -72,7 +72,7 @@ export default class ShowFertility {
 // }
 
 async function getProjectSensor(projectId, farmId) {
-  await project_sensor.findOne({
+  let result = await project_sensor.findOne({
       projectId: projectId,
       farmId: farmId
     }, {}, {
@@ -83,12 +83,13 @@ async function getProjectSensor(projectId, farmId) {
     function (err, result) {
       if (err) {
         console.log("[ShowFertility] ProjectSensor Query Failed!");
-        projectSensorData = undefined;
+        projectSensorData = null;
       } else {
         projectSensorData = result;
       }
     }
   );
+  return result;
 }
 
 function seekProjectIdIndex(dataArray, projectId) {

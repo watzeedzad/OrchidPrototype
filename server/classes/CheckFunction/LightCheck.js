@@ -38,7 +38,7 @@ async function operation(req, res) {
   }
   await getConfigFile(farmId);
   controllerDataResult = await getControllerData(greenHouseId, farmId);
-  if (typeof controllerDataResult === "undefined") {
+  if (controllerDataResult == null) {
     req.session.lightCheckStatus = 200;
     return;
   }
@@ -204,9 +204,9 @@ async function getLastestLightDurationData(farmId, greenHouseId) {
     },
     function (err, result) {
       if (err) {
-        return undefined;
+        return null;
       } else if (!result) {
-        return undefined;
+        return null;
       } else {
         return result;
       }
@@ -272,8 +272,8 @@ async function createNewLightDuration(farmId, greenHouseId, nowDate) {
   });
 }
 
-function resetDurationTime(id) {
-  lightDuration.findOneAndUpdate({
+async function resetDurationTime(id) {
+  await lightDuration.findOneAndUpdate({
     _id: id
   }, {
     $set: {

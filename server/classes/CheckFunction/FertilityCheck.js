@@ -30,8 +30,8 @@ export default class FertilityCheck {
       return;
     }
     await getConfigFile(farmId);
-    await getControllerData(projectId, farmId);
-    if (typeof controllerDataResult === "undefined") {
+    controllerDataResult = await getControllerData(projectId, farmId);
+    if (controllerDataResult == null) {
       req.session.fertilityCheckStatus = 200;
       return;
     }
@@ -122,7 +122,7 @@ async function getControllerData(projectId, farmId) {
   console.log(
     "[FertilityCheck] getControllerData: " + projectId + ", " + farmId
   );
-  await know_controller.findOne({
+  let result = await know_controller.findOne({
       isHaveRelay: true,
       "relayType.fertilizer": true,
       projectId: projectId,
@@ -141,6 +141,7 @@ async function getControllerData(projectId, farmId) {
       }
     }
   );
+  return result;
 }
 
 // function onOffFertilizerPump(ip, state) {
