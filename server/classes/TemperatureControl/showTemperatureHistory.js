@@ -13,7 +13,7 @@ export default class ShowTemperatureHistory {
   async process(req, res) {
     console.log("[ShowTemperatureHistory] session id: " + req.session.id);
     if (typeof req.session.farmData === "undefined" || typeof req.session.configFilePath === "undefined") {
-      res.sendStatus(401);
+      res.sendStatus(500);
       return;
     }
     let greenHouseId = req.body.greenHouseId;
@@ -25,8 +25,8 @@ export default class ShowTemperatureHistory {
       return;
     }
     console.log("[ShowTemperatureHistory] greenHouseId: " + greenHouseId);
-    greenHouseSensorResult = await getGreenHouseSensor(greenHouseId, req);
-    if (greenHouseSensorResult == null) {
+    await getGreenHouseSensor(greenHouseId, req);
+    if (typeof greenHouseSensorResult === "undefined") {
       console.log("[ShowTemperatureHistory] greenHouseSensorResult undefined");
       res.json({
         status: 500,
@@ -101,8 +101,7 @@ async function getGreenHouseSensor(greenHouseId, req) {
   if (result) {
     greenHouseSensorResult = result;
   } else {
-    greenHouseSensorResult = null;
+    greenHouseSensorResult = undefined;
     console.log("[ShowTemperatureHistory] getGreenHouseSensor, Query fail!");
   }
-  return result;
 }
