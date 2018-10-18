@@ -8,7 +8,8 @@ const {
 const projectSchema = new Schema({
     greenHouseId: Number,
     tribeName: String,
-    picturePath: String
+    picturePath: String,
+    isAutoFertilizering: Boolean
 });
 
 projectSchema.plugin(autoIncrement, {

@@ -4,6 +4,7 @@ const mongoose = require("mongoose");
 const fs = require("fs");
 const farm = mongoose.model("farm");
 const know_controller = mongoose.model("know_controller");
+const greenHouse = mongoose.model("greenHouse")
 
 let configFile;
 let controllerDataResult;
@@ -130,31 +131,9 @@ async function getConfigFile(farmIdIn) {
     configFile = config;
 }
 
-// function onOffWaterPump(ip, state) {
-//     if (state) {
-//         console.log("Send: /waterPump?params=0 (on)");
-//         request
-//             .get("http://" + String(ip) + "/waterPump?params=0", {
-//                 timeout: 20000
-//             })
-//             .on("error", function (err) {
-//                 console.log(err.code === "ETIMEDOUT");
-//                 console.log(err.connect === true);
-//                 console.log(err);
-//             });
-//     } else {
-//         console.log("Send: /waterPump?params=1 (off)");
-//         request
-//             .get("http://" + String(ip) + "/waterPump?params=1", {
-//                 timeout: 20000
-//             })
-//             .on("error", function (err) {
-//                 console.log(err.code === "ETIMEDOUT");
-//                 console.log(err.connect === true);
-//                 console.log(err);
-//             });
-//     }
-// }
+async function updateAutoFertilizeringStatus() {
+    
+}
 
 function compareSoilMositure(configFile, currentSoilMoisture, greenHouseIdIndexSoilMoisture) {
     minSoilMoisture = configFile.soilMoistureConfigs[greenHouseIdIndexSoilMoisture].minSoilMoisture;

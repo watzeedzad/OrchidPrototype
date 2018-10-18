@@ -9,7 +9,8 @@ const greenHouseSchema = new Schema({
     farmId: Number,
     name: String,
     desc: String,
-    picturePath: String
+    picturePath: String,
+    isAutoWatering: Boolean
 });
 
 greenHouseSchema.plugin(autoIncrement, {

@@ -54,6 +54,8 @@ require("./models/Project");
 require("./models/relay_queue");
 require("./models/relayManualQueue");
 require("./models/light_duration");
+require("./models/tempWateringHistory");
+require("./models/tempFertilizeringHistory");
 
 //load routes
 const sensorRoutes = require("./routes/sensorRoutes");

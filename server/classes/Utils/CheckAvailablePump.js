@@ -11,7 +11,7 @@ export default class CheckAvailablePump {
     async operation(req, res) {
         console.log("[CheckAvailablePump] session id: " + req.session.id);
         if (typeof req.session.farmData === "undefined" || typeof req.session.configFilePath === "undefined") {
-            res.sendStatus(500);
+            res.sendStatus(401);
             return;
         }
         let greenHouseId = req.body.greenHouseId;
@@ -32,8 +32,8 @@ export default class CheckAvailablePump {
                     });
                     return;
                 }
-                await getKnowControllerWaterPumpData(req.session.farmId, greenHouseId);
-                if (typeof controllerResultData == "undefined") {
+                controllerResultData = await getKnowControllerWaterPumpData(req.session.farmId, greenHouseId);
+                if (controllerResultData == null) {
                     res.json({
                         status: 200,
                         pumpStatus: false
@@ -52,8 +52,8 @@ export default class CheckAvailablePump {
                     });
                     return;
                 }
-                await getKnowControllerMoisturePumpData(req.session.farmId, greenHouseId);
-                if (typeof controllerResultData == "undefined") {
+                controllerResultData = await getKnowControllerMoisturePumpData(req.session.farmId, greenHouseId);
+                if (controllerResultData == null) {
                     res.json({
                         status: 200,
                         pumpStatus: false
@@ -72,8 +72,8 @@ export default class CheckAvailablePump {
                     });
                     return;
                 }
-                await getKnowControllerFertilizerPumpData(req.session.farmId, projectId);
-                if (typeof controllerResultData == "undefined") {
+                controllerResultData = await getKnowControllerFertilizerPumpData(req.session.farmId, projectId);
+                if (controllerResultData == null) {
                     res.json({
                         status: 200,
                         pumpStatus: false
@@ -90,58 +90,61 @@ export default class CheckAvailablePump {
 }
 
 async function getKnowControllerWaterPumpData(farmId, greenHouseId) {
-    await knowController.find({
-        isHavePump: true,
-        "pumpType.water": true,
+    let result = await knowController.findOne({
+        isHaveRelay: true,
+        "relayType.water": true,
         greenHouseId: greenHouseId,
         farmId: farmId
     }, (err, result) => {
         if (err) {
-            controllerResultData = undefined;
+            controllerResultData = null;
             console.log("[CheckAvailablePump] getKnowControllerWaterPumpData (err): " + err);
         } else if (!result) {
-            controllerResultData = undefined;
+            controllerResultData = null;
             console.log("[CheckAvailablePump] getKnowControllerWaterPumpData (!result): " + result);
         } else {
             controllerResultData = result;
         }
     });
+    return result;
 }
 
 async function getKnowControllerMoisturePumpData(farmId, greenHouseId) {
-    await knowController.find({
-        isHavePump: true,
-        "pumpType.moisture": true,
+    let result = await knowController.findOne({
+        isHaveRelay: true,
+        "relayType.moisture": true,
         greenHouseId: greenHouseId,
         farmId: farmId
     }, (err, result) => {
         if (err) {
-            controllerResultData = undefined;
+            controllerResultData = null;
             console.log("[CheckAvailablePump] getKnowControllerMoisturePumpData (err): " + err);
         } else if (!result) {
-            controllerResultData = undefined;
+            controllerResultData = null;
             console.log("[CheckAvailablePump] getKnowControllerMoisturePumpData (!result): " + result);
         } else {
             controllerResultData = result;
         }
     });
+    return result;
 }
 
 async function getKnowControllerFertilizerPumpData(farmId, projectId) {
-    await knowController.find({
+    let result = await knowController.findOne({
         isHavePump: true,
         "pumpType.fertilizer": true,
         projectId: projectId,
         farmId: farmId
     }, (err, result) => {
         if (err) {
-            controllerResultData = undefined;
+            controllerResultData = null;
             console.log("[CheckAvailablePump] getKnowControllerFertilizerPumpData (err): " + err);
         } else if (!result) {
-            controllerResultData = undefined;
+            controllerResultData = null;
             console.log("[CheckAvailablePump] getKnowControllerFertilizerPumpData (!result): " + result);
         } else {
             controllerResultData = result;
         }
     });
+    return result;
 }
