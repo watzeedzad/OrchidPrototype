@@ -24,7 +24,7 @@ export default class ShowSoilMoistureHistory {
     }
     console.log("[ShowSoilMoistureHistory] greenHouseId: " + greenHouseId);
     greenHouseSensorResult = await getGreenHouseSensor(greenHouseId, req);
-    if (greenHouseSensorResult == null) {
+    if (greenHouseSensorResult.length == 0) {
       console.log("[ShowSoilMoistureHistory] greenHouseSensorResult undefined");
       res.json({
         status: 500,

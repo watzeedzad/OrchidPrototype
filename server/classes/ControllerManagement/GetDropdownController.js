@@ -12,7 +12,7 @@ export default class GetDropdownController {
     async operation(req, res) {
         console.log("[GetDropdownController] session id: " + req.session.id);
         if (typeof req.session.farmData === "undefined" || typeof req.session.configFilePath === "undefined") {
-            console.log(req.session.farmData+" / "+req.session.configFilePath)
+            console.log(req.session.farmData + " / " + req.session.configFilePath)
             res.sendStatus(401);
             return;
         }
@@ -28,7 +28,7 @@ export default class GetDropdownController {
 
         controllerNotAssignData = await getNotAssignControllerData(farmId);
 
-        if (controllerNotAssignData == null) {
+        if (controllerNotAssignData.length == 0) {
             res.json({
                 status: 500,
                 errorMessage: "เกิดข้อผิดพลาดไม่มีข้อมูล Controller"
@@ -43,7 +43,7 @@ async function getNotAssignControllerData(farmId) {
     let result = await knowController.find({
         farmId: farmId,
         greenHouseId: null
-        
+
     }, (err, result) => {
         if (err) {
             controllerNotAssignData = null;

@@ -11,14 +11,14 @@ export default class CreateController {
   async operation(req, res) {
     console.log("[CreateController] session id: " + req.session.id);
     if (typeof req.session.farmData === "undefined" || typeof req.session.configFilePath === "undefined") {
-        res.sendStatus(401);
-        return;
+      res.sendStatus(401);
+      return;
     }
 
     let ip = req.body.ip;
     let macAddress = req.body.mac_address;
     let name = req.body.name;
-   
+
     if (isHavePump === false) {
       moisture = false;
       water = false;
@@ -94,20 +94,18 @@ async function findAndUpdateController(
   macAddress,
   piMacAddress
 ) {
-  know_controller.findOneAndUpdate(
-    {
+  know_controller.findOneAndUpdate({
       ip: ip,
       macAddress: macAddress,
       piMacAddress: piMacAddress,
-      projectId:null
-    },
-    {
+      projectId: null
+    }, {
       $set: {
         name: name,
         projectId: projectId,
         greenHouseId: greenHouseId,
-        farmId:farmId,
-        controllerType:controllerType,
+        farmId: farmId,
+        controllerType: controllerType,
         pumpType: {
           moisture: moisture,
           water: water,
@@ -117,7 +115,7 @@ async function findAndUpdateController(
         piMacAddress: piMacAddress
       }
     },
-    function(err, doc) {
+    function (err, doc) {
       if (err) {
         assignControllerResult = false;
         console.log("[CreateController] findAndUpdateController (err): " + err);

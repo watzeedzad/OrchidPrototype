@@ -25,7 +25,7 @@ export default class ShowFertilityHistory {
     }
     console.log("[ShowFertilityHistory] projectId: " + projectId);
     projectSensorResult = await getProjectSensor(projectId, req.session.farmId);
-    if (projectSensorResult == null) {
+    if (projectSensorResult.length == 0) {
       console.log("[ShowFertilityHistory] projectSensorResult undefined");
       res.json({
         status: 500,

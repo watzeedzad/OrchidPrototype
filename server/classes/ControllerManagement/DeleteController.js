@@ -16,7 +16,7 @@ export default class CreateController {
         }
 
         let macAddress = req.body.macAddress;
-        
+
         if (typeof macAddress === "undefined") {
             res.json({
                 status: 500,
@@ -38,14 +38,14 @@ export default class CreateController {
 async function deleteController(macAddress) {
     await knowController.findOneAndRemove({
         mac_address: macAddress,
-    },  (err,doc) => {
+    }, (err, doc) => {
         if (err) {
             deleteControllerResult = false;
             console.log("[deleteControllerResult] findAndDeleteController (err):  " + err);
         } else if (!doc) {
             deleteControllerResult = false;
             console.log('[deleteControllerResult] findAndDeleteController(!doc): ' + doc);
-        }else {
+        } else {
             deleteControllerResult = true;
         }
     });

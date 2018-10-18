@@ -28,7 +28,7 @@ export default class ShowAllFertility {
     console.log("[ShowAllFertility] greenHouseId: " + greenHouseId);
     // await getConfigFile(req);
     projectSensorData = await getProjectSensor(greenHouseId, req.session.farmId);
-    if (projectSensorData == null) {
+    if (projectSensorData.length == 0) {
       console.log("[ShowAllFertility] projectSensorResult undefined");
       res.json({
         status: 500,

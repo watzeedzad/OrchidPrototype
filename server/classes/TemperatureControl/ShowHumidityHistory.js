@@ -26,7 +26,7 @@ export default class ShowHumidityHistory {
     }
     console.log("[ShowHumidityHistory] greenHouseId: " + greenHouseId);
     greenHouseSensorResult = await getGreenHouseSensor(greenHouseId, req);
-    if (greenHouseSensorResult == null) {
+    if (greenHouseSensorResult.length == 0) {
       console.log("[ShowHumidityHistory] greenHouseSensorResult undefined");
       res.json({
         status: 500,

@@ -11,26 +11,26 @@ export default class ShowActualRate {
     }
 
     async operation(req, res) {
-        console.log('[ShowActualRate] session id: '+req.session.id);
-        if(typeof req.session.farmData === 'undefined' || typeof req.session.configFilePath ==='undefined'){
+        console.log('[ShowActualRate] session id: ' + req.session.id);
+        if (typeof req.session.farmData === 'undefined' || typeof req.session.configFilePath === 'undefined') {
             res.sendStatus(401);
             return;
         }
 
         let projectId = req.body.projectId;
-        if(typeof projectId==="undefined"){
+        if (typeof projectId === "undefined") {
             res.json({
-                status:500,
-                errorMessage:"เกิดข้อผิดพลาดไม่มีประวัติเเสดงการเจริญเติบโต"
+                status: 500,
+                errorMessage: "เกิดข้อผิดพลาดไม่มีประวัติเเสดงการเจริญเติบโต"
             });
             return;
         }
-        
-        growthRateData = await getGrowthRateData(req.session.farmId,projectId);
-        if(growthRateData == null){
+
+        growthRateData = await getGrowthRateData(req.session.farmId, projectId);
+        if (growthRateData.length == 0) {
             res.json({
-                status:500,
-                errorMessage:"เกิดข้อผิดพลาดไม่มีประวัติเเสดงการเจริญเติบโต"
+                status: 500,
+                errorMessage: "เกิดข้อผิดพลาดไม่มีประวัติเเสดงการเจริญเติบโต"
             });
         }
         res.json(growthRateData);
@@ -38,7 +38,7 @@ export default class ShowActualRate {
 }
 
 
-async function getGrowthRateData(farmId,projectId) {
+async function getGrowthRateData(farmId, projectId) {
     let result = await growth_rate.find({
         projectId: projectId
     }, null, {
@@ -52,7 +52,7 @@ async function getGrowthRateData(farmId,projectId) {
         } else if (!result) {
             growthRateData = null;
             console.log('[ShowActualRate] getGrowthRateData (!result):' + result);
-        }else{
+        } else {
             growthRateData = result;
         }
     });

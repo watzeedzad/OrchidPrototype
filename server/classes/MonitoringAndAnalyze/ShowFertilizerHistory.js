@@ -23,7 +23,7 @@ export default class ShowFertilizerHistory {
             return;
         }
         fertilizerHistoryResultData = await getFertilizerHistoryData(req.session.farmId, greenHouseId);
-        if (fertilizerHistoryResultData == null) {
+        if (fertilizerHistoryResultData.length == 0) {
             res.json({
                 status: 500,
                 errorMessage: "เกิดข้อผิดพลาดไม่มีข้อมูลประวัติการให้น้ำ"

@@ -32,7 +32,7 @@ export default class ShowGrowthRateGraph {
             return;
         }
         growthRateResult = await getGrowthRateData(projectId, req.session.farmId);
-        if (growthRateResult == null) {
+        if (growthRateResult.length == 0) {
             res.json({
                 status: 50,
                 errorMessage: "เกิดข้อผิดพลาดไม่มีข้อมูลการเจริญเติบโต"

@@ -30,26 +30,39 @@ export default class SearchUser {
             return;
         }
 
-        userDataResult = await getUserData(farmId,term);
-            console.log(userDataResult)
-            if (userDataResult == null) {
-                res.json({
-                    status: 500,
-                    errorMessage: "เกิดข้อผิดพลาดไม่มีข้อมูลUser"
-                });
-                return;
-            }
-            
-            res.json(userDataResult);
+        userDataResult = await getUserData(farmId, term);
+        console.log(userDataResult)
+        if (userDataResult == null) {
+            res.json({
+                status: 500,
+                errorMessage: "เกิดข้อผิดพลาดไม่มีข้อมูลUser"
+            });
+            return;
+        }
+
+        res.json(userDataResult);
     }
 }
 
-async function getUserData(farmId,term) {
+async function getUserData(farmId, term) {
     let result = await user.find({
         farmId: farmId,
-        $or: [{ firstname: {'$regex':term} },
-            { lastname: {'$regex':term} },
-            { username: {'$regex':term} }],
+        $or: [{
+                firstname: {
+                    '$regex': term
+                }
+            },
+            {
+                lastname: {
+                    '$regex': term
+                }
+            },
+            {
+                username: {
+                    '$regex': term
+                }
+            }
+        ],
 
     }, (err, result) => {
         if (err) {

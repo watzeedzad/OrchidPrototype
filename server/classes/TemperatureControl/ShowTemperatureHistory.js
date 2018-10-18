@@ -26,7 +26,7 @@ export default class ShowTemperatureHistory {
     }
     console.log("[ShowTemperatureHistory] greenHouseId: " + greenHouseId);
     greenHouseSensorResult = await getGreenHouseSensor(greenHouseId, req);
-    if (greenHouseSensorResult == null) {
+    if (greenHouseSensorResult.length == 0) {
       console.log("[ShowTemperatureHistory] greenHouseSensorResult undefined");
       res.json({
         status: 500,

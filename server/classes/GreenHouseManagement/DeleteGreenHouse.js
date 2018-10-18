@@ -3,13 +3,13 @@ const greenHouse = mongoose.model('greenHouse');
 
 let deleteGreenHouseResult;
 
-export default class DeleteGreenHouse{
+export default class DeleteGreenHouse {
 
-    constructor(req,res){
-        this.operation(req,res);
+    constructor(req, res) {
+        this.operation(req, res);
     }
 
-    async operation(req,res){
+    async operation(req, res) {
         console.log("[FertilizerConfig] session id: " + req.session.id);
         if (typeof req.session.farmData === "undefined" || typeof req.session.configFilePath === "undefined") {
             res.sendStatus(401);
@@ -20,26 +20,26 @@ export default class DeleteGreenHouse{
 
         await findAndDeleteGreenHouse(id);
 
-        if(deleteGreenHouseResult){
+        if (deleteGreenHouseResult) {
             res.sendStatus(200);
-        }else{
+        } else {
             res.sendStatus(500);
         }
     }
 }
 
-async function findAndDeleteGreenHouse(id){
+async function findAndDeleteGreenHouse(id) {
 
     greenHouse.findOneAndRemove({
         _id: id
-    },(err,doc)=>{
-        if(err){
+    }, (err, doc) => {
+        if (err) {
             deleteGreenHouseResult = false;
             console.log('[deleteGreenHouseResult] findAndDeleteGreenHouse(err): ' + err);
-        }else if(!doc){
+        } else if (!doc) {
             deleteGreenHouseResult = false;
             console.log('[deleteGreenHouseResult] findAndDeleteGreenHouse(!doc): ' + doc);
-        }else{
+        } else {
             deleteGreenHouseResult = true;
         }
     })

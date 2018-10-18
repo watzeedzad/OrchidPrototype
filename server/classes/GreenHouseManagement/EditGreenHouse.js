@@ -1,15 +1,15 @@
 const mongoose = require('mongoose');
 const greenHouse = mongoose.model('greenHouse');
 
-let editGreenHouseResult ; 
+let editGreenHouseResult;
 
-export default class EditGreenHouse{
+export default class EditGreenHouse {
 
-    constructor(req,res){
-        this.operation(req,res);
+    constructor(req, res) {
+        this.operation(req, res);
     }
 
-    async operation(req,res){
+    async operation(req, res) {
         console.log("[FertilizerConfig] session id: " + req.session.id);
         if (typeof req.session.farmData === "undefined" || typeof req.session.configFilePath === "undefined") {
             res.sendStatus(401);
@@ -21,36 +21,36 @@ export default class EditGreenHouse{
         let desc = req.body.desc;
         let picturePath = req.body.picturePath;
 
-        await findOneAndUpdateGreenHouse(id,name,desc,picturePath);
+        await findOneAndUpdateGreenHouse(id, name, desc, picturePath);
 
-        if(editGreenHouseResult){
+        if (editGreenHouseResult) {
             res.sendStatus(200);
-        }else{
+        } else {
             res.sendStatus(500);
         }
 
-    }   
+    }
 
 }
 
-async function findOneAndUpdateGreenHouse(id,name,desc,picturePath){
+async function findOneAndUpdateGreenHouse(id, name, desc, picturePath) {
 
     greenHouse.findOneAndUpdate({
-        _id:id
-    },{
-        $set:{
-            name:name,
-            desc:desc,
-            picturePath:picturePath
+        _id: id
+    }, {
+        $set: {
+            name: name,
+            desc: desc,
+            picturePath: picturePath
         }
-    },(err,doc)=>{
-        if(err){
+    }, (err, doc) => {
+        if (err) {
             editGreenHouseResult = false;
             console.log("[editGreenHouseResult] findOneAndUpdateGreenHouse (err): " + err);
-        }else if(!doc){
+        } else if (!doc) {
             editGreenHouseResult = false;
             console.log("[editGreenHouseResult] findOneAndUpdateGreenHouse (!doc): " + doc);
-        }else{
+        } else {
             editGreenHouseResult = true;
         }
     });

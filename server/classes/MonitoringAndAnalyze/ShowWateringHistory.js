@@ -23,7 +23,7 @@ export default class ShowWateringHistory {
             return;
         }
         waterHistoryResultData = await getWateringHistoryData(req.session.farmId, greenHouseId);
-        if (waterHistoryResultData == null) {
+        if (waterHistoryResultData.length == 0) {
             res.json({
                 status: 500,
                 errorMessage: "เกิดข้อผิดพลาดไม่มีข้อมูลประวัติการให้น้ำ"
