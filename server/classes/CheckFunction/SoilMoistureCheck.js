@@ -4,7 +4,7 @@ const mongoose = require("mongoose");
 const fs = require("fs");
 const farm = mongoose.model("farm");
 const know_controller = mongoose.model("know_controller");
-const greenHouse = mongoose.model("greenHouse")
+const greenHouse = mongoose.model("greenHouse");
 
 let configFile;
 let controllerDataResult;
@@ -80,10 +80,12 @@ export default class SoilMoistureCheck {
             if (resultCompareSoilMoisture) {
                 new InsertRelayCommand(controllerDataResult.ip, "water", true, piMacAddress);
                 console.log("[SoilMoistureCheck] farmDataResult.piMacAddress: " + piMacAddress);
+                await updateAutoWateringStatus(farmId, greenHouseId, true);
                 // onOffWaterPump(controllerDataResult.ip, true);
             } else {
                 new InsertRelayCommand(controllerDataResult.ip, "water", false, piMacAddress);
                 console.log("[SoilMoistureCheck] farmDataResult.piMacAddress: " + piMacAddress);
+                await updateAutoWateringStatus(farmId, greenHouseId, false);
                 // onOffWaterPump(controllerDataResult.ip, false);
             }
             req.session.soilMoistureCheckStatus = 200
@@ -131,8 +133,15 @@ async function getConfigFile(farmIdIn) {
     configFile = config;
 }
 
-async function updateAutoFertilizeringStatus() {
-    
+async function updateAutoWateringStatus(farmId, greenHouseId, status) {
+    await greenHouse.findOneAndUpdate({
+        farmId: farmId,
+        greenHouseId: greenHouseId
+    }, {
+        $set: {
+            isAutoWatering: status
+        }
+    });
 }
 
 function compareSoilMositure(configFile, currentSoilMoisture, greenHouseIdIndexSoilMoisture) {

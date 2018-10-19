@@ -33,7 +33,7 @@ export default class EditUser {
 }
 
 async function editUserData(id, firstname, lastname, username, role) {
-    user.findOneAndUpdate({
+    await user.findOneAndUpdate({
         _id: id
     }, {
         $set: {
@@ -47,7 +47,7 @@ async function editUserData(id, firstname, lastname, username, role) {
             editUserResult = false;
             console.log("[EditUser] editUserData (err): " + err);
         } else if (!doc) {
-            editUserData = false;
+            editUserResult = false;
             console.log('[EditUser] editUserData (!doc): ' + doc);
         } else {
             editUserResult = true;

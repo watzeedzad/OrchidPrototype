@@ -13,6 +13,6 @@ const tempFertilizeringHistorySchema = new Schema({
 });
 
 tempFertilizeringHistorySchema.plugin(autoIncrement, {
-    inc_field: "manualQueueId"
+    inc_field: "tempAutoFertilizeringId"
 });
 mongoose.model("temp_fertilizering_history", tempFertilizeringHistorySchema, "temp_fertilizering_history");

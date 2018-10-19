@@ -128,7 +128,7 @@ void setup(void)
         attachInterrupt(fertilizerFlowSensorInterrupt, fertilizerPulseCounter, FALLING);
 
         Wire.begin(5, 23);
-        lightMeter.begin(BH1750::ONE_TIME_HIGH_RES_MODE);
+        lightMeter.begin(BH1750::CONTINUOUS_HIGH_RES_MODE);
 
         runner.init();
         runner.addTask(checkWaterLitreTask);
@@ -357,6 +357,36 @@ void sendData()
         humidityStats.clear();
         fertilityStats.clear();
         moistureStats.clear();
+}
+
+void sendFlowMeterData
+{
+        StaticJsonBuffer<250> JSONbuffer1;
+        JsonObject &JSONencoder = JSONbuffer1.createObject();
+        JSONencoder["waterFlow"] = waterFlowMilliLitres;
+        JSONencoder["fertilizerFlow"] = fertilizerFlowMilliLitres;
+        JSONencoder["ip"] = WiFi.localIP().toString();
+        JSONencoder["type"] = "flowMeter";
+        char dataSet1[250];
+        JSONencoder.prettyPrintTo(dataSet1, sizeof(dataSet1));
+        // Serial.println(dataSet1);
+
+        HTTPClient http;
+        http.setTimeout(10000);
+        // http.begin("https://hello-api.careerity.me/sensorRoutes/greenHouseSensor", "EC:BB:33:AB:B4:F4:5B:A0:76:F3:F1:5B:FE:EC:BD:16:17:5C:22:47");
+        http.begin("http://" + WiFi.gatewayIP().toString() + ":3001" + "/handleController/");
+        http.addHeader("Content-Type", "application/json");
+        int httpCode = http.POST(dataSet1);
+        String payload = http.getString();
+        Serial.print("http result: ");
+        Serial.println(httpCode);
+        Serial.println(String(http.errorToString(httpCode)));
+        Serial.print("Payload: ");
+        Serial.println(payload);
+        http.end();
+
+        waterFlowMilliLitres = 0;
+        fertilizerFlowMilliLitres = 0;
 }
 
 void checkWaterLitre()

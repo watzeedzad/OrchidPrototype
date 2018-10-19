@@ -4,6 +4,7 @@ const mongoose = require("mongoose");
 const fs = require("fs");
 const farm = mongoose.model("farm");
 const know_controller = mongoose.model("know_controller");
+const project = mongoose.model("project");
 
 let configFile;
 let controllerDataResult;
@@ -61,7 +62,8 @@ export default class FertilityCheck {
         console.log("[FertilityCheck] checkTime enter CASE 2");
         checkTimeResult = true;
       } else {
-        console.log("[FertilityCheck] checkTime enter CASE 3");if ((currentDate.getHours() == tempDate.getHours()) || (currentDate.getHours() - tempDate.getHours() <= 2 && currentDate.getHours() - tempDate.getHours() >= 0)) {
+        console.log("[FertilityCheck] checkTime enter CASE 3");
+        if ((currentDate.getHours() == tempDate.getHours()) || (currentDate.getHours() - tempDate.getHours() <= 2 && currentDate.getHours() - tempDate.getHours() >= 0)) {
           checkTimeResult = true;
         } else {
           checkTimeResult = false;
@@ -85,7 +87,7 @@ export default class FertilityCheck {
     );
     if (typeof resultCompareFertility === "undefined") {
       req.session.fertilityCheckStatus = 500;
-      
+
       return;
     } else {
       console.log("[FertilityCheck] enter insert relay command phase");
@@ -99,6 +101,7 @@ export default class FertilityCheck {
         console.log(
           "[FertilityCheck] piMacAddress: " + piMacAddress
         );
+        await updateAutoFertilizeringStatus(farmId, projectId, true);
         // onOffFertilizerPump(controllerDataResult.ip, true);
       } else {
         new InsertRelayCommand(
@@ -110,6 +113,7 @@ export default class FertilityCheck {
         console.log(
           "[FertilityCheck] piMacAddress: " + piMacAddress
         );
+        await updateAutoFertilizeringStatus(farmId, projectId, false);
         // onOffFertilizerPump(controllerDataResult.ip, false);
       }
       req.session.fertilityCheckStatus = 200;
@@ -144,32 +148,6 @@ async function getControllerData(projectId, farmId) {
   return result;
 }
 
-// function onOffFertilizerPump(ip, state) {
-//     if (state) {
-//         console.log("Send: /fertilizerPump?params=0 (on)");
-//         request
-//             .get("http://" + String(ip) + "/fertilizerPump?params=0", {
-//                 timeout: 20000
-//             })
-//             .on("error", function (err) {
-//                 console.log(err.code === "ETIMEDOUT");
-//                 console.log(err.connect === true);
-//                 console.log(err);
-//             });
-//     } else {
-//         console.log("Send: /fertilizerPump?params=1 (off)");
-//         request
-//             .get("http://" + String(ip) + "/fertilizerPump?params=1", {
-//                 timeout: 20000
-//             })
-//             .on("error", function (err) {
-//                 console.log(err.code === "ETIMEDOUT");
-//                 console.log(err.connect === true);
-//                 console.log(err);
-//             });
-//     }
-// }
-
 async function getConfigFile(farmIdIn) {
   let farmResult = await farm.findOne({
       farmId: farmIdIn
@@ -187,6 +165,17 @@ async function getConfigFile(farmIdIn) {
   let configFilePath = farmResult.configFilePath;
   let config = JSON.parse(fs.readFileSync(String(configFilePath), "utf8"));
   configFile = config;
+}
+
+async function updateAutoFertilizeringStatus(farmId, projectId, status) {
+  await project.findOneAndUpdate({
+    farmId: farmId,
+    projectId: projectId
+  }, {
+    $set: {
+      isAutoFertilizering: status
+    }
+  });
 }
 
 function compareFertility(configFile, currentFertility, projectIdIndexFertilizer) {
