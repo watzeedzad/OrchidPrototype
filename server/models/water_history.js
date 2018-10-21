@@ -6,10 +6,11 @@ const {
 } = mongoose;
 
 const waterHistorySchema = new Schema({
+    farmId: Number,
     greenHouseId: Number,
     history: [{
         volume: Number,
-        timeStamp: Date
+        startTime: Date
     }]
 });
 

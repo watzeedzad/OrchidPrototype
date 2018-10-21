@@ -6,11 +6,13 @@ const {
 } = mongoose;
 
 const fertilizerHistorySchema = new Schema({
+    farmId: Number,
+    greenHouseId: Number,
     projectId: Number,
     history: [{
         volume: Number,
-        ration: String,
-        timeStamp: Date
+        ratio: String,
+        startTime: Date
     }]
 });
 

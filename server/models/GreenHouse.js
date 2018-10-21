@@ -7,6 +7,7 @@ const {
 
 const greenHouseSchema = new Schema({
     farmId: Number,
+    greenHouseId: Number,
     name: String,
     desc: String,
     picturePath: String,

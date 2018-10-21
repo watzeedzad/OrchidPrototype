@@ -6,10 +6,12 @@ const {
 } = mongoose;
 
 const projectSchema = new Schema({
+    farmId: Number,
     greenHouseId: Number,
     tribeName: String,
     picturePath: String,
-    isAutoFertilizering: Boolean
+    isAutoFertilizering: Boolean,
+    currentRatio: String
 });
 
 projectSchema.plugin(autoIncrement, {
