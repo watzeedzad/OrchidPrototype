@@ -5,8 +5,8 @@ let showProjectData = undefined;
 
 export default class ShowAllGreenHouseController {
 
-    constructor(req) {
-        process(req);
+    constructor(req, res) {
+        process(req, res);
     }
 }
 

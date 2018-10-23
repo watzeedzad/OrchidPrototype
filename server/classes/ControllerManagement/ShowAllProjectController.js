@@ -5,8 +5,8 @@ let showProjectControllerData = undefined;
 
 export default class showAllProjectController {
 
-    constructor(req) {
-        operation(req);
+    constructor(req, res) {
+        operation(req, res);
     }
 }
 async function operation(req, res) {

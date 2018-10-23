@@ -10,7 +10,7 @@ export default class ShowAllGreenHouseController {
     }
 }
 
-async function process(req) {
+async function process(req, res) {
     console.log("[ShowAllGreenHouseController] session id: " + req.session.id);
     if (typeof req.session.farmData === "undefined" || typeof req.session.configFilePath === "undefined") {
         console.log(req.session.farmData + " / " + req.session.configFilePath)
