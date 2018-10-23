@@ -58,7 +58,7 @@ async function getProjectControllerData(farmId, greenHouseId, projectId) {
         farmId: farmId,
         greenHouseId: greenHouseId,
         projectId: projectId
-    },{
+    }, null, {
         sort: {
             projectId: 1
         }

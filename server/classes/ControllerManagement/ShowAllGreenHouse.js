@@ -43,9 +43,9 @@ async function process(req) {
         return;
     }
 
-    showGreenHouseData.sort(function (a, b) {
-        return a.greenHouseId - b.greenHouseId
-    });
+    // showGreenHouseData.sort(function (a, b) {
+    //     return a.greenHouseId - b.greenHouseId
+    // });
 
     res.json(showGreenHouseData);
 
@@ -56,6 +56,10 @@ async function process(req) {
 async function getGreenHouseData(farmId) {
     let result = await greenHouse.findOne({
         farmId: farmId,
+    }, null, {
+        sort: {
+            greenHouseId: 1
+        }
     }, (err, result) => {
         if (err) {
             showGreenHouseData = null;
