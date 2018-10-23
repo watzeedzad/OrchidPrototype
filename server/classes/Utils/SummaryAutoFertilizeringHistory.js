@@ -1,12 +1,9 @@
-import {
-    func
-} from "../../../../../../AppData/Local/Microsoft/TypeScript/3.1/node_modules/@types/prop-types";
-
 const mongoose = require("mongoose");
+const fs = require("fs");
 const tempAutoFertilizeringHistory = mongoose.model("temp_fertilizering_history");
 const farm = mongoose.model("farm");
 const project = mongoose.model("project");
-const fertilizeringHistory = mongoose.model("fetilizer_history");
+const fertilizeringHistory = mongoose.model("fertilizer_history");
 
 let tempAutoFertilizeringHistoryResultData;
 let allFarmIdResultData;
@@ -22,6 +19,7 @@ export default class SummaryAutoFertilizeingHistory {
 }
 
 async function operation() {
+    console.log("[SummaryAutoFertilizeringHistory] start batch fertilizering history summarize!");
     allFarmIdResultData = await getAllFarmId();
     if (allFarmIdResultData.length == 0) {
         return;
@@ -36,9 +34,9 @@ async function operation() {
         allProjectConfig = configFile.fertilizer
         for (let projectConfigIndex = 0; projectConfigIndex < allProjectConfig.length; projectConfigIndex++) {
             let projectResultData;
-            let projectId = allFarmIdResultData[projectConfigIndex].projectId;
-            let oneProjectTimeRanges = allFarmIdResultData[projectConfigIndex].timeRanges;
-            for (let timeRangesIndex = 0; timeRangesIndex < array.length; timeRangesIndex++) {
+            let projectId = allProjectConfig[projectConfigIndex].projectId;
+            let oneProjectTimeRanges = allProjectConfig[projectConfigIndex].timeRanges;
+            for (let timeRangesIndex = 0; timeRangesIndex < oneProjectTimeRanges.length; timeRangesIndex++) {
                 tempAutoFertilizeringHistoryResultData = await getAllTempAutoFertilizeringHistoryData(
                     allFarmIdResultData[farmIndex].farmId,
                     projectId,
@@ -48,7 +46,7 @@ async function operation() {
                     console.log("[SummaryAutoFertilizeringHistory] no temp data to summarize!");
                 }
                 projectResultData = await getProjectData(allFarmIdResultData[farmIndex].farmId, projectId);
-                if (projectResultData.length == 0) {
+                if (projectResultData == null) {
                     return;
                 }
                 isExistHistoryResultData = await isProjectHistoryExist(
@@ -56,7 +54,7 @@ async function operation() {
                     projectResultData.greenHouseId,
                     projectId
                 );
-                if (isExistHistoryResultData.length == 0) {
+                if (isExistHistoryResultData == null) {
                     createNewFertilizerHistoryResultStatus = await createNewFertilizerHistory(
                         allFarmIdResultData[farmIndex].farmId,
                         projectResultData.greenHouseId,
@@ -83,7 +81,9 @@ async function operation() {
                 }
             }
         };
+        await clearAllTempFertilizeringData(allFarmIdResultData[farmIndex].farmId);
     }
+    console.log("[SummaryAutoFertilizeringHistory] end batch fertilizering history summarize!")
 }
 
 async function getAllFarmId() {
@@ -111,7 +111,7 @@ async function getConfigFile(farmId) {
             } else if (!result) {
                 console.log("[SummaryAutoFertilizeringHistory] getConfigFile (!result): " + result);
             } else {
-                console.log("[SummaryAutoFertilizeringHistory] getConfigFile (result): " + result);
+                // console.log("[SummaryAutoFertilizeringHistory] getConfigFile (result): " + result);
             }
         }
     );
@@ -128,7 +128,7 @@ async function getAllTempAutoFertilizeringHistoryData(farmId, projectId, timeSta
     startTime.setMinutes(tempTime.getMinutes());
     endTime.setHours(tempTime.getHours() + 2);
     endTime.setMinutes(tempTime.getMinutes() + 2);
-    let result = await tempAutoFertilizeringHistory({
+    let result = await tempAutoFertilizeringHistory.aggregate([{
         "$match": {
             farmId: farmId,
             projectId: projectId,
@@ -144,7 +144,7 @@ async function getAllTempAutoFertilizeringHistoryData(farmId, projectId, timeSta
                 $sum: "$amount"
             }
         }
-    }, function (err, result) {
+    }], function (err, result) {
         if (err) {
             tempAutoFertilizeringHistoryResultData = null;
             console.log("[SummaryAutoFertilizeringHistory] getAllTempAutoFertilizeringHistoryData (err): " + err);
@@ -251,4 +251,11 @@ async function updateExistFertilizerHistory(farmId, greenHouseId, project, total
         }
     });
     return result;
+}
+
+async function clearAllTempFertilizeringData(farmId) {
+    console.log("[SummaryAutoWateringHistory] clear temp fetilizering data of " + farmId);
+    await fertilizeringHistory.remove({
+        farmId: farmId
+    })
 }

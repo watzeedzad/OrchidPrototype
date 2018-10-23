@@ -1,4 +1,5 @@
 const mongoose = require("mongoose");
+const fs = require("fs");
 const tempAutoWateringHistory = mongoose.model("temp_watering_history");
 const farm = mongoose.model("farm");
 const wateringHistory = mongoose.model("water_history");
@@ -17,6 +18,7 @@ export default class SummaryAutoWateringHistory {
 }
 
 async function operation() {
+    console.log("[SummaryAutoWateringHistory] start batch watering history summarize!");
     allFarmIdResultData = await getAllFarmId();
     if (allFarmIdResultData.length == 0) {
         return;
@@ -43,7 +45,7 @@ async function operation() {
                     return;
                 }
                 isExistHistoryResultData = await isGreenHouseHistoryExist(allFarmIdResultData[farmIndex].farmId, greenHouseId);
-                if (isExistHistoryResultData.length == 0) {
+                if (isExistHistoryResultData == null) {
                     createNewWaterHistoryResultStatus = await createNewWaterHistory(
                         allFarmIdResultData[farmIndex].farmId,
                         greenHouseId,
@@ -66,7 +68,9 @@ async function operation() {
                 }
             }
         }
+        await clearAllTempWateringData(allFarmIdResultData[farmIndex].farmId);
     }
+    console.log("[SummaryAutoWateringHistory] end batch watering history summarize!");
 }
 
 async function getAllTempAutoWateringHistoryData(farmId, greenHouseId, timeStart) {
@@ -77,7 +81,7 @@ async function getAllTempAutoWateringHistoryData(farmId, greenHouseId, timeStart
     startTime.setMinutes(tempTime.getMinutes());
     endTime.setHours(tempTime.getHours() + 2);
     endTime.setMinutes(tempTime.getMinutes() + 2);
-    let result = tempAutoWateringHistory.aggregate({
+    let result = tempAutoWateringHistory.aggregate([{
         "$match": {
             farmId: farmId,
             greenHouseId: greenHouseId,
@@ -93,7 +97,7 @@ async function getAllTempAutoWateringHistoryData(farmId, greenHouseId, timeStart
                 $sum: "$amount"
             }
         }
-    }, function (err, result) {
+    }], function (err, result) {
         if (err) {
             tempAutoWateringHistoryResultData = null;
             console.log("[SummaryAutoWateringHistory] getAllTempAutoWateringHistoryData (err): " + err);
@@ -204,11 +208,18 @@ async function getConfigFile(farmId) {
             } else if (!result) {
                 console.log("[SummaryAutoWateringHistory] getConfigFile (!result): " + result);
             } else {
-                console.log("[SummaryAutoWateringHistory] getConfigFile (result): " + result);
+                // console.log("[SummaryAutoWateringHistory] getConfigFile (result): " + result);
             }
         }
     );
     let configFilePath = farmResult.configFilePath;
     let config = JSON.parse(fs.readFileSync(String(configFilePath), "utf8"));
     configFile = config;
+}
+
+async function clearAllTempWateringData(farmId) {
+    console.log("[SummaryAutoWateringHistory] clear temp watering data of " + farmId);
+    await wateringHistory.remove({
+        farmId: farmId
+    });
 }

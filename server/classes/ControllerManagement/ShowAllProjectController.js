@@ -43,9 +43,9 @@ async function operation(req, res) {
         return;
     }
 
-    showProjectControllerData.sort(function (a, b) {
-        return a.projectId - b.projectId
-    });
+    // showProjectControllerData.sort(function (a, b) {
+    //     return a.projectId - b.projectId
+    // });
 
     res.json(showProjectControllerData);
 
@@ -58,6 +58,10 @@ async function getProjectControllerData(farmId, greenHouseId, projectId) {
         farmId: farmId,
         greenHouseId: greenHouseId,
         projectId: projectId
+    },{
+        sort: {
+            projectId: 1
+        }
     }, (err, result) => {
         if (err) {
             projectControllerData = null;

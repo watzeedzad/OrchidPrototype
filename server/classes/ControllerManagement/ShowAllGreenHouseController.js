@@ -45,9 +45,9 @@ async function process(req) {
         return;
     }
 
-    showGreenHouseControllerData.sort(function (a, b) {
-        return a.greenHouseId - b.greenHouseId
-    });
+    // showGreenHouseControllerData.sort(function (a, b) {
+    //     return a.greenHouseId - b.greenHouseId
+    // });
 
     res.json(showGreenHouseControllerData);
 }
@@ -61,6 +61,10 @@ async function getGreenHouseControllerData(farmId, greenHouseId) {
         farmId: farmId,
         greenHouseId: greenHouseId,
         projectId: null
+    }, {
+        sort: {
+            greenHouseId: 1
+        }
     }, (err, result) => {
         if (err) {
             showGreenHouseControllerData = null;

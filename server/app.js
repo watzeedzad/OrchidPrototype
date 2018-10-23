@@ -7,6 +7,7 @@ const mongoose = require("mongoose");
 const session = require("express-session");
 const memoryStore = require("memorystore")(session);
 const cors = require("cors");
+const cron = require("node-schedule")
 const ipfilter = require("express-ipfilter").IpFilter;
 require("dotenv").config();
 
@@ -115,6 +116,14 @@ app.use("/monitoringAndAnalyze", monitoringAndAnalyze);
 app.use("/lightControl", lightControl);
 app.use("/dynamicControllerHandle", dynamicControllerHandle);
 app.use("/user", user);
+
+let SummaryAutoFertilizeringHistory = require("./classes/Utils/SummaryAutoFertilizeringHistory");
+let SummaryAutoWateringHistory = require("./classes/Utils/SummaryAutoWateringHistory");
+
+let cronSchedule = cron.scheduleJob("*/60 * * * * *", function() {
+  new SummaryAutoWateringHistory.default();
+  new SummaryAutoFertilizeringHistory.default();
+});
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
