@@ -54,7 +54,7 @@ async function process(req, res) {
 
 
 async function getGreenHouseData(farmId) {
-    let result = await greenHouse.findOne({
+    let result = await greenHouse.find({
         farmId: farmId,
     }, null, {
         sort: {

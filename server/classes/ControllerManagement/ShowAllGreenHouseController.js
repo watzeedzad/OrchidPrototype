@@ -57,7 +57,7 @@ async function process(req, res) {
 
 
 async function getGreenHouseControllerData(farmId, greenHouseId) {
-    let result = await knowController.findOne({
+    let result = await knowController.find({
         farmId: farmId,
         greenHouseId: greenHouseId,
         projectId: null

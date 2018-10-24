@@ -18,10 +18,8 @@ async function process(req, res) {
         return;
     }
     let greenHouseId = req.body.greenHouseId;
-    console.log(greenHouseId);
 
     showProjectData = await getProjectData(greenHouseId);
-    console.log(showProjectData);
     if (showProjectData == null) {
         res.json({
             status: 500,
