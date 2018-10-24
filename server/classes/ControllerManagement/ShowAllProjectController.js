@@ -19,7 +19,7 @@ async function operation(req, res) {
     let farmId = req.session.farmId;
     let greenHouseId = req.body.greenHouseId;
     let projectId = req.body.projectId;
-    console.log(farmId, greenHouseId, projectId)
+
     if (typeof farmId === "undefined" || typeof greenHouseId === "undefined" || typeof projectId === "undefined") {
         res.json({
             status: 500,
@@ -28,7 +28,7 @@ async function operation(req, res) {
         return;
     }
     showProjectControllerData = await getProjectControllerData(farmId, greenHouseId, projectId);
-    console.log("pj controller" + showProjectControllerData)
+
     if (showProjectControllerData == null) {
         res.json({
             status: 500,
@@ -64,10 +64,10 @@ async function getProjectControllerData(farmId, greenHouseId, projectId) {
         }
     }, (err, result) => {
         if (err) {
-            projectControllerData = null;
+            showProjectControllerData = null;
             console.log("[showProjectControllerData] getProjectControllerData(err): " + err);
         } else if (!result) {
-            projectControllerData = null;
+            showProjectControllerData = null;
             console.log("[showProjectControllerData] getProjectControllerData(!result): " + result);
         } else {
             showProjectControllerData = result;

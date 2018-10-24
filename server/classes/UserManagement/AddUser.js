@@ -16,7 +16,6 @@ export default class AddUser {
             return;
         }
         
-        let userId = req.body.userId;
         let farmId = req.body.farmId;
         let role = req.body.role;
         let firstname = req.body.firstname;
@@ -24,7 +23,7 @@ export default class AddUser {
         let username = req.body.username;
         let password = req.body.password;
 
-        await addUser(userId, farmId, firstname, lastname, role, username, password);
+        await addUser(farmId, firstname, lastname, role, username, password);
         if (addUserResult) {
             res.sendStatus(200);
         } else {
@@ -33,10 +32,9 @@ export default class AddUser {
     }
 }
 
-async function addUser(userId, farmId, firstname, lastname, role, username, password) {
+async function addUser(farmId, firstname, lastname, role, username, password) {
 
     let userData = new user({
-        userId: userId,
         farmId: farmId,
         role: role,
         firstname: firstname,
