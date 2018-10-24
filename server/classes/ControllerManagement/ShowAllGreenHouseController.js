@@ -30,14 +30,22 @@ async function process(req, res) {
 
     showGreenHouseControllerData = await getGreenHouseControllerData(farmId, greenHouseId);
 
-    if (showGreenHouseControllerData == null) {
-        res.json({
-            status: 500,
-            errorMessage: "เกิดข้อผิดพลาดในการเเสดงข้อมูลGreenHouseControllerทั้งหมด"
-        });
-        return;
+    // if (showGreenHouseControllerData == null) {
+    //     res.json({
+    //         status: 500,
+    //         errorMessage: "เกิดข้อผิดพลาดในการเเสดงข้อมูลGreenHouseControllerทั้งหมด"
+    //     });
+    //     return;
 
-    } else if (showGreenHouseControllerData.length == 0) {
+    // } else if (showGreenHouseControllerData.length == 0) {
+    //     res.json({
+    //         status: 500,
+    //         errorMessage: "เกิดข้อผิดพลาดไม่มีข้อมูลGreenHouse Controller"
+    //     });
+    //     return;
+    // }
+
+    if (showGreenHouseControllerData.length == 0) {
         res.json({
             status: 500,
             errorMessage: "เกิดข้อผิดพลาดไม่มีข้อมูลGreenHouse Controller"

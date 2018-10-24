@@ -29,13 +29,21 @@ async function operation(req, res) {
     }
     showProjectControllerData = await getProjectControllerData(farmId, greenHouseId, projectId);
 
-    if (showProjectControllerData == null) {
-        res.json({
-            status: 500,
-            errorMessage: "เกิดข้อผิดพลาดในการเเสดงข้อมูล Project Controller ทั้งหมด"
-        });
-        return;
-    } else if (showProjectControllerData.length == 0) {
+    // // if (showProjectControllerData == null) {
+    // //     res.json({
+    // //         status: 500,
+    // //         errorMessage: "เกิดข้อผิดพลาดในการเเสดงข้อมูล Project Controller ทั้งหมด"
+    // //     });
+    // //     return;
+    // // } else if (showProjectControllerData.length == 0) {
+    //     res.json({
+    //         status: 500,
+    //         errorMessage: "เกิดข้อผิดพลาดไม่มีข้อมูล Project Controller"
+    //     });
+    //     return;
+    // }
+
+    if (showProjectControllerData.length == 0) {
         res.json({
             status: 500,
             errorMessage: "เกิดข้อผิดพลาดไม่มีข้อมูล Project Controller"
