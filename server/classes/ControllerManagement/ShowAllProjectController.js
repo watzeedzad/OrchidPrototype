@@ -18,16 +18,16 @@ async function operation(req, res) {
 
     let farmId = req.session.farmId;
     let greenHouseId = req.body.greenHouseId;
-    let projectId = req.body.projectId;
+    // let projectId = req.body.projectId;
 
-    if (typeof farmId === "undefined" || typeof greenHouseId === "undefined" || typeof projectId === "undefined") {
+    if (typeof farmId === "undefined" || typeof greenHouseId === "undefined") {
         res.json({
             status: 500,
             errorMessage: "เกิดข้อผิดพลาดในการเเสดงข้อมูล Project Controller ทั้งหมด"
         });
         return;
     }
-    showProjectControllerData = await getProjectControllerData(farmId, greenHouseId, projectId);
+    showProjectControllerData = await getProjectControllerData(farmId, greenHouseId);
 
     // // if (showProjectControllerData == null) {
     // //     res.json({
@@ -51,21 +51,45 @@ async function operation(req, res) {
         return;
     }
 
+    let allProjectControllerData = [];
+    let currentArrayIndex = 0;
+
+    for (let index = 0; index < showProjectControllerData.length; index++) {
+        if (index == 0) {
+            let temp = {
+                projectId: showProjectControllerData[index].projectId,
+                controllerData: []
+            }
+            temp.controllerData.push(showProjectControllerData[index]);
+            allProjectControllerData.push(temp);
+        } else if (showProjectControllerData[index].projectId != showProjectControllerData[index - 1].projectId) {
+            let temp = {
+                projectId: showProjectControllerData[index].projectId,
+                controllerData: []
+            }
+            temp.controllerData.push(showProjectControllerData[index]);
+            allProjectControllerData.push(temp);
+            currentArrayIndex++;
+        } else {
+            allProjectControllerData[currentArrayIndex].controllerData.push(showProjectControllerData[index]);
+        }
+    }
+
     // showProjectControllerData.sort(function (a, b) {
     //     return a.projectId - b.projectId
     // });
 
-    res.json(showProjectControllerData);
+    res.json(allProjectControllerData);
 
 }
 
-
-
-async function getProjectControllerData(farmId, greenHouseId, projectId) {
+async function getProjectControllerData(farmId, greenHouseId) {
     let result = await knowController.find({
         farmId: farmId,
         greenHouseId: greenHouseId,
-        projectId: projectId
+        projectId: {
+            $ne: null
+        }
     }, null, {
         sort: {
             projectId: 1
