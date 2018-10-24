@@ -20,9 +20,9 @@ async function operation(req, res) {
     let password = req.body.password;
     let key = crypto.createCipher("aes-256-gcm", aes256_key);
     let passwordCipher = key.update(password, "utf8", "hex");
-    console.log("[AddUser] passwordCipher (aes256): " + passwordCipher);
+    console.log("[Login] passwordCipher (aes256): " + passwordCipher);
     let passwordCipherHash = sha256(passwordCipher);
-    console.log("[AddUser] passwordCipherHash (ase256 /w sha256): " + passwordCipherHash);
+    console.log("[Login] passwordCipherHash (ase256 /w sha256): " + passwordCipherHash);
     password = passwordCipherHash;
     userDataResult = await getUserData(username, password);
     if (userDataResult == null) {
@@ -41,7 +41,6 @@ async function operation(req, res) {
     // console.log("[Login] req.session.configFilePath: " + req.session.configFilePath);
     res.sendStatus(200);
     console.log("[Login] session id: " + req.session.id);
-    console.log("[Login] cookie: " + req.cookies);
 }
 
 async function getUserData(username, password) {
