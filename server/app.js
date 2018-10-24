@@ -19,6 +19,7 @@ origin_url = process.env.ORIGIN_URL;
 db_host = process.env.DB_HOST;
 db_user = process.env.DB_USER;
 db_pass = process.env.DB_PASS;
+aes256_key = process.env.AES256_KEY
 
 //load babel(es6)
 require("babel-core/register");

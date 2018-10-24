@@ -1,7 +1,8 @@
 const mongoose = require("mongoose");
+const crypto = require("crypto");
+const sha256 = require("js-sha256").sha256;
 const user = mongoose.model("user");
 const farm = mongoose.model("farm");
-const session = require("express-session");
 const fs = require("fs");
 
 let userDataResult;
@@ -17,9 +18,16 @@ export default class Login {
 async function operation(req, res) {
     let username = req.body.username;
     let password = req.body.password;
+    let key = crypto.createCipher("aes-256-gcm", aes256_key);
+    let passwordCipher = key.update(password, "utf8", "hex");
+    console.log("[AddUser] passwordCipher (aes256): " + passwordCipher);
+    let passwordCipherHash = sha256(passwordCipher);
+    console.log("[AddUser] passwordCipherHash (ase256 /w sha256): " + passwordCipherHash);
+    password = passwordCipherHash;
     userDataResult = await getUserData(username, password);
     if (userDataResult == null) {
         res.sendStatus(401);
+        return;
     }
     // console.log("[Login] farmId: " + userDataResult.farmId);
     farmDataResult = await getFarmData(userDataResult.farmId);
