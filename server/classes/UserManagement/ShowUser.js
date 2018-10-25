@@ -30,13 +30,13 @@ async function operation(req, res) {
 
     userDataResult = await getUserData(farmId);
 
-    if (userDataResult.length == 0) {
-        res.json({
-            status: 500,
-            errorMessage: "เกิดข้อผิดพลาดไม่มีข้อมูลUser"
-        });
-        return;
-    }
+    // if (userDataResult.length == 0) {
+    //     res.json({
+    //         status: 500,
+    //         errorMessage: "เกิดข้อผิดพลาดไม่มีข้อมูลUser"
+    //     });
+    //     return;
+    // }
     res.json(userDataResult);
 
 }

@@ -44,10 +44,7 @@ async function operation(req, res) {
     // }
 
     if (showProjectControllerData.length == 0) {
-        res.json({
-            status: 500,
-            errorMessage: "เกิดข้อผิดพลาดไม่มีข้อมูล Project Controller"
-        });
+        res.json({});
         return;
     }
 

@@ -45,13 +45,13 @@ async function process(req, res) {
     //     return;
     // }
 
-    if (showGreenHouseControllerData.length == 0) {
-        res.json({
-            status: 500,
-            errorMessage: "เกิดข้อผิดพลาดไม่มีข้อมูลGreenHouse Controller"
-        });
-        return;
-    }
+    // if (showGreenHouseControllerData.length == 0) {
+    //     res.json({
+    //         status: 500,
+    //         errorMessage: "เกิดข้อผิดพลาดไม่มีข้อมูลGreenHouse Controller"
+    //     });
+    //     return;
+    // }
 
     // showGreenHouseControllerData.sort(function (a, b) {
     //     return a.greenHouseId - b.greenHouseId
