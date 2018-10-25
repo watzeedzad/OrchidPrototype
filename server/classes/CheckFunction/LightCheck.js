@@ -99,7 +99,7 @@ async function operation(req, res) {
     }
   }
 
-  if ((nowLightCheckDate.getHours() < 7) && (nowLightCheckDate.getHours() > 18) && (configFile.lightVolumeConfigs[greenHouseIndexLightIntensity] > currentDuration)) {
+  if ((nowLightCheckDate.getHours() < 7) && (nowLightCheckDate.getHours() > 18) && (configFile.lightVolumeConfigs[greenHouseIndexLightIntensity.duration] > currentDuration)) {
     new InsertRelayCommand(controllerDataResult.ip, "light", true, piMacAddress);
   } else {
     if (!isAlreadySetPumptoFalse) {

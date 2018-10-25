@@ -121,7 +121,7 @@ app.use("/user", user);
 let SummaryAutoFertilizeringHistory = require("./classes/Utils/SummaryAutoFertilizeringHistory");
 let SummaryAutoWateringHistory = require("./classes/Utils/SummaryAutoWateringHistory");
 
-let cronSchedule = cron.scheduleJob("*/60 * * * * *", function() {
+let cronSchedule = cron.scheduleJob("*/30 * * * * *", function() {
   new SummaryAutoWateringHistory.default();
   new SummaryAutoFertilizeringHistory.default();
 });

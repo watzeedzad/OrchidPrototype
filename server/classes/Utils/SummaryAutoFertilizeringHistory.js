@@ -123,11 +123,12 @@ async function getConfigFile(farmId) {
 async function getAllTempAutoFertilizeringHistoryData(farmId, projectId, timeStart) {
     let tempTime = new Date(timeStart);
     let startTime = new Date();
-    let endTime = startTime;
+    let endTime = new Date();
     startTime.setHours(tempTime.getHours());
     startTime.setMinutes(tempTime.getMinutes());
     endTime.setHours(tempTime.getHours() + 2);
     endTime.setMinutes(tempTime.getMinutes() + 2);
+    console.log(startTime, endTime);
     let result = await tempAutoFertilizeringHistory.aggregate([{
         "$match": {
             farmId: farmId,
@@ -155,6 +156,7 @@ async function getAllTempAutoFertilizeringHistoryData(farmId, projectId, timeSta
             tempAutoFertilizeringHistoryResultData = result;
         }
     });
+    console.log(result);
     return result;
 }
 

@@ -34,7 +34,7 @@
     }],
     "lightVolumeConfigs": [{
         "greenHouseid": 789456123,
-        "timeRanges": [1800000]
+        "duration": [1800000]
     }],
     "watering": [{
         "greenHouseId": 789456123,
