@@ -44,6 +44,7 @@ async function operation() {
                 );
                 if (tempAutoFertilizeringHistoryResultData.length == 0) {
                     console.log("[SummaryAutoFertilizeringHistory] no temp data to summarize!");
+                    return;
                 }
                 projectResultData = await getProjectData(allFarmIdResultData[farmIndex].farmId, projectId);
                 if (projectResultData == null) {
@@ -59,9 +60,9 @@ async function operation() {
                         allFarmIdResultData[farmIndex].farmId,
                         projectResultData.greenHouseId,
                         projectId,
-                        tempAutoFertilizeringHistoryResultData.totalAmount,
+                        tempAutoFertilizeringHistoryResultData[0].totalAmount,
                         oneProjectTimeRanges[timeRangesIndex],
-                        projectResultData.ratio
+                        tempAutoFertilizeringHistoryResultData[0].ratio
                     );
                     if (!createNewFertilizerHistoryResultStatus) {
                         return;
@@ -71,9 +72,9 @@ async function operation() {
                         allFarmIdResultData[farmIndex].farmId,
                         projectResultData.greenHouseId,
                         projectId,
-                        tempAutoFertilizeringHistoryResultData.totalAmount,
+                        tempAutoFertilizeringHistoryResultData[0].totalAmount,
                         oneProjectTimeRanges[timeRangesIndex],
-                        projectResultData.ratio
+                        tempAutoFertilizeringHistoryResultData[0].ratio[0]
                     );
                     if (!updateExistFertilizerHistoryResultStatus) {
                         return;
@@ -81,7 +82,7 @@ async function operation() {
                 }
             }
         };
-        await clearAllTempFertilizeringData(allFarmIdResultData[farmIndex].farmId);
+        // await clearAllTempFertilizeringData(allFarmIdResultData[farmIndex].farmId);
     }
     console.log("[SummaryAutoFertilizeringHistory] end batch fertilizering history summarize!")
 }
@@ -125,16 +126,16 @@ async function getAllTempAutoFertilizeringHistoryData(farmId, projectId, timeSta
     let startTime = new Date();
     let endTime = new Date();
     startTime.setHours(tempTime.getHours());
-    startTime.setMinutes(tempTime.getMinutes());
+    startTime.setMinutes(tempTime.getMinutes() - 1);
     endTime.setHours(tempTime.getHours() + 2);
     endTime.setMinutes(tempTime.getMinutes() + 2);
-    console.log(startTime, endTime);
+    console.log(farmId, projectId, startTime, endTime);
     let result = await tempAutoFertilizeringHistory.aggregate([{
         "$match": {
             farmId: farmId,
             projectId: projectId,
             timeStamp: {
-                $gte: startTime,
+                $gt: startTime,
                 $lt: endTime
             }
         }
@@ -143,6 +144,9 @@ async function getAllTempAutoFertilizeringHistoryData(farmId, projectId, timeSta
             _id: "$projectId",
             totalAmount: {
                 $sum: "$amount"
+            },
+            ratio: {
+                $addToSet: "$ratio"
             }
         }
     }], function (err, result) {
@@ -161,6 +165,7 @@ async function getAllTempAutoFertilizeringHistoryData(farmId, projectId, timeSta
 }
 
 async function getProjectData(farmId, projectId) {
+    console.log("[SummaryAutoFertilizeringHistory] getProjectData: " + farmId, projectId);
     let result = await project.findOne({
         farmId: farmId,
         projectId: projectId
@@ -179,7 +184,7 @@ async function getProjectData(farmId, projectId) {
 }
 
 async function isProjectHistoryExist(farmId, greenHouseId, projectId) {
-    let result = await wateringHistory.findOne({
+    let result = await fertilizeringHistory.findOne({
         farmId: farmId,
         greenHouseId: greenHouseId,
         projectId: projectId
@@ -231,18 +236,21 @@ async function updateExistFertilizerHistory(farmId, greenHouseId, project, total
     insertDate.setHours(tempDate.getHours());
     insertDate.setMinutes(tempDate.getMinutes());
     let result;
-    await wateringHistory.findOneAndUpdate({
+    fertilizeringHistory.findOneAndUpdate({
         farmId: farmId,
         greenHouseId: greenHouseId,
         projectId: project
     }, {
         "$push": {
-            history: {
+            "history": {
                 volume: totalAmount,
                 ratio: ratio,
                 startTime: insertDate
             }
         }
+    }, {
+        upsert: true,
+        new: true
     }, function (err) {
         if (err) {
             console.log("[SummaryAutoWateringHistory] updateExistWateringHistory (err): " + err);

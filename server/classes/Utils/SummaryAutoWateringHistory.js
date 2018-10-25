@@ -49,7 +49,7 @@ async function operation() {
                     createNewWaterHistoryResultStatus = await createNewWaterHistory(
                         allFarmIdResultData[farmIndex].farmId,
                         greenHouseId,
-                        tempAutoWateringHistoryResultData.totalAmount,
+                        tempAutoWateringHistoryResultData[0].totalAmount,
                         oneGreenHouseTimeRanges[timeRangesIndex]
                     );
                     if (!createNewWaterHistoryResultStatus) {
@@ -59,7 +59,7 @@ async function operation() {
                     updateExistWaterHistoryResultStatus = await updateExistWaterHistory(
                         allFarmIdResultData[farmIndex].farmId,
                         greenHouseId,
-                        tempAutoWateringHistoryResultData.totalAmount,
+                        tempAutoWateringHistoryResultData[0].totalAmount,
                         oneGreenHouseTimeRanges[timeRangesIndex]
                     );
                     if (!updateExistWaterHistoryResultStatus) {
@@ -68,7 +68,7 @@ async function operation() {
                 }
             }
         }
-        await clearAllTempWateringData(allFarmIdResultData[farmIndex].farmId);
+        // await clearAllTempWateringData(allFarmIdResultData[farmIndex].farmId);
     }
     console.log("[SummaryAutoWateringHistory] end batch watering history summarize!");
 }
@@ -76,17 +76,18 @@ async function operation() {
 async function getAllTempAutoWateringHistoryData(farmId, greenHouseId, timeStart) {
     let tempTime = new Date(timeStart);
     let startTime = new Date();
-    let endTime = startTime;
+    let endTime = new Date();
     startTime.setHours(tempTime.getHours());
-    startTime.setMinutes(tempTime.getMinutes());
+    startTime.setMinutes(tempTime.getMinutes() - 1);
     endTime.setHours(tempTime.getHours() + 2);
     endTime.setMinutes(tempTime.getMinutes() + 2);
+    console.log(farmId, projectId, startTime, endTime);
     let result = tempAutoWateringHistory.aggregate([{
         "$match": {
             farmId: farmId,
             greenHouseId: greenHouseId,
             timeStamp: {
-                $gte: startTime,
+                $gt: startTime,
                 $lt: endTime
             }
         }
@@ -161,7 +162,7 @@ async function updateExistWaterHistory(farmId, greenHouseId, totalAmount, startT
     insertDate.setHours(tempDate.getHours());
     insertDate.setMinutes(tempDate.getMinutes());
     let result;
-    await wateringHistory.findOneAndUpdate({
+    wateringHistory.findOneAndUpdate({
         farmId: farmId,
         greenHouseId: greenHouseId
     }, {
@@ -171,6 +172,9 @@ async function updateExistWaterHistory(farmId, greenHouseId, totalAmount, startT
                 startTime: insertDate
             }
         }
+    }, {
+        upsert: true,
+        new: true
     }, function (err) {
         if (err) {
             console.log("[SummaryAutoWateringHistory] updateExistWateringHistory (err): " + err);
