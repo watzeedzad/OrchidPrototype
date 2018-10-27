@@ -9,7 +9,8 @@ const tempFertilizeringHistorySchema = new Schema({
     farmId: Number,
     projectId: Number,
     amount: Number,
-    timeStamp: Date
+    timeStamp: Date,
+    ratio: String
 });
 
 tempFertilizeringHistorySchema.plugin(autoIncrement, {

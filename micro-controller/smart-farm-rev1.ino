@@ -33,9 +33,11 @@ WiFiServer server(LISTEN_PORT);
 BH1750 lightMeter;
 
 void sendData();
+void sendFlowMeterData();
 void checkWaterLitre();
 void checkFertilizerLitre();
 Task sendDataTask(30000, TASK_FOREVER, &sendData);
+Task sendFlowMeterDataTask(30000, TASK_FOREVER, &sendFlowMeterData);
 Task checkWaterLitreTask(100, TASK_FOREVER, &checkWaterLitre);
 Task checkFertilizerLitreTask(100, TASK_FOREVER, &checkFertilizerLitre);
 
@@ -134,7 +136,9 @@ void setup(void)
         runner.addTask(checkWaterLitreTask);
         runner.addTask(checkFertilizerLitreTask);
         runner.addTask(sendDataTask);
+        runner.addTask(sendFlowMeterDataTask);
         sendDataTask.enable();
+        sendFlowMeterDataTask.enable();
         checkFertilizerLitreTask.disable();
         checkWaterLitreTask.disable();
 
@@ -359,14 +363,12 @@ void sendData()
         moistureStats.clear();
 }
 
-void sendFlowMeterData
+void sendFlowMeterData()
 {
         StaticJsonBuffer<250> JSONbuffer1;
         JsonObject &JSONencoder = JSONbuffer1.createObject();
-        JSONencoder["waterFlow"] = waterFlowMilliLitres;
-        JSONencoder["fertilizerFlow"] = fertilizerFlowMilliLitres;
-        JSONencoder["ip"] = WiFi.localIP().toString();
-        JSONencoder["type"] = "flowMeter";
+        JSONencoder["volume"] = waterFlowMilliLitres;
+        JSONencoder["type"] = "water";
         char dataSet1[250];
         JSONencoder.prettyPrintTo(dataSet1, sizeof(dataSet1));
         // Serial.println(dataSet1);
@@ -374,7 +376,7 @@ void sendFlowMeterData
         HTTPClient http;
         http.setTimeout(10000);
         // http.begin("https://hello-api.careerity.me/sensorRoutes/greenHouseSensor", "EC:BB:33:AB:B4:F4:5B:A0:76:F3:F1:5B:FE:EC:BD:16:17:5C:22:47");
-        http.begin("http://" + WiFi.gatewayIP().toString() + ":3001" + "/handleController/");
+        http.begin("http://" + WiFi.gatewayIP().toString() + ":3001" + "/handleFlowVolume/");
         http.addHeader("Content-Type", "application/json");
         int httpCode = http.POST(dataSet1);
         String payload = http.getString();
@@ -383,6 +385,28 @@ void sendFlowMeterData
         Serial.println(String(http.errorToString(httpCode)));
         Serial.print("Payload: ");
         Serial.println(payload);
+        http.end();
+
+        StaticJsonBuffer<250> JSONbuffer2;
+        JsonObject &JSONencoder2 = JSONbuffer2.createObject();
+        JSONencoder["volume"] = fertilizerFlowTotalMilliLitres;
+        JSONencoder["type"] = "fertilizer";
+        char dataSet2[250];
+        JSONencoder.prettyPrintTo(dataSet2, sizeof(dataSet2));
+        // Serial.println(dataSet1);
+
+        HTTPClient http2;
+        http.setTimeout(10000);
+        // http.begin("https://hello-api.careerity.me/sensorRoutes/greenHouseSensor", "EC:BB:33:AB:B4:F4:5B:A0:76:F3:F1:5B:FE:EC:BD:16:17:5C:22:47");
+        http.begin("http://" + WiFi.gatewayIP().toString() + ":3001" + "/handleFlowVolume/");
+        http.addHeader("Content-Type", "application/json");
+        int httpCode2 = http.POST(dataSet2);
+        String payload2 = http.getString();
+        Serial.print("http result: ");
+        Serial.println(httpCode2);
+        Serial.println(String(http.errorToString(httpCode)));
+        Serial.print("Payload: ");
+        Serial.println(payload2);
         http.end();
 
         waterFlowMilliLitres = 0;

@@ -82,7 +82,7 @@ async function operation() {
                 }
             }
         };
-        // await clearAllTempFertilizeringData(allFarmIdResultData[farmIndex].farmId);
+        await clearAllTempFertilizeringData(allFarmIdResultData[farmIndex].farmId);
     }
     console.log("[SummaryAutoFertilizeringHistory] end batch fertilizering history summarize!")
 }

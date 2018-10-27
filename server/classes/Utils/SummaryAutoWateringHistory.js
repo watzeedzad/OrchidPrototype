@@ -68,7 +68,7 @@ async function operation() {
                 }
             }
         }
-        // await clearAllTempWateringData(allFarmIdResultData[farmIndex].farmId);
+        await clearAllTempWateringData(allFarmIdResultData[farmIndex].farmId);
     }
     console.log("[SummaryAutoWateringHistory] end batch watering history summarize!");
 }
