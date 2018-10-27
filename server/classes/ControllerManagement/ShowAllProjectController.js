@@ -44,7 +44,7 @@ async function operation(req, res) {
     // }
 
     if (showProjectControllerData.length == 0) {
-        res.json({});
+        res.json([{projectId:-1}]);
         return;
     }
 

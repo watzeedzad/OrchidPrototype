@@ -15,17 +15,17 @@ export default class CreateController {
             return;
         }
 
-        let macAddress = req.body.macAddress;
+        let id = req.body.id;
 
-        if (typeof macAddress === "undefined") {
+        if (typeof id === "undefined") {
             res.json({
                 status: 500,
-                errorMessage: "macAddress is null"
+                errorMessage: "id is null"
             });
             return;
         }
 
-        await deleteController(macAddress);
+        await deleteController(id);
 
         if (deleteControllerResult) {
             res.sendStatus(200);
@@ -35,9 +35,9 @@ export default class CreateController {
     }
 }
 
-async function deleteController(macAddress) {
+async function deleteController(id) {
     await knowController.findOneAndRemove({
-        mac_address: macAddress,
+        _id: id,
     }, (err, doc) => {
         if (err) {
             deleteControllerResult = false;
