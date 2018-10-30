@@ -59,6 +59,7 @@ require("./models/light_duration");
 require("./models/tempWateringHistory");
 require("./models/tempFertilizeringHistory");
 
+
 //load routes
 const sensorRoutes = require("./routes/sensorRoutes");
 const greenHouseRoutes = require("./routes/greenHouseRoutes");
@@ -72,6 +73,7 @@ const monitoringAndAnalyze = require("./routes/monitoringAndAnalyze");
 const lightControl = require("./routes/lightControl");
 const dynamicControllerHandle = require("./routes/dynamicControllerHandle");
 const user = require("./routes/user");
+const projectRoutes = require("./routes/projectRoutes");
 
 const app = express();
 
@@ -117,6 +119,7 @@ app.use("/monitoringAndAnalyze", monitoringAndAnalyze);
 app.use("/lightControl", lightControl);
 app.use("/dynamicControllerHandle", dynamicControllerHandle);
 app.use("/user", user);
+app.use("/project",projectRoutes)
 
 let SummaryAutoFertilizeringHistory = require("./classes/Utils/SummaryAutoFertilizeringHistory");
 let SummaryAutoWateringHistory = require("./classes/Utils/SummaryAutoWateringHistory");
