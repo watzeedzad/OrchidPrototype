@@ -48,13 +48,11 @@ export default class AddUser {
             });
             return;
         }
-
-        let key = crypto.createCipher("aes-256-gcm", aes256_key);
-        let passwordCipher = key.update(password, "utf8", "hex");
-        console.log("[AddUser] passwordCipher (aes256): " + passwordCipher);
-        let passwordCipherHash = sha256(passwordCipher);
-        console.log("[AddUser] passwordCipherHash (ase256 /w sha256): " + passwordCipherHash);
-        password = passwordCipherHash;
+        
+        let hash = crypto.createHash('sha512');
+        hash.update(password);
+        password = hash.digest('hex');
+        console.log("[Login] passwordCipherHash (sha512): " + password);
 
         addUserResult = await addUser(farmId, firstname, lastname, role, username, password);
         setTimeout(() => {

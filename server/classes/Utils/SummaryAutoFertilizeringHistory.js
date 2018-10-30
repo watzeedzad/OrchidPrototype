@@ -129,7 +129,7 @@ async function getAllTempAutoFertilizeringHistoryData(farmId, projectId, timeSta
     startTime.setMinutes(tempTime.getMinutes() - 1);
     endTime.setHours(tempTime.getHours() + 2);
     endTime.setMinutes(tempTime.getMinutes() + 2);
-    console.log(farmId, projectId, startTime, endTime);
+    console.log("[SummaryAutoFertilizeringHistory] getAllTempAutoFertilizeringHistoryData: " + farmId, projectId, startTime, endTime);
     let result = await tempAutoFertilizeringHistory.aggregate([{
         "$match": {
             farmId: farmId,
@@ -160,7 +160,6 @@ async function getAllTempAutoFertilizeringHistoryData(farmId, projectId, timeSta
             tempAutoFertilizeringHistoryResultData = result;
         }
     });
-    console.log(result);
     return result;
 }
 

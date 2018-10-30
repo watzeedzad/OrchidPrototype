@@ -81,7 +81,7 @@ async function getAllTempAutoWateringHistoryData(farmId, greenHouseId, timeStart
     startTime.setMinutes(tempTime.getMinutes() - 1);
     endTime.setHours(tempTime.getHours() + 2);
     endTime.setMinutes(tempTime.getMinutes() + 2);
-    console.log(farmId, greenHouseId, startTime, endTime);
+    console.log("[SummaryAutoWateringHistory] getAllTempAutoWateringHistoryData: " + farmId, greenHouseId, startTime, endTime);
     let result = tempAutoWateringHistory.aggregate([{
         "$match": {
             farmId: farmId,
