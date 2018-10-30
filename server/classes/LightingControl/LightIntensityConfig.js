@@ -34,7 +34,7 @@ export default class LightIntensityConfig {
         console.log("[LightIntensityConfig] minLightIntensity: " + minLightIntensity);
         console.log("[LightIntensityConfig] maxLightIntensity: " + maxLightIntensity);
         console.log("[LightIntensityConfig] greenHouseId: " + greenHouseId);
-        let greenHouseIdIndex = await seekGreenHouseIdIndex(configFile, greenHouseId);
+        let greenHouseIdIndex = await seekGreenHouseIdIndex(configFile.lightIntensityConfigs, greenHouseId);
         if (greenHouseIdIndex == -1) {
             res.json({
                 status: 500,
