@@ -34,7 +34,7 @@
     }],
     "lightVolumeConfigs": [{
         "greenHouseId": 789456123,
-        "duration": 1800000
+        "maxLightVolume": 28800000
     }],
     "watering": [{
         "greenHouseId": 789456123,

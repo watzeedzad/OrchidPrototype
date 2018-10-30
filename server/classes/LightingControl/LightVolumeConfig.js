@@ -32,7 +32,7 @@ export default class LightVolumeConfig {
         let greenHouseId = req.body.greenHouseId;
         console.log("[LightVolumeConfig] maxLightVolume: " + maxLightVolume);
         console.log("[LightVolumeConfig] greenHouseId: " + greenHouseId);
-        let greenHouseIdIndex = seekGreenHouseIdIndex(configFile, greenHouseId);
+        let greenHouseIdIndex = seekGreenHouseIdIndex(configFile.lightVolumeConfigs, greenHouseId);
         if (greenHouseIdIndex == -1) {
             res.json({
                 status: 500,
