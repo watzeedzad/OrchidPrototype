@@ -17,6 +17,7 @@ export default class ShowLightVolumeConfig {
         }
         configFile = req.session.configFile;
         let greenHouseId = req.body.greenHouseId;
+        console.log("[ShowLightVolume] greenHouseId: " + greenHouseId);
         if (typeof greenHouseId === "undefined") {
             res.json({
                 status: 500,
@@ -37,6 +38,7 @@ export default class ShowLightVolumeConfig {
             });
         } else {
             let greenHouseIdIndex = await seekGreenHouseIdIndex(configFile.lightVolumeConfigs, greenHouseId);
+            console.log("[ShowLightVolume] greenHouseIdIndex: " + greenHouseIdIndex);
             if (greenHouseIdIndex == -1) {
                 res.json({
                     status: 500,
@@ -44,7 +46,7 @@ export default class ShowLightVolumeConfig {
                 });
                 return;
             }
-            let maxLightVolume = configFile.lightVolumeConfigs[greenHouseIdIndex].maxLightVolume;
+            let maxLightVolume = configFile.lightVolumeConfigs[greenHouseIdIndex].duration;
             let crruentLightVolume = lightDurationData.duration;
             var showTemp = {
                 maxLightVolume: maxLightVolume,
@@ -78,7 +80,7 @@ async function getLightDurationData(greenHouseId, farmId) {
     //     lightDurationData = undefined;
     //     console.log("Query fail!");
     // }
-    await lightDuration.findOne({
+    let result = await lightDuration.findOne({
         greenHouseId: greenHouseId,
         farmId: farmId
     }, null, {
@@ -96,6 +98,7 @@ async function getLightDurationData(greenHouseId, farmId) {
             lightDurationData = result;
         }
     });
+    return result;
 }
 
 function seekGreenHouseIdIndex(dataArray, greenHouseId) {
