@@ -74,6 +74,7 @@ const lightControl = require("./routes/lightControl");
 const dynamicControllerHandle = require("./routes/dynamicControllerHandle");
 const user = require("./routes/user");
 const projectRoutes = require("./routes/projectRoutes");
+const farm = require('./routes/farm');
 
 const app = express();
 
@@ -119,7 +120,8 @@ app.use("/monitoringAndAnalyze", monitoringAndAnalyze);
 app.use("/lightControl", lightControl);
 app.use("/dynamicControllerHandle", dynamicControllerHandle);
 app.use("/user", user);
-app.use("/project",projectRoutes)
+app.use("/project",projectRoutes);
+app.use("/farm",farm);
 
 let SummaryAutoFertilizeringHistory = require("./classes/Utils/SummaryAutoFertilizeringHistory");
 let SummaryAutoWateringHistory = require("./classes/Utils/SummaryAutoWateringHistory");
