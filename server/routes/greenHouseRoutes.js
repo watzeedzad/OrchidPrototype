@@ -30,7 +30,7 @@ router.use('/deleteGreenHouse',(req,res,next)=>{
     next();
 });
 
-router.delete('/deleteGreenHouse' ,(req,res)=>{
+router.post('/deleteGreenHouse' ,(req,res)=>{
     new DeleteGreenHouse(req,res);
 });
 
@@ -45,7 +45,7 @@ router.use('/editGreenHouse', (req,res,next)=>{
     next();
 });
 
-router.put('/editGreenHouse', (req,res)=>{
+router.post('/editGreenHouse', (req,res)=>{
     new EditGreenHouse(req,res);
 });
 
@@ -60,7 +60,7 @@ router.use('/showGreenHouse', (req,res,next)=>{
     next();
 });
 
-router.get('/showGreenHouse', (req,res)=>{
+router.post('/showGreenHouse', (req,res)=>{
     new ShowGreenHouse(req,res);
 });
 

@@ -6,8 +6,8 @@ let greenHouseDataResult = undefined;
 
 export default class ShowGreenHouse {
 
-    constructor(req) {
-        operation(req);
+    constructor(req, res) {
+        operation(req ,res);
     }
 }
 async function operation(req, res) {
@@ -19,7 +19,7 @@ async function operation(req, res) {
         return;
     }
 
-    let farmId = req.body.farmId;
+    let farmId = req.session.farmId;
     if (typeof farmId === "undefined") {
         res.json({
             status: 500,
@@ -46,7 +46,7 @@ async function operation(req, res) {
 
 
 async function getGreenHouseData(farmId) {
-    let result = await greenHouse.findOne({
+    let result = await greenHouse.find({
         farmId: farmId,
     }, (err, result) => {
         if (err) {

@@ -19,7 +19,7 @@ async function operation(req, res) {
         return;
     }
 
-    let farmId = req.body.farmId;
+    let farmId = req.session.farmId;
     if (typeof farmId === "undefined") {
         res.json({
             status: 500,
