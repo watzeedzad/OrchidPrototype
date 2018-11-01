@@ -6,8 +6,8 @@ let farmDataResult;
 let knowControllerDataResult;
 
 export default class Handler {
-    constructor(req) {
-        operation(req);
+    constructor(req, res) {
+        operation(req, res);
     }
 }
 
@@ -15,6 +15,7 @@ async function operation(req, res) {
     let ipPoolData;
     let ipPooldataTemp = req.body.ipPoolData;
     let piMacAddress = req.body.piMacAddress;
+    console.log(ipPooldataTemp, piMacAddress);
     if (typeof ipPooldataTemp === "undefined" || typeof piMacAddress === "undefined") {
         res.sendStatus(500);
         return;
@@ -45,7 +46,7 @@ async function operation(req, res) {
         let ip = indexData[2];
         let macAddress = indexData[1];
         knowControllerDataResult = await findExistController(macAddress, newFormatPiMacAddress, farmDataResult.farmId);
-        if (typeof knowControllerDataResult == "undefined") {
+        if (knowControllerDataResult == null) {
             console.log("[Handler] begin insert new controller " + ip, macAddress)
             insertKnowController(ip, macAddress, newFormatPiMacAddress, farmDataResult.farmId);
         } else {
@@ -84,17 +85,17 @@ async function findExistController(macAddress, piMacAddress, farmId) {
         farmId: farmId
     }, (err, result) => {
         if (err) {
-            knowControllerDataResult = undefined;
+            knowControllerDataResult = null;
             console.log("[Handler] findExistController (err): " + err);
         } else if (!result) {
-            knowControllerDataResult = undefined;
+            knowControllerDataResult = null;
             console.log("[Handler] findExistController (!result): " + result);
         } else {
             knowControllerDataResult = result;
             console.log("[Handler] findExistController (result): " + result);
         }
-        return result;
     });
+    return result;
 }
 
 async function getFarmData(piMacAddress) {

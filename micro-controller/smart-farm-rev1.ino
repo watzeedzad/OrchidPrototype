@@ -369,6 +369,7 @@ void sendFlowMeterData()
         JsonObject &JSONencoder = JSONbuffer1.createObject();
         JSONencoder["volume"] = waterFlowMilliLitres;
         JSONencoder["type"] = "water";
+        JSONencoder["ip"] = WiFi.localIP().toString();
         char dataSet1[250];
         JSONencoder.prettyPrintTo(dataSet1, sizeof(dataSet1));
         // Serial.println(dataSet1);
@@ -389,10 +390,11 @@ void sendFlowMeterData()
 
         StaticJsonBuffer<250> JSONbuffer2;
         JsonObject &JSONencoder2 = JSONbuffer2.createObject();
-        JSONencoder["volume"] = fertilizerFlowTotalMilliLitres;
-        JSONencoder["type"] = "fertilizer";
+        JSONencoder2["volume"] = fertilizerFlowTotalMilliLitres;
+        JSONencoder2["type"] = "fertilizer";
+        JSONencoder2["ip"] = WiFi.localIP().toString();
         char dataSet2[250];
-        JSONencoder.prettyPrintTo(dataSet2, sizeof(dataSet2));
+        JSONencoder2.prettyPrintTo(dataSet2, sizeof(dataSet2));
         // Serial.println(dataSet1);
 
         HTTPClient http2;
