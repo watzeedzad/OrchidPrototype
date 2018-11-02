@@ -30,7 +30,7 @@ DynamicJsonBuffer jsonBuffer;
 dht DHT;
 Scheduler runner;
 WiFiServer server(LISTEN_PORT);
-BH1750 lightMeter;
+BH1750 lightMeter(0x23);
 
 void sendData();
 void sendFlowMeterData();
@@ -106,6 +106,7 @@ void setup(void)
         rest.function("waterPump", waterPumpControl);
         rest.function("fertilizerPump", fertilizerPumpControl);
         rest.function("moisturePump", moisturePumpControl);
+        rest.function("light", lightCOntrol);
         rest.function("manualWater", manualWaterPump);
         rest.function("manualFertilizer", manualFertilizerPump);
         // rest.function("manualMoisture", manualMoisturePump);
@@ -465,6 +466,13 @@ int moisturePumpControl(String command)
 {
         int state = command.toInt();
         digitalWrite(RE_IN_PIN4, state);
+        return 1;
+}
+
+int lightCOntrol(String command)
+{
+        int state = command.toInt();
+        digitalWrite(RE_IN_PIN3, state);
         return 1;
 }
 
