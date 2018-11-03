@@ -100,6 +100,8 @@ async function operation(req, res) {
   }
 
   if (!(nowLightCheckDate.getHours() >= 7 && nowLightCheckDate.getHours() <= 18) && (configFile.lightVolumeConfigs[greenHouseIndexLightIntensity].maxLightVolume > currentDuration)) {
+    console.log("[LightCheck] turn on light condition: " + !(nowLightCheckDate.getHours() >= 7 && nowLightCheckDate.getHours() <= 18), (configFile.lightVolumeConfigs[greenHouseIndexLightIntensity].maxLightVolume > currentDuration));
+    console.log("[LightCheck] turn on light params: " + configFile.lightVolumeConfigs[greenHouseIndexLightIntensity].maxLightVolume, currentDuration);
     new InsertRelayCommand(controllerDataResult.ip, "light", true, piMacAddress);
   } else {
     if (!isAlreadySetPumptoFalse) {
@@ -107,9 +109,17 @@ async function operation(req, res) {
     }
     console.log("[LightCheck] not in lighting time (night) or enough light");
   }
+  nowLightCheckDate.setHours(0);
+  nowLightCheckDate.setMinutes(0);
+  nowLightCheckDate.setSeconds(0);
+  nowLightCheckDate.setMilliseconds(0);
+  previousDate.setHours(0);
+  previousDate.setMinutes(0);
+  previousDate.setSeconds(0);
+  previousDate.setMilliseconds(0);
   let momentNowLightCheckDate = moment(nowLightCheckDate);
   let momentPreviousDate = moment(previousDate);
-  console.log("[LightCheck] moment isAfter check: " + moment(momentPreviousDate).isBefore(momentNowLightCheckDate), momentNowLightCheckDate, momentPreviousDate);
+  console.log("[LightCheck] moment isBefore check: " + moment(momentPreviousDate).isBefore(momentNowLightCheckDate), momentNowLightCheckDate, momentPreviousDate);
   if (moment(momentPreviousDate).isBefore(momentNowLightCheckDate) && (nowLightCheckDate.getHours() >= 7 && nowLightCheckDate.getHours() <= 18)) {
     console.log("[LightCheck] enter duration reset");
     await resetDurationTime(lightDurationResult._id);

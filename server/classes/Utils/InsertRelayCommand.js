@@ -17,6 +17,7 @@ export default class InsertRelayCommand {
         }
         new relayQueue(relayInsertData).save(function (err) {
             if (!err) {
+                console.log("[InsertRelayCommand] params: " + ip, pumpType, command, macAddress);
                 console.log("[InsertRelayCommand] created command!");
             } else {
                 //TODO: return page with errors
