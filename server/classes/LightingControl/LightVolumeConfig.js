@@ -28,8 +28,8 @@ export default class LightVolumeConfig {
                 errorMessage: "เกิดข้อผิดพลาดในการตั้งค่าปริมาณแสง"
             });
         }
-        let maxLightVolume = req.body.maxLightVolume;
-        let greenHouseId = req.body.greenHouseId;
+        let maxLightVolume = parseInt(req.body.maxLightVolume);
+        let greenHouseId = parseInt(req.body.greenHouseId);
         console.log("[LightVolumeConfig] maxLightVolume: " + maxLightVolume);
         console.log("[LightVolumeConfig] greenHouseId: " + greenHouseId);
         let greenHouseIdIndex = seekGreenHouseIdIndex(configFile.lightVolumeConfigs, greenHouseId);

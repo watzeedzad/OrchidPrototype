@@ -28,8 +28,8 @@ export default class LightIntensityConfig {
                 errorMessage: "เกิดข้อผิดพลาดในการตั้งค่าความเข้มแสง"
             });
         }
-        let minLightIntensity = req.body.minLightIntensity;
-        let maxLightIntensity = req.body.maxLightIntensity;
+        let minLightIntensity = parseInt(req.body.minLightIntensity);
+        let maxLightIntensity = parseInt(req.body.maxLightIntensity);
         let greenHouseId = req.body.greenHouseId;
         console.log("[LightIntensityConfig] minLightIntensity: " + minLightIntensity);
         console.log("[LightIntensityConfig] maxLightIntensity: " + maxLightIntensity);
