@@ -65,8 +65,7 @@ export default class TemperatureCheck {
                 new InsertRelayCommand(controllerDataResult.ip, "moisture", true, piMacAddress);
                 console.log("[TemperatureCheck] farmDataResult.piMacAddress: " + piMacAddress);
                 // onOffMoisturePump(controllerDataResult.ip, true);
-            }
-            if (!resultCompareHumid) {
+            } else if (!resultCompareHumid) {
                 new InsertRelayCommand(controllerDataResult.ip, "moisture", true, piMacAddress);
                 console.log("[TemperatureCheck] farmDataResult.piMacAddress: " + piMacAddress);
                 // onOffMoisturePump(controllerDataResult.ip, true);
