@@ -75,7 +75,9 @@ async function operation(req, res) {
     return;
   }
   console.log("[LightCheck] resultCompareLightIntensity: " + resultCompareLightIntensity);
-
+  if (!resultCompareLightIntensity) {
+    await updateLightDurationData(lightDurationResult._id, currentDuration, nowLightCheckDate, true);
+  }
   lightDurationResult = await getLastestLightDurationData(farmId, greenHouseId);
   console.log("[LightCheck] lightDurationResult: " + lightDurationResult);
   if (lightDurationResult == null) {
