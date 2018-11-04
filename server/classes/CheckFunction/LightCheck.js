@@ -92,6 +92,7 @@ async function operation(req, res) {
     currentDuration = lightDurationResult.duration;
     if (currentDuration >= configFile.lightVolumeConfigs[greenHouseIndexLightIntensity].maxLightVolume) {
       console.log("[LightCheck] enough light in day time");
+      return;
     }
     previousDate = new Date(lightDurationResult.timeStamp);
     if (resultCompareLightIntensity) {
@@ -112,7 +113,7 @@ async function operation(req, res) {
     if (!isAlreadySetPumptoFalse) {
       new InsertRelayCommand(controllerDataResult.ip, "light", false, piMacAddress);
     }
-    console.log("[LightCheck] not in lighting time (night) or enough light");
+    console.log("[LightCheck] not in lighting time (night) and enough light");
   }
   nowLightCheckDate.setHours(0);
   nowLightCheckDate.setMinutes(0);
