@@ -90,6 +90,9 @@ async function operation(req, res) {
     return;
   } else {
     currentDuration = lightDurationResult.duration;
+    if (currentDuration >= configFile.lightVolumeConfigs[greenHouseIndexLightIntensity].maxLightVolume) {
+      console.log("[LightCheck] enough light in day time");
+    }
     previousDate = new Date(lightDurationResult.timeStamp);
     if (resultCompareLightIntensity) {
       currentDuration += nowLightCheckDate.getTime() - previousDate.getTime();
