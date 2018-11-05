@@ -398,18 +398,17 @@ void sendFlowMeterData()
         JSONencoder2.prettyPrintTo(dataSet2, sizeof(dataSet2));
         // Serial.println(dataSet1);
 
-        HTTPClient http2;
         http.setTimeout(10000);
         // http.begin("https://hello-api.careerity.me/sensorRoutes/greenHouseSensor", "EC:BB:33:AB:B4:F4:5B:A0:76:F3:F1:5B:FE:EC:BD:16:17:5C:22:47");
         http.begin("http://" + WiFi.gatewayIP().toString() + ":3001" + "/handleFlowVolume/");
         http.addHeader("Content-Type", "application/json");
-        int httpCode2 = http.POST(dataSet2);
-        String payload2 = http.getString();
+        httpCode = http.POST(dataSet2);
+        payload = http.getString();
         Serial.print("http result: ");
-        Serial.println(httpCode2);
+        Serial.println(httpCode);
         Serial.println(String(http.errorToString(httpCode)));
         Serial.print("Payload: ");
-        Serial.println(payload2);
+        Serial.println(payload);
         http.end();
 
         waterFlowMilliLitres = 0;
