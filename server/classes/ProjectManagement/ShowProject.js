@@ -14,7 +14,7 @@ export default class ShowProject {
     }
 }
 async function operation(req, res) {
-    console.log("[ShoWAllGreenHouse] session id: " + req.session.id);
+    console.log("[ShowAllProject] session id: " + req.session.id);
     if (typeof req.session.farmData === "undefined" || typeof req.session.configFilePath === "undefined") {
         console.log(req.session.farmData + " / " + req.session.configFilePath)
         res.sendStatus(401);
@@ -62,7 +62,7 @@ async function getProjectData(greenHouseId) {
         if (err) {
             showProjectData = null;
             console.log('[ShowProject] getProjectData(err): ' + err);
-        } else if (!doc) {
+        } else if (!result) {
             showProjectData = null;
             console.log('[ShowProject] getProjectData(doc): ' + doc);
         } else {

@@ -15,11 +15,12 @@ export default class EdirProject {
         }
 
         let id = req.body.id
+        let name = req.body.name
         let tribeName = req.body.tribeName
-        let isAutoFertilizering = req.body.isAutoFertilizering
+        let picturePath = req.body.picturePath
         let currentRatio = req.body.currentRatio
 
-        await editProjectData(id, tribeName, isAutoFertilizering, currentRatio, function (editProjectResult) {
+        await editProjectData(id, name, tribeName, picturePath, currentRatio, function (editProjectResult) {
             if (editProjectResult) {
                 res.sendStatus(200);
             } else {
@@ -30,16 +31,17 @@ export default class EdirProject {
 
 }
 
-async function editProjectData(id, tribeName, picturePath, isAutoFertilizering, currentRatio, callback) {
-    let editProjectResult;
+async function editProjectData(id, name, tribeName, picturePath, currentRatio, callback) {
+    let editProjectResult = null;
 
     await project.findOne({
         _id: id
     }, {
         $set: {
             tribeName: tribeName,
+            name: name,
             picturePath: picturePath,
-            isAutoFertilizering: isAutoFertilizering,
+            isAutoFertilizering: false,
             currentRatio: currentRatio
         }
     }, (err, doc) => {
@@ -47,7 +49,7 @@ async function editProjectData(id, tribeName, picturePath, isAutoFertilizering, 
             editProjectResult = false;
             console.log('[EditProject] editProjectData(err) : ' + err);
         } else if (!doc) {
-            editProjectData = false;
+            editProjectResult = false;
             console.log('[EditProject] editProjectData(!doc) : ' + doc)
         } else {
             editProjectResult = true;

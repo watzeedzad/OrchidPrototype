@@ -12,7 +12,7 @@ export default class ShowGreenHouse {
 }
 async function operation(req, res) {
 
-    console.log('[userDataResult] session id: ' + req.session.id);
+    console.log('[ShowAllGreenHouse] session id: ' + req.session.id);
     if (typeof req.session.farmData === "undefined" || typeof req.session.configFilePath === "undefined") {
         console.log(req.session.farmData + " / " + req.session.configFilePath)
         res.sendStatus(401);

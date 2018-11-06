@@ -14,14 +14,14 @@ export default class AddProject {
             return;
         }
 
-        let farmId = req.body.farmId;
+        let farmId = req.session.farmId;
         let greenHouseId = req.body.greenHouseId;
+        let name = req.body.name;
         let tribeName = req.body.tribeName;
         let picturePath = req.body.picturePath;
-        let isAutoFertilizering = req.body.isAutoFertilizering;
         let currentRatio = req.body.currentRatio;
 
-        await addProject(farmId, greenHouseId, tribeName, picturePath, isAutoFertilizering, currentRatio, function (addProjectResult) {
+        await addProject(farmId, greenHouseId, name, tribeName, picturePath, currentRatio, function (addProjectResult) {
             if (addProjectResult) {
                 res.sendStatus(200);
             } else {
@@ -33,15 +33,16 @@ export default class AddProject {
 }
 
 
-async function addProject(farmId, greenHouseId, tribeName, picturePath, isAutoFertilizering, currentRatio, callback) {
+async function addProject(farmId, greenHouseId, name, tribeName, picturePath, currentRatio, callback) {
     let addProjectResult = null;
 
     let projectData = new project({
         farmId: farmId,
         greenHouseId: greenHouseId,
+        name: name,
         tribeName: tribeName,
         picturePath: picturePath,
-        isAutoFertilizering: isAutoFertilizering,
+        isAutoFertilizering: false,
         currentRatio: currentRatio
     });
 

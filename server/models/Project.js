@@ -8,6 +8,7 @@ const {
 const projectSchema = new Schema({
     farmId: Number,
     greenHouseId: Number,
+    name: String,
     tribeName: String,
     picturePath: String,
     isAutoFertilizering: Boolean,

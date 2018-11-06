@@ -32,7 +32,7 @@ router.use('/deleteProject',(req,res,next)=>{
     next();
 });
 
-router.delete('/deleteProject' ,(req,res)=>{
+router.post('/deleteProject' ,(req,res)=>{
     new DeleteProject(req,res);
 });
 
@@ -47,7 +47,7 @@ router.use('/editProject', (req,res,next)=>{
     next();
 });
 
-router.put('/editProject', (req,res)=>{
+router.post('/editProject', (req,res)=>{
     new EditProject(req,res);
 });
 
@@ -63,7 +63,7 @@ router.use('/showProject', (req,res,next)=>{
     next();
 });
 
-router.get('/showProject', (req,res)=>{
+router.post('/showProject', (req,res)=>{
     new ShowProject(req,res);
 });
 
