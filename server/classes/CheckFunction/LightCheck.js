@@ -120,6 +120,32 @@ async function operation(req, res) {
     } else {
       console.log("[LightCheck] in night time not check duration");
       new InsertRelayCommand(controllerDataResult.ip, "light", false, piMacAddress);
+
+      if (currentDuration != 0) {
+        nowLightCheckDate.setHours(0);
+        nowLightCheckDate.setMinutes(0);
+        nowLightCheckDate.setSeconds(0);
+        nowLightCheckDate.setMilliseconds(0);
+        previousDate.setHours(0);
+        previousDate.setMinutes(0);
+        previousDate.setSeconds(0);
+        previousDate.setMilliseconds(0);
+        let momentNowLightCheckDate = moment(nowLightCheckDate);
+        let momentPreviousDate = moment(previousDate);
+        console.log("[LightCheck] moment isBefore check: " + moment(momentPreviousDate).isBefore(momentNowLightCheckDate), momentNowLightCheckDate, momentPreviousDate);
+        if (moment(momentPreviousDate).isBefore(momentNowLightCheckDate)) {
+          console.log("[LightCheck] enter duration reset");
+          await resetDurationTime(lightDurationResult._id, function (resetLightDurationResult) {
+            if (resetLightDurationResult) {
+              req.session.lightCheckStatus = 200;
+            } else {
+              req.session.lightCheckStatus = 500;
+            }
+            return;
+          });
+        }
+      }
+
       req.session.lightCheckStatus = 200;
       return;
     }
@@ -136,28 +162,6 @@ async function operation(req, res) {
   //   console.log("[LightCheck] not in lighting time (night) and enough light");
   // }
 
-  nowLightCheckDate.setHours(0);
-  nowLightCheckDate.setMinutes(0);
-  nowLightCheckDate.setSeconds(0);
-  nowLightCheckDate.setMilliseconds(0);
-  previousDate.setHours(0);
-  previousDate.setMinutes(0);
-  previousDate.setSeconds(0);
-  previousDate.setMilliseconds(0);
-  let momentNowLightCheckDate = moment(nowLightCheckDate);
-  let momentPreviousDate = moment(previousDate);
-  console.log("[LightCheck] moment isBefore check: " + moment(momentPreviousDate).isBefore(momentNowLightCheckDate), momentNowLightCheckDate, momentPreviousDate);
-  if (moment(momentPreviousDate).isBefore(momentNowLightCheckDate)) {
-    console.log("[LightCheck] enter duration reset");
-    await resetDurationTime(lightDurationResult._id, function (resetLightDurationResult) {
-      if (resetLightDurationResult) {
-        req.session.lightCheckStatus = 200;
-      } else {
-        req.session.lightCheckStatus = 500;
-      }
-      return;
-    });
-  }
   if (updateLightDurationResult) {
     req.session.lightCheckStatus = 200;
     return;
