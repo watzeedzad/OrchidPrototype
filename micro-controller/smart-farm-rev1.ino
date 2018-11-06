@@ -1,6 +1,7 @@
 #include <dht.h>
 #include <ArduinoJson.h>
 #include <WiFi.h>
+#include <WiFiMulti.h>
 #include <HTTPClient.h>
 #include <TaskScheduler.h>
 #include <Statistic.h>
@@ -31,6 +32,7 @@ dht DHT;
 Scheduler runner;
 WiFiServer server(LISTEN_PORT);
 BH1750 lightMeter(0x23);
+WiFiMulti WiFiMulti;
 
 void sendData();
 void sendFlowMeterData();
@@ -113,14 +115,14 @@ void setup(void)
         rest.set_id("10000001");
         rest.set_name("esp32");
 
-        // WiFi.mode(WIFI_STA);
         // WiFi.config(ip, gateway, subnet, primaryDns, secondaryDns);
-        WiFi.begin(SSID, SSID_PASSWORD);
+        WiFiMulti.addAP(SSID, SSID_PASSWORD);
+        // WiFi.begin(SSID, SSID_PASSWORD);
 
-        while (WiFi.status() != WL_CONNECTED)
+        while (WiFiMulti.run() != WL_CONNECTED)
         {
                 delay(500);
-                Serial.print(".");
+                Serial.print("Connecting to WiFi...");
         }
         Serial.println("");
         Serial.println("WiFi is Connected!");
@@ -148,11 +150,6 @@ void setup(void)
 
 void loop(void)
 {
-        while (WiFi.status() != WL_CONNECTED)
-        {
-                delay(500);
-                return;
-        }
         Serial.println("enter loop");
         WiFiClient client = server.available();
         if (client && client.available())

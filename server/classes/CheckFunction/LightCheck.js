@@ -92,6 +92,7 @@ async function operation(req, res) {
     currentDuration = lightDurationResult.duration;
     if (currentDuration >= configFile.lightVolumeConfigs[greenHouseIndexLightIntensity].maxLightVolume) {
       console.log("[LightCheck] enough light in day time");
+      req.session.lightCheckStatus = 200;
       return;
     }
     previousDate = new Date(lightDurationResult.timeStamp);
