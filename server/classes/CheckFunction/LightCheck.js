@@ -119,6 +119,9 @@ async function operation(req, res) {
 
     } else {
       console.log("[LightCheck] in night time not check duration");
+      await updateLightDurationData(lightDurationResult._id, null, nowLightCheckDate, false, function (updateLightDuration) {
+        updateLightDurationResult = updateLightDuration;
+      });
       new InsertRelayCommand(controllerDataResult.ip, "light", false, piMacAddress);
 
       if (currentDuration != 0) {
@@ -145,9 +148,6 @@ async function operation(req, res) {
           });
         }
       }
-
-      req.session.lightCheckStatus = 200;
-      return;
     }
   }
 
