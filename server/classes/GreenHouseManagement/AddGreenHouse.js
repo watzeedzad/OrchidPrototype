@@ -16,13 +16,12 @@ export default class AddGreenHouse {
             return;
         }
 
-        let greenHouseId = req.body.greenHouseId;
-        let farmId = req.body.farmId;
+        let farmId = req.session.farmId;
         let name = req.body.name;
         let desc = req.body.desc;
         let picturePath = req.body.picturePath;
 
-        await addGreenHouse(greenHouseId, farmId, name, desc, picturePath);
+        await addGreenHouse(farmId, name, desc, picturePath);
 
         if (addGreenHouseResult) {
             res.sendStatus(200);
@@ -34,11 +33,9 @@ export default class AddGreenHouse {
 
 }
 
-async function addGreenHouse(greenHouseId, farmId, name, desc, picturePath) {
+async function addGreenHouse(farmId, name, desc, picturePath) {
 
     let greenHouseData = new greenHouse({
-
-        greenHouseId: greenHouseId,
         farmId: farmId,
         name: name,
         desc: desc,
