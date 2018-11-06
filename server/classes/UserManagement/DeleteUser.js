@@ -1,8 +1,6 @@
 const mongoose = require('mongoose');
 const user = mongoose.model('user');
 
-let deleteUserResult;
-
 export default class DeleteUser {
 
     constructor(req, res) {
@@ -18,18 +16,20 @@ export default class DeleteUser {
 
         let id = req.body.id;
 
-        await findAndDeleteUser(id);
-
-        if (deleteUserResult) {
-            res.sendStatus(200);
-        } else {
-            res.sendStatus(500);
-        }
+        await findAndDeleteUser(id, function (deleteUserResult) {
+            if (deleteUserResult) {
+                res.sendStatus(200);
+            } else {
+                res.sendStatus(500);
+            }
+        });
     }
 }
 
-async function findAndDeleteUser(id) {
-    user.findOneAndRemove({
+async function findAndDeleteUser(id, callback) {
+    let deleteUserResult = null;
+
+    await user.findOneAndRemove({
         _id: id
     }, (err, doc) => {
         if (err) {
@@ -41,5 +41,6 @@ async function findAndDeleteUser(id) {
         } else {
             deleteUserResult = true;
         }
+        callback(deleteUserResult);
     })
 }

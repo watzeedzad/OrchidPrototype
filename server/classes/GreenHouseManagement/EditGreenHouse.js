@@ -1,8 +1,6 @@
 const mongoose = require('mongoose');
 const greenHouse = mongoose.model('greenHouse');
 
-let editGreenHouseResult;
-
 export default class EditGreenHouse {
 
     constructor(req, res) {
@@ -21,21 +19,21 @@ export default class EditGreenHouse {
         let desc = req.body.desc;
         let picturePath = req.body.picturePath;
 
-        await findOneAndUpdateGreenHouse(id, name, desc, picturePath);
-
-        if (editGreenHouseResult) {
-            res.sendStatus(200);
-        } else {
-            res.sendStatus(500);
-        }
-
+        await findOneAndUpdateGreenHouse(id, name, desc, picturePath, function (editGreenHouseResult) {
+            if (editGreenHouseResult) {
+                res.sendStatus(200);
+            } else {
+                res.sendStatus(500);
+            }
+        });
     }
 
 }
 
-async function findOneAndUpdateGreenHouse(id, name, desc, picturePath) {
+async function findOneAndUpdateGreenHouse(id, name, desc, picturePath, callback) {
+    let editGreenHouseResult = null;
 
-    greenHouse.findOneAndUpdate({
+    await greenHouse.findOneAndUpdate({
         _id: id
     }, {
         $set: {
@@ -53,6 +51,7 @@ async function findOneAndUpdateGreenHouse(id, name, desc, picturePath) {
         } else {
             editGreenHouseResult = true;
         }
+        callback(editGreenHouseResult);
     });
 
 }

@@ -1,8 +1,6 @@
 const mongoose = require("mongoose");
 const knowController = mongoose.model("know_controller");
 
-let editControllerResult;
-
 export default class EditController {
     constructor(req, res) {
         this.operation(req, res);
@@ -45,18 +43,20 @@ export default class EditController {
             light = req.body.light === '0' || req.body.light === true ? true : false;
         }
 
-        await editControllerData(farmId, greenHouseId, projectId, name, isHaveRelay, moisture, water, fertilizer, light, macAddress);
-
-        if (editControllerData) {
-            res.sendStatus(200);
-        } else {
-            res.sendStatus(500);
-        }
+        await editControllerData(farmId, greenHouseId, projectId, name, isHaveRelay, moisture, water, fertilizer, light, macAddress, function (editControllerResult) {
+            if (editControllerResult) {
+                res.sendStatus(200);
+            } else {
+                res.sendStatus(500);
+            }
+        });
     }
 }
 
-async function editControllerData(farmId, greenHouseId, projectId, name, isHaveRelay, moisture, water, fertilizer, light, macAddress) {
-    knowController.findOneAndUpdate({
+async function editControllerData(farmId, greenHouseId, projectId, name, isHaveRelay, moisture, water, fertilizer, light, macAddress, callback) {
+    let editControllerResult = null;
+
+    await knowController.findOneAndUpdate({
             //ip: ip,
             mac_address: macAddress,
             //piMacAddress: piMacAddress
@@ -86,6 +86,7 @@ async function editControllerData(farmId, greenHouseId, projectId, name, isHaveR
             } else {
                 editControllerResult = true;
             }
+            callback(editControllerResult)
         }
     );
 }

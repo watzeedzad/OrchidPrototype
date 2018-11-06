@@ -1,8 +1,6 @@
 const mongoose = require('mongoose');
 const greenHouse = mongoose.model('greenHouse');
 
-let addGreenHouseResult;
-
 export default class AddGreenHouse {
 
     constructor(req, res) {
@@ -21,19 +19,18 @@ export default class AddGreenHouse {
         let desc = req.body.desc;
         let picturePath = req.body.picturePath;
 
-        await addGreenHouse(farmId, name, desc, picturePath);
-
-        if (addGreenHouseResult) {
-            res.sendStatus(200);
-        } else {
-            res.sendStatus(500);
-        }
-
+        await addGreenHouse(farmId, name, desc, picturePath, function (addGreenHouseResult) {
+            if (addGreenHouseResult) {
+                res.sendStatus(200);
+            } else {
+                res.sendStatus(500);
+            }
+        });
     }
-
 }
 
-async function addGreenHouse(farmId, name, desc, picturePath) {
+async function addGreenHouse(farmId, name, desc, picturePath, callback) {
+    let addGreenHouseResult = null;
 
     let greenHouseData = new greenHouse({
         farmId: farmId,
@@ -42,9 +39,7 @@ async function addGreenHouse(farmId, name, desc, picturePath) {
         picturePath: picturePath,
     });
 
-    console.log(greenHouseData);
-
-    greenHouseData.save(function (err, doc) {
+    await greenHouseData.save(function (err, doc) {
         if (err) {
             addGreenHouseResult = false;
             console.log('[AddGreenHouse] addGreenHouse(err):  ' + err);
@@ -54,6 +49,7 @@ async function addGreenHouse(farmId, name, desc, picturePath) {
         } else {
             addGreenHouseResult = true;
         }
+        callback(addGreenHouseResult);
     })
 
 

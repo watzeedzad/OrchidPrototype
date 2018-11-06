@@ -1,8 +1,6 @@
 const mongoose = require("mongoose");
 const know_controller = mongoose.model("know_controller");
 
-let assignControllerResult;
-
 export default class CreateController {
   constructor(req, res) {
     this.operation(req, res);
@@ -39,62 +37,34 @@ export default class CreateController {
       controllerType,
       moisture,
       water,
-      fertilizer
+      fertilizer,
+      function (assignControllerResult) {
+        if (assignControllerResult) {
+          res.sendStatus(200);
+        } else {
+          res.sendStatus(500);
+        }
+      }
     );
-
-    if (assignControllerResult) {
-      res.sendStatus(200);
-    } else {
-      res.sendStatus(500);
-    }
   }
 }
-
-// async function saveControllerData(
-//   ip,
-//   macAddress,
-//   name,
-//   projectId,
-//   greenHouseId,
-//   farmId,
-//   moisture,
-//   water,
-//   fertilizer,
-//   isHavePump,
-//   piMacAddress
-// ) {
-//   const newKnowControllerData = {
-//     ip: ip,
-//     mac_address: macAddress,
-//     name: name,
-//     projectId: projectId,
-//     greenHouseId: greenHouseId,
-//     farmId: farmId,
-//     pumpType: {
-//       moisture: moisture,
-//       water: water,
-//       fertilizer: fertilizer
-//     },
-//     isHavePump: isHavePump,
-//     piMacAddress: piMacAddress
-//   };
-
-//   new know_controller(newKnowControllerData).save(function(err) {
-//     if (!err) {
-//       console.log("[CreateControoler] created new controller!");
-//     } else {
-//       //TODO: return page with errors
-//       return console.log(err);
-//     }
-//   });
-// }
 
 async function findAndUpdateController(
   ip,
   macAddress,
-  piMacAddress
+  name,
+  projectId,
+  greenHouseId,
+  farmId,
+  controllerType,
+  moisture,
+  water,
+  fertilizer,
+  callback
 ) {
-  know_controller.findOneAndUpdate({
+  let assignControllerResult = null;
+
+  await know_controller.findOneAndUpdate({
       ip: ip,
       macAddress: macAddress,
       piMacAddress: piMacAddress,
@@ -121,12 +91,11 @@ async function findAndUpdateController(
         console.log("[CreateController] findAndUpdateController (err): " + err);
       } else if (!doc) {
         assignControllerResult = false;
-        console.log(
-          "[CreateController] findAndUpdateController (!doc): " + doc
-        );
+        console.log("[CreateController] findAndUpdateController (!doc): " + doc);
       } else {
         assignControllerResult = true;
       }
+      callback(assignControllerResult);
     }
   );
 }

@@ -1,9 +1,7 @@
 const mongoose = require('mongoose');
 const crypto = require("crypto");
-const sha256 = require("js-sha256").sha256;
 const user = mongoose.model('user');
 
-let addUserResult;
 let isExistUser;
 
 export default class AddUser {
@@ -48,24 +46,25 @@ export default class AddUser {
             });
             return;
         }
-        
+
         let hash = crypto.createHash('sha512');
         hash.update(password);
         password = hash.digest('hex');
         console.log("[Login] passwordCipherHash (sha512): " + password);
 
-        addUserResult = await addUser(farmId, firstname, lastname, role, username, password);
-        setTimeout(() => {
+        addUserResult = await addUser(farmId, firstname, lastname, role, username, password, function (addUserResult) {
             if (addUserResult) {
                 res.sendStatus(200);
             } else {
                 res.sendStatus(500);
             }
-        }, 200);
+        });
     }
 }
 
-async function addUser(farmId, firstname, lastname, role, username, password) {
+async function addUser(farmId, firstname, lastname, role, username, password, callback) {
+    let addUserResult = null;
+
     let userData = new user({
         // userId: userId,
         farmId: farmId,
@@ -87,6 +86,7 @@ async function addUser(farmId, firstname, lastname, role, username, password) {
             addUserResult = true;
             console.log("[AddUser] addUser succesfully!");
         }
+        callback(addUserResult);
     });
 }
 

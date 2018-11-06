@@ -12,7 +12,7 @@ const farmSchema = new Schema({
   ownerTel: String,
   ownerAddress: String,
   configFilePath: String,
-  pimac: String
+  piMacAddress: String
 });
 
 farmSchema.plugin(autoIncrement, {

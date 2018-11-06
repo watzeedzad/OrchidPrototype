@@ -1,8 +1,6 @@
 const mongoose = require("mongoose");
 const knowController = mongoose.model("know_controller");
 
-let deleteControllerResult;
-
 export default class CreateController {
     constructor(req, res) {
         this.operation(req, res);
@@ -25,17 +23,19 @@ export default class CreateController {
             return;
         }
 
-        await deleteController(id);
-
-        if (deleteControllerResult) {
-            res.sendStatus(200);
-        } else {
-            res.sendStatus(500);
-        }
+        await deleteController(id, function (deleteControllerResult) {
+            if (deleteControllerResult) {
+                res.sendStatus(200);
+            } else {
+                res.sendStatus(500);
+            }
+        });
     }
 }
 
-async function deleteController(id) {
+async function deleteController(id, callback) {
+    let deleteControllerResult = null;
+
     await knowController.findOneAndRemove({
         _id: id,
     }, (err, doc) => {
@@ -48,5 +48,6 @@ async function deleteController(id) {
         } else {
             deleteControllerResult = true;
         }
+        callback(deleteControllerResult);
     });
 }

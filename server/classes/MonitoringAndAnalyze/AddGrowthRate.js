@@ -1,8 +1,6 @@
 const mongoose = require('mongoose');
 const growthRate = mongoose.model('growth_rate');
 
-let addGrowRateResult;
-
 export default class AddGrowthRate {
 
     constructor(req, res) {
@@ -25,20 +23,21 @@ export default class AddGrowthRate {
         let height = req.body.height;
         let timeStamp = req.body.timeStamp;
 
-        await addUser(farmId, greenHouseId, projectId, trunkDiameter, leafWidth, totalLeaf,height,timeStamp);
-        console.logfarmId, greenHouseId, projectId, trunkDiameter, leafWidth, totalLeaf,height,timeStamp
-        if (addGrowRateResult) {
-            res.sendStatus(200);
-        } else {
-            res.sendStatus(500);
-        }
+        await addUser(farmId, greenHouseId, projectId, trunkDiameter, leafWidth, totalLeaf, height, timeStamp, function (addGrowRateResult) {
+            if (addGrowRateResult) {
+                res.sendStatus(200);
+            } else {
+                res.sendStatus(500);
+            }
+        });
     }
 }
 
-async function addUser(farmId, greenHouseId, projectId, trunkDiameter, leafWidth, totalLeaf,height,timeStamp) {
+async function addUser(farmId, greenHouseId, projectId, trunkDiameter, leafWidth, totalLeaf, height, timeStamp, callback) {
+    let addGrowRateResult = null;
 
     let growthRateData = new growthRate({
-        farmId:farmId,
+        farmId: farmId,
         greenHouseId: greenHouseId,
         projectId: projectId,
         trunkDiameter: trunkDiameter,
@@ -49,9 +48,7 @@ async function addUser(farmId, greenHouseId, projectId, trunkDiameter, leafWidth
 
     });
 
-    console.log(growthRateData);
-
-    growthRateData.save(function (err, doc) {
+    await growthRateData.save(function (err, doc) {
         if (err) {
             addGrowRateResult = false;
             console.log('[AddGrowthRate] addGrowthRate (err):  ' + err);
@@ -61,10 +58,6 @@ async function addUser(farmId, greenHouseId, projectId, trunkDiameter, leafWidth
         } else {
             addGrowRateResult = true;
         }
-    })
-
-
-
-
-
+        callback(addGrowRateResult);
+    });
 }

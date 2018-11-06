@@ -4,10 +4,10 @@ const user = mongoose.model('user');
 
 let showFarmDataResult = undefined;
 
-export default class ShowFarm{
-    
-    constructor(req,res){
-        operation(req,res);
+export default class ShowFarm {
+
+    constructor(req, res) {
+        operation(req, res);
     }
 }
 
@@ -43,25 +43,24 @@ async function operation(req, res) {
 
 
 async function getFarmData(farmId) {
-    let result = await farm.aggregate([
-        {$lookup:{
+    let result = await farm.aggregate([{
+        $lookup: {
             from: user,
             localField: farmId,
             foreignField: farmId,
-            as:'ownedFarm'
+            as: 'ownedFarm'
         }
-    }],(err,result)=>{
-        if(err){
-            showFarmDataResult = null ;
-            console.log('[ShowFarm] getFarmData(err): '+err);
-        }else if(!result){
-            showFarmDataResult = null ;
-            console.log('[ShowFarm] getFarmData(!result): '+result);
-        }else{
+    }], (err, result) => {
+        if (err) {
+            showFarmDataResult = null;
+            console.log('[ShowFarm] getFarmData(err): ' + err);
+        } else if (!result) {
+            showFarmDataResult = null;
+            console.log('[ShowFarm] getFarmData(!result): ' + result);
+        } else {
             showFarmDataResult = result;
         }
     });
 
     return result;
- 
 }

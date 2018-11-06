@@ -28,7 +28,7 @@ async function operation(req, res) {
     newFormatPiMacAddress = newFormatPiMacAddress.toLowerCase();
     console.log("[Handler] newFormatPiMacAddress : " + newFormatPiMacAddress);
     farmDataResult = await getFarmData(newFormatPiMacAddress);
-    if (typeof farmDataResult === "undefined") {
+    if (farmDataResult == null) {
         res.sendStatus(500);
         return;
     }
@@ -48,11 +48,23 @@ async function operation(req, res) {
         knowControllerDataResult = await findExistController(macAddress, newFormatPiMacAddress, farmDataResult.farmId);
         if (knowControllerDataResult == null) {
             console.log("[Handler] begin insert new controller " + ip, macAddress)
-            insertKnowController(ip, macAddress, newFormatPiMacAddress, farmDataResult.farmId);
+            await insertKnowController(ip, macAddress, newFormatPiMacAddress, farmDataResult.farmId, function (insertKnowControllerResult) {
+                if (insertKnowControllerResult) {
+                    res.sendStatus(200);
+                } else {
+                    res.sendStatus(500);
+                }
+            });
         } else {
             if (knowControllerDataResult.ip != ip) {
                 console.log("[Handler] begin update controller ip " + ip, macAddress, knowControllerDataResult.ip);
-                updateExistController(knowControllerDataResult._id, ip, knowControllerDataResult);
+                await updateExistController(knowControllerDataResult._id, ip, knowControllerDataResult, function (updateExistControllerResult) {
+                    if (updateExistControllerResult) {
+                        res.sendStatus(200);
+                    } else {
+                        res.sendStatus(500);
+                    }
+                });
             } else {
                 console.log("[Handler] ip won't cahnge")
             }
@@ -62,7 +74,9 @@ async function operation(req, res) {
 
 }
 
-async function insertKnowController(ip, macAddress, piMacAddress, farmId) {
+async function insertKnowController(ip, macAddress, piMacAddress, farmId, callback) {
+    let insertKnowControllerResult = null;
+
     let insertData = {
         ip: ip,
         mac_address: macAddress,
@@ -71,10 +85,13 @@ async function insertKnowController(ip, macAddress, piMacAddress, farmId) {
     }
     await knowController(insertData).save(function (err) {
         if (!err) {
-            console.log("[Handler] insert new controller!")
+            insertKnowControllerResult = true;
+            console.log("[Handler] insertKnowController (!err): insert new controller!")
         } else {
-            return console.log(err);
+            insertKnowControllerResult = false;
+            console.log("[Handler] insertKnowController (err): " + err);
         }
+        callback(insertKnowControllerResult);
     });
 }
 
@@ -103,10 +120,10 @@ async function getFarmData(piMacAddress) {
         piMacAddress: piMacAddress
     }, (err, result) => {
         if (err) {
-            farmDataResult = undefined;
+            farmDataResult = null;
             console.log("[Handler] getFarmData (err): " + err);
         } else if (!result) {
-            farmDataResult = undefined;
+            farmDataResult = null;
             console.log("[Handler] getFarmData (!result): " + result);
         } else {
             farmDataResult = result;
@@ -116,8 +133,10 @@ async function getFarmData(piMacAddress) {
     return result;
 }
 
-async function updateExistController(macAddress, ip, piMacAddress) {
-    knowController.findOneAndUpdate({
+async function updateExistController(macAddress, ip, piMacAddress, callback) {
+    let updateExistControllerResult = null;
+
+    await knowController.findOneAndUpdate({
         mac_address: macAddress,
         piMacAddress: piMacAddress
     }, {}, {
@@ -127,10 +146,14 @@ async function updateExistController(macAddress, ip, piMacAddress) {
     }, function (err, result) {
         if (err) {
             console.log("[Handler] updateExistController (err): " + err);
+            updateExistControllerResult = false;
         } else if (!result) {
             console.log("[Handler] updateExistController (!result): " + result);
+            updateExistControllerResult = false;
         } else {
             console.log("[Handler] updateExistController (result): " + result);
+            updateExistControllerResult = true;
         }
+        callback(updateExistControllerResult);
     });
 }

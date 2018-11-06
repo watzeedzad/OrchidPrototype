@@ -1,8 +1,6 @@
 const mongoose = require('mongoose');
 const greenHouse = mongoose.model('greenHouse');
 
-let deleteGreenHouseResult;
-
 export default class DeleteGreenHouse {
 
     constructor(req, res) {
@@ -18,19 +16,20 @@ export default class DeleteGreenHouse {
 
         let id = req.body.id;
 
-        await findAndDeleteGreenHouse(id);
-
-        if (deleteGreenHouseResult) {
-            res.sendStatus(200);
-        } else {
-            res.sendStatus(500);
-        }
+        await findAndDeleteGreenHouse(id, function (deleteGreenHouseResult) {
+            if (deleteGreenHouseResult) {
+                res.sendStatus(200);
+            } else {
+                res.sendStatus(500);
+            }
+        });
     }
 }
 
-async function findAndDeleteGreenHouse(id) {
+async function findAndDeleteGreenHouse(id, callback) {
+    let deleteGreenHouseResult = null;
 
-    greenHouse.findOneAndRemove({
+    await greenHouse.findOneAndRemove({
         _id: id
     }, (err, doc) => {
         if (err) {
@@ -42,7 +41,6 @@ async function findAndDeleteGreenHouse(id) {
         } else {
             deleteGreenHouseResult = true;
         }
-    })
-
-
+        callback(deleteGreenHouseResult);
+    });
 }

@@ -1,8 +1,6 @@
 const mongoose = require('mongoose');
 const user = mongoose.model('user');
 
-let editUserResult;
-
 export default class EditUser {
 
     constructor(req, res) {
@@ -22,17 +20,19 @@ export default class EditUser {
         let lastname = req.body.lastname;
         let username = req.body.username;
 
-        await editUserData(id, firstname, lastname, username, role);
-
-        if (editUserResult) {
-            res.sendStatus(200);
-        } else {
-            res.sendStatus(500);
-        }
+        await editUserData(id, firstname, lastname, username, role, function (editUserResult) {
+            if (editUserResult) {
+                res.sendStatus(200);
+            } else {
+                res.sendStatus(500);
+            }
+        });
     }
 }
 
-async function editUserData(id, firstname, lastname, username, role) {
+async function editUserData(id, firstname, lastname, username, role, callback) {
+    let editUserResult = null;
+
     await user.findOneAndUpdate({
         _id: id
     }, {
@@ -52,5 +52,6 @@ async function editUserData(id, firstname, lastname, username, role) {
         } else {
             editUserResult = true;
         }
+        callback(editUserResult);
     })
 }

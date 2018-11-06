@@ -1,9 +1,6 @@
 const mongoose = require('mongoose');
 const farm = mongoose.model('farm');
 
-let editFarmResult
-
-
 export default class EditFarm {
 
     constructor(req, res) {
@@ -19,18 +16,20 @@ export default class EditFarm {
         let ownerAddress = req.body.ownerAddress
         let pimac = req.body.pimac
 
-        await editProjectData(id, farmName, ownerName, ownerSurname ,ownerTel ,ownerAddress ,pimac);
-
-        if (editProjectResult) {
-            res.sendStatus(200);
-        } else {
-            res.sendStatus(500)
-        }
+        await editFarmData(id, farmName, ownerName, ownerSurname, ownerTel, ownerAddress, pimac, function (editFarmResult) {
+            if (editProjectResult) {
+                res.sendStatus(200);
+            } else {
+                res.sendStatus(500)
+            }
+        });
     }
 
 }
 
-async function editFarmData(id, farmName, ownerName, ownerSurname, ownerTel, ownerAddress, pimac) {
+async function editFarmData(id, farmName, ownerName, ownerSurname, ownerTel, ownerAddress, pimac, callback) {
+    let editFarmResult = null;
+
     await farm.findOme({
         _id: id
     }, {
@@ -52,5 +51,6 @@ async function editFarmData(id, farmName, ownerName, ownerSurname, ownerTel, own
         } else {
             editFarmResult = true;
         }
-    })
+        callback(editFarmResult);
+    });
 }
