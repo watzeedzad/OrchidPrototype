@@ -24,7 +24,7 @@ export default class EdirProject {
             if (editProjectResult) {
                 res.sendStatus(200);
             } else {
-                res.sendStatus(500)
+                res.sendStatus(500);
             }
         });
     }
@@ -34,7 +34,7 @@ export default class EdirProject {
 async function editProjectData(id, name, tribeName, picturePath, currentRatio, callback) {
     let editProjectResult = null;
 
-    await project.findOne({
+    await project.findOneAndUpdate({
         _id: id
     }, {
         $set: {
