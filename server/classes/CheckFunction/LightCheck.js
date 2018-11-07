@@ -112,6 +112,9 @@ async function operation(req, res) {
         if (!resultCompareLightIntensity) {
           new InsertRelayCommand(controllerDataResult.ip, "light", true, piMacAddress);
           console.log("[LightCheck] in day light time, light intensity and volume not met criteria");
+        } else {
+          new InsertRelayCommand(controllerDataResult.ip, "light", true, piMacAddress);
+          console.log("[LightCheck] in day light time, light volume not met criteria");
         }
         req.session.lightCheckStatus = 200;
         return;
