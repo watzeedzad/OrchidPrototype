@@ -1,4 +1,4 @@
-#include <dht.h>
+#include <DHTesp.h>
 #include <ArduinoJson.h>
 #include <WiFi.h>
 #include <WiFiMulti.h>
@@ -8,6 +8,11 @@
 #include <aREST.h>
 #include <Wire.h>
 #include <BH1750.h>
+
+#ifndef ESP32
+#pragma message(THIS EXAMPLE IS FOR ESP32 ONLY!)
+#error Select ESP32 board.
+#endif
 
 #define DHT22_PIN 26
 #define RE_IN_PIN1 25
@@ -28,7 +33,7 @@ Statistic moistureStats;
 Statistic temperatureStats;
 Statistic ambientLightStats;
 DynamicJsonBuffer jsonBuffer;
-dht DHT;
+DHTesp dht;
 Scheduler runner;
 WiFiServer server(LISTEN_PORT);
 BH1750 lightMeter(0x23);
@@ -93,6 +98,8 @@ void setup(void)
         digitalWrite(RE_IN_PIN2, 1);
         digitalWrite(RE_IN_PIN3, 1);
         digitalWrite(RE_IN_PIN4, 1);
+
+        dht.setup(DHT22_PIN, DHTesp::DHT22);
 
         waterPulseCount = 0;
         waterFlowRate = 0.0;
@@ -198,19 +205,20 @@ void loop(void)
                 attachInterrupt(fertilizerFlowSensorInterrupt, fertilizerPulseCounter, FALLING);
         }
 
-        DHT.read22(DHT22_PIN);
-        humidity = DHT.humidity, 1;
-        temperature = DHT.temperature, 1;
+        // DHT.read22(DHT22_PIN);
+        TempAndHumidity newValues = dht.getTempAndHumidity();
+        humidity = newValues.humidity;
+        temperature = newValues.temperature;
         lux = lightMeter.readLightLevel(true);
         Serial.printf("Moisture Raw : %d \n", moisture);
         Serial.printf("Fertility Knob Raw : %d \n", fertility);
         moisturePercent = convertToPercent(moisture);
         fertilityPercent = convertFertilityToPercent(fertility);
 
-        if (temperature < 0 || humidity < 0)
-        {
-                return;
-        }
+        // if (temperature < 0 || humidity < 0)
+        // {
+        //         return;
+        // }
         humidityStats.add(humidity);
         temperatureStats.add(temperature);
         moistureStats.add(moisturePercent);
