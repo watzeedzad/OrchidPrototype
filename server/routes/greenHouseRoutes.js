@@ -10,7 +10,7 @@ const multer = require("multer");
 const fs = require("fs-extra");
 const storage = multer.diskStorage({
     destination: function (req, file, callback) {
-        let path = "../OrchidPrototype-Client/public/assets/images"
+        let path = "../OrchidPrototype-Client/public/assets/images/greenhouse"
         fs.mkdirpSync(path);
         callback(null, path);
     },
