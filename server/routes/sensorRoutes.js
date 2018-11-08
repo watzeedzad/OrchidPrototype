@@ -1,7 +1,5 @@
 const express = require("express");
 const router = express.Router();
-const syncNode = require("sync-node");
-const jobQueue = syncNode.createQueue();
 import GreenHouseSensor from "../classes/SaveData/GreenHouseSensor";
 import ProjectSensor from "../classes/SaveData/ProjectSensor";
 import TemperatureCheck from "../classes/CheckFunction/TemperatureCheck";

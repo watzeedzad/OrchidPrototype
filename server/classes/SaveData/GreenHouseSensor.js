@@ -2,8 +2,6 @@ const mongoose = require("mongoose");
 const greenHouseSensor = mongoose.model("greenHouse_Sensor");
 const know_controller = mongoose.model("know_controller");
 const farm = mongoose.model("farm");
-const syncNode = require("sync-node");
-const jobQueue = syncNode.createQueue();
 
 let controllerData;
 let farmData;

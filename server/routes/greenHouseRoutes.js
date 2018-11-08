@@ -5,6 +5,23 @@ import ShowGreenHouse from '../classes/GreenHouseManagement/ShowGreenHouse';
 
 const express = require('express');
 const router = express.Router();
+const crypto = require("crypto");
+const multer = require("multer");
+const fs = require("fs-extra");
+const storage = multer.diskStorage({
+    destination: function(req, file, callback) {
+        let path = "../OrchidPrototype-Client/public/assets/images"
+        fs.mkdirpSync(path);
+        callback(null, path);
+    },
+    filename: function(req, file, callback) {
+        let hash = crypto.createHash("sha256");
+        hash.update(file.fieldname + "-" + Date.now());
+        let renameFile = hash.digest("hex") + ".jpg";
+        callback(null, renameFile);
+    }
+});
+const uploadMulter = multer({storage: storage});
 
 router.use('/addGreenHouse', (req,res,next)=>{
     res.setHeader("Access-Control-Allow-Origin", origin_url);
@@ -16,7 +33,7 @@ router.use('/addGreenHouse', (req,res,next)=>{
     next();
 });
 
-router.post('/addGreenHouse', (req,res)=>{
+router.post('/addGreenHouse', uploadMulter.single('picture'), (req,res)=>{
     new AddGreenHouse(req,res);
 });
 

@@ -47,11 +47,10 @@
     "redux-form": "^7.3.0",
     "redux-thunk": "^2.2.0",
     "request": "~2.85.0",
-    "sync-node": "~1.3.1",
     "yarn": "^1.6.0",
+    "multer": "1.4.1",
     "node-schedule": "1.3.0",
-    "text-crypto": "1.0.0",
-    "js-sha256": "0.9.0"
+    "fs-extra": "7.0.1"
   },
   "devDependencies": {
     "concurrently": "^3.5.1",
