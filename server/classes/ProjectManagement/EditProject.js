@@ -16,9 +16,9 @@ export default class EdirProject {
 
         let id = req.headers.id;
         let name = req.headers.name;
-        let tribeName = req.headers.tribeName;
+        let tribeName = req.headers.tribename;
         let picturePath = req.file.filename;
-        let currentRatio = req.headers.currentRatio;
+        let currentRatio = req.headers.currentratio;
 
         await editProjectData(id, name, tribeName, picturePath, currentRatio, function (editProjectResult, doc) {
             deleteOldPicture(req.file.destination, doc.picturePath, function (result) {

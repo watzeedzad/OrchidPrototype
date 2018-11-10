@@ -17,9 +17,9 @@ export default class AddProject {
         let farmId = req.session.farmId;
         let greenHouseId = req.headers.greenhouseid;
         let name = req.headers.name;
-        let tribeName = req.headers.tribeName;
+        let tribeName = req.headers.tribename;
         let picturePath = req.file.filename;
-        let currentRatio = req.headers.currentRatio;
+        let currentRatio = req.headers.currentratio;
         
         await addProject(farmId, greenHouseId, name, tribeName, picturePath, currentRatio, function (addProjectResult) {
             if (addProjectResult) {
