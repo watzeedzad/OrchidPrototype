@@ -18,7 +18,7 @@ export default class AddUser {
         }
 
         // let userId = req.body.userId;
-        let farmId = req.body.farmId;
+        let farmId = req.session.farmId;
         let role = req.body.role;
         let firstname = req.body.firstname;
         let lastname = req.body.lastname;
