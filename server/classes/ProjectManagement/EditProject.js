@@ -14,18 +14,20 @@ export default class EdirProject {
             return;
         }
 
-        let id = req.body.id
-        let name = req.body.name
-        let tribeName = req.body.tribeName
-        let picturePath = req.body.picturePath
-        let currentRatio = req.body.currentRatio
+        let id = req.headers.id;
+        let name = req.headers.name;
+        let tribeName = req.headers.tribeName;
+        let picturePath = req.file.filename;
+        let currentRatio = req.headers.currentRatio;
 
-        await editProjectData(id, name, tribeName, picturePath, currentRatio, function (editProjectResult) {
-            if (editProjectResult) {
-                res.sendStatus(200);
-            } else {
-                res.sendStatus(500);
-            }
+        await editProjectData(id, name, tribeName, picturePath, currentRatio, function (editProjectResult, doc) {
+            deleteOldPicture(req.file.destination, doc.picturePath, function (result) {
+                if (editProjectResult && result) {
+                    res.sendStatus(200);
+                } else {
+                    res.sendStatus(500);
+                }
+            });
         });
     }
 
@@ -56,4 +58,17 @@ async function editProjectData(id, name, tribeName, picturePath, currentRatio, c
         }
         callback(editProjectResult);
     })
+}
+
+async function deleteOldPicture(path, fileName, callback) {
+    let removeFile = path + "/" + fileName;
+    let result = null;
+    fs.unlink(removeFile, function (err) {
+        if (err) {
+            result = false;
+        } else {
+            result = true;
+        }
+        callback(result);
+    });
 }

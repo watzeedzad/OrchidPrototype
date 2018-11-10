@@ -42,51 +42,49 @@ router.post('/addProject', uploadMulter.single('picture'), (req, res) => {
     new AddProject(req, res);
 });
 
-router.use('/deleteProject',(req,res,next)=>{
+router.use('/deleteProject', (req, res, next) => {
     res.setHeader("Access-Control-Allow-Origin", origin_url);
     res.setHeader(
         "Access-Control-Allow-Headers",
         "X-Requested-With,content-type"
     );
-    res.set('Content-Type','application/json');
+    res.set('Content-Type', 'application/json');
     next();
 });
 
-router.post('/deleteProject' ,(req,res)=>{
-    new DeleteProject(req,res);
+router.post('/deleteProject', (req, res) => {
+    new DeleteProject(req, res);
 });
 
 
-router.use('/editProject', (req,res,next)=>{
+router.use('/editProject', uploadMulter.single("picture"), (req, res, next) => {
     res.setHeader("Access-Control-Allow-Origin", origin_url);
     res.setHeader(
         "Access-Control-Allow-Headers",
         "X-Requested-With,content-type"
     );
-    res.set('Content-Type','application/json');
+    res.set('Content-Type', 'application/json');
     next();
 });
 
-router.post('/editProject', (req,res)=>{
-    new EditProject(req,res);
+router.post('/editProject', (req, res) => {
+    new EditProject(req, res);
 });
 
 
 
-router.use('/showProject', (req,res,next)=>{
+router.use('/showProject', (req, res, next) => {
     res.setHeader("Access-Control-Allow-Origin", origin_url);
     res.setHeader(
         "Access-Control-Allow-Headers",
         "X-Requested-With,content-type"
     );
-    res.set('Content-Type','application/json');
+    res.set('Content-Type', 'application/json');
     next();
 });
 
-router.post('/showProject', (req,res)=>{
-    new ShowProject(req,res);
+router.post('/showProject', (req, res) => {
+    new ShowProject(req, res);
 });
 
 module.exports = router;
-
-

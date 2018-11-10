@@ -1,5 +1,6 @@
 const mongoose = require('mongoose');
 const greenHouse = mongoose.model('greenHouse');
+const fs = require("fs");
 
 export default class EditGreenHouse {
 
@@ -14,17 +15,19 @@ export default class EditGreenHouse {
             return;
         }
 
-        let id = req.body.id;
-        let name = req.body.name;
-        let desc = req.body.desc;
-        let picturePath = req.body.picturePath;
+        let id = req.headers.id;
+        let name = req.headers.name;
+        let desc = req.headers.desc;
+        let picturePath = req.file.filename;
 
-        await findOneAndUpdateGreenHouse(id, name, desc, picturePath, function (editGreenHouseResult) {
-            if (editGreenHouseResult) {
-                res.sendStatus(200);
-            } else {
-                res.sendStatus(500);
-            }
+        await findOneAndUpdateGreenHouse(id, name, desc, picturePath, function (editGreenHouseResult, doc) {
+            deleteOldPicture(req.file.destination, doc.picturePath, function (result) {
+                if (editGreenHouseResult && result) {
+                    res.sendStatus(200);
+                } else {
+                    res.sendStatus(500);
+                }
+            });
         });
     }
 
@@ -51,7 +54,19 @@ async function findOneAndUpdateGreenHouse(id, name, desc, picturePath, callback)
         } else {
             editGreenHouseResult = true;
         }
-        callback(editGreenHouseResult);
+        callback(editGreenHouseResult, doc);
     });
+}
 
+async function deleteOldPicture(path, fileName, callback) {
+    let removeFile = path + "/" + fileName;
+    let result = null;
+    fs.unlink(removeFile, function (err) {
+        if (err) {
+            result = false;
+        } else {
+            result = true;
+        }
+        callback(result);
+    });
 }

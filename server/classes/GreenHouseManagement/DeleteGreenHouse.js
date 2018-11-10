@@ -1,5 +1,6 @@
 const mongoose = require('mongoose');
 const greenHouse = mongoose.model('greenHouse');
+const fs = require("fs");
 
 export default class DeleteGreenHouse {
 
@@ -16,12 +17,14 @@ export default class DeleteGreenHouse {
 
         let id = req.body.id;
 
-        await findAndDeleteGreenHouse(id, function (deleteGreenHouseResult) {
-            if (deleteGreenHouseResult) {
-                res.sendStatus(200);
-            } else {
-                res.sendStatus(500);
-            }
+        await findAndDeleteGreenHouse(id, function (deleteGreenHouseResult, doc) {
+            deletePicture("../OrchidPrototype-Client/public/assets/images/greenhouse", doc.picturePath, function (result) {
+                if (deleteGreenHouseResult && result) {
+                    res.sendStatus(200);
+                } else {
+                    res.sendStatus(500);
+                }
+            });
         });
     }
 }
@@ -41,6 +44,19 @@ async function findAndDeleteGreenHouse(id, callback) {
         } else {
             deleteGreenHouseResult = true;
         }
-        callback(deleteGreenHouseResult);
+        callback(deleteGreenHouseResult, doc);
     });
+}
+
+async function deletePicture(path, fileName, callback) {
+    let removeFile = path + "/" + fileName;
+    let result = null;
+    fs.unlink(removeFile, function (err) {
+        if (err) {
+            result = false;
+        } else {
+            result = true;
+        }
+        callback(result);
+    })
 }

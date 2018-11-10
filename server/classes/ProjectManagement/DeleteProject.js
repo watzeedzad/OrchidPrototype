@@ -16,12 +16,14 @@ export default class DeleteProject {
 
         let id = req.body.id;
 
-        await findAndDeleteProject(id, function (deleteProjectResult) {
-            if (deleteProjectResult) {
-                res.sendStatus(200);
-            } else {
-                res.sendStatus(500);
-            }
+        await findAndDeleteProject(id, function (deleteProjectResult, doc) {
+            deletePicture("../OrchidPrototype-Client/public/assets/images/project", doc.picturePath, function (result) {
+                if (deleteProjectResult && result) {
+                    res.sendStatus(200);
+                } else {
+                    res.sendStatus(500);
+                }
+            });
         });
     }
 
@@ -42,6 +44,19 @@ async function findAndDeleteProject(id, callback) {
         } else {
             deleteProjectResult = true;
         }
-        callback(deleteProjectResult)
+        callback(deleteProjectResult, doc)
     });
+}
+
+async function deletePicture(path, fileName, callback) {
+    let removeFile = path + "/" + fileName;
+    let result = null;
+    fs.unlink(removeFile, function (err) {
+        if (err) {
+            result = false;
+        } else {
+            result = true;
+        }
+        callback(result);
+    })
 }

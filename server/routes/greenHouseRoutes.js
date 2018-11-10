@@ -34,6 +34,7 @@ router.use('/addGreenHouse', (req, res, next) => {
         "Access-Control-Allow-Headers",
         "X-Requested-With,content-type"
     );
+    res.set('Content-Type', 'application/json');
     next();
 });
 
@@ -66,7 +67,7 @@ router.use('/editGreenHouse', (req, res, next) => {
     next();
 });
 
-router.post('/editGreenHouse', (req, res) => {
+router.post('/editGreenHouse', uploadMulter.single('picture'), (req, res) => {
     new EditGreenHouse(req, res);
 });
 
