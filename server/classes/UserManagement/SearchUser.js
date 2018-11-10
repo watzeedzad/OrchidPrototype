@@ -19,7 +19,7 @@ export default class SearchUser {
             return;
         }
 
-        let farmId = req.body.farmId;
+        let farmId = req.session.farmId;
         let term = req.body.term;
 
         if (typeof farmId === "undefined") {
