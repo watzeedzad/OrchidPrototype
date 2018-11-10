@@ -18,8 +18,14 @@ export default class AddProject {
         let greenHouseId = req.headers.greenhouseid;
         let name = req.headers.name;
         let tribeName = req.headers.tribename;
-        let picturePath = req.file.filename;
+        let picturePath;
         let currentRatio = req.headers.currentratio;
+
+        if (typeof req.file === "undefined") {
+            picturePath = null;
+        } else {
+            picturePath = req.file.filename;
+        }
         
         await addProject(farmId, greenHouseId, name, tribeName, picturePath, currentRatio, function (addProjectResult) {
             if (addProjectResult) {

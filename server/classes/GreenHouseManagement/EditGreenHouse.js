@@ -18,16 +18,32 @@ export default class EditGreenHouse {
         let id = req.headers.id;
         let name = req.headers.name;
         let desc = req.headers.desc;
-        let picturePath = req.file.filename;
+        let picturePath;
+
+        if (typeof req.file === "undefined") {
+            picturePath = null;
+        } else {
+            picturePath = req.file.filename;
+        }
 
         await findOneAndUpdateGreenHouse(id, name, desc, picturePath, function (editGreenHouseResult, doc) {
-            deleteOldPicture(req.file.destination, doc.picturePath, function (result) {
-                if (editGreenHouseResult && result) {
+            if (typeof req.file === "undefined") {
+                if (editGreenHouseResult) {
                     res.sendStatus(200);
+                    return;
                 } else {
                     res.sendStatus(500);
+                    return;
                 }
-            });
+            } else {
+                deleteOldPicture(req.file.destination, doc.picturePath, function (result) {
+                    if (editGreenHouseResult && result) {
+                        res.sendStatus(200);
+                    } else {
+                        res.sendStatus(500);
+                    }
+                });
+            }
         });
     }
 

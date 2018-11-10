@@ -17,7 +17,13 @@ export default class AddGreenHouse {
         let farmId = req.session.farmId;
         let name = req.headers.greenhousename;
         let desc = req.headers.greenhousedesc;
-        let picturePath = req.file.filename;
+        let picturePath;
+
+        if (typeof req.file === "undefined") {
+            picturePath = null;
+        } else {
+            picturePath = req.file.filename;
+        }
 
         await addGreenHouse(farmId, name, desc, picturePath, function (addGreenHouseResult) {
             if (addGreenHouseResult) {

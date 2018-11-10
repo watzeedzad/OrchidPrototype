@@ -17,17 +17,33 @@ export default class EdirProject {
         let id = req.headers.id;
         let name = req.headers.name;
         let tribeName = req.headers.tribename;
-        let picturePath = req.file.filename;
+        let picturePath;
         let currentRatio = req.headers.currentratio;
 
+        if (typeof req.file === "undefined") {
+            picturePath = null;
+        } else {
+            picturePath = req.file.filename;
+        }
+
         await editProjectData(id, name, tribeName, picturePath, currentRatio, function (editProjectResult, doc) {
-            deleteOldPicture(req.file.destination, doc.picturePath, function (result) {
-                if (editProjectResult && result) {
+            if (typeof req.file === "undefined") {
+                if (editProjectResult) {
                     res.sendStatus(200);
+                    return;
                 } else {
                     res.sendStatus(500);
+                    return;
                 }
-            });
+            } else {
+                deleteOldPicture(req.file.destination, doc.picturePath, function (result) {
+                    if (editProjectResult && result) {
+                        res.sendStatus(200);
+                    } else {
+                        res.sendStatus(500);
+                    }
+                });
+            }
         });
     }
 
