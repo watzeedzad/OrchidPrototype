@@ -70,8 +70,9 @@ async function operation() {
                 }
             }
         }
-        await clearAllTempWateringData(allFarmIdResultData[farmIndex].farmId);
     }
+    console.log("[SummaryAutoWateringHistory] calling clear data");
+    await clearAllTempWateringData();
     console.log("[SummaryAutoWateringHistory] end batch watering history summarize!");
 }
 
@@ -223,9 +224,6 @@ async function getConfigFile(farmId) {
     configFile = config;
 }
 
-async function clearAllTempWateringData(farmId) {
-    console.log("[SummaryAutoWateringHistory] clear temp watering data of " + farmId);
-    await wateringHistory.remove({
-        farmId: farmId
-    });
+async function clearAllTempWateringData() {
+    await wateringHistory.remove();
 }

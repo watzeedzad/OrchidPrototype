@@ -84,8 +84,9 @@ async function operation() {
                 }
             }
         };
-        await clearAllTempFertilizeringData(allFarmIdResultData[farmIndex].farmId);
     }
+    console.log("[SummaryAutoFertilizeringHistory] calling clear data");
+    await clearAllTempFertilizeringData();
     console.log("[SummaryAutoFertilizeringHistory] end batch fertilizering history summarize!")
 }
 
@@ -264,9 +265,6 @@ async function updateExistFertilizerHistory(farmId, greenHouseId, project, total
     });
 }
 
-async function clearAllTempFertilizeringData(farmId) {
-    console.log("[SummaryAutoWateringHistory] clear temp fetilizering data of " + farmId);
-    await fertilizeringHistory.remove({
-        farmId: farmId
-    })
+async function clearAllTempFertilizeringData() {
+    await fertilizeringHistory.remove()
 }
