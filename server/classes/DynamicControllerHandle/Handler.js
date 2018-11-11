@@ -70,8 +70,6 @@ async function operation(req, res) {
             }
         }
     }
-    res.sendStatus(200);
-
 }
 
 async function insertKnowController(ip, macAddress, piMacAddress, farmId, callback) {

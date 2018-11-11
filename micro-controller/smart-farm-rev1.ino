@@ -240,7 +240,6 @@ void loop(void)
         Serial.println("-----------------DATA-----------------");
 
         runner.execute();
-        delay(2000);
 }
 
 void waterPulseCounter()
