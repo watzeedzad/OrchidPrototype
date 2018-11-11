@@ -1,1 +1,69 @@
-{"temperatureConfigs":[{"greenHouseId":789456123,"minTemperature":15,"maxTemperature":35}],"humidityConfigs":[{"greenHouseId":789456123,"minHumidity":70,"maxHumidity":85}],"soilMoistureConfigs":[{"greenHouseId":789456123,"minSoilMoisture":50,"maxSoilMoisture":85}],"fertilityConfigs":[{"projectId":2,"minFertility":25,"maxFertility":40},{"projectId":1,"minFertility":30,"maxFertility":70},{"projectId":3,"minFertility":30,"maxFertility":70}],"lightIntensityConfigs":[{"greenHouseId":789456123,"minLightIntensity":5,"maxLightIntensity":10}],"lightVolumeConfigs":[{"greenHouseId":789456123,"maxLightVolume":28800000}],"watering":[{"greenHouseId":789456123,"timeRanges":[-25200000,-18000000,54000000]}],"fertilizer":[{"projectId":1,"timeRanges":[-25200000,-21600000,1800000,14400000]}]}
+{
+    "temperatureConfigs": [{
+        "greenHouseId": 789456123,
+        "minTemperature": 20,
+        "maxTemperature": 35
+    },{
+        "greenHouseId": 2,
+        "minTemperature": 20,
+        "maxTemperature": 35
+    }],
+    "humidityConfigs": [{
+        "greenHouseId": 789456123,
+        "minHumidity": 70,
+        "maxHumidity": 85
+    },{
+        "greenHouseId": 2,
+        "minHumidity": 70,
+        "maxHumidity": 85
+    }],
+    "soilMoistureConfigs": [{
+        "greenHouseId": 789456123,
+        "minSoilMoisture": 50,
+        "maxSoilMoisture": 85
+    },{
+        "greenHouseId": 2,
+        "minSoilMoisture": 50,
+        "maxSoilMoisture": 85
+    }],
+    "fertilityConfigs": [{
+        "projectId": 2,
+        "minFertility": 25,
+        "maxFertility": 40
+    }, {
+        "projectId": 1,
+        "minFertility": 30,
+        "maxFertility": 70
+    }, {
+        "projectId": 3,
+        "minFertility": 30,
+        "maxFertility": 70
+    }],
+    "lightIntensityConfigs": [{
+        "greenHouseId": 789456123,
+        "minLightIntensity": 5,
+        "maxLightIntensity": 10
+    },{
+        "greenHouseId": 2,
+        "minLightIntensity": 5,
+        "maxLightIntensity": 10
+    }],
+    "lightVolumeConfigs": [{
+        "greenHouseId": 789456123,
+        "maxLightVolume": 28800000
+    },{
+        "greenHouseId": 2,
+        "maxLightVolume": 28800000
+    }],
+    "watering": [{
+        "greenHouseId": 789456123,
+        "timeRanges": [-25200000, -18000000, 54000000]
+    },{
+        "greenHouseId": 2,
+        "timeRanges": []
+    }],
+    "fertilizer": [{
+        "projectId": 1,
+        "timeRanges": [-25200000, -21600000, 1800000, 14400000]
+    }]
+}
