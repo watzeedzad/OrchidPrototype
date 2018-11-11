@@ -15,10 +15,10 @@ export default class InsertRelayManualCommand {
             inputLitre: litre,
             piMacAddress: macAddress
         }
-        console.log("[InsertRelayManualCommand] " + ip, pumpType, macAddress, litre);
         new relayManualQueue(relayInsertData).save(function (err) {
             console.log(err);
             if (!err) {
+                console.log("[InsertRelayManualCommand] params: " + ip, pumpType, macAddress, litre);
                 console.log("[InsertRelayManualCommand] created command!");
             } else {
                 //TODO: return page with errors

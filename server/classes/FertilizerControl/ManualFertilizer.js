@@ -29,6 +29,7 @@ export default class ManualFertilizer {
         console.log("[ManualFertilizer] inputLitre, " + inputLitre);
         controllerData = await getControllerData(projectId);
         if (controllerData == null) {
+            console.log("[ManualWater] controlerData is null");
             res.sendStatus(200);
             return;
         }
@@ -45,8 +46,11 @@ async function getControllerData(projectId) {
         projectId: projectId
     }, function (err, result) {
         if (err) {
-            controllerData = undefined;
+            controllerData = null;
             console.log("[ManualWater] Query fail!, know_controller2");
+        } else if (!result) {
+            controllerData = null;
+            console.log("[ManualWater] getControllerData (!result): " + result);
         } else {
             controllerData = result;
         }

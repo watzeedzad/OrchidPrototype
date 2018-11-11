@@ -5,7 +5,6 @@ const know_controller = mongoose.model("know_controller");
 const request = require("request");
 
 let controllerData;
-let farmData;
 
 export default class ManualWatering {
     constructor(req, res) {
@@ -31,6 +30,7 @@ export default class ManualWatering {
         }
         controllerData = await getControllerData(greenHouseId);
         if (controllerData == null) {
+            console.log("[ManualWater] controlerData is null");
             res.sendStatus(200);
             return;
         }
@@ -46,8 +46,11 @@ async function getControllerData(greenHouseId) {
         greenHouseId: greenHouseId
     }, function (err, result) {
         if (err) {
-            controllerData = undefined;
+            controllerData = null;
             console.log("[ManualWater] Query fail!, know_controller2");
+        } else if (!result) {
+            controllerData = null;
+            console.log("[ManualWater] getControllerData (!result): " + result);
         } else {
             controllerData = result;
         }
