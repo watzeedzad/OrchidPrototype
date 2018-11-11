@@ -10,7 +10,7 @@
 #include <BH1750.h>
 
 #ifndef ESP32
-#pragma message(THIS EXAMPLE IS FOR ESP32 ONLY!)
+#pragma message(THIS EXAMPLE IS FOR ESP32 ONLY !)
 #error Select ESP32 board.
 #endif
 
@@ -219,8 +219,12 @@ void loop(void)
         // {
         //         return;
         // }
-        humidityStats.add(humidity);
-        temperatureStats.add(temperature);
+
+        if (!isnan(humidity) && !isnan(temperature))
+        {
+                humidityStats.add(humidity);
+                temperatureStats.add(temperature); /* code */
+        }
         moistureStats.add(moisturePercent);
         fertilityStats.add(fertilityPercent);
         ambientLightStats.add(lux);
@@ -327,10 +331,13 @@ void sendData()
         JSONencoder.prettyPrintTo(dataSet1, sizeof(dataSet1));
         // Serial.println(dataSet1);
 
+        String sendUrlPath = "http://" + WiFi.gatewayIP().toString() + ":3001" + "/handleController";
+
         HTTPClient http;
         http.setTimeout(10000);
         // http.begin("https://hello-api.careerity.me/sensorRoutes/greenHouseSensor", "EC:BB:33:AB:B4:F4:5B:A0:76:F3:F1:5B:FE:EC:BD:16:17:5C:22:47");
-        http.begin("http://" + WiFi.gatewayIP().toString() + ":3001" + "/handleController/");
+        http.begin(sendUrlPath);
+        Serial.println("Send data to: " + sendUrlPath);
         http.addHeader("Content-Type", "application/json");
         int httpCode = http.POST(dataSet1);
         String payload = http.getString();
@@ -352,7 +359,8 @@ void sendData()
 
         http.setTimeout(10000);
         // http.begin("https://hello-api.careerity.me/sensorRoutes/projectSensor", "EC:BB:33:AB:B4:F4:5B:A0:76:F3:F1:5B:FE:EC:BD:16:17:5C:22:47");
-        http.begin("http://" + WiFi.gatewayIP().toString() + ":3001" + "/handleController/");
+        http.begin(sendUrlPath);
+        Serial.println("Send data to: " + sendUrlPath);
         http.addHeader("Content-Type", "application/json");
         httpCode = http.POST(dataSet2);
         payload = http.getString();
@@ -383,7 +391,7 @@ void sendFlowMeterData()
         HTTPClient http;
         http.setTimeout(10000);
         // http.begin("https://hello-api.careerity.me/sensorRoutes/greenHouseSensor", "EC:BB:33:AB:B4:F4:5B:A0:76:F3:F1:5B:FE:EC:BD:16:17:5C:22:47");
-        http.begin("http://" + WiFi.gatewayIP().toString() + ":3001" + "/handleFlowVolume/");
+        http.begin("http://" + WiFi.gatewayIP().toString() + ":3001" + "/handleFlowVolume");
         http.addHeader("Content-Type", "application/json");
         int httpCode = http.POST(dataSet1);
         String payload = http.getString();
@@ -405,7 +413,7 @@ void sendFlowMeterData()
 
         http.setTimeout(10000);
         // http.begin("https://hello-api.careerity.me/sensorRoutes/greenHouseSensor", "EC:BB:33:AB:B4:F4:5B:A0:76:F3:F1:5B:FE:EC:BD:16:17:5C:22:47");
-        http.begin("http://" + WiFi.gatewayIP().toString() + ":3001" + "/handleFlowVolume/");
+        http.begin("http://" + WiFi.gatewayIP().toString() + ":3001" + "/handleFlowVolume");
         http.addHeader("Content-Type", "application/json");
         httpCode = http.POST(dataSet2);
         payload = http.getString();

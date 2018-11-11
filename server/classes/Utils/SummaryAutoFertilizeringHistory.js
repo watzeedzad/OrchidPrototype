@@ -9,8 +9,6 @@ let tempAutoFertilizeringHistoryResultData;
 let allFarmIdResultData;
 let isExistHistoryResultData;
 let configFile;
-let createNewFertilizerHistoryResultStatus;
-let updateExistFertilizerHistoryResultStatus;
 
 export default class SummaryAutoFertilizeingHistory {
     constructor() {
@@ -62,11 +60,13 @@ async function operation() {
                         projectId,
                         tempAutoFertilizeringHistoryResultData[0].totalAmount,
                         oneProjectTimeRanges[timeRangesIndex],
-                        tempAutoFertilizeringHistoryResultData[0].ratio
+                        tempAutoFertilizeringHistoryResultData[0].ratio,
+                        function (result) {
+                            if (!result) {
+                                return;
+                            }
+                        }
                     );
-                    if (!createNewFertilizerHistoryResultStatus) {
-                        return;
-                    }
                 } else {
                     updateExistFertilizerHistoryResultStatus = await updateExistFertilizerHistory(
                         allFarmIdResultData[farmIndex].farmId,
@@ -74,11 +74,13 @@ async function operation() {
                         projectId,
                         tempAutoFertilizeringHistoryResultData[0].totalAmount,
                         oneProjectTimeRanges[timeRangesIndex],
-                        tempAutoFertilizeringHistoryResultData[0].ratio[0]
+                        tempAutoFertilizeringHistoryResultData[0].ratio[0],
+                        function (result) {
+                            if (!result) {
+                                return;
+                            }
+                        }
                     );
-                    if (!updateExistFertilizerHistoryResultStatus) {
-                        return;
-                    }
                 }
             }
         };
@@ -201,7 +203,7 @@ async function isProjectHistoryExist(farmId, greenHouseId, projectId) {
     return result;
 }
 
-async function createNewFertilizerHistory(farmId, greenHouseId, projectId, totalAmount, startTime, ratio) {
+async function createNewFertilizerHistory(farmId, greenHouseId, projectId, totalAmount, startTime, ratio, callback) {
     let tempDate = new Date(startTime);
     let insertDate = new Date();
     insertDate.setHours(tempDate.getHours());
@@ -225,11 +227,11 @@ async function createNewFertilizerHistory(farmId, greenHouseId, projectId, total
             console.log("[SummaryAutoFertilizeringHistory] createNewFertilizerHistory: create new data!")
             result = true;
         }
+        callback(result);
     });
-    return result;
 };
 
-async function updateExistFertilizerHistory(farmId, greenHouseId, project, totalAmount, startTime, ratio) {
+async function updateExistFertilizerHistory(farmId, greenHouseId, project, totalAmount, startTime, ratio, callback) {
     let tempDate = new Date(startTime);
     let insertDate = new Date();
     insertDate.setHours(tempDate.getHours());
@@ -258,8 +260,8 @@ async function updateExistFertilizerHistory(farmId, greenHouseId, project, total
             console.log("[SummaryAutoWateringHistory] updateExistWateringHistory: update done!")
             result = true;
         }
+        callback(result);
     });
-    return result;
 }
 
 async function clearAllTempFertilizeringData(farmId) {

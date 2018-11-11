@@ -8,8 +8,6 @@ let tempAutoWateringHistoryResultData;
 let isExistHistoryResultData;
 let allFarmIdResultData;
 let configFile;
-let createNewWaterHistoryResultStatus;
-let updateExistWaterHistoryResultStatus;
 
 export default class SummaryAutoWateringHistory {
     constructor() {
@@ -50,21 +48,25 @@ async function operation() {
                         allFarmIdResultData[farmIndex].farmId,
                         greenHouseId,
                         tempAutoWateringHistoryResultData[0].totalAmount,
-                        oneGreenHouseTimeRanges[timeRangesIndex]
+                        oneGreenHouseTimeRanges[timeRangesIndex],
+                        function (result) {
+                            if (!result) {
+                                return;
+                            }
+                        }
                     );
-                    if (!createNewWaterHistoryResultStatus) {
-                        return;
-                    }
                 } else {
                     updateExistWaterHistoryResultStatus = await updateExistWaterHistory(
                         allFarmIdResultData[farmIndex].farmId,
                         greenHouseId,
                         tempAutoWateringHistoryResultData[0].totalAmount,
-                        oneGreenHouseTimeRanges[timeRangesIndex]
+                        oneGreenHouseTimeRanges[timeRangesIndex],
+                        function (result) {
+                            if (!result) {
+                                return;
+                            }
+                        }
                     );
-                    if (!updateExistWaterHistoryResultStatus) {
-                        return;
-                    }
                 }
             }
         }
@@ -130,7 +132,7 @@ async function isGreenHouseHistoryExist(farmId, greenHouseId) {
     return result;
 }
 
-async function createNewWaterHistory(farmId, greenHouseId, totalAmount, startTime) {
+async function createNewWaterHistory(farmId, greenHouseId, totalAmount, startTime, callback) {
     let tempDate = new Date(startTime);
     let insertDate = new Date();
     insertDate.setHours(tempDate.getHours());
@@ -152,11 +154,11 @@ async function createNewWaterHistory(farmId, greenHouseId, totalAmount, startTim
             console.log("[SummaryAutoWateringHistory] createNewWaterHistory: create new data!")
             result = true;
         }
+        callback(result);
     });
-    return result;
 };
 
-async function updateExistWaterHistory(farmId, greenHouseId, totalAmount, startTime) {
+async function updateExistWaterHistory(farmId, greenHouseId, totalAmount, startTime, callback) {
     let tempDate = new Date(startTime);
     let insertDate = new Date();
     insertDate.setHours(tempDate.getHours());
@@ -183,8 +185,8 @@ async function updateExistWaterHistory(farmId, greenHouseId, totalAmount, startT
             console.log("[SummaryAutoWateringHistory] updateExistWateringHistory: update done!")
             result = true;
         }
+        callback(result);
     });
-    return result;
 }
 
 async function getAllFarmId() {
