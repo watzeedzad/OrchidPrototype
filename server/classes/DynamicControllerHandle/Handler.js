@@ -12,16 +12,16 @@ export default class Handler {
 }
 
 async function operation(req, res) {
-    let ipPoolData;
-    let ipPooldataTemp = req.body.ipPoolData;
+    let ipPoolData = req.body.ipPoolData;
+    // let ipPooldataTemp = req.body.ipPoolData;
     let piMacAddress = req.body.piMacAddress;
-    console.log(ipPooldataTemp, piMacAddress);
+    // console.log(ipPooldataTemp, piMacAddress);
     if (typeof ipPooldataTemp === "undefined" || typeof piMacAddress === "undefined") {
         res.sendStatus(500);
         return;
     }
     let newFormatPiMacAddress;
-    console.log("[Handler] ipPoolData : " + ipPooldataTemp);
+    console.log("[Handler] ipPoolData : " + ipPoolData);
     console.log("[Handler] piMacAddress : " + piMacAddress);
     let splitChar = piMacAddress[2];
     newFormatPiMacAddress = (piMacAddress.split(splitChar)).toString();
@@ -32,15 +32,15 @@ async function operation(req, res) {
         res.sendStatus(500);
         return;
     }
-    if (typeof ipPooldataTemp === "string") {
-        ipPoolData = [];
-        ipPoolData.push(ipPooldataTemp);
-    } else {
-        ipPoolData = ipPooldataTemp;
-    }
+    // if (typeof ipPooldataTemp === "string") {
+    //     ipPoolData = [];
+    //     ipPoolData.push(ipPooldataTemp);
+    // } else {
+    //     ipPoolData = ipPooldataTemp;
+    // }
     let status;
+    console.log("[Handler] ipPoolData.length : " + ipPoolData.length);
     for (let index = 0; index < ipPoolData.length; index++) {
-        console.log("[Handler] ipPoolData.length : " + ipPoolData.length);
         let indexData = ipPoolData[index];
         console.log("[Handler] indexData : " + indexData);
         indexData = indexData.split(" ");
