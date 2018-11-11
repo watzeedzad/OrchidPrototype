@@ -71,10 +71,14 @@ async function operation(req, res) {
             }
         }
     }
-    if (status) {
+    if (typeof status === "undefined") {
         res.sendStatus(200);
     } else {
-        res.sendStatus(500);
+        if (status) {
+            res.sendStatus(200);
+        } else {
+            res.sendStatus(500);
+        }
     }
 }
 
