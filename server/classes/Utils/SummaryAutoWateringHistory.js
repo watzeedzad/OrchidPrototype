@@ -44,7 +44,7 @@ async function operation() {
                 }
                 isExistHistoryResultData = await isGreenHouseHistoryExist(allFarmIdResultData[farmIndex].farmId, greenHouseId);
                 if (isExistHistoryResultData == null) {
-                    createNewWaterHistoryResultStatus = await createNewWaterHistory(
+                    await createNewWaterHistory(
                         allFarmIdResultData[farmIndex].farmId,
                         greenHouseId,
                         tempAutoWateringHistoryResultData[0].totalAmount,
@@ -56,7 +56,7 @@ async function operation() {
                         }
                     );
                 } else {
-                    updateExistWaterHistoryResultStatus = await updateExistWaterHistory(
+                    await updateExistWaterHistory(
                         allFarmIdResultData[farmIndex].farmId,
                         greenHouseId,
                         tempAutoWateringHistoryResultData[0].totalAmount,

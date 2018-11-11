@@ -54,7 +54,7 @@ async function operation() {
                     projectId
                 );
                 if (isExistHistoryResultData == null) {
-                    createNewFertilizerHistoryResultStatus = await createNewFertilizerHistory(
+                    await createNewFertilizerHistory(
                         allFarmIdResultData[farmIndex].farmId,
                         projectResultData.greenHouseId,
                         projectId,
@@ -68,7 +68,7 @@ async function operation() {
                         }
                     );
                 } else {
-                    updateExistFertilizerHistoryResultStatus = await updateExistFertilizerHistory(
+                    await updateExistFertilizerHistory(
                         allFarmIdResultData[farmIndex].farmId,
                         projectResultData.greenHouseId,
                         projectId,
