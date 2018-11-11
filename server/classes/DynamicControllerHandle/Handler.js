@@ -12,16 +12,16 @@ export default class Handler {
 }
 
 async function operation(req, res) {
-    let ipPoolData = req.body.ipPoolData;
+    let ipPoolDataTemp = req.body.ipPoolData;
     // let ipPooldataTemp = req.body.ipPoolData;
     let piMacAddress = req.body.piMacAddress;
     // console.log(ipPooldataTemp, piMacAddress);
-    if (typeof ipPoolData === "undefined" || typeof piMacAddress === "undefined") {
+    if (typeof ipPoolDataTemp === "undefined" || typeof piMacAddress === "undefined") {
         res.sendStatus(500);
         return;
     }
     let newFormatPiMacAddress;
-    console.log("[Handler] ipPoolData : " + ipPoolData);
+    console.log("[Handler] ipPoolDataTemp : " + ipPoolDataTemp);
     console.log("[Handler] piMacAddress : " + piMacAddress);
     let splitChar = piMacAddress[2];
     newFormatPiMacAddress = (piMacAddress.split(splitChar)).toString();
@@ -39,6 +39,8 @@ async function operation(req, res) {
     //     ipPoolData = ipPooldataTemp;
     // }
     let status;
+    let ipPoolData = ipPoolDataTemp[0].substring(1, ipPoolDataTemp[0].length - 1);
+    ipPoolData = ipPoolData.split(", ")
     console.log("[Handler] ipPoolData.length : " + ipPoolData.length);
     for (let index = 0; index < ipPoolData.length; index++) {
         let indexData = ipPoolData[index];
