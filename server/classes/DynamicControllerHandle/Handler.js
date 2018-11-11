@@ -16,7 +16,7 @@ async function operation(req, res) {
     // let ipPooldataTemp = req.body.ipPoolData;
     let piMacAddress = req.body.piMacAddress;
     // console.log(ipPooldataTemp, piMacAddress);
-    if (typeof ipPooldataTemp === "undefined" || typeof piMacAddress === "undefined") {
+    if (typeof ipPoolData === "undefined" || typeof piMacAddress === "undefined") {
         res.sendStatus(500);
         return;
     }
