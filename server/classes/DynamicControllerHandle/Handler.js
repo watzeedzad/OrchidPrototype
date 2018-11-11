@@ -38,6 +38,7 @@ async function operation(req, res) {
     } else {
         ipPoolData = ipPooldataTemp;
     }
+    let status;
     for (let index = 0; index < ipPoolData.length; index++) {
         console.log("[Handler] ipPoolData.length : " + ipPoolData.length);
         let indexData = ipPoolData[index];
@@ -50,9 +51,9 @@ async function operation(req, res) {
             console.log("[Handler] begin insert new controller " + ip, macAddress)
             await insertKnowController(ip, macAddress, newFormatPiMacAddress, farmDataResult.farmId, function (insertKnowControllerResult) {
                 if (insertKnowControllerResult) {
-                    res.sendStatus(200);
+                    status = true;
                 } else {
-                    res.sendStatus(500);
+                    status = false;
                 }
             });
         } else {
@@ -60,15 +61,20 @@ async function operation(req, res) {
                 console.log("[Handler] begin update controller ip " + ip, macAddress, knowControllerDataResult.ip);
                 await updateExistController(knowControllerDataResult._id, ip, knowControllerDataResult, function (updateExistControllerResult) {
                     if (updateExistControllerResult) {
-                        res.sendStatus(200);
+                        status = true;
                     } else {
-                        res.sendStatus(500);
+                        status = false;
                     }
                 });
             } else {
                 console.log("[Handler] ip won't cahnge")
             }
         }
+    }
+    if (status) {
+        res.sendStatus(200);
+    } else {
+        res.sendStatus(500);
     }
 }
 
