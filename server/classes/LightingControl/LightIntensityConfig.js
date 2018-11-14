@@ -14,7 +14,9 @@ export default class LightIntensityConfig {
             res.sendStatus(401);
             return;
         }
-        configFile = req.session.configFile;
+        await getConfigFile(req, function (config) {
+            configFile = config;
+        });
         if (typeof configFile === "undefined") {
             res.json({
                 status: 500,
@@ -67,13 +69,14 @@ export default class LightIntensityConfig {
     }
 }
 
-// function getConfigFile(req) {
-//     console.log("[LightIntensityConfig] getConfigFilePath: " + req.session.configFilePath);
-//     let config = JSON.parse(
-//         require("fs").readFileSync(String(req.session.configFilePath), "utf8")
-//     );
-//     configFile = config;
-// }
+function getConfigFile(req, callback) {
+    // console.log("[LightIntensityConfig] getConfigFilePath: " + req.session.configFilePath);
+    let config = JSON.parse(
+        require("fs").readFileSync(String(req.session.configFilePath), "utf8")
+    );
+    // configFile = config;
+    callback(config);
+}
 
 function writeConfigFile(configFile, configFilePath) {
     let content = JSON.stringify(configFile);

@@ -15,7 +15,9 @@ export default class WateringConfig {
       res.sendStatus(401);
       return;
     }
-    configFile = req.session.configFile;
+    await getConfigFile(req, function (config) {
+      configFile = config;
+    });
     let greenHouseId = parseInt(req.body.greenHouseId);
     let configTimeRanges = req.body.timeRanges;
     if (
@@ -73,13 +75,14 @@ export default class WateringConfig {
   }
 }
 
-// async function getConfigFile(req) {
-//   console.log("[WateringConfig] getConfigFilePath, " + req.session.configFilePath);
-//   let config = JSON.parse(
-//     require("fs").readFileSync(String(req.session.configFilePath), "utf8")
-//   );
-//   configFile = config;
-// }
+function getConfigFile(req, callback) {
+  // console.log("[WateringConfigs] getConfigFilePath: " + req.session.configFilePath);
+  let config = JSON.parse(
+    require("fs").readFileSync(String(req.session.configFilePath), "utf8")
+  );
+  // configFile = config;
+  callback(config);
+}
 
 function writeConfigFile(configFile, configFilePath) {
   let content = JSON.stringify(configFile);

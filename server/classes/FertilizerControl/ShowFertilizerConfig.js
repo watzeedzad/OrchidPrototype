@@ -12,7 +12,9 @@ export default class ShowFertilizerConfig {
             res.sendStatus(401);
             return;
         }
-        configFile = req.session.configFile;
+        await getConfigFile(req, function (config) {
+            configFile = config;
+        });
         let projectId = req.body.projectId;
         if (typeof projectId === "undefined") {
             res.json({
@@ -55,13 +57,14 @@ export default class ShowFertilizerConfig {
     }
 }
 
-// function getConfigFile(req) {
-//     console.log("[ShowFertilizerConfig] getConfigFilePath, " + req.session.configFilePath);
-//     let config = JSON.parse(
-//         require("fs").readFileSync(String(req.session.configFilePath), "utf8")
-//     );
-//     configFile = config;
-// }
+function getConfigFile(req, callback) {
+    // console.log("[ShowFertilizerConfig] getConfigFilePath, " + req.session.configFilePath);
+    let config = JSON.parse(
+        require("fs").readFileSync(String(req.session.configFilePath), "utf8")
+    );
+    // configFile = config;
+    callback(config);
+}
 
 function seekProjectIdIndex(dataArray, projectId) {
     let index = dataArray.findIndex(function (item, i) {

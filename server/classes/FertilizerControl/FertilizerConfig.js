@@ -15,7 +15,16 @@ export default class FertilizerConfig {
             res.sendStatus(401);
             return;
         }
-        configFile = req.session.configFile;
+        await getConfigFile(req, function (config) {
+            configFile = config;
+        });
+        if (typeof configFile === "undefined") {
+            res.json({
+                status: 500,
+                errorMessage: "เกิดข้อผิดพลาดไม่สามารถอ่านไฟล์การตั้งค่าได้"
+            });
+            return;
+        }
         let projectId = req.body.projectId;
         let configTimeRanges = req.body.timeRanges;
         if (
@@ -68,13 +77,14 @@ export default class FertilizerConfig {
     }
 }
 
-// async function getConfigFile(req) {
-//     console.log("[FertilizerConfig] getConfigFilePath, " + req.session.configFilePath);
-//     let config = JSON.parse(
-//         require("fs").readFileSync(String(req.session.configFilePath), "utf8")
-//     );
-//     configFile = config;
-// }
+async function getConfigFile(req, callback) {
+    // console.log("[FertilizerConfig] getConfigFilePath, " + req.session.configFilePath);
+    let config = JSON.parse(
+        require("fs").readFileSync(String(req.session.configFilePath), "utf8")
+    );
+    // configFile = config;
+    callback(config);
+}
 
 function writeConfigFile(configFile, configFilePath) {
     let content = JSON.stringify(configFile);

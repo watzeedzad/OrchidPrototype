@@ -89,20 +89,6 @@ async function operation(req, res) {
     currentDuration = lightDurationResult.duration;
     previousDate = new Date(lightDurationResult.timeStamp);
     if (nowLightCheckDate.getHours() >= 7 && nowLightCheckDate.getHours() <= 17) {
-
-      if (resultCompareLightIntensity) {
-        currentDuration += nowLightCheckDate.getTime() - previousDate.getTime();
-        console.log("[LightCheck] currentDuration (update): " + currentDuration);
-        await updateLightDurationData(lightDurationResult._id, currentDuration, nowLightCheckDate, true, function (updateLightDuration) {
-          updateLightDurationResult = updateLightDuration;
-        });
-      } else {
-        console.log("[LightCheck] currentDuration (not update): " + currentDuration);
-        await updateLightDurationData(lightDurationResult._id, null, nowLightCheckDate, false, function (updateLightDuration) {
-          updateLightDurationResult = updateLightDuration;
-        });
-      }
-
       if (currentDuration >= configFile.lightVolumeConfigs[greenHouseIndexLightIntensity].maxLightVolume) {
         new InsertRelayCommand(controllerDataResult.ip, "light", false, piMacAddress);
         console.log("[LightCheck] enough light in day time");
@@ -116,10 +102,21 @@ async function operation(req, res) {
           new InsertRelayCommand(controllerDataResult.ip, "light", false, piMacAddress);
           console.log("[LightCheck] in day light time, light volume not met criteria but light intensity met criteria");
         }
+        if (resultCompareLightIntensity) {
+          currentDuration += nowLightCheckDate.getTime() - previousDate.getTime();
+          console.log("[LightCheck] currentDuration (update): " + currentDuration);
+          await updateLightDurationData(lightDurationResult._id, currentDuration, nowLightCheckDate, true, function (updateLightDuration) {
+            updateLightDurationResult = updateLightDuration;
+          });
+        } else {
+          console.log("[LightCheck] currentDuration (not update): " + currentDuration);
+          await updateLightDurationData(lightDurationResult._id, null, nowLightCheckDate, false, function (updateLightDuration) {
+            updateLightDurationResult = updateLightDuration;
+          });
+        }
         req.session.lightCheckStatus = 200;
         return;
       }
-
     } else {
       console.log("[LightCheck] in night time not check duration");
       await updateLightDurationData(lightDurationResult._id, null, nowLightCheckDate, false, function (updateLightDuration) {

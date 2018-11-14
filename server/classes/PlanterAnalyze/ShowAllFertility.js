@@ -16,7 +16,9 @@ export default class ShowAllFertility {
       res.sendStatus(401);
       return;
     }
-    configFile = req.session.configFile;
+    await getConfigFile(req, function (config) {
+      configFile = config;
+    });
     if (typeof req.body.greenHouseId === "undefined") {
       res.json({
         status: 500,
@@ -74,13 +76,14 @@ export default class ShowAllFertility {
   }
 }
 
-// function getConfigFile(req) {
-//   console.log("[ShowAllFertility] getConfigFilePath: " + req.session.configFilePath);
-//   let config = JSON.parse(
-//     require("fs").readFileSync(String(req.session.configFilePath), "utf8")
-//   );
-//   configFile = config;
-// }
+function getConfigFile(req, callback) {
+  // console.log("[ShowAllFertility] getConfigFilePath: " + req.session.configFilePath);
+  let config = JSON.parse(
+    require("fs").readFileSync(String(req.session.configFilePath), "utf8")
+  );
+  // configFile = config;
+  callback(config);
+}
 
 async function getProjectSensor(greenHouseId, farmId) {
   let result = await project_sensor.find({

@@ -32,7 +32,6 @@ async function operation(req, res) {
     await getConfigFile(farmDataResult.configFilePath);
     // console.log("[Login] farmDataResult: " + farmDataResult);
     req.session.farmData = farmDataResult;
-    req.session.configFile = configFile;
     req.session.configFilePath = farmDataResult.configFilePath;
     req.session.farmId = farmDataResult.farmId;
     // console.log("[Login] req.session.farmData: " + req.session.farmData);

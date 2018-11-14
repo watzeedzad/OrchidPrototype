@@ -16,7 +16,9 @@ export default class ShowFertility {
       res.sendStatus(401);
       return;
     }
-    configFile = req.session.configFile;
+    await getConfigFile(req, function (config) {
+      configFile = config;
+    });
     let projectId = req.body.projectId;
     if (typeof projectId === "undefined") {
       res.json({
@@ -63,13 +65,14 @@ export default class ShowFertility {
   }
 }
 
-// function getConfigFile(req) {
-//   console.log("[ShowFertility] getConfigFilePath: " + req.session.configFilePath);
-//   let config = JSON.parse(
-//     require("fs").readFileSync(String(req.session.configFilePath), "utf8")
-//   );
-//   configFile = config;
-// }
+function getConfigFile(req, callback) {
+  // console.log("[ShowFertility] getConfigFilePath: " + req.session.configFilePath);
+  let config = JSON.parse(
+    require("fs").readFileSync(String(req.session.configFilePath), "utf8")
+  );
+  // configFile = config;
+  callback(config);
+}
 
 async function getProjectSensor(projectId, farmId) {
   let result = await project_sensor.findOne({
