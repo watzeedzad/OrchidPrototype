@@ -16,7 +16,7 @@ export default class WateringConfig {
       return;
     }
     configFile = req.session.configFile;
-    let greenHouseId = req.body.greenHouseId;
+    let greenHouseId = parseInt(req.body.greenHouseId);
     let configTimeRanges = req.body.timeRanges;
     if (
       typeof greenHouseId === "undefined" ||
@@ -33,18 +33,19 @@ export default class WateringConfig {
       greenHouseId: greenHouseId,
       timeRanges: []
     };
-    let wateringConfig = configFile.watering;
+    // let wateringConfig = configFile.watering;
+    existGreenHouseIndex = await seekGreenHouseIdIndex(configFile.watering, greenHouseId);
     // let tempArray = [];
-    if (!Object.keys(wateringConfig).length == 0) {
-      for (let index = 0; index < Object.keys(wateringConfig).length; index++) {
-        let temp = wateringConfig[index];
-        if (temp.greenHouseId == greenHouseId) {
-          existGreenHouseIndex = index;
-        } else {
-          existGreenHouseIndex = -1;
-        }
-      }
-    }
+    // if (!Object.keys(wateringConfig).length == 0) {
+    //   for (let index = 0; index < Object.keys(wateringConfig).length; index++) {
+    //     let temp = wateringConfig[index];
+    //     if (temp.greenHouseId == greenHouseId) {
+    //       existGreenHouseIndex = index;
+    //     } else {
+    //       existGreenHouseIndex = -1;
+    //     }
+    //   }
+    // }
     for (let index = 0; index < configTimeRanges.length; index++) {
       let tempDate = new Date(configTimeRanges[index]);
       console.log("[WateringConfigs] configTimeRanges" + "[" + index + "]: " + configTimeRanges[index]);
@@ -91,4 +92,11 @@ function writeConfigFile(configFile, configFilePath) {
   });
   writeFileStatus = true;
   console.log("[WateringConfig] write file with no error");
+}
+
+function seekGreenHouseIdIndex(dataArray, greenHouseId) {
+  let index = dataArray.findIndex(function (item, i) {
+    return item.greenHouseId === greenHouseId;
+  });
+  return index;
 }
