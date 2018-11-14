@@ -23,16 +23,22 @@ async function operation() {
     }
     let allGreenHouseConfig;
     for (let farmIndex = 0; farmIndex < allFarmIdResultData.length; farmIndex++) {
+        console.log("[SummaryAutoWateringHistory] farmLoop length: " + allFarmIdResultData.length);
+        console.log("[SummaryAutoWateringHistory] farmLoop (farmIndex): " + farmIndex);
         await getConfigFile(allFarmIdResultData[farmIndex].farmId);
         if (typeof configFile === "undefined") {
-            console.log("[SummaryAutoFertilizeringHistory] configFile is undefined!");
+            console.log("[SummaryAutoWateringHistory] configFile is undefined!");
             return;
         }
         allGreenHouseConfig = configFile.watering;
         for (let greenHouseConfigIndex = 0; greenHouseConfigIndex < allGreenHouseConfig.length; greenHouseConfigIndex++) {
+            console.log("[SummaryAutoWateringHistory] greenHouseConfigLoop length: " + allGreenHouseConfig.length);
+            console.log("[SummaryAutoWateringHistory] greenHouseConfigLoop (greenHouseConfigIndex, farmIndex): " + greenHouseConfigIndex, farmIndex);
             let greenHouseId = allGreenHouseConfig[greenHouseConfigIndex].greenHouseId
             let oneGreenHouseTimeRanges = allGreenHouseConfig[greenHouseConfigIndex].timeRanges
             for (let timeRangesIndex = 0; timeRangesIndex < oneGreenHouseTimeRanges.length; timeRangesIndex++) {
+                console.log("[SummaryAutoWateringHistory] timeRangesLoop length: " + oneGreenHouseTimeRanges.length);
+                console.log("[SummaryAutoWateringHistory] timeRangesLoop (timeRangesIndex, greenHouseConfigIndex, farmIndex): " + timeRangesIndex, greenHouseConfigIndex, farmIndex);
                 tempAutoWateringHistoryResultData = await getAllTempAutoWateringHistoryData(
                     allFarmIdResultData[farmIndex].farmId,
                     greenHouseId,
@@ -40,7 +46,7 @@ async function operation() {
                 );
                 if (tempAutoWateringHistoryResultData.length == 0) {
                     console.log("[SummaryAutoWateringHistory] no temp data to summrize!");
-                    return;
+                    continue;
                 }
                 isExistHistoryResultData = await isGreenHouseHistoryExist(allFarmIdResultData[farmIndex].farmId, greenHouseId);
                 if (isExistHistoryResultData == null) {
@@ -70,9 +76,9 @@ async function operation() {
                 }
             }
         }
+        console.log("[SummaryAutoWateringHistory] calling clear data of farmId : " + allFarmIdResultData[farmIndex].farmId);
+        await clearAllTempWateringData(allFarmIdResultData[farmIndex].farmId);
     }
-    console.log("[SummaryAutoWateringHistory] calling clear data");
-    await clearAllTempWateringData();
     console.log("[SummaryAutoWateringHistory] end batch watering history summarize!");
 }
 
@@ -224,6 +230,8 @@ async function getConfigFile(farmId) {
     configFile = config;
 }
 
-async function clearAllTempWateringData() {
-    await wateringHistory.remove();
+async function clearAllTempWateringData(farmId) {
+    await tempAutoWateringHistory.remove({
+        farmId: farmId
+    });
 }

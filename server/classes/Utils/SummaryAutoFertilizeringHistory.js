@@ -24,6 +24,8 @@ async function operation() {
     }
     let allProjectConfig;
     for (let farmIndex = 0; farmIndex < allFarmIdResultData.length; farmIndex++) {
+        console.log("[SummaryAutoFertilizeringHistory] farmLoop length: " + allFarmIdResultData.length);
+        console.log("[SummaryAutoFertilizeringHistory] farmLoop (farmIndex): " + farmIndex);
         await getConfigFile(allFarmIdResultData[farmIndex].farmId);
         if (typeof configFile === "undefined") {
             console.log("[SummaryAutoFertilizeringHistory] configFile is undefined!");
@@ -31,10 +33,14 @@ async function operation() {
         }
         allProjectConfig = configFile.fertilizer
         for (let projectConfigIndex = 0; projectConfigIndex < allProjectConfig.length; projectConfigIndex++) {
+            console.log("[SummaryAutoFertilizeringHistory] projectConfigLoop length: " + allFarmIdResultData.length);
+            console.log("[SummaryAutoFertilizeringHistory] projectConfigLoop (projectConfigIndex, farmIndex): " + projectConfigIndex, farmIndex);
             let projectResultData;
             let projectId = allProjectConfig[projectConfigIndex].projectId;
             let oneProjectTimeRanges = allProjectConfig[projectConfigIndex].timeRanges;
             for (let timeRangesIndex = 0; timeRangesIndex < oneProjectTimeRanges.length; timeRangesIndex++) {
+                console.log("[SummaryAutoFertilizeringHistory] timeRangesLoop length: " + oneProjectTimeRanges.length);
+                console.log("[SummaryAutoFertilizeringHistory] timeRangesLoop (timeRangesIndex, projectConfigIndex, farmIndex): " + timeRangesIndex, projectConfigIndex, farmIndex);
                 tempAutoFertilizeringHistoryResultData = await getAllTempAutoFertilizeringHistoryData(
                     allFarmIdResultData[farmIndex].farmId,
                     projectId,
@@ -42,7 +48,7 @@ async function operation() {
                 );
                 if (tempAutoFertilizeringHistoryResultData.length == 0) {
                     console.log("[SummaryAutoFertilizeringHistory] no temp data to summarize!");
-                    return;
+                    continue;
                 }
                 projectResultData = await getProjectData(allFarmIdResultData[farmIndex].farmId, projectId);
                 if (projectResultData == null) {
@@ -83,10 +89,10 @@ async function operation() {
                     );
                 }
             }
-        };
+        }
+        console.log("[SummaryAutoFertilizeringHistory] calling clear data of farmId: " + allFarmIdResultData[farmIndex].farmId);
+        await clearAllTempFertilizeringData(allFarmIdResultData[farmIndex].farmId);
     }
-    console.log("[SummaryAutoFertilizeringHistory] calling clear data");
-    await clearAllTempFertilizeringData();
     console.log("[SummaryAutoFertilizeringHistory] end batch fertilizering history summarize!")
 }
 
@@ -265,6 +271,8 @@ async function updateExistFertilizerHistory(farmId, greenHouseId, project, total
     });
 }
 
-async function clearAllTempFertilizeringData() {
-    await fertilizeringHistory.remove()
+async function clearAllTempFertilizeringData(farmId) {
+    await tempAutoFertilizeringHistory.remove({
+        farmId: farmId
+    })
 }
