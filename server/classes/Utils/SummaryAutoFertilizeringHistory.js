@@ -32,6 +32,9 @@ async function operation() {
             return;
         }
         allProjectConfig = configFile.fertilizer
+        if (typeof allProjectConfig === "undefined") {
+            continue;
+        }
         for (let projectConfigIndex = 0; projectConfigIndex < allProjectConfig.length; projectConfigIndex++) {
             console.log("[SummaryAutoFertilizeringHistory] projectConfigLoop length: " + allFarmIdResultData.length);
             console.log("[SummaryAutoFertilizeringHistory] projectConfigLoop (projectConfigIndex, farmIndex): " + projectConfigIndex, farmIndex);

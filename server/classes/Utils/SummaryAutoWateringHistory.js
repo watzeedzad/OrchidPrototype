@@ -31,6 +31,9 @@ async function operation() {
             return;
         }
         allGreenHouseConfig = configFile.watering;
+        if (typeof allGreenHouseConfig === "undefined") {
+            continue;
+        }
         for (let greenHouseConfigIndex = 0; greenHouseConfigIndex < allGreenHouseConfig.length; greenHouseConfigIndex++) {
             console.log("[SummaryAutoWateringHistory] greenHouseConfigLoop length: " + allGreenHouseConfig.length);
             console.log("[SummaryAutoWateringHistory] greenHouseConfigLoop (greenHouseConfigIndex, farmIndex): " + greenHouseConfigIndex, farmIndex);

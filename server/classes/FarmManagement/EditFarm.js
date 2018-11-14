@@ -1,5 +1,6 @@
 const mongoose = require('mongoose');
 const farm = mongoose.model('farm');
+const knowController = mongoose.model("know_controller");
 
 export default class EditFarm {
 
@@ -14,11 +15,29 @@ export default class EditFarm {
         let ownerSurname = req.body.ownerSurname
         let ownerTel = req.body.ownerTel
         let ownerAddress = req.body.ownerAddress
-        let pimac = req.body.pimac
+        let piMacAddress = req.body.piMacAddress
 
-        await editFarmData(id, farmName, ownerName, ownerSurname, ownerTel, ownerAddress, pimac, function (editFarmResult) {
-            if (editProjectResult) {
-                res.sendStatus(200);
+        if (typeof id === "undefined" || typeof farmName === "undefined" || typeof ownerName === "undefined" || typeof ownerSurname === "undefined" || typeof ownerTel === "undefined" || typeof ownerAddress === "undefined" || typeof piMacAddress === "undefined") {
+            res.json({
+                status: 500,
+                errorMessage: "เกิดข้อผิดพลาดในการแก้ไขข้อมูลฟาร์ม"
+            });
+            return;
+        }
+
+        let splitChar = piMacAddress[2];
+        piMacAddress = (piMacAddress.split(splitChar)).toString();
+        piMacAddress = piMacAddress.toLowerCase();
+
+        await editFarmData(id, farmName, ownerName, ownerSurname, ownerTel, ownerAddress, piMacAddress, function (editFarmResult, doc) {
+            if (editFarmResult) {
+                updateKnowControllerPiMacAddress(doc.farmId, piMacAddress, function (updateKnowControllerPiMacAddressResult) {
+                    if (updateKnowControllerPiMacAddressResult) {
+                        res.sendStatus(200);
+                    } else {
+                        res.sendStatus(500)
+                    }
+                });
             } else {
                 res.sendStatus(500)
             }
@@ -27,10 +46,10 @@ export default class EditFarm {
 
 }
 
-async function editFarmData(id, farmName, ownerName, ownerSurname, ownerTel, ownerAddress, pimac, callback) {
+async function editFarmData(id, farmName, ownerName, ownerSurname, ownerTel, ownerAddress, piMacAddress, callback) {
     let editFarmResult = null;
 
-    await farm.findOme({
+    await farm.findOneAndUpdate({
         _id: id
     }, {
         $set: {
@@ -39,7 +58,7 @@ async function editFarmData(id, farmName, ownerName, ownerSurname, ownerTel, own
             ownerSurname: ownerSurname,
             ownerTel: ownerTel,
             ownerAddress: ownerAddress,
-            pimac: pimac
+            piMacAddress: piMacAddress
         }
     }, (err, doc) => {
         if (err) {
@@ -51,6 +70,26 @@ async function editFarmData(id, farmName, ownerName, ownerSurname, ownerTel, own
         } else {
             editFarmResult = true;
         }
-        callback(editFarmResult);
+        callback(editFarmResult, doc);
     });
+}
+
+async function updateKnowControllerPiMacAddress(farmId, newPiMacAddress, callback) {
+    let updateKnowControllerPiMacAddressResult;
+    await knowController.update({
+        farmId: farmId
+    }, {
+        $set: {
+            piMacAddress: newPiMacAddress
+        }
+    }, {
+        multi: true
+    }, function (err) {
+        if (err) {
+            updateKnowControllerPiMacAddressResult = false;
+        } else {
+            updateKnowControllerPiMacAddressResult = true;
+        }
+    });
+    callback(updateKnowControllerPiMacAddressResult);
 }

@@ -1,5 +1,9 @@
 const mongoose = require('mongoose');
+const fs = require("fs");
 const project = mongoose.model('project')
+
+let configFile;
+let defaultConfigFile;
 
 export default class AddProject {
 
@@ -26,10 +30,36 @@ export default class AddProject {
         } else {
             picturePath = req.file.filename;
         }
-        
-        await addProject(farmId, greenHouseId, name, tribeName, picturePath, currentRatio, function (addProjectResult) {
+
+        await getConfigFile(req, function (config) {
+            configFile = config;
+        });
+        await getDefaultConfigFile("./conf/default.json", function (defaultConfig) {
+            defaultConfigFile = defaultConfig;
+        });
+        if (typeof configFile === "undefined" || typeof defaultConfigFile === "undefined") {
+            res.sendStatus(500);
+            return;
+        }
+
+        await addProject(farmId, greenHouseId, name, tribeName, picturePath, currentRatio, function (addProjectResult, doc) {
             if (addProjectResult) {
-                res.sendStatus(200);
+                configFile.fertilityConfigs.push({
+                    projectId: doc.projectId,
+                    minFertility: defaultConfigFile.defaultMinFertility,
+                    maxFertility: defaultConfigFile.defaultMaxFertility
+                });
+                configFile.fertilizer.push({
+                    projectId: doc.projectId,
+                    timeRanges: defaultConfigFile.defaultFertilizeringTimeRanges
+                });
+                writeConfigFile(configFile, req.session.configFilePath, function(writeConfigFileStatus) {
+                    if (writeConfigFileStatus) {
+                        res.sendStatus(200);
+                    } else {
+                        res.sendStatus(500);
+                    }
+                });
             } else {
                 res.sendStatus(500);
             }
@@ -62,6 +92,37 @@ async function addProject(farmId, greenHouseId, name, tribeName, picturePath, cu
         } else {
             addProjectResult = true;
         }
-        callback(addProjectResult);
+        callback(addProjectResult, doc);
     })
+}
+
+function getConfigFile(req, callback) {
+    // console.log("[AddGreenHouse] getConfigFilePath: " + req.session.configFilePath);
+    let config = JSON.parse(
+        require("fs").readFileSync(String(req.session.configFilePath), "utf8")
+    );
+    // configFile = config;
+    callback(config);
+}
+
+function getDefaultConfigFile(path, callback) {
+    let config = JSON.parse(
+        fs.readFileSync(String(path)), "utf8"
+    );
+    callback(config);
+}
+
+async function writeConfigFile(configFile, configFilePath, callback) {
+    let writeConfigFileStatus;
+    let content = JSON.stringify(configFile);
+    fs.writeFile(String(configFilePath), content, "utf8", function (err) {
+        if (err) {
+            console.log(err);
+            writeConfigFileStatus = false;
+            return;
+        }
+    });
+    writeConfigFileStatus = true;
+    console.log("[AddProject] write file with no error");
+    callback(writeConfigFileStatus);
 }
