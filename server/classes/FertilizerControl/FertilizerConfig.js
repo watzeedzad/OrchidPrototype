@@ -33,14 +33,15 @@ export default class FertilizerConfig {
             };
             let fertilizerConfig = configFile.fertilizer;
             // let tempArray = [];
-            if (!Object.keys(fertilizerConfig).length == 0) {
-                for (let index = 0; index < Object.keys(fertilizerConfig).length; index++) {
-                    let temp = fertilizerConfig[index];
-                    if (temp.projectId == projectId) {
-                        existProjectIndex = index;
-                    }
-                }
-            }
+            // if (!Object.keys(fertilizerConfig).length == 0) {
+            //     for (let index = 0; index < Object.keys(fertilizerConfig).length; index++) {
+            //         let temp = fertilizerConfig[index];
+            //         if (temp.projectId == projectId) {
+            //             existProjectIndex = index;
+            //         }
+            //     }
+            // }
+            existProjectIndex = await seekProjectIdIndex(fertilizerConfig, projectId);
             for (let index = 0; index < configTimeRanges.length; index++) {
                 let tempDate = new Date(configTimeRanges[index]);
                 let tempTimeMills = tempDate.getTime();
@@ -86,4 +87,11 @@ function writeConfigFile(configFile, configFilePath) {
     });
     writeFileStatus = true;
     console.log("[FertilizerConfig] write file with no error");
+}
+
+function seekProjectIdIndex(dataArray, projectId) {
+    let index = dataArray.findIndex(function (item, i) {
+        return item.projectId === projectId;
+    });
+    return index;
 }

@@ -29,21 +29,22 @@ export default class ShowWateringConfig {
             return;
         }
         let wateringConfig = configFile.watering;
-        if (Object.keys(wateringConfig).length == 0) {
-            res.json({
-                status: 500,
-                errorMessage: "ไม่มีข้อมูลการตั้งค่าการให้น้ำในโรงเรือนใดๆ",
-                result: false
-            });
-        } else {
-            for (let index = 0; index < Object.keys(wateringConfig).length; index++) {
-                let temp = wateringConfig[index];
-                if (temp.greenHouseId == greenHouseId) {
-                    existGreenHouseIndex = index;
-                }
-            }
-        }
-        if (typeof existGreenHouseIndex === "undefined") {
+        // if (Object.keys(wateringConfig).length == 0) {
+        //     res.json({
+        //         status: 500,
+        //         errorMessage: "ไม่มีข้อมูลการตั้งค่าการให้น้ำในโรงเรือนใดๆ",
+        //         result: false
+        //     });
+        // } else {
+        //     for (let index = 0; index < Object.keys(wateringConfig).length; index++) {
+        //         let temp = wateringConfig[index];
+        //         if (temp.greenHouseId == greenHouseId) {
+        //             existGreenHouseIndex = index;
+        //         }
+        //     }
+        // }
+        existGreenHouseIndex = await seekGreenHouseIdIndex(wateringConfig, greenHouseId);
+        if (existGreenHouseIndex == -1) {
             res.json({
                 status: 500,
                 errorMessage: "ไม่มีข้อมูลการตั้งค่าการให้น้ำในโรงเรือนที่ระบุ",
@@ -62,3 +63,10 @@ export default class ShowWateringConfig {
 //     );
 //     configFile = config;
 // }
+
+function seekGreenHouseIdIndex(dataArray, greenHouseId) {
+    let index = dataArray.findIndex(function (item, i) {
+      return item.greenHouseId === greenHouseId;
+    });
+    return index;
+  }

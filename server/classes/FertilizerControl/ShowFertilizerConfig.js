@@ -29,21 +29,22 @@ export default class ShowFertilizerConfig {
             return;
         }
         let fertilizerConfig = configFile.fertilizer;
-        if (Object.keys(fertilizerConfig).length == 0) {
-            res.json({
-                status: 500,
-                errorMessage: "ไม่มีข้อมูลการตั้งค่าการให้น้ำในโปรเจคใดๆ",
-                result: false
-            });
-        } else {
-            for (let index = 0; index < Object.keys(fertilizerConfig).length; index++) {
-                let temp = fertilizerConfig[index];
-                if (temp.projectId == projectId) {
-                    existProjectIndex = index;
-                }
-            }
-        }
-        if (typeof existProjectIndex === "undefined") {
+        // if (Object.keys(fertilizerConfig).length == 0) {
+        //     res.json({
+        //         status: 500,
+        //         errorMessage: "ไม่มีข้อมูลการตั้งค่าการให้น้ำในโปรเจคใดๆ",
+        //         result: false
+        //     });
+        // } else {
+        //     for (let index = 0; index < Object.keys(fertilizerConfig).length; index++) {
+        //         let temp = fertilizerConfig[index];
+        //         if (temp.projectId == projectId) {
+        //             existProjectIndex = index;
+        //         }
+        //     }
+        // }
+        existProjectIndex = await seekProjectIdIndex(fertilizerConfig, projectId);
+        if (existProjectIndex == -1) {
             res.json({
                 status: 500,
                 errorMessage: "ไม่มีข้อมูลการตั้งค่าการให้น้ำในโปรเจคที่ระบุ",
@@ -61,3 +62,10 @@ export default class ShowFertilizerConfig {
 //     );
 //     configFile = config;
 // }
+
+function seekProjectIdIndex(dataArray, projectId) {
+    let index = dataArray.findIndex(function (item, i) {
+        return item.projectId === projectId;
+    });
+    return index;
+}
