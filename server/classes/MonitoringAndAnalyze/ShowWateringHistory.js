@@ -23,19 +23,13 @@ export default class ShowWateringHistory {
             return;
         }
         waterHistoryResultData = await getWateringHistoryData(req.session.farmId, greenHouseId);
-        if (waterHistoryResultData.length == 0) {
-            res.json({
-                status: 500,
-                errorMessage: "เกิดข้อผิดพลาดไม่มีข้อมูลประวัติการให้น้ำ"
-            });
-            return;
-        }
+
         res.json(waterHistoryResultData);
     }
 }
 
 async function getWateringHistoryData(farmId, greenHouseId) {
-    let result = await waterHistory.find({
+    let result = await waterHistory.findOne({
         farmId: farmId,
         greenHouseId: greenHouseId
     }, null, {
