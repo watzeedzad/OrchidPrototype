@@ -14,30 +14,24 @@ export default class ShowFertilizerHistory {
             res.sendStatus(401);
             return;
         }
-        let greenHouseId = req.body.greenHouseId;
-        if (typeof greenHouseId === "undefined") {
+        let projectId = req.body.projectId;
+        if (typeof projectId === "undefined") {
             res.json({
                 status: 500,
                 errorMessage: "เกิดข้อผิดพลาดในการแสดงข้อมูลประวัติการให้น้ำ"
             });
             return;
         }
-        fertilizerHistoryResultData = await getFertilizerHistoryData(req.session.farmId, greenHouseId);
-        if (fertilizerHistoryResultData.length == 0) {
-            res.json({
-                status: 500,
-                errorMessage: "เกิดข้อผิดพลาดไม่มีข้อมูลประวัติการให้น้ำ"
-            });
-            return;
-        }
+        fertilizerHistoryResultData = await getFertilizerHistoryData(req.session.farmId, projectId);
+
         res.json(fertilizerHistoryResultData);
     }
 }
 
-async function getFertilizerHistoryData(farmId, greenHouseId) {
-    let result = await fertilizerHistory.find({
+async function getFertilizerHistoryData(farmId, projectId) {
+    let result = await fertilizerHistory.findOne({
         farmId: farmId,
-        greenHouseId: greenHouseId
+        projectId: projectId
     }, null, {
         sort: {
             _id: 1
