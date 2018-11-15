@@ -15,9 +15,9 @@ export default class EditGreenHouse {
             return;
         }
 
-        let id = req.headers.id;
-        let name = req.headers.name;
-        let desc = req.headers.desc;
+        let id = req.body.greenHouseDocId;
+        let name = req.body.greenHouseName;
+        let desc = req.body.greenHouseDesc;
         let picturePath;
 
         if (typeof req.file === "undefined") {

@@ -14,11 +14,11 @@ export default class EdirProject {
             return;
         }
 
-        let id = req.headers.id;
-        let name = req.headers.name;
-        let tribeName = req.headers.tribename;
+        let id = req.body.id;
+        let name = req.body.name;
+        let tribeName = req.body.tribeName;
         let picturePath;
-        let currentRatio = req.headers.currentratio;
+        let currentRatio = req.body.currentRatio;
 
         if (typeof req.file === "undefined") {
             picturePath = null;

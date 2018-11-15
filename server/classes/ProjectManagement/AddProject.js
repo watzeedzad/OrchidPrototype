@@ -19,11 +19,11 @@ export default class AddProject {
         }
 
         let farmId = req.session.farmId;
-        let greenHouseId = req.headers.greenhouseid;
-        let name = req.headers.name;
-        let tribeName = req.headers.tribename;
+        let greenHouseId = req.body.greenHouseId;
+        let name = req.body.name;
+        let tribeName = req.body.tribeName;
         let picturePath;
-        let currentRatio = req.headers.currentratio;
+        let currentRatio = req.body.currentRatio;
 
         if (typeof req.file === "undefined") {
             picturePath = null;

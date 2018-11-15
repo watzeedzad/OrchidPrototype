@@ -86,20 +86,18 @@ export default class DeleteGreenHouse {
 async function findAndDeleteGreenHouse(id, callback) {
     let deleteGreenHouseResult = null;
 
-    await greenHouse.findByIdAndRemove({
-        _id: id
-    }, function (err, doc) {
+    let result = await greenHouse.findByIdAndRemove(id);
+
+    await greenHouse.findByIdAndRemove(id, function (err) {
         if (err) {
             deleteGreenHouseResult = false;
             console.log('[DeleteGreenHouse] findAndDeleteGreenHouse(err): ' + err);
-        } else if (!doc) {
-            deleteGreenHouseResult = false;
-            console.log('[DeleteGreenHouse] findAndDeleteGreenHouse(!doc): ' + doc);
         } else {
             deleteGreenHouseResult = true;
         }
-        callback(deleteGreenHouseResult, doc);
     });
+
+    callback(deleteGreenHouseResult, result);
 }
 
 async function deletePicture(path, fileName, callback) {

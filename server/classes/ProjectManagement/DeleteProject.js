@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 const fs = require("fs");
-const project = mongoose.model('project')
+const project = mongoose.model('project');
 
 let configFile;
 
@@ -73,20 +73,18 @@ export default class DeleteProject {
 async function findAndDeleteProject(id, callback) {
     let deleteProjectResult = null;
 
-    await project.findByIdAndRemove({
-        _id: id
-    }, function (err, doc) {
+    let result = await project.findByIdAndRemove(id);
+
+    await project.findByIdAndRemove(id, function (err) {
         if (err) {
             deleteProjectResult = false
             console.log('[DeleteProject] findAndDeleteProject(err): ' + err);
-        } else if (!doc) {
-            deleteProjectResult = false
-            console.log('[DeleteProject] findAndDeleteProject(err): ' + doc);
         } else {
             deleteProjectResult = true;
         }
-        callback(deleteProjectResult, doc)
     });
+
+    callback(deleteProjectResult, result);
 }
 
 async function deletePicture(path, fileName, callback) {
