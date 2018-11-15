@@ -23,7 +23,9 @@ export default class ShowWateringHistory {
             return;
         }
         waterHistoryResultData = await getWateringHistoryData(req.session.farmId, greenHouseId);
-
+        if(waterHistoryResultData === null){
+            waterHistoryResultData = []
+        }
         res.json(waterHistoryResultData);
     }
 }

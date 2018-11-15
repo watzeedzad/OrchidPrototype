@@ -23,7 +23,9 @@ export default class ShowFertilizerHistory {
             return;
         }
         fertilizerHistoryResultData = await getFertilizerHistoryData(req.session.farmId, projectId);
-
+        if(fertilizerHistoryResultData === null){
+            fertilizerHistoryResultData = []
+        }
         res.json(fertilizerHistoryResultData);
     }
 }
