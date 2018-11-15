@@ -1,5 +1,5 @@
 const mongoose = require("mongoose");
-const project = mongoose.model("project");
+const greenHouse = mongoose.model('greenHouse');
 
 let greenHouseDataResult;
 
@@ -35,7 +35,7 @@ async function operation(req, res) {
 }
 
 async function getGreenHouseData(greenHouseId) {
-    let result = await project.findOne({
+    let result = await greenHouse.findOne({
         greenHouseId: greenHouseId
     }, (err, result) => {
         if(err) {

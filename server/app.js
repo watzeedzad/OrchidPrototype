@@ -73,6 +73,7 @@ const monitoringAndAnalyze = require("./routes/monitoringAndAnalyze");
 const lightControl = require("./routes/lightControl");
 const dynamicControllerHandle = require("./routes/dynamicControllerHandle");
 const user = require("./routes/user");
+const utils = require("./routes/utils");
 const projectRoutes = require("./routes/projectRoutes");
 const farm = require('./routes/farm');
 
@@ -120,6 +121,7 @@ app.use("/monitoringAndAnalyze", monitoringAndAnalyze);
 app.use("/lightControl", lightControl);
 app.use("/dynamicControllerHandle", dynamicControllerHandle);
 app.use("/user", user);
+app.use("/utils", utils);
 app.use("/project",projectRoutes);
 app.use("/farm",farm);
 

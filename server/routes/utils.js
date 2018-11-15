@@ -29,7 +29,7 @@ router.use("/isAutoWatering", (req, res, next) => {
     next();
 });
 
-router.use("/isAutoWatering", (req, res) => {
+router.post("/isAutoWatering", (req, res) => {
     new IsAutoWatering(req, res);
 });
 
@@ -43,7 +43,7 @@ router.use("/isAutoFertilizering", (req, res, next) => {
     next();
 });
 
-router.use("/isAutoFertilizering", (req, res) => {
+router.post("/isAutoFertilizering", (req, res) => {
     new IsAutoFertilizering(req, res);
 });
 

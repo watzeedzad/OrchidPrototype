@@ -23,7 +23,7 @@ async function operation(req, res) {
         }
 
         projectDataResult = await getProjectData(projectId);
-        if (greenHouseDataResult == null) {
+        if (projectDataResult == null) {
             req.sendStatus(500);
             return;
         }
