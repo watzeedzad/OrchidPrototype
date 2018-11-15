@@ -380,7 +380,7 @@ void sendFlowMeterData()
 {
         StaticJsonBuffer<250> JSONbuffer1;
         JsonObject &JSONencoder = JSONbuffer1.createObject();
-        JSONencoder["volume"] = waterFlowMilliLitres;
+        JSONencoder["volume"] = waterFlowTotalMilliLitres;
         JSONencoder["type"] = "water";
         JSONencoder["ip"] = WiFi.localIP().toString();
         char dataSet1[250];
@@ -423,8 +423,8 @@ void sendFlowMeterData()
         Serial.println(payload);
         http.end();
 
-        waterFlowMilliLitres = 0;
-        fertilizerFlowMilliLitres = 0;
+        waterFlowTotalMilliLitres = 0;
+        fertilizerFlowTotalMilliLitres = 0;
 }
 
 void checkWaterLitre()
