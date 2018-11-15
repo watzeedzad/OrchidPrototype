@@ -4,6 +4,8 @@ import ShowWateringHistory from "../classes/MonitoringAndAnalyze/ShowWateringHis
 import ShowFertilizerHistory from "../classes/MonitoringAndAnalyze/ShowFertilizerHistory";
 import AddGrowthRate from "../classes/MonitoringAndAnalyze/AddGrowthRate";
 import LoadGrowthRateCSV from "../classes/MonitoringAndAnalyze/LoadGrowthRateCSV";
+import LoadCompareGrowthRate from '../classes/MonitoringAndAnalyze/LoadCompareGrowthRate'
+import GetCompareProject from '../classes/MonitoringAndAnalyze/GetCompareProject'
 
 
 const express = require("express");
@@ -91,6 +93,34 @@ router.use("/loadGrowthRateCSV", (req, res, next) => {
 
 router.post("/loadGrowthRateCSV", (req, res) => {
     new LoadGrowthRateCSV(req, res);
+});
+
+router.use("/loadCompareGrowthRate", (req, res, next) => {
+    res.setHeader("Access-Control-Allow-Origin", origin_url);
+    res.setHeader(
+        "Access-Control-Allow-Headers",
+        "X-Requested-With,content-type"
+    );
+    res.set("Content-Type", "application/json");
+    next();
+});
+
+router.post("/loadCompareGrowthRate", (req, res) => {
+    new LoadCompareGrowthRate(req, res);
+});
+
+router.use("/getCompareProject", (req, res, next) => {
+    res.setHeader("Access-Control-Allow-Origin", origin_url);
+    res.setHeader(
+        "Access-Control-Allow-Headers",
+        "X-Requested-With,content-type"
+    );
+    res.set("Content-Type", "application/json");
+    next();
+});
+
+router.post("/getCompareProject", (req, res) => {
+    new GetCompareProject(req, res);
 });
 
 module.exports = router;
