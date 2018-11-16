@@ -34,7 +34,9 @@ mongoose.promise = global.promise;
 //Mongoose connect
 mongoose.Promise = global.Promise;
 let connection = mongoose
-  .connect(keys.mongoURI, {useNewUrlParser: true})
+  .connect(keys.mongoURI, {
+    useNewUrlParser: true
+  })
   .then(console.log("MongoDb Connected"))
   .catch(err => {
     if (err) {
@@ -66,6 +68,7 @@ const greenHouseRoutes = require("./routes/greenHouseRoutes");
 const temperatureControl = require("./routes/temperatureControl");
 const planterAnalyze = require("./routes/planterAnalyze");
 const login = require("./routes/login");
+const logout = require("./routes/logout");
 const waterControl = require("./routes/waterControl");
 const fertilizerControl = require("./routes/fertilizerControl");
 const controllerManagement = require("./routes/controllerManagement");
@@ -122,13 +125,14 @@ app.use("/lightControl", lightControl);
 app.use("/dynamicControllerHandle", dynamicControllerHandle);
 app.use("/user", user);
 app.use("/utils", utils);
-app.use("/project",projectRoutes);
-app.use("/farm",farm);
+app.use("/project", projectRoutes);
+app.use("/farm", farm);
+app.use("/logout", logout);
 
 let SummaryAutoFertilizeringHistory = require("./classes/Utils/SummaryAutoFertilizeringHistory");
 let SummaryAutoWateringHistory = require("./classes/Utils/SummaryAutoWateringHistory");
 
-let cronSchedule = cron.scheduleJob("0 22 * * *", function() {
+let cronSchedule = cron.scheduleJob("0 22 * * *", function () {
   new SummaryAutoWateringHistory.default();
   new SummaryAutoFertilizeringHistory.default();
 });

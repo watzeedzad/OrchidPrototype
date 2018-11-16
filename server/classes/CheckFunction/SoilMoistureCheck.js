@@ -80,15 +80,24 @@ export default class SoilMoistureCheck {
             if (resultCompareSoilMoisture) {
                 new InsertRelayCommand(controllerDataResult.ip, "water", true, piMacAddress);
                 console.log("[SoilMoistureCheck] farmDataResult.piMacAddress: " + piMacAddress);
-                await updateAutoWateringStatus(farmId, greenHouseId, true);
-                // onOffWaterPump(controllerDataResult.ip, true);
+                await updateAutoWateringStatus(farmId, greenHouseId, true, function (updateAutoWateringResultStatus) {
+                    if (updateAutoWateringResultStatus) {
+                        req.session.soilMoistureCheckStatus = 200;
+                    } else {
+                        req.session.soilMoistureCheckStatus = 500;
+                    }
+                });
             } else {
                 new InsertRelayCommand(controllerDataResult.ip, "water", false, piMacAddress);
                 console.log("[SoilMoistureCheck] farmDataResult.piMacAddress: " + piMacAddress);
-                await updateAutoWateringStatus(farmId, greenHouseId, false);
-                // onOffWaterPump(controllerDataResult.ip, false);
+                await updateAutoWateringStatus(farmId, greenHouseId, false, function (updateAutoWateringResultStatus) {
+                    if (updateAutoWateringResultStatus) {
+                        req.session.soilMoistureCheckStatus = 200;
+                    } else {
+                        req.session.soilMoistureCheckStatus = 500;
+                    }
+                });
             }
-            req.session.soilMoistureCheckStatus = 200
             return;
         }
     }
@@ -133,7 +142,9 @@ async function getConfigFile(farmIdIn) {
     configFile = config;
 }
 
-async function updateAutoWateringStatus(farmId, greenHouseId, status) {
+async function updateAutoWateringStatus(farmId, greenHouseId, status, callback) {
+    let updateAutoWateringResultStatus;
+
     await greenHouse.findOneAndUpdate({
         farmId: farmId,
         greenHouseId: greenHouseId
@@ -141,6 +152,13 @@ async function updateAutoWateringStatus(farmId, greenHouseId, status) {
         $set: {
             isAutoWatering: status
         }
+    }, function (err) {
+        if (err) {
+            updateAutoWateringResultStatus = false;
+        } else {
+            updateAutoWateringResultStatus = true;
+        }
+        callback(updateAutoWateringResultStatus);
     });
 }
 

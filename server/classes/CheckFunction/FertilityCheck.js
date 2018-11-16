@@ -101,8 +101,13 @@ export default class FertilityCheck {
         console.log(
           "[FertilityCheck] piMacAddress: " + piMacAddress
         );
-        await updateAutoFertilizeringStatus(farmId, projectId, true);
-        // onOffFertilizerPump(controllerDataResult.ip, true);
+        await updateAutoFertilizeringStatus(farmId, projectId, true, function (updateAutoFertilizeringResultStatus) {
+          if (updateAutoFertilizeringResultStatus) {
+            req.session.fertilityCheckStatus = 200;
+          } else {
+            req.session.fertilityCheckStatus = 500;
+          }
+        });
       } else {
         new InsertRelayCommand(
           controllerDataResult.ip,
@@ -113,10 +118,14 @@ export default class FertilityCheck {
         console.log(
           "[FertilityCheck] piMacAddress: " + piMacAddress
         );
-        await updateAutoFertilizeringStatus(farmId, projectId, false);
-        // onOffFertilizerPump(controllerDataResult.ip, false);
+        await updateAutoFertilizeringStatus(farmId, projectId, false, function (updateAutoFertilizeringResultStatus) {
+          if (updateAutoFertilizeringResultStatus) {
+            req.session.fertilityCheckStatus = 200;
+          } else {
+            req.session.fertilityCheckStatus = 500;
+          }
+        });
       }
-      req.session.fertilityCheckStatus = 200;
       return;
     }
   }
@@ -167,7 +176,9 @@ async function getConfigFile(farmIdIn) {
   configFile = config;
 }
 
-async function updateAutoFertilizeringStatus(farmId, projectId, status) {
+async function updateAutoFertilizeringStatus(farmId, projectId, status, callback) {
+  let updateAutoFertilizeringResultStatus;
+
   await project.findOneAndUpdate({
     farmId: farmId,
     projectId: projectId
@@ -175,6 +186,13 @@ async function updateAutoFertilizeringStatus(farmId, projectId, status) {
     $set: {
       isAutoFertilizering: status
     }
+  }, function (err) {
+    if (err) {
+      updateAutoFertilizeringResultStatus = false;
+    } else {
+      updateAutoFertilizeringResultStatus = true;
+    }
+    callback(updateAutoFertilizeringResultStatus);
   });
 }
 
