@@ -73,8 +73,14 @@ export default class FertilityCheck {
     }
     console.log("[FertilityCheck] checkTimeResult: " + checkTimeResult);
     if (!checkTimeResult) {
-      req.session.fertilityCheckStatus = 200;
       new InsertRelayCommand(controllerDataResult.ip, "fertilizer", false, piMacAddress);
+      await updateAutoFertilizeringStatus(farmId, projectId, false, function (updateAutoFertilizeringResultStatus) {
+        if (updateAutoFertilizeringResultStatus) {
+          req.session.fertilityCheckStatus = 200;
+        } else {
+          req.session.fertilityCheckStatus = 500;
+        }
+      });
       return;
     }
     let resultCompareFertility = await compareFertility(
@@ -87,7 +93,6 @@ export default class FertilityCheck {
     );
     if (typeof resultCompareFertility === "undefined") {
       req.session.fertilityCheckStatus = 500;
-
       return;
     } else {
       console.log("[FertilityCheck] enter insert relay command phase");
@@ -186,8 +191,12 @@ async function updateAutoFertilizeringStatus(farmId, projectId, status, callback
     $set: {
       isAutoFertilizering: status
     }
-  }, function (err) {
+  }, function (err, doc) {
     if (err) {
+      console.log("[FertilityCheck] updateAutoFertilizeringStatus (err): " + err);
+      updateAutoFertilizeringResultStatus = false;
+    } else if (!doc) {
+      console.log("[FertilityCheck] updateAutoFertilizeringStatus (!doc): " + err);
       updateAutoFertilizeringResultStatus = false;
     } else {
       updateAutoFertilizeringResultStatus = true;

@@ -62,8 +62,14 @@ export default class SoilMoistureCheck {
         }
         console.log("[SoilMoistureCheck] checkTimeResult: " + checkTimeResult);
         if (!checkTimeResult) {
-            req.session.soilMoistureCheckStatus = 200;
             new InsertRelayCommand(controllerDataResult.ip, "water", false, piMacAddress);
+            await updateAutoWateringStatus(farmId, greenHouseId, false, function (updateAutoWateringResultStatus) {
+                if (updateAutoWateringResultStatus) {
+                    req.session.soilMoistureCheckStatus = 200;
+                } else {
+                    req.session.soilMoistureCheckStatus = 500;
+                }
+            });
             return;
         }
         let resultCompareSoilMoisture = await compareSoilMositure(
@@ -152,8 +158,12 @@ async function updateAutoWateringStatus(farmId, greenHouseId, status, callback) 
         $set: {
             isAutoWatering: status
         }
-    }, function (err) {
+    }, function (err, doc) {
         if (err) {
+            console.log("[SoilMoistureCheck] updateAutoWateringStatus (err): " + err);
+            updateAutoWateringResultStatus = false;
+        } else if (!doc) {
+            console.log("[SoilMoistureCheck] updateAutoWateringStatus (!doc): " + doc);
             updateAutoWateringResultStatus = false;
         } else {
             updateAutoWateringResultStatus = true;
