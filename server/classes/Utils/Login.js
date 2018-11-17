@@ -36,7 +36,15 @@ async function operation(req, res) {
     req.session.farmId = farmDataResult.farmId;
     // console.log("[Login] req.session.farmData: " + req.session.farmData);
     // console.log("[Login] req.session.configFilePath: " + req.session.configFilePath);
-    res.json({farm:farmDataResult,user:userDataResult});
+    res.json({
+        farm: farmDataResult,
+        user: {
+            userId: userDataResult,userId,
+            firstname: userDataResult.firstname,
+            lastname: userDataResult.lastname,
+            role: userDataResult.role
+        }
+    });
     console.log("[Login] session id: " + req.session.id);
 }
 
