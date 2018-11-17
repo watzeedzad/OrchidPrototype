@@ -58,13 +58,16 @@ export default class FertilityCheck {
       if (tempDate.getHours() == currentDate.getHours() && tempDate.getMinutes() == currentDate.getMinutes()) {
         console.log("[FertilityCheck] checkTime enter CASE 1");
         checkTimeResult = true;
+        break;
       } else if (tempDate.getHours() == currentDate.getHours() && tempDate.getMinutes() < currentDate.getMinutes()) {
         console.log("[FertilityCheck] checkTime enter CASE 2");
         checkTimeResult = true;
+        break;
       } else {
         console.log("[FertilityCheck] checkTime enter CASE 3");
         if ((currentDate.getHours() == tempDate.getHours()) || (currentDate.getHours() - tempDate.getHours() <= 2 && currentDate.getHours() - tempDate.getHours() >= 0)) {
           checkTimeResult = true;
+          break;
         } else {
           checkTimeResult = false;
         }
