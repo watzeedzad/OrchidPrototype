@@ -26,6 +26,18 @@ async function operation(req, res) {
     if (userDataResult == null) {
         res.sendStatus(401);
         return;
+    } else {
+        if (userDataResult.role == "ผู้ดูแลระบบ") {
+            res.json({
+                user: {
+                    userId: userDataResult.userId,
+                    firstname: userDataResult.firstname,
+                    lastname: userDataResult.lastname,
+                    role: userDataResult.role
+                }
+            });
+            return;
+        }
     }
     // console.log("[Login] farmId: " + userDataResult.farmId);
     farmDataResult = await getFarmData(userDataResult.farmId);

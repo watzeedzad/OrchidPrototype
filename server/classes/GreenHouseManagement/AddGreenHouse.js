@@ -19,8 +19,8 @@ export default class AddGreenHouse {
         }
 
         let farmId = req.session.farmId;
-        let name = req.body.greenHouseDesc;
-        let desc = req.body.greenHouseName;
+        let name = req.body.greenHouseName;
+        let desc = req.body.greenHouseDesc;
         let picturePath;
 
         if (typeof req.file === "undefined") {

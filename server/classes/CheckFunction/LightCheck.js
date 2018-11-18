@@ -73,80 +73,81 @@ async function operation(req, res) {
   }
   console.log("[LightCheck] resultCompareLightIntensity: " + resultCompareLightIntensity);
 
-  lightDurationResult = await getLastestLightDurationData(farmId, greenHouseId);
-  console.log("[LightCheck] lightDurationResult: " + lightDurationResult);
-
-  if (lightDurationResult == null) {
-    await createNewLightDuration(farmId, greenHouseId, nowLightCheckDate, function (createLightDurationResult) {
-      if (createLightDurationResult) {
-        req.session.lightCheckStatus = 200;
-      } else {
-        req.session.lightCheckStatus = 500;
-      }
-      return;
-    });
-  } else {
-    currentDuration = lightDurationResult.duration;
-    previousDate = new Date(lightDurationResult.timeStamp);
-    if (nowLightCheckDate.getHours() >= 7 && nowLightCheckDate.getHours() <= 17) {
-      if (currentDuration >= configFile.lightVolumeConfigs[greenHouseIndexLightIntensity].maxLightVolume) {
-        new InsertRelayCommand(controllerDataResult.ip, "light", false, piMacAddress);
-        console.log("[LightCheck] enough light in day time");
-        req.session.lightCheckStatus = 200;
-        return;
-      } else {
-        if (!resultCompareLightIntensity) {
-          new InsertRelayCommand(controllerDataResult.ip, "light", true, piMacAddress);
-          console.log("[LightCheck] in day light time, light intensity and volume not met criteria");
+  await getLastestLightDurationData(farmId, greenHouseId, function (result) {
+    lightDurationResult = result;
+    if (lightDurationResult == null) {
+      createNewLightDuration(farmId, greenHouseId, nowLightCheckDate, function (createLightDurationResult) {
+        if (createLightDurationResult) {
+          req.session.lightCheckStatus = 200;
         } else {
-          new InsertRelayCommand(controllerDataResult.ip, "light", false, piMacAddress);
-          console.log("[LightCheck] in day light time, light volume not met criteria but light intensity met criteria");
+          req.session.lightCheckStatus = 500;
         }
-        if (resultCompareLightIntensity) {
-          currentDuration += nowLightCheckDate.getTime() - previousDate.getTime();
-          console.log("[LightCheck] currentDuration (update): " + currentDuration);
-          await updateLightDurationData(lightDurationResult._id, currentDuration, nowLightCheckDate, true, function (updateLightDuration) {
-            updateLightDurationResult = updateLightDuration;
-          });
-        } else {
-          console.log("[LightCheck] currentDuration (not update): " + currentDuration);
-          await updateLightDurationData(lightDurationResult._id, null, nowLightCheckDate, false, function (updateLightDuration) {
-            updateLightDurationResult = updateLightDuration;
-          });
-        }
-        req.session.lightCheckStatus = 200;
         return;
-      }
+      });
     } else {
-      console.log("[LightCheck] in night time not check duration");
+      if (nowLightCheckDate.getHours() >= 7 && nowLightCheckDate.getHours() <= 17) {
+        if (currentDuration >= configFile.lightVolumeConfigs[greenHouseIndexLightIntensity].maxLightVolume) {
+          new InsertRelayCommand(controllerDataResult.ip, "light", false, piMacAddress);
+          console.log("[LightCheck] enough light in day time");
+          req.session.lightCheckStatus = 200;
+          return;
+        }
+      }
+    }
+  });
+  currentDuration = lightDurationResult.duration;
+  previousDate = new Date(lightDurationResult.timeStamp);
+  if (nowLightCheckDate.getHours() >= 7 && nowLightCheckDate.getHours() <= 17) {
+    if (!resultCompareLightIntensity) {
+      new InsertRelayCommand(controllerDataResult.ip, "light", true, piMacAddress);
+      console.log("[LightCheck] in day light time, light intensity and volume not met criteria");
+    } else {
+      new InsertRelayCommand(controllerDataResult.ip, "light", false, piMacAddress);
+      console.log("[LightCheck] in day light time, light volume not met criteria but light intensity met criteria");
+    }
+    if (resultCompareLightIntensity) {
+      currentDuration += nowLightCheckDate.getTime() - previousDate.getTime();
+      console.log("[LightCheck] currentDuration (update): " + currentDuration);
+      await updateLightDurationData(lightDurationResult._id, currentDuration, nowLightCheckDate, true, function (updateLightDuration) {
+        updateLightDurationResult = updateLightDuration;
+      });
+    } else {
+      console.log("[LightCheck] currentDuration (not update): " + currentDuration);
       await updateLightDurationData(lightDurationResult._id, null, nowLightCheckDate, false, function (updateLightDuration) {
         updateLightDurationResult = updateLightDuration;
       });
-      new InsertRelayCommand(controllerDataResult.ip, "light", false, piMacAddress);
+    }
+    req.session.lightCheckStatus = 200;
+    return;
+  } else {
+    console.log("[LightCheck] in night time not check duration");
+    await updateLightDurationData(lightDurationResult._id, null, nowLightCheckDate, false, function (updateLightDuration) {
+      updateLightDurationResult = updateLightDuration;
+    });
+    new InsertRelayCommand(controllerDataResult.ip, "light", false, piMacAddress);
 
-      if (currentDuration != 0) {
-        nowLightCheckDate.setHours(0);
-        nowLightCheckDate.setMinutes(0);
-        nowLightCheckDate.setSeconds(0);
-        nowLightCheckDate.setMilliseconds(0);
-        previousDate.setHours(0);
-        previousDate.setMinutes(0);
-        previousDate.setSeconds(0);
-        previousDate.setMilliseconds(0);
-        let momentNowLightCheckDate = moment(nowLightCheckDate);
-        let momentPreviousDate = moment(previousDate);
-        console.log("[LightCheck] moment isBefore check: " + moment(momentPreviousDate).isBefore(momentNowLightCheckDate), momentNowLightCheckDate, momentPreviousDate);
-        if (moment(momentPreviousDate).isBefore(momentNowLightCheckDate)) {
-          console.log("[LightCheck] enter duration reset");
-          await resetDurationTime(lightDurationResult._id, function (resetLightDurationResult) {
-            if (resetLightDurationResult) {
-              req.session.lightCheckStatus = 200;
-            } else {
-              req.session.lightCheckStatus = 500;
-            }
-            return;
-          });
-        }
+    if (currentDuration != 0) {
+      nowLightCheckDate.setHours(0);
+      nowLightCheckDate.setMinutes(0);
+      nowLightCheckDate.setSeconds(0);
+      nowLightCheckDate.setMilliseconds(0);
+      previousDate.setHours(0);
+      previousDate.setMinutes(0);
+      previousDate.setSeconds(0);
+      previousDate.setMilliseconds(0);
+      let momentNowLightCheckDate = moment(nowLightCheckDate);
+      let momentPreviousDate = moment(previousDate);
+      console.log("[LightCheck] moment isBefore check: " + moment(momentPreviousDate).isBefore(momentNowLightCheckDate), momentNowLightCheckDate, momentPreviousDate);
+      if (moment(momentPreviousDate).isBefore(momentNowLightCheckDate)) {
+        console.log("[LightCheck] enter duration reset");
+        await resetDurationTime(lightDurationResult._id, function (resetLightDurationResult) {
+          if (resetLightDurationResult) {
+            req.session.lightCheckStatus = 200;
+          } else {
+            req.session.lightCheckStatus = 500;
+          }
+          return;
+        });
       }
     }
   }
@@ -240,22 +241,22 @@ function seekGreenHouseIdIndex(dataArray, greenHouseId) {
   return index;
 }
 
-async function getLastestLightDurationData(farmId, greenHouseId) {
-  let result = await lightDuration.findOne({
+async function getLastestLightDurationData(farmId, greenHouseId, callback) {
+  await lightDuration.findOne({
       farmId: farmId,
       greenHouseId: greenHouseId
     },
     function (err, result) {
       if (err) {
-        return null;
+        result = null;
+        console.log("[LightCheck] getLastestLightDurationData (err): " + err);
       } else if (!result) {
-        return null;
-      } else {
-        return result;
+        result = null;
+        console.log("[LightCheck] getLastestLightDurationData (!result): " + result);
       }
+      callback(result);
     }
   );
-  return result;
 }
 
 async function updateLightDurationData(id, updateDuration, nowLightCheckDate, isUpdateDuration, callback) {
