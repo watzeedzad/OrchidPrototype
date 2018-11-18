@@ -12,13 +12,11 @@ export default class AddUser {
 
     async operation(req, res) {
         console.log("[AddUser] session id: " + req.session.id);
-        if (typeof req.session.farmData === "undefined" || typeof req.session.configFilePath === "undefined") {
-            res.sendStatus(401);
-            return;
-        }
 
-        // let userId = req.body.userId;
         let farmId = req.session.farmId;
+        if (typeof farmId === "undefined"){
+            farmId = req.body.farmId
+        }
         let role = req.body.role;
         let firstname = req.body.firstname;
         let lastname = req.body.lastname;
