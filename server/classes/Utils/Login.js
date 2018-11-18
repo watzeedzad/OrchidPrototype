@@ -39,7 +39,7 @@ async function operation(req, res) {
     res.json({
         farm: farmDataResult,
         user: {
-            userId: userDataResult,userId,
+            userId: userDataResult.userId,
             firstname: userDataResult.firstname,
             lastname: userDataResult.lastname,
             role: userDataResult.role
