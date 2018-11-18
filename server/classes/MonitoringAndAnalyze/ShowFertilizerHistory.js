@@ -23,8 +23,12 @@ export default class ShowFertilizerHistory {
             return;
         }
         fertilizerHistoryResultData = await getFertilizerHistoryData(req.session.farmId, projectId);
-        if(fertilizerHistoryResultData === null){
+        if (fertilizerHistoryResultData === null) {
             fertilizerHistoryResultData = []
+        }
+        for (let index = 0; index < fertilizerHistoryResultData.history.length; index++) {
+            let temp = fertilizerHistoryResultData.history[index].startTime;
+            fertilizerHistoryResultData.history[index].startTime = temp.setTime(temp.getTime() + 25200000);
         }
         res.json(fertilizerHistoryResultData);
     }
