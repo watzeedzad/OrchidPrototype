@@ -33,7 +33,7 @@ router.use('/deleteFarm',(req,res,next)=>{
     next();
 });
 
-router.delete('/deleteFarm' ,(req,res)=>{
+router.post('/deleteFarm' ,(req,res)=>{
     new DeleteFarm(req,res);
 });
 
@@ -47,7 +47,7 @@ router.use('/editFarm', (req,res,next)=>{
     next();
 });
 
-router.put('/editFarm', (req,res)=>{
+router.post('/editFarm', (req,res)=>{
     new EditFarm(req,res);
 });
 

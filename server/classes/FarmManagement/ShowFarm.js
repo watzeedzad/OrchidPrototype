@@ -1,6 +1,5 @@
 const mongoose = require('mongoose');
 const farm = mongoose.model('farm');
-const user = mongoose.model('user');
 
 let showFarmDataResult = undefined;
 
@@ -20,16 +19,7 @@ async function operation(req, res) {
         return;
     }
 
-    let farmId = req.body.farmId;
-    if (typeof farmId === "undefined") {
-        res.json({
-            status: 500,
-            errorMessage: "เกิดข้อผิดพลาดในการเเสดงข้อมูลFarmทั้งหมด"
-        });
-        return;
-    }
-
-    showFarmDataResult = await getFarmData(farmId);
+    showFarmDataResult = await getFarmData();
 
     if (showFarmDataResult == null) {
         res.json({
@@ -42,21 +32,15 @@ async function operation(req, res) {
 }
 
 
-async function getFarmData(farmId) {
-    let result = await farm.aggregate([{
-        $lookup: {
-            from: user,
-            localField: farmId,
-            foreignField: farmId,
-            as: 'ownedFarm'
-        }
-    }], (err, result) => {
+async function getFarmData() {
+    let result = await farm.find({
+    }, (err, result) => {
         if (err) {
             showFarmDataResult = null;
-            console.log('[ShowFarm] getFarmData(err): ' + err);
+            console.log('[FarmDataResult] getFarmData(err): ' + err);
         } else if (!result) {
             showFarmDataResult = null;
-            console.log('[ShowFarm] getFarmData(!result): ' + result);
+            console.log('[FarmDataResult] getFarmData(!result): ' + result);
         } else {
             showFarmDataResult = result;
         }

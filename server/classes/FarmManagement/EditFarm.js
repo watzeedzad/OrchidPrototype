@@ -17,14 +17,6 @@ export default class EditFarm {
         let ownerAddress = req.body.ownerAddress
         let piMacAddress = req.body.piMacAddress
 
-        if (typeof id === "undefined" || typeof farmName === "undefined" || typeof ownerName === "undefined" || typeof ownerSurname === "undefined" || typeof ownerTel === "undefined" || typeof ownerAddress === "undefined" || typeof piMacAddress === "undefined") {
-            res.json({
-                status: 500,
-                errorMessage: "เกิดข้อผิดพลาดในการแก้ไขข้อมูลฟาร์ม"
-            });
-            return;
-        }
-
         let splitChar = piMacAddress[2];
         piMacAddress = (piMacAddress.split(splitChar)).toString();
         piMacAddress = piMacAddress.toLowerCase();
