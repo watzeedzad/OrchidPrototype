@@ -9,7 +9,7 @@ export default class EditFarm {
     }
 
     async operation(req, res) {
-        let id = req.body.id
+        let id = req.body._id
         let farmName = req.body.farmName
         let ownerName = req.body.ownerName
         let ownerSurname = req.body.ownerSurname
@@ -23,11 +23,15 @@ export default class EditFarm {
 
         await editFarmData(id, farmName, ownerName, ownerSurname, ownerTel, ownerAddress, piMacAddress, function (editFarmResult, doc) {
             if (editFarmResult) {
-                updateKnowControllerPiMacAddress(doc.farmId, piMacAddress, function (updateKnowControllerPiMacAddressResult) {
-                    if (updateKnowControllerPiMacAddressResult) {
+                updateKnowControllerPiMacAddress(doc.farmId, piMacAddress, function (updateKnowControllerPiMacAddressResult, doc) {
+                    if (doc == null) {
                         res.sendStatus(200);
                     } else {
-                        res.sendStatus(500)
+                        if (updateKnowControllerPiMacAddressResult) {
+                            res.sendStatus(200);
+                        } else {
+                            res.sendStatus(500)
+                        }
                     }
                 });
             } else {
@@ -58,6 +62,7 @@ async function editFarmData(id, farmName, ownerName, ownerSurname, ownerTel, own
             console.log('[EditFarm] editFarmData(err) : ' + err);
         } else if (!doc) {
             editFarmResult = false;
+            doc = null;
             console.log('[EditFarm] editFarmData(!doc) : ' + doc)
         } else {
             editFarmResult = true;
@@ -76,12 +81,12 @@ async function updateKnowControllerPiMacAddress(farmId, newPiMacAddress, callbac
         }
     }, {
         multi: true
-    }, function (err) {
+    }, function (err, doc) {
         if (err) {
             updateKnowControllerPiMacAddressResult = false;
         } else {
             updateKnowControllerPiMacAddressResult = true;
         }
+        callback(updateKnowControllerPiMacAddressResult, doc);
     });
-    callback(updateKnowControllerPiMacAddressResult);
 }
