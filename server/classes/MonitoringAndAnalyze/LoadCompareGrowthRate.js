@@ -17,24 +17,35 @@ export default class LoadCompareGrowthRate {
             return;
         }
 
-        let projectId = req.body.projectId ? req.body.projectId : {
-            $ne: null
-        };
-        
-        let growthData = await getGrowthRateData(projectId);
-        if (typeof growthRateData === 'undefined') {
+        // let projectId = req.body.projectId ? req.body.projectId : {
+        //     $ne: null
+        // };
+
+        let projectId = req.body.projectId;
+
+        if (typeof projectId === "undefined") {
             res.json({
                 status: 500,
-                errorMessage: "เกิดข้อผิดพลาดในการดึงข้อมูลกรุณาลองใหม่อีกครั้ง"
+                errorMessage: "test"
             });
+            return;
         }
-        res.json(growthData);
+
+        await getGrowthRateData(projectId, function(result) {
+            if (result.length == 0) {
+                console.log(result);
+                res.json([]);
+                return;
+            } else {
+                res.json(result);
+            }
+        });
     }
 }
 
 
-async function getGrowthRateData(projectId) {
-    let result = await growth_rate.find({
+async function getGrowthRateData(projectId, callback) {
+    await growth_rate.find({
         projectId: projectId
     }, null, {
         sort: {
@@ -42,15 +53,10 @@ async function getGrowthRateData(projectId) {
         }
     }, (err, result) => {
         if (err) {
-            growthRateData = null;
             console.log('[LoadCompareGrowthRate] getGrowthRateData (err): ' + err);
         } else if (!result) {
-            growthRateData = null;
             console.log('[LoadCompareGrowthRate] getGrowthRateData (!result):' + result);
-        } else {
-            growthRateData = result;
         }
-    })
-    return result;
-
+        callback(result);
+    });
 }
