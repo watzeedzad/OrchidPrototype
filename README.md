@@ -24,7 +24,7 @@ git clone https://github.com/watzeedzad/OrchidPrototype.git
  npm install
  ```
 ## วิธีการรัน
- - ไปที่ root ของ OrchidPrototype-Client ที่เป็น Frontend ซึ่ง Folder OrchidPrototype และ OrchidPrototype-Client ต้องอยู่ใน Directory เดียวกัน และใช้คำสี่ง
+ - ไปที่ root folder ของ OrchidPrototype-Client ที่เป็น Frontend ซึ่ง folder OrchidPrototype และ OrchidPrototype-Client ต้องอยู่ใน Directory เดียวกัน และใช้คำสี่ง
  ```
  npm start
  ```
