@@ -1,15 +1,29 @@
 const mongoose = require("mongoose");
+const autoIncrement = require("mongoose-sequence")(mongoose);
 
-const {Schema} = mongoose;
+const {
+    Schema
+} = mongoose;
 
 const know_controllerSchema = new Schema({
-    knowControllerId: Number,
     ip: String,
     mac_address: String,
     name: String,
     projectId: Number,
     greenHouseId: Number,
     farmId: Number,
+    isHaveRelay: Boolean,
+    controllerType:String,
+    relayType: {
+        moisture: Boolean,
+        water: Boolean,
+        fertilizer: Boolean,
+        light: Boolean
+    },
+    piMacAddress: String
 });
 
-mongoose.model("know_controller",know_controllerSchema);
+know_controllerSchema.plugin(autoIncrement, {
+    inc_field: "knowControllerId"
+});
+mongoose.model("know_controller", know_controllerSchema, "know_controller");

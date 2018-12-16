@@ -1,95 +1,16 @@
+import ShowSoilMoisture from "../classes/PlanterAnalyze/ShowSoilMoisture";
+import ConfigSoilMoisture from "../classes/PlanterAnalyze/ConfigSoilMoisture";
+import ShowFertility from "../classes/PlanterAnalyze/ShowFertility";
+import ConfigFertility from "../classes/PlanterAnalyze/ConfigFertility";
+import ShowAllFertility from "../classes/PlanterAnalyze/ShowAllFertility";
+import ShowFertilityHistory from "../classes/PlanterAnalyze/ShowFertilityHistory";
+import ShowSoilMoistureHistory from "../classes/PlanterAnalyze/ShowSoilMoistureHistory";
+
 const express = require("express");
 const router = express.Router();
-const mongoose = require("mongoose");
-const fs = require("fs");
-const request = require("request");
-const farm = mongoose.model("farm");
-const project_sensor = mongoose.model("project_Sensor");
-const greenHouseSensor = mongoose.model("greenHouse_Sensor");
-
-let farmData;
-let configFile;
-let projectSensorData;
-let greenHouseSensorData;
-
-async function getConfigFile() {
-  if (farmIdGlobal == 0) {
-    return;
-  }
-  var farmResult = await farm.find({
-    farmId: farmIdGlobal
-  });
-  if (farmResult) {
-    farmData = farmResult;
-  } else {
-    console.log("fail");
-  }
-  let configFilePath = farmData[0].configFilePath;
-  let config = JSON.parse(
-    require("fs").readFileSync(String(configFilePath), "utf8")
-  );
-  configFile = config;
-}
-
-async function writeConfigFile(configFile) {
-  var farmData = await farm.find({
-    farmId: farmIdGlobal
-  });
-  if (farmData) {
-    farmData = JSON.stringify(farmData);
-  } else {
-    console.log("fail");
-  }
-  let temp = JSON.parse(farmData);
-  let configFilePath = temp[0].configFilePath;
-  let content = JSON.stringify(configFile);
-  fs.writeFileSync(String(configFilePath), content, "utf8", function (err) {
-    if (err) {
-      console.log(err);
-    } else {
-      console.log("write with no error");
-    }
-  });
-}
-
-async function getProjectSensor(projectId) {
-  let result = await project_sensor.findOne({
-      projectId: projectId
-    }, {}, {
-      sort: {
-        _id: -1
-      }
-    },
-    function (err, result) {
-      if (err) {
-        console.log("ProjectSensor Query Failed!");
-        projectSensorData = undefined;
-      } else {
-        projectSensorData = result;
-      }
-    }
-  );
-}
-
-async function getGreenhouseSensor(greenHouseId) {
-  let result = await greenHouseSensor.findOne({
-    greenHouseId: greenHouseId
-  }, {}, {
-    sort: {
-      _id: -1
-    }
-  });
-  if (result) {
-    greenHouseSensorData = result;
-  } else {
-    greenHouseSensorData = undefined;
-    console.log("Query fail!");
-  }
-  console.log(greenHouseSensorData);
-}
 
 router.use("/configFertility", (req, res, next) => {
-  res.setHeader("Access-Control-Allow-Origin", "http://localhost:3000");
+  res.setHeader("Access-Control-Allow-Origin", origin_url);
   res.setHeader(
     "Access-Control-Allow-Headers",
     "X-Requested-With,content-type"
@@ -99,34 +20,11 @@ router.use("/configFertility", (req, res, next) => {
 });
 
 router.post("/configFertility", (req, res) => {
-  async function setConfig() {
-    await getConfigFile();
-    if (typeof configFile === "undefined") {
-      res.sendStatus(500);
-    }
-    let minConfigFertility = parseFloat(req.body.minFertility);
-    let maxConfigFertility = parseFloat(req.body.maxFertility);
-    async function writeFile() {
-      await writeConfigFile(configFile);
-      res.sendStatus(200);
-    }
-    if (
-      typeof minConfigFertility === "undefined" ||
-      typeof maxConfigFertility === "undefined"
-    ) {
-      res.sendStatus(500);
-    } else if (minConfigFertility > maxConfigFertility) {
-      res.sendStatus(500);
-    } else {
-      configFile.minFertility = minConfigFertility;
-      configFile.maxFertility = maxConfigFertility;
-      writeFile();
-    }
-  }
+  new ConfigFertility(req, res);
 });
 
 router.use("/configSoilMoisture", (req, res, next) => {
-  res.setHeader("Access-Control-Allow-Origin", "http://localhost:3000");
+  res.setHeader("Access-Control-Allow-Origin", origin_url);
   res.setHeader(
     "Access-Control-Allow-Headers",
     "X-Requested-With,content-type"
@@ -136,34 +34,11 @@ router.use("/configSoilMoisture", (req, res, next) => {
 });
 
 router.post("/configSoilMoisture", (req, res) => {
-  async function setConfig() {
-    await getConfigFile();
-    if (typeof configFile === "undefined") {
-      res.sendStatus(500);
-    }
-    let minConfigSoilMois = parseInt(req.body.minSoilMoisture);;
-    let maxConfigSoilMois = parseInt(req.body.maxSoilMoisture);;
-    async function writeFile() {
-      await writeConfigFile(configFile);
-      res.sendStatus(200);
-    }
-    if (
-      typeof minConfigSoilMois === "undefined" ||
-      typeof maxConfigSoilMois === "undefined"
-    ) {
-      res.sendStatus(500);
-    } else if (minConfigSoilMois > maxConfigSoilMois) {
-      res.sendStatus(500);
-    } else {
-      configFile.minSoilMoisture = minConfigSoilMois;
-      configFile.maxSoilMoisture = maxConfigSoilMois;
-      writeFile();
-    }
-  }
+  new ConfigSoilMoisture(req, res);
 });
 
 router.use("/showFertility", (req, res, next) => {
-  res.setHeader("Access-Control-Allow-Origin", "http://localhost:3000");
+  res.setHeader("Access-Control-Allow-Origin", origin_url);
   res.setHeader(
     "Access-Control-Allow-Headers",
     "X-Requested-With,content-type"
@@ -173,37 +48,25 @@ router.use("/showFertility", (req, res, next) => {
 });
 
 router.post("/showFertility", (req, res) => {
-  async function getData() {
-    let projectId = parseInt(req.body.projectId);
-    console.log("projectId: " + projectId);
-    await getProjectSensor(projectId);
-    await getConfigFile();
-    if (typeof projectSensorData === "undefined") {
-      res.sendStatus(500);
-    } else if (typeof configFile === "undefined") {
-      res.sendStatus(500);
-    } else if (
-      configFile.minFertility == null ||
-      configFile.maxFertility == null
-    ) {
-      res.sendStatus(500);
-    } else {
-      let minConfigFertility = configFile.minFertility;
-      let maxConfigFertility = configFile.maxFertility;
-      let cuurentFertility = projectSensorData.soilFertilizer;
-      var showFertility = {
-        minConfigFertility: minConfigFertility,
-        maxConfigFertility: maxConfigFertility,
-        cuurentFertility: cuurentFertility
-      };
-      res.json(showFertility);
-    }
-  }
-  getData();
+  new ShowFertility(req, res);
 });
 
+router.use("/showAllFertility", (req, res, next) => {
+  res.setHeader("Access-Control-Allow-Origin", origin_url);
+  res.setHeader(
+    "Access-Control-Allow-Headers",
+    "X-Requested-With,content-type"
+  );
+  res.set("Content-Type", "application/json");
+  next();
+})
+
+router.post("/showAllFertility", (req, res) => {
+  new ShowAllFertility(req, res);
+})
+
 router.use("/showSoilMoisture", (req, res, next) => {
-  res.setHeader("Access-Control-Allow-Origin", "http://localhost:3000");
+  res.setHeader("Access-Control-Allow-Origin", origin_url);
   res.setHeader(
     "Access-Control-Allow-Headers",
     "X-Requested-With,content-type"
@@ -212,34 +75,36 @@ router.use("/showSoilMoisture", (req, res, next) => {
   next();
 });
 
-router.post("/showSoilMoisture", (req, res, next) => {
-  async function setConfig() {
-    let greenHouseId = req.body.greenHouseId;
-    console.log("showSoilMoisture: " + greenHouseId);
-    await getGreenhouseSensor(greenHouseId);
-    await getConfigFile();
-    if (typeof greenHouseSensorData === "undefined") {
-      res.sendStatus(500);
-    } else if (typeof configFile === "undefined") {
-      res.sendStatus(500);
-    } else if (
-      configFile.minSoilMoisture == null ||
-      configFile.maxSoilMoisture == null
-    ) {
-      res.sendStatus(500);
-    } else {
-      let minConfigSoilMois = configFile.minSoilMoisture;
-      let maxConfigSoilMois = configFile.maxSoilMoisture;
-      let currentSoilMoisture = greenHouseSensorData.soilMoisture;
-      var showSoilMoisture = {
-        minConfigSoilMoisture: minConfigSoilMois,
-        maxConfigSoilMoisture: maxConfigSoilMois,
-        currentSoilMoisture: currentSoilMoisture
-      };
-      res.json(showSoilMoisture);
-    }
-  }
-  setConfig();
+router.post("/showSoilMoisture", (req, res) => {
+  new ShowSoilMoisture(req, res);
 });
+
+router.use("/showFertilityHistory", (req, res, next) => {
+  res.setHeader("Access-Control-Allow-Origin", origin_url);
+  res.setHeader(
+    "Access-Control-Allow-Headers",
+    "X-Requested-With,content-type"
+  );
+  res.set("Content-Type", "application/json");
+  next();
+});
+
+router.post("/showFertilityHistory", (req, res) => {
+  new ShowFertilityHistory(req, res);
+});
+
+router.use("/showSoilMoistureHistory", (req, res, next) => {
+  res.setHeader("Access-Control-Allow-Origin", origin_url);
+  res.setHeader(
+    "Access-Control-Allow-Headers",
+    "X-Requested-With,content-type"
+  );
+  res.set("Content-Type", "application/json");
+  next();
+})
+
+router.post("/showSoilMoistureHistory", (req, res) => {
+  new ShowSoilMoistureHistory(req, res);
+})
 
 module.exports = router;

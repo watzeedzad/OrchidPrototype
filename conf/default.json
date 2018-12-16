@@ -1,0 +1,15 @@
+{
+    "defaultMinTemperature": 20,
+    "defaultMaxTemperature": 35,
+    "defaultMinHumidity": 60,
+    "defaultMaxHumidity": 70,
+    "defaultMinFertility": 50,
+    "defaultMaxFertility": 60,
+    "defaultMinLightIntensity": 50,
+    "defaultMaxLightIntensity": 100,
+    "defaultMinSoilMoisture": 30,
+    "defaultMaxSoilMoisture": 55,
+    "defaultMaxLightVolume": 28800000,
+    "defaultWateringTimeRanges": [3600000, 18000000],
+    "defaultFertilizeringTimeRanges": [14400000]
+}

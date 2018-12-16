@@ -1,37 +1,89 @@
-const express = require("express");
+import AddGreenHouse from '../classes/GreenHouseManagement/AddGreenHouse';
+import DeleteGreenHouse from '../classes/GreenHouseManagement/DeleteGreenHouse';
+import EditGreenHouse from '../classes/GreenHouseManagement/EditGreenHouse';
+import ShowGreenHouse from '../classes/GreenHouseManagement/ShowGreenHouse';
+
+const express = require('express');
 const router = express.Router();
-const mongoose = require("mongoose");
-const GreenHouse = mongoose.model("greenHouse");
-
-router.post("/addGreenHouse",(req,res)=>{
-    const newGreenHouse = {
-        greemHouseId : req.body.greemHouseId,
-        farmId : req.body.farmId,
-        name : req.body.String,
-        desc : req.body.desc,
-        picturePath : req.body.picturePath
+const crypto = require("crypto");
+const multer = require("multer");
+const fs = require("fs-extra");
+const storage = multer.diskStorage({
+    destination: function (req, file, callback) {
+        let path = "../OrchidPrototype-Client/public/assets/images/greenhouse"
+        fs.mkdirpSync(path);
+        callback(null, path);
+    },
+    filename: function (req, file, callback) {
+        let hash = crypto.createHash("sha256");
+        hash.update(file.fieldname + "-" + Date.now());
+        let renameFile = hash.digest("hex") + ".jpg";
+        callback(null, renameFile);
     }
-
-    new GreenHouse(newGreenHouse)
-    .save
-    .then(err =>{
-        if(!err){
-        console.log("created");
-        res.sendStatus(200);
-        }else{
-            return console.log(err);
-        }
-    });
+});
+const uploadMulter = multer({
+    storage: storage,
+    limits: {
+        fileSize: 5000000
+    }
 });
 
-router.get("/showGreenHouse", (req,res)=>{
-    Greenhouse.find((err,greenHouseDataList)=>{
-        if(!err){
-            res.json(greenHouseDataList);
-        }else{
-            res.json({});
-        }
-    });
+router.use('/addGreenHouse', (req, res, next) => {
+    res.setHeader("Access-Control-Allow-Origin", origin_url);
+    res.setHeader(
+        "Access-Control-Allow-Headers",
+        "X-Requested-With,content-type"
+    );
+    res.set('Content-Type', 'application/json');
+    next();
+});
+
+router.post('/addGreenHouse', uploadMulter.single('picture'), (req, res) => {
+    new AddGreenHouse(req, res);
+});
+
+router.use('/deleteGreenHouse', (req, res, next) => {
+    res.setHeader("Access-Control-Allow-Origin", origin_url);
+    res.setHeader(
+        "Access-Control-Allow-Headers",
+        "X-Requested-With,content-type"
+    );
+    res.set('Content-Type', 'application/json');
+    next();
+});
+
+router.post('/deleteGreenHouse', (req, res) => {
+    new DeleteGreenHouse(req, res);
+});
+
+
+router.use('/editGreenHouse', (req, res, next) => {
+    res.setHeader("Access-Control-Allow-Origin", origin_url);
+    res.setHeader(
+        "Access-Control-Allow-Headers",
+        "X-Requested-With,content-type"
+    );
+    res.set('Content-Type', 'application/json');
+    next();
+});
+
+router.post('/editGreenHouse', uploadMulter.single('picture'), (req, res) => {
+    new EditGreenHouse(req, res);
+});
+
+
+router.use('/showGreenHouse', (req, res, next) => {
+    res.setHeader("Access-Control-Allow-Origin", origin_url);
+    res.setHeader(
+        "Access-Control-Allow-Headers",
+        "X-Requested-With,content-type"
+    );
+    res.set('Content-Type', 'application/json');
+    next();
+});
+
+router.post('/showGreenHouse', (req, res) => {
+    new ShowGreenHouse(req, res);
 });
 
 module.exports = router;

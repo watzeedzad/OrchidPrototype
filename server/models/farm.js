@@ -1,15 +1,21 @@
 const mongoose = require("mongoose");
+const autoIncrement = require("mongoose-sequence")(mongoose);
 
-const { Schema } = mongoose;
+const {
+  Schema
+} = mongoose;
 
 const farmSchema = new Schema({
-  farmId: Number,
   farmName: String,
   ownerName: String,
   ownerSurname: String,
   ownerTel: String,
   ownerAddress: String,
-  configFilePath: String
+  configFilePath: String,
+  piMacAddress: String
 });
 
-mongoose.model("farm", farmSchema);
+farmSchema.plugin(autoIncrement, {
+  inc_field: "farmId"
+});
+mongoose.model("farm", farmSchema, "farm");

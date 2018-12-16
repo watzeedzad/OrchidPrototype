@@ -1,13 +1,20 @@
 const mongoose = require("mongoose");
+const autoIncrement = require("mongoose-sequence")(mongoose);
 
-const { Schema } = mongoose;
+const {
+  Schema
+} = mongoose;
 
 const userSchema = new Schema({
-  userId: Number,
   farmId: Number,
   role: String,
+  firstname: String,
+  lastname: String,
   username: String,
   password: String
 });
 
-mongoose.model("user", userSchema);
+userSchema.plugin(autoIncrement, {
+  inc_field: "userId"
+});
+mongoose.model("user", userSchema, "user");

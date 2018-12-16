@@ -1,110 +1,84 @@
 const express = require("express");
 const router = express.Router();
-const mongoose = require("mongoose");
-const greenHouseSensor = mongoose.model("greenHouse_Sensor");
-const projectSensor = mongoose.model("project_Sensor");
-const know_controller = mongoose.model("know_controller");
-import TemperatureCheck from "../classes/TemperatureCheck";
+import GreenHouseSensor from "../classes/SaveData/GreenHouseSensor";
+import ProjectSensor from "../classes/SaveData/ProjectSensor";
+import TemperatureCheck from "../classes/CheckFunction/TemperatureCheck";
+import SoilMoistureCheck from "../classes/CheckFunction/SoilMoistureCheck";
+import FertilityCheck from "../classes/CheckFunction/FertilityCheck";
+import LightCheck from "../classes/CheckFunction/LightCheck";
 
-let controllerData;
-
-async function getControllerData(ip) {
-  console.log("enter 0");
-  let controllerResult = await know_controller.findOne({
-    ip: ip
-  }, function(err, result) {
-    if (err) {
-      console.log("Query fail!");
-    } else {
-      controllerData = result;
-      console.log("Result enter 0: " + controllerData);
-    }
-  });
-}
-
-async function saveSensorData(greenHouseId, temp, humid, soilMoisture, ambientLight) {
-  const newGreenHouseData = {
-    greenHouseSensorId: 1,
-    temperature: temp,
-    humidity: humid,
-    soilMoisture: soilMoisture,
-    ambientLight: ambientLight,
-    timeStamp: Date.now(),
-    greenHouseId: greenHouseId
-  };
-
-  new greenHouseSensor(newGreenHouseData).save(function (err) {
-    if (!err) {
-      console.log("created green house!");
-    } else {
-      //TODO: return page with errors
-      return console.log(err);
-    }
-  });
-}
-
-router.use("/greenHouseSensor", (req, res, next) => {
-  async function getData() {
-    let ip = req.body.ip
-    console.log("ip: " + req.body.ip)
-    await getControllerData(ip);
-    next()
-  }
-  getData();
-})
+let status = 0;
 
 //Add greenHouseSensor
 router.post("/greenHouseSensor", (req, res) => {
-  console.log(controllerData.greenHouseId);
-  let greenHouseId = controllerData.greenHouseId;
-  let temp = req.body.temperature;
-  let humid = req.body.humidity;
-  let soilMoisture = req.body.soilMoisture;
-  let ambientLight = req.body.ambientLight;
-  saveSensorData(greenHouseId, temp, humid, soilMoisture, ambientLight);
-  new TemperatureCheck(req, res);
-});
-
-//Show greenHouseSensorData
-router.get("/showGreenHouseSensor", (req, res) => {
-  greenHouseSensor.find((err, greenHouseDataList) => {
-    if (!err) {
-      res.json(greenHouseDataList);
+  req.session.temperatureCheckStatus = 0;
+  req.session.soilMoistureCheckStatus = 0;
+  req.session.lightCheckStatus = 0;
+  new GreenHouseSensor(req);
+  new TemperatureCheck(req);
+  new SoilMoistureCheck(req);
+  new LightCheck(req, res);
+  setTimeout(() => {
+    if (req.session.temperatureCheckStatus == 200 && req.session.soilMoistureCheckStatus == 200 && req.session.lightCheckStatus == 200) {
+      res.sendStatus(200);
     } else {
-      res.json({});
+      checkStatus(req, res, "greenHouse");
     }
-  });
+  }, 4500);
+  // new GreenHouseSensor(req, res);
+  // new TemperatureCheck(req, res);
+  // new SoilMoistureCheck(req, res);
+  // if (req.session.temperatureCheckStatus == 200 && req.session.soilMoistureCheckStatus == 200) {
+  //   res.sendStatus(200);
+  // } else {
+  //   checkStatus(req, res, "greenHouse");
+  // }
 });
 
 //Add projectSensor
 router.post("/projectSensor", (req, res) => {
-  const newProjectSensorData = {
-    projectSensorId: req.body.projectSensorId,
-    soilFertilizer: req.body.soilFertilizer,
-    timeStamp: req.body.timeStamp,
-    projectId: req.body.projectId
-  };
-
-  new projectSensor(newProjectSensorData).save(function (err) {
-    if (!err) {
-      console.log("created");
+  req.session.fertilityCheckStatus = 0;
+  new ProjectSensor(req, res);
+  new FertilityCheck(req, res);
+  setTimeout(() => {
+    if (req.session.fertilityCheckStatus == 200) {
       res.sendStatus(200);
     } else {
-      //TODO: return page with errors
-      return console.log(err);
+      checkStatus(req, res, "project");
     }
-  });
+  }, 3500);
 });
 
-//Show Project Sensor Data
-router.get("/showProjectData", (req, res) => {
-  projectSensor.find((err, projectDataList) => {
-    if (!err) {
-      res.json(projectDataList);
-    } else {
-      res.json({});
+function checkStatus(req, res, checkType) {
+  console.log("start check status " + checkType);
+  let messageArray = [];
+  if (checkType == "greenHouse") {
+    if (req.session.temperatureCheckStatus == 500) {
+      messageArray.push('เกิดข้อผิดพลาดในการตรวจสอบอุณหภูมิ');
     }
-  });
-});
+    if (req.session.soilMoistureCheckStatus == 500) {
+      messageArray.push('เกิดข้อผิดพลาดในการตรวจสอบความชิ้นในเครื่องปลูก');
+    }
+    if (req.session.lightCheckStatus == 500) {
+      messageArray.push('เกิดข้อผิดพลาดในการตรวจสอบความเข้มแสง');
+    }
+    if (req.session.temperatureCheckStatus == 500 || req.session.soilMoistureCheckStatus == 500 || req.session.lightCheckStatus == 500) {
+      res.json({
+        status: 500,
+        errorMessage: messageArray
+      });
+    }
+  } else if (checkType == "project") {
+    if (req.session.fertilityCheckStatus == 500) {
+      messageArray.push('เกิดข้อผิดพลาดในการตรวจสอบความอุดมสมบูรณ์ในเครื่องปลูก');
+    }
+    if (req.session.fertilityCheckStatus == 500) {
+      res.json({
+        status: 500,
+        errorMessage: messageArray
+      });
+    }
+  }
+}
 
 module.exports = router;
